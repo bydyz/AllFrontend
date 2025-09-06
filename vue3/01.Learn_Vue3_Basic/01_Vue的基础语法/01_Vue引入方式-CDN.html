@@ -1,0 +1,29 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+
+  <h2>哈哈哈</h2>
+  <p>我是内容, 呵呵呵呵</p>
+
+  <!-- open with live serve时，上面的两个东西会很快加载出来，利用vue编译template后挂载到div的会过一会出现 -->
+  <div id="app"></div>
+  <!-- template中的内容会解析成dom，挂载到这个div上 -->
+  
+  <!-- CDN地址 -->
+  <script src="https://unpkg.com/vue@next"></script>
+  <script>
+    // 使用Vue
+    const app = Vue.createApp({
+      template: `<h2>Hello World</h2><span>呵呵呵</span>`
+    })
+    // 挂载
+    app.mount("#app")
+
+  </script>
+</body>
+</html>

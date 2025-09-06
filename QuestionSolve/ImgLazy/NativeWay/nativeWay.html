@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>图片懒加载示例</title>
+
+<style>
+  * {
+    padding: 0;
+    margin: 0;
+  }
+  div {
+    width: 100%;
+    height: 100vh;
+    background-color: pink;
+  }
+  img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .lazy {
+    opacity: 0;
+  }
+</style>
+
+</head>
+
+<body>
+  
+<div>1</div>
+<!-- 图片懒加载示例 -->
+<img class="lazy" data-src="./image1.jpg" alt="描述文字1">
+<img class="lazy" data-src="./image2.jpg" alt="描述文字2">
+<!-- 更多图片 -->
+
+<script>
+// 滚动时加载图片的函数
+function lazyLoad() {
+  const lazyImages = document.querySelectorAll('img.lazy');
+
+  lazyImages.forEach(img => {
+    const imgTop = img.getBoundingClientRect().top;
+    console.log(imgTop)
+
+    // 当图片距离顶部的距离小于窗口高度时，开始加载图片
+    if (imgTop < window.innerHeight) {
+      img.src = img.dataset.src;
+      img.classList.remove('lazy');
+      // 图片加载后，可以移除滚动监听
+      window.removeEventListener('scroll', lazyLoad);
+    }
+  });
+}
+
+// 添加滚动监听
+window.addEventListener('scroll', lazyLoad);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>innerText vs textContent</title>
+</head>
+<body>
+
+<div id="myElement">Hello, <span style="visibility: hidden;">Hidden</span> World!</div>
+
+<script>
+  const myElement = document.getElementById('myElement');
+
+  console.log('innerText:', myElement.innerText);
+  // 输出: Hello, World!
+
+  console.log('textContent:', myElement.textContent);
+  // 输出: Hello, Hidden World!
+
+  // 和答案不一样？？？
+  // 总的设置为   style="display: none;"  不行
+
+  // 除此外 设置为  style="display: none;" 和  style="visibility: hidden;"  均会起作用
+</script>
+
+<!-- 
+  innerText 和 textContent 是 JavaScript 中用于获取和设置元素文本内容的两个属性，它们在使用上有一些区别：
+
+渲染结果的区别：
+  innerText: 返回渲染后在屏幕上实际显示的文本内容。它会考虑样式（CSS）和可见性（visibility: hidden 或 display: none）等因素，只返回用户可以看到的文本。
+  textContent: 返回元素内所有文本，包括可能对用户隐藏的文本。它不受 CSS 样式的影响，返回元素的原始文本内容。
+
+性能差异：
+  innerText: 虽然在获取渲染后的文本方面更直观，但在某些情况下可能会引起性能问题，因为它需要计算渲染样式。
+  textContent: 通常性能更好，因为它不考虑样式和渲染，直接返回元素的文本内容。
+  
+浏览器兼容性：
+  innerText: 是 IE 的专有属性，但被大多数现代浏览器支持。
+  textContent: 是 DOM Level 3 标准的一部分，得到了广泛支持，包括现代浏览器和 IE9+。
+ -->
+
+
+
+ <!-- 浏览器在计算样式时做了一些优化，导致 visibility: hidden; 的元素被视为可见。
+
+visibility: hidden; 是一种隐藏元素的方式，但不会影响文档流，元素仍然占据空间。在某些情况下，浏览器可能会对这样的元素进行优化，使其在计算样式时被视为可见。
+
+如果你想确保 visibility: hidden; 的元素被正确地处理，可以使用 display: none;，这样元素就会在文档流中移除，而不影响布局和可见性。 -->
+</body>
+</html>

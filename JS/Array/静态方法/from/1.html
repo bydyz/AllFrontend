@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <img src="./img/1.jpg" height="600" alt="">
+  <img src="./img/2.jpg" height="600" alt="">
+
+  <script>
+    // 根据 DOM 元素的属性创建一个数组
+    const images = document.querySelectorAll("img");
+    console.log(images)
+    const sources = Array.from(images, (image) => image.src);
+    console.log(sources)
+    const insecureSources = sources.filter((link) => link.startsWith("http://"));
+  </script>
+</body>
+</html>

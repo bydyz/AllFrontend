@@ -1,0 +1,16 @@
+{
+  "name": "xr_publish_1",
+  "version": "1.0.0",
+  "main": "index.js",
+  "bin": {
+    "xr_publish_test_1": "./index.js"
+  },
+  "files": ["index.js"],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["learn", "test"],
+  "author": "XR",
+  "license": "ISC",
+  "description": "Learn and Test"
+}

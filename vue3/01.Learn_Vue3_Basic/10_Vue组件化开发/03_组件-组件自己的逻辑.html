@@ -1,0 +1,82 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .product {
+      background-color: orange;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app">
+    <!-- <home-nav></home-nav> -->
+    <HomeNav></HomeNav>
+    <home-nav></home-nav>
+
+    <product-item></product-item>
+    <product-item></product-item>
+    <product-item></product-item>
+  </div>
+
+  <template id="nav">
+    <h2>我是应用程序的导航</h2>
+  </template>
+
+  <template id="product">
+    <div class="product">
+      <h2>{{title}}</h2>
+      <p>商品描述, 限时折扣, 赶紧抢购</p>
+      <p>价格: {{price}}</p>
+      <button @click="favarItem">收藏</button>
+    </div>
+  </template>
+  
+  <script src="../lib/vue.js"></script>
+  <script>
+    // 1.创建app
+    const app = Vue.createApp({
+      // data: option api
+      data() {
+        return {
+          message: "Hello Vue"
+        }
+      },
+    })
+
+    // 2.注册全局组件
+    app.component("product-item", {
+      template: "#product",
+      data() {
+        return {
+          title: "我是商品Item",
+          price: 9.9
+        }
+      },
+      methods: {
+        favarItem() {
+          console.log("收藏了当前的item")
+        }
+      }
+    })
+
+    app.component("HomeNav", {
+      template: "#nav"
+    })
+    /* 
+    在通过app.component注册一个组件的时候，第一个参数是组件的名称，定义组件名的方式有两种：
+    ◼ 方式一：使用kebab-case（短横线分割符）
+      当使用 kebab-case (短横线分隔命名) 定义一个组件时，你也必须在引用这个自定义元素时使用 kebab-case，例如 <my-component-name>；
+    ◼ 方式二：使用PascalCase（驼峰标识符）
+      当使用 PascalCase (首字母大写命名) 定义一个组件时，你在引用这个自定义元素时两种命名法都可以使用。
+      也就是说 <my-component-name> 和 <MyComponentName> 都是可接受的；
+    */
+
+    // 2.挂载app
+    app.mount("#app")
+  </script>
+</body>
+</html>

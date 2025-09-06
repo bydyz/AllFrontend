@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      //！！ node环境不能直接使用Blob，浏览器环境可
+      const blob3 = new Blob(["hello", "randy"], { type: "text/plain" });
+
+      const fileReader = new FileReader();
+
+      fileReader.readAsText(blob3);
+
+      fileReader.onload = () => {
+        console.log(fileReader.result);
+        // 通过fileReader获取结果
+        // fileReader.result 是结果（如果成功）
+        // fileReader.error 是 error（如果失败）。
+      };
+    </script>
+  </body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // console.log('Blob')
+      // Blob 对象表示一个不可变、原始数据的类文件对象。
+      console.log('')
+
+      // 构造函数
+      // for example :  const blob = new Blob(array, options)
+      // array 是一个由ArrayBuffer, ArrayBufferView, Blob, DOMString 等对象构成的数组，DOMStrings会被编码为UTF-8。
+      // options 是一个可选，它可能会指定如下两个属性：
+      // type，默认值为 ""，内容的MIME类型。
+      // endings，默认值为"transparent"，用于指定包含行结束符\n的字符串如何被写入。 它是以下两个值中的一个： "native"，代表行结束符会被更改为适合宿主操作系统文件系统的换行符，或者 "transparent"，代表会保持blob中保存的结束符不变
+
+      const blob1 = new Blob(["hello randy", "oh, my god"], { type: "text/plain" });
+      console.log(blob1);
+      console.log("");
+
+      // slice() 从 Blob 中截取一部分并返回一个 新 的 Blob(用法同数组的 slice)
+      // arrayBuffer() 返回一个以二进制形式展现的 promise
+      // stream() 返回一个ReadableStream对象
+      // text() 返回一个文本形式的 promise
+
+      // 转成stream
+      console.log(blob1.stream());
+      console.log("");
+
+      // 转成Arraybuffer
+      blob1.arrayBuffer().then(res => {
+        console.log(res);
+      });
+      console.log("");
+
+      // 转成文本
+      blob1.text().then(res => {
+        console.log(res);
+        console.log("");
+      });
+    </script>
+  </body>
+</html>

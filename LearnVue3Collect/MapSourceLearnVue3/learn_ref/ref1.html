@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Learn Ref</title>
+    <link rel="stylesheet" href="../vueSource/style.css" />
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <script type="module">
+      import {
+        createApp,
+        ref,
+        h,
+      } from '../vueSource/vue.runtime.esm-bundler.js';
+
+      const app = createApp({
+        setup() {
+          const count = ref(0);
+
+          // 使用 h() 构建虚拟 DOM
+          return () => {
+            let result = h('p', `当前值：${count.value}`);
+            return result;
+          };
+        },
+      });
+
+      app.mount('#app');
+    </script>
+  </body>
+</html>

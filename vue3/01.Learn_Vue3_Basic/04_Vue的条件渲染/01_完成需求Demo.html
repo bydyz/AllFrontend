@@ -1,0 +1,39 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+
+  <!-- 模板语法 -->
+  <div id="app">
+    <ul v-if="names.length > 0">
+      <li v-for="item in names">{{item}}</li>
+    </ul>
+
+    <h2 v-else>当前names没有数据, 请求获取数据后展示</h2>
+  </div>
+  <!-- v-if的渲染原理：
+        v-if是惰性的；
+        当条件为false时，其判断的内容完全不会被渲染或者会被销毁掉；
+        当条件为true时，才会真正渲染条件块中的内容； -->
+  
+  <script src="../lib/vue.js"></script>
+  <script>
+    // 1.创建app
+    const app = Vue.createApp({
+      // data: option api
+      data: function() {
+        return {
+          names: []
+        }
+      },
+    })
+
+    // 2.挂载app
+    app.mount("#app")
+  </script>
+</body>
+</html>

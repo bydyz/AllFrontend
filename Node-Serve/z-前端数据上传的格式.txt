@@ -1,0 +1,104 @@
+前端调用后端接口时，可以传递多种形式的数据。以下是一些常见的数据格式和形式，以及它们的例子：
+
+1. 查询字符串（Query String）
+查询字符串是通过 URL 传递的键值对。它们通常用于不需要保密的数据。
+
+例子：
+
+GET /search?q=express&sort=desc HTTP/1.1
+在这个例子中，q 和 sort 是查询参数，分别表示搜索查询和排序方式。
+
+
+
+2. 表单数据（Form Data）
+表单数据通常通过 application/x-www-form-urlencoded 格式的 POST 请求发送。这种格式适用于简单的文本数据。
+
+例子：
+
+<form action="/login" method="post">
+  <input type="text" name="username" />
+  <input type="password" name="password" />
+  <input type="submit" value="登录" />
+</form>
+当用户填写表单并提交时，数据会被编码为查询字符串格式，并作为 POST 请求的请求体发送。
+
+
+
+3. JSON 数据
+JSON（JavaScript Object Notation）是一种轻量级的数据交换格式，易于人阅读和编写，同时也易于机器解析和生成。
+
+例子：
+
+{
+  "username": "johndoe",
+  "password": "secret"
+}
+在 AJAX 请求中，这通常通过 Content-Type: application/json 发送：
+
+fetch('/login', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    username: 'johndoe',
+    password: 'secret'
+  })
+});
+
+
+
+4. 多部分表单数据（Multipart Form Data）
+用于文件上传，通过 multipart/form-data 格式发送。
+
+例子：
+
+<form action="/upload" method="post" enctype="multipart/form-data">
+  <input type="file" name="file" />
+  <input type="submit" value="上传" />
+</form>
+在这个例子中，用户选择一个文件后，表单会将文件作为请求的一部分发送。
+
+
+
+5. URL 编码的表单数据
+类似于表单数据，但所有数据都被编码并附加到 URL 上。
+
+例子：
+
+POST /submit HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+username=johndoe&password=secret
+
+
+
+6. 二进制数据
+用于传输文件或二进制流。
+
+例子：
+
+fetch('/upload', {
+  method: 'POST',
+  body: fileData // ArrayBuffer 或 Blob 类型的数据
+});
+在这个例子中，fileData 可能是一个 Blob 或 ArrayBuffer，表示一个文件或二进制数据。
+
+
+
+7. 头信息（Headers）
+HTTP 请求头可以包含额外的元数据，如认证令牌、内容类型等。
+
+例子：
+
+fetch('/api/data', {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer your-token-here'
+  }
+});
+在这个例子中，请求头包含了一个用于认证的令牌。
+
+
+总结
+前端可以通过多种方式向服务器传递数据，选择哪种方式取决于数据的类型、大小、安全性要求以及 API 的设计。JSON 和表单数据是最常用的格式，因为它们易于使用并且被广泛支持。对于文件上传，通常使用多部分表单数据。在发送敏感数据时，确保使用 HTTPS 来加密数据。

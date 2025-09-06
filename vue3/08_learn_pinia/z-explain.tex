@@ -1,0 +1,50 @@
+第一步：
+
+  在stores中的index.js里导入
+
+    import { createPinia } from 'pinia'
+
+    const pinia = createPinia()
+
+    export default pinia
+
+
+
+第二步：
+
+  在main.js里use
+
+    import pinia from './stores'
+
+    createApp(App).use(pinia).mount('#app')
+
+
+
+第三步:
+
+  在store中定义store
+
+    // 定义关于counter的store
+    import { defineStore } from 'pinia'
+    
+    const useCounter = defineStore("counter", {       //这里defineStore返回的是函数
+      state: () => ({ }),
+
+      getters: { },
+
+      actions: { }
+
+    })
+    
+    export default useCounter
+  
+
+
+第四步：
+
+在views的01中
+  import useCounter from '@/stores/counter';
+
+  const counterStore = useCounter()
+
+  counterStore即是store实例，可以读写state，获取getters，调用action

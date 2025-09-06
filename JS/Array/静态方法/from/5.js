@@ -1,0 +1,1 @@
+console.log(Array.from.call({}, { length: 1, 0: "foo" })); // [ 'foo' ]

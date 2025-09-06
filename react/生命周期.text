@@ -1,0 +1,27 @@
+◼ componentDidMount
+◼ componentDidMount() 会在组件挂载后（插入 DOM 树中）立即调用。
+◼ componentDidMount中通常进行哪里操作呢？
+   依赖于DOM的操作可以在这里进行；
+   在此处发送网络请求是最好的地方；（官方建议）
+   可以在此处添加一些订阅（会在componentWillUnmount取消订阅）；
+
+◼ componentDidUpdate
+◼ componentDidUpdate() 会在更新后会被立即调用，首次渲染不会执行此方法。
+   当组件更新后，可以在此处对 DOM 进行操作；
+   如果你对更新前后的 props 进行了比较，也可以选择在此处进行网络请求；（例如，当 props 未发生变化时，则不会执行网络请求）。
+
+◼ componentWillUnmount
+◼ componentWillUnmount() 会在组件卸载及销毁之前直接调用。
+   在此方法中执行必要的清理操作；
+   例如，清除 timer，取消网络请求或清除在 componentDidMount() 中创建的订阅等；
+
+
+
+◼ 除了上面介绍的生命周期函数之外，还有一些不常用的生命周期函数：
+   getDerivedStateFromProps：state 的值在任何时候都依赖于 props时使用；该方法返回一个对象来更新state；
+   getSnapshotBeforeUpdate：在React更新DOM之前回调的一个函数，可以获取DOM更新前的一些信息（比如说滚动位置）；
+   shouldComponentUpdate：该生命周期函数很常用，但是我们等待讲性能优化时再来详细讲解；
+
+
+参考官网：
+  https://zh-hans.reactjs.org/docs/reactcomponent.html

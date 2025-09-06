@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app"></div>
+  
+  <script>
+    const container = document.getElementById( 'app' )
+
+    const el = document.createElement('div');
+    el.innerText = "哈哈哈"
+    el.textContent = "呵呵呵"
+
+    el.addEventListener("click", function divClick () {
+      alert('div clicked!');
+    })
+
+    function divHover() {
+      alert('div hovered!');
+    }
+    // el.addEventListener("mouseover", divHover )
+
+    el.setAttribute('style', 'color: red; font-size: 18px; text-align: center; cursor: pointer')
+
+    container.appendChild(el);
+
+
+    const fruits = ['apple', 'banana', 'orange', 'apple'];
+    const uniqueFruitsSet = new Set(fruits);
+    console.log(uniqueFruitsSet);
+  </script>
+</body>
+</html>

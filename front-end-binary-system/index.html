@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .containerClass {
+        width: 500px;
+        display: flex;
+        flex-wrap: wrap;
+        padding: 16px;
+      }
+      .buttonClass {
+        margin-right: 8px;
+        margin-top: 12px;
+        padding: 6px;
+        background-color: #999;
+        border-radius: 2px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="buttonContainer" class="containerClass"></div>
+
+  <script src="./ArrayBuffer.js" type="module"></script>
+  <!-- <script src="./Uint8Array.js" type="module"></script> -->
+  <!-- <script src="./DataView.js" type="module"></script> -->
+  <!-- <script src="./Blob.js" type="module"></script> -->
+  <!-- <script src="./Base64.js" type="module"></script> -->
+  <!-- <script src="./BlobToFile.js" type="module"></script> -->
+  <!-- <script src="./FileBlobImgToBase64.js" type="module"></script> -->
+
+  <!-- 类型化数组对象 -->
+  <!-- <script src="./TypedArray.js" type="module"></script> -->
+
+  <script type="module">
+    import {ArrayBufferBaseUseF, TypedArrayUseF, NewTypedArrayUseF, NewTypedArrayTypedArrayUseF, ByteOrderUseF, ByteOrderUseTwoF, JudgeBigOrSmallUseF, StringArrayBufferChangeUseF} from "./ArrayBuffer.js"
+
+    const containerEle = document.getElementById("buttonContainer")
+
+    const arrayAll = [
+      {
+        id: 'ArrayBufferBaseUse',
+        func: ArrayBufferBaseUseF
+      },
+      {
+        id: 'TypedArrayUse',
+        func: TypedArrayUseF
+      },
+      {
+        id: 'NewTypedArrayUse',
+        func: NewTypedArrayUseF
+      },
+      {
+        id: 'NewTypedArrayTypedArrayUse',
+        func: NewTypedArrayTypedArrayUseF
+      },
+      {
+        id: 'ByteOrderUse',
+        func: ByteOrderUseF
+      },
+      {
+        id: 'ByteOrderUseTwo',
+        func: ByteOrderUseTwoF
+      },
+      {
+        id: 'JudgeBigOrSmallUse',
+        func: JudgeBigOrSmallUseF
+      },
+      {
+        id: 'StringArrayBufferChangeUse',
+        func: StringArrayBufferChangeUseF
+      },
+    ]
+
+    for(let i = 0; i < arrayAll.length; i++) {
+      const buttonItem = document.createElement("button");
+      buttonItem.innerText = arrayAll[i].id
+      buttonItem.id = arrayAll[i].id
+      buttonItem.className = "buttonClass"
+      buttonItem.onclick = function() {
+        arrayAll[i].func()
+      }
+
+      containerEle.appendChild(buttonItem)
+    }
+
+  </script>
+  
+</body>
+</html>

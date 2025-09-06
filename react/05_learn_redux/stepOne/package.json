@@ -1,0 +1,13 @@
+{
+  "name": "stepOne",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "rc",
+  "license": "MIT",
+  "dependencies": {
+    "redux": "^5.0.1"
+  },
+  "scripts": {
+    "start": "node src/index.js"
+  }    
+}

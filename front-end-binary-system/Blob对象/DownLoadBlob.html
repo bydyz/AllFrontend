@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 3.示例：以下是一个示例，演示了如何使用Blob对象将文本数据封装为Blob，然后创建并下载一个包含这些数据的文件：
+      // 创建一个包含文本数据的Blob对象
+      var text = "Hello, Blob!";
+      var blob = new Blob([text], { type: "text/plain" });
+
+      // 创建一个包含Blob URL的链接，用户可以点击以下载文件
+      var url = URL.createObjectURL(blob);
+      
+      var link = document.createElement("a");
+      link.href = url;
+      link.download = "example.txt"; // 指定文件名
+      link.innerHTML = "Download File";
+
+      // 将链接添加到页面上
+      document.body.appendChild(link);
+
+      // 在这个示例中，我们首先创建了一个包含文本数据的Blob对象。然后，使用URL.createObjectURL(blob)创建了一个Blob URL，该URL指向Blob对象的数据。最后，我们创建了一个链接，用户可以点击以下载文件。这个示例演示了如何使用Blob对象来封装和操作二进制数据，以便生成和下载文件。这是Blob对象与二进制数据之间联系的一个实际用例。
+    </script>
+  </body>
+</html>

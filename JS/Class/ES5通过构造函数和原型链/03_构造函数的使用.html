@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+
+  <script>
+    /*
+      构造函数的使用
+        1. 构造函数和普通函数没有区别
+          => 只不过在调用的时候和 new 关键字连用
+        2. 书写构造函数, 函数名首字母大写
+          => 当你看到名字的时候, 就知道要和 new 关键字连用
+        3. 调用的时候, 需要和 new 关键字连用
+          => 因为只有和 new 关键字连用的时候, 这个函数才会有 自动创建 和 返回对象 的能力
+          => 因为我们之所以书写构造函数, 就是为了使用它去批量生产对象
+          => 如果不和 new 关键字连用, 那么该函数 没有创建对象 的能力,  没有自动返回对象 的能力
+        4. 调用构造函数的时候, 如果不需要传递参数
+          => 可以不写最后的小括号
+          => 如果你需要传递参数, 那么必须写小括号
+          => 但是书写规范推荐我们都写上小括号
+        5. 当你的函数名 和 new 关键字连用的时候
+          => 函数内部的 this 指向当前实例(new 关键字前面的变量)   
+          => 我们直接在函数体内书写 this.xxx = 值
+            -> 就是在向自动创建出来的对象里面添加内容
+        6. 构造函数内部不要随便写 return
+          => 当你 return 了一个基本数据类型的时候, 写了白写
+          => 当你 return 了一个复杂数据类型的时候, 构造函数白写
+    */
+
+
+
+    // function person() {
+    //   console.log('hello world')
+    // }
+
+    // function Person() {
+    //   this.name = 'Jack'
+    // }
+
+
+    // 3.
+    // var obj = new Person()
+    // console.log(obj)
+
+    // var obj2 = Person()
+    // console.log(obj2)
+
+    // 4.
+    // var obj = new Person() // 推荐
+    // console.log(obj)
+
+    // var obj2 = new Person // 不推荐
+    // console.log(obj2)
+
+    // 6.
+    // function Person() {
+    //   this.name = 'Jack'
+    //   this.age = 18
+
+     /*  return 基本数据类型，如
+                                    return 'true'
+                                    retuen true
+                                    return 123
+                                    reture undefined
+                                    return null 
+                                这些基本数据都无法显示出来*/
+
+    /* return 复杂数据类型,如
+                                    return [1, 2, 3]
+                                    return function() {} 
+                                    retuen new Date()
+                                此时，用 this.形参 表示的内容都不会显示*/
+    // }
+
+    // var obj = new Person()
+    // console.log(obj)
+  </script>
+</body>
+</html>

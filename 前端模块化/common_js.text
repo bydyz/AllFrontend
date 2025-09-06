@@ -1,0 +1,29 @@
+exports 不是提供模块化方案的对象，而是 CommonJS 规范中用于导出模块的一个特殊对象。
+
+在 CommonJS 中，一个文件就是一个模块，每个模块都有一个 module 对象，其中有一个 exports 属性。通过给 exports 对象赋值，可以将模块中的内容导出，使其可以在其他文件中引用。
+
+
+
+// math.js
+exports.add = function (a, b) {
+  return a + b;
+};
+
+exports.multiply = function (a, b) {
+  return a * b;
+};
+
+
+在另一个文件中，你可以通过 require 来引入并使用这个模块：
+
+
+// app.js
+const math = require('./math');
+
+console.log(math.add(2, 3));       // 输出: 5
+console.log(math.multiply(2, 3));  // 输出: 6
+
+
+
+
+common.js规范  可以  在  node.js环境、浏览器   中使用，但主要是在node.js中使用，在浏览器中多用ES Module

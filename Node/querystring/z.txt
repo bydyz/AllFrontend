@@ -1,0 +1,8 @@
+querystring is more performant than URLSearchParams but is not a standardized API. Use URLSearchParams when performance is not critical or when compatibility with browser code is desirable.
+
+
+在 Node.js 中，querystring 是一个内置的实用模块，它提供了一些用于解析和格式化 URL 查询字符串的工具。这个模块的 API 提供了两个主要的功能：
+
+
+
+querystring 模块在处理 URL 查询参数时非常有用，尤其是在构建或解析 HTTP 请求和响应时。尽管现代的 URLSearchParams API 提供了更简洁和强大的查询参数处理功能，但在一些旧的 Node.js 版本或需要向后兼容的情况下，querystring 模块仍然是一个有用的工具。

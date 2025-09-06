@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>拖曳调整宽度</title>
+  <style>
+    .box {
+      width: 200px;
+      height: 100px;
+      background-color: lightblue;
+      position: relative;
+    }
+    .resize-handle {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background-color: coral;
+      cursor: ew-resize; /* 水平调整光标 */
+    }
+  </style>
+</head>
+<body>
+  <div class="box" id="box">
+    <div class="resize-handle" id="resizeHandle"></div>
+  </div>
+
+  <script>
+    const box = document.getElementById('box');
+    const resizeHandle = document.getElementById('resizeHandle');
+
+    let isResizing = false;
+
+    // 鼠标按下时开始调整
+    resizeHandle.addEventListener('mousedown', (e) => {
+      e.preventDefault(); // 防止默认行为（如文本选择）
+      isResizing = true;
+
+      const onMouseMove = (event) => {
+        if (isResizing) {
+          // 计算新的宽度
+          const newWidth = event.clientX - box.getBoundingClientRect().left;
+          box.style.width = Math.max(newWidth, 50) + 'px'; // 最小宽度为50px
+        }
+      };
+
+      const onMouseUp = () => {
+        isResizing = false;
+        // 移除事件监听器
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+      };
+
+      // 监听鼠标移动和释放事件
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+    });
+  </script>
+</body>
+</html>

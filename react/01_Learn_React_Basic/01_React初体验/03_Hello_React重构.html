@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+
+  <div id="root"></div>
+  
+  <script src="../lib/react.js"></script>
+  <script src="../lib/react-dom.js"></script>
+  <script src="../lib/babel.js"></script>
+
+  <script type="text/babel">
+    // 对 02 功能的重构
+
+    // 使用组件进行重构代码
+    // 类组件和函数式组件
+    class App extends React.Component {
+      // 组件数据
+      constructor() {
+        super()
+        this.state = {
+          message: "Hello World",
+
+          name: "why",
+          age: 18
+        }
+      }
+
+      // 组件方法(实例方法)
+      btnClick() {
+        // 内部完成了两件事情: 
+        // 1.将state中message值修改掉  2.自动重新执行render函数函数
+        this.setState({
+          message: "Hello React"
+        })
+      }
+
+      // 渲染内容 render方法
+      // 在 JSX 中使用 onClick 属性时，应该传递一个函数，而不是函数调用的结果。
+      render() {
+        return (
+          <div>
+            <h2>{this.state.message}</h2>
+            <button onClick={this.btnClick.bind(this)}>修改文本</button>
+          </div>
+        )
+      }
+      // 除了此处用 this.btnClick.bind(this) 外，还可以像  03_Hello_React重构1.html  一样，提前在constructor中将要传入的函数定义好
+    }
+
+    // 将组件渲染到界面上
+    const root = ReactDOM.createRoot(document.querySelector("#root"))
+    // App根组件
+    root.render(<App/>)
+
+
+    // 同一个文件 后面加上 1  2  3  4 ... 表示对当前文件的解释添加！！！！！！！！！！！！！！！
+  </script>
+
+</body>
+</html>

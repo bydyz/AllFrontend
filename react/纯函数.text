@@ -1,0 +1,82 @@
+纯函数：
+1.确定的输入，一定会产生确定的输出；
+2.函数在执行过程中，不能产生副作用；
+  a.不可 “触发事件”
+  b.不可 使输出设备输出
+  c.不可 更改输出值以外物件的内容
+  d.不可 修改了全局变量，
+  d.不可 修改参数
+  d.不可 改变外部的存储
+
+slice：slice截取数组时不会对原数组进行任何操作,而是生成一个新的数组；
+splice：splice截取数组, 会返回一个新的数组, 也会对原数组进行修改；
+◼ slice就是一个纯函数，不会修改数组本身，而splice函数不是一个纯函数；
+
+
+下面这个函数也不是纯函数
+let foo = 5
+function add(num) {
+  return num + foo
+}
+console.log(add(5))
+foo = 10
+console.log(add(5))
+
+
+下面这个函数也不是纯函数
+function change(info) {
+  console.log(info.name, info.age)
+  info.name = '哈哈哈‘
+}
+
+
+
+
+React中就要求我们无论是函数还是class声明一个组件，这个组件都必须像纯函数一样，保护它们的props不被修改
+
+redux中，reducer也被要求是一个纯函数。
+
+
+Redux就是一个帮助我们管理State的容器：Redux是JavaScript的状态容器，提供了可预测的状态管理；
+Redux除了和React一起使用之外，它也可以和其他界面库一起来使用（比如Vue），并且它非常小（包括依赖在内，只有2kb）
+
+
+Redux要求我们通过action来更新数据：
+   所有数据的变化，必须通过派发（dispatch）action来更新；
+   action是一个普通的JavaScript对象，用来描述这次更新的type和content；
+
+  强制使用action的好处是可以清晰的知道数据到底发生了什么样的变化，所有的数据变化都是可跟追、可预测的；
+
+
+如何将state和action联系在一起呢？答案就是reducer
+ reducer是一个纯函数；
+ reducer做的事情就是将传入的state和action结合起来生成一个新的state；
+
+
+Redux的三大原则
+◼ 单一数据源
+   整个应用程序的state被存储在一颗object tree中，并且这个object tree只存储在一个 store 中：
+   Redux并没有强制让我们不能创建多个Store，但是那样做并不利于数据的维护；
+   单一的数据源可以让整个应用程序的state变得方便维护、追踪、修改；
+◼ State是只读的
+   唯一修改State的方法一定是触发action，不要试图在其他地方通过任何的方式来修改State：
+   这样就确保了View或网络请求都不能直接修改state，它们只能通过action来描述自己想要如何修改state；
+   这样可以保证所有的修改都被集中化处理，并且按照严格的顺序来执行，所以不需要担心race condition（竟态）的问题；
+◼ 使用纯函数来执行修改
+   通过reducer将 旧state和 actions联系在一起，并且返回一个新的State：
+   随着应用程序的复杂度增加，我们可以将reducer拆分成多个小的reducers，分别操作不同state tree的一部分；
+   但是所有的reducer都应该是纯函数，不能产生任何的副作用；
+
+
+Redux的使用过程
+◼ 1.创建一个对象，作为我们要保存的状态：
+◼ 2.创建Store来存储这个state
+   创建store时必须创建reducer；
+   我们可以通过 store.getState 来获取当前的state；
+◼ 3.通过action来修改state
+   通过dispatch来派发action；
+   通常action中都会有type属性，也可以携带其他的数据；
+◼ 4.修改reducer中的处理代码
+   这里一定要记住，reducer是一个纯函数，不需要直接修改state；
+   后面我会讲到直接修改state带来的问题；
+◼ 5.可以在派发action之前，监听store的变化：

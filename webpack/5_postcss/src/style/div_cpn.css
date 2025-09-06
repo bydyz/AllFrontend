@@ -1,0 +1,9 @@
+.content {
+  font-size: 60px;
+  color: pink;
+
+  /* 这个css属性在有些浏览器中并不支持，需加浏览器前缀，而postcss的工具 autoprefixer 可以在打包时自动添加前缀的css */
+  user-select: none;
+
+  /* -moz-user-select: none; */
+}

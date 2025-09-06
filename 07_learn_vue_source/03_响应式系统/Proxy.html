@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script type="module">
+    // Vue 2中不能直接使用Proxy，如果想要在 Vue 2.x 中使用类似于 Proxy 的功能，可以考虑使用第三方库，例如 vue2-proxy。该库尝试在 Vue 2.x 中提供类似于 Vue 3 中 Proxy 的功能，但需要注意的是，这并不是原生支持，而是一个基于 Object.defineProperty 的尝试。
+
+    // 在 Vue 3 中，Proxy 是 JavaScript 的一个内置对象，用于创建代理对象。Proxy 可以用于拦截对目标对象的访问和操作，提供了一种强大的方式来自定义对象的行为。在 Vue 3 中，Proxy 通常与响应式系统结合使用，用于创建可观察的对象。
+
+    import { reactive, watch } from 'vue';
+
+    const originalObject = { count: 0 };
+
+    // 使用 Proxy 创建可观察对象
+    const observableObject = reactive(new Proxy(originalObject, {
+      get(target, key, receiver) {
+        console.log(`Getting ${key}`);
+        return Reflect.get(target, key, receiver);
+      },
+      set(target, key, value, receiver) {
+        console.log(`Setting ${key} to ${value}`);
+        return Reflect.set(target, key, value, receiver);
+      }
+    }));
+
+    // 监听可观察对象的变化
+    watch(() => {
+      console.log(`Count is now: ${observableObject.count}`);
+    });
+
+    // 对可观察对象进行操作
+    observableObject.count++; // 触发代理中的 set 操作，同时触发 watch 回调
+
+    // 在这个例子中，我们使用 reactive 函数创建了一个响应式对象 observableObject，该对象是 originalObject 的代理。Proxy 的 get 和 set 拦截器允许我们在访问和修改属性时执行自定义的逻辑。在实际应用中，这种机制可以用于实现数据的侦听、拦截、验证等功能。
+
+    // 注意：在 Vue 3 中，Proxy 是响应式系统的核心机制之一，用于追踪属性的访问和修改。在一般的 Vue 组件中，你通常不需要直接操作 Proxy，而是通过 reactive 和其他响应式 API 来创建和管理响应式状态。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // new Proxy(obj, {
+    //   set: function(target, key, value, receiver) {
+    //     Reflect.set(target, key, value, receiver);
+    //   },
+    //   get: function(target, key, receiver) {
+    //     return Reflect.get(target, key, receiver);
+    //   }
+    // })
+
+    // 这段代码是使用 JavaScript 中的 Proxy 对象创建了一个代理，用于拦截对目标对象的读取和写入操作。这通常用于实现  观察者模式  或  响应式系统  。
+
+
+    // new Proxy(obj, { ... }): 创建了一个代理对象，其中 obj 是目标对象，而 { ... } 是一个配置对象，用于定义拦截器函数。
+
+    // set: function(target, key, value, receiver) { ... }: 这是一个 Proxy 的 set 拦截器，用于拦截对目标对象属性的写入操作。
+
+      // target: 被代理的目标对象。
+      // key: 要写入的属性名。
+      // value: 要写入的值。
+      // receiver: 接收写入操作的对象。
+      // 在这个拦截器中：
+
+      // Reflect.set(target, key, value, receiver): 使用 Reflect.set 方法将值写入目标对象。这是为了确保正常的写入操作继续执行。
+
+      // 需要注意的是，如果目标对象的属性已经存在，并且对该属性进行修改，set 拦截器会被触发。如果属性不存在，而是进行新增操作，set 拦截器同样会被触发。
+
+
+    // get: function(target, key, receiver) { ... }: 这是一个 Proxy 的 get 拦截器，用于拦截对目标对象属性的读取操作。
+
+      // target: 被代理的目标对象。
+      // key: 要读取的属性名。
+      // receiver: 接收读取操作的对象。
+      // 在这个拦截器中：
+
+      // return Reflect.get(target, key, receiver): 使用 Reflect.get 方法获取目标对象的属性值。这是为了确保正常的读取操作继续执行。
+
+
+
+      // new Proxy 底层的代码支持？？？
+  </script>
+</body>
+</html>

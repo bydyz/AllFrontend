@@ -1,0 +1,41 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    /* 和 CSS 规则如 [v-cloak] { display: none } 一起用时，这个指令可以隐藏未编译的 Mustache 标签直到组件实例准备完毕。 */
+    [v-cloak] {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app">
+    <!-- 这个指令保持在元素上直到关联组件实例结束编译 -->
+    <h2 v-cloak>{{message}}</h2>
+  </div>
+  
+  <script src="../lib/vue.js"></script>
+  <script>
+    
+    setTimeout(() => {
+      // 1.创建app
+      const app = Vue.createApp({
+        // data: option api
+        data: function() {
+          return {
+            message: "Hello Vue"
+          }
+        },
+      })
+
+      // 2.挂载app
+      app.mount("#app")
+    }, 3000)
+
+  </script>
+</body>
+</html>

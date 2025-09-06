@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>可调整大小的DIV</title>
+  <style>
+    .resizable {
+      position: absolute;
+      top: 100px;
+      left: 100px;
+      width: 200px;
+      height: 150px;
+      background-color: #f0f0f0;
+      border: 2px solid #333;
+      overflow: hidden; /* 防止内容溢出影响拖动 */
+    }
+    
+    .resizer {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #333;
+      z-index: 10;
+    }
+    
+    /* 四个角的调整点 */
+    .resizer-nw {
+      top: -5px;
+      left: -5px;
+      cursor: nwse-resize;
+    }
+    .resizer-ne {
+      top: -5px;
+      right: -5px;
+      cursor: nesw-resize;
+    }
+    .resizer-sw {
+      bottom: -5px;
+      left: -5px;
+      cursor: nesw-resize;
+    }
+    .resizer-se {
+      bottom: -5px;
+      right: -5px;
+      cursor: nwse-resize;
+    }
+    
+    /* 四条边的调整点 */
+    .resizer-n {
+      top: -5px;
+      left: 50%;
+      margin-left: -5px;
+      width: calc(100% - 10px);
+      height: 10px;
+      cursor: ns-resize;
+    }
+    .resizer-s {
+      bottom: -5px;
+      left: 50%;
+      margin-left: -5px;
+      width: calc(100% - 10px);
+      height: 10px;
+      cursor: ns-resize;
+    }
+    .resizer-w {
+      left: -5px;
+      top: 50%;
+      margin-top: -5px;
+      width: 10px;
+      height: calc(100% - 10px);
+      cursor: ew-resize;
+    }
+    .resizer-e {
+      right: -5px;
+      top: 50%;
+      margin-top: -5px;
+      width: 10px;
+      height: calc(100% - 10px);
+      cursor: ew-resize;
+    }
+  </style>
+</head>
+<body>
+  <div class="resizable" id="resizable">
+    <div class="resizer resizer-nw"></div>
+    <div class="resizer resizer-ne"></div>
+    <div class="resizer resizer-sw"></div>
+    <div class="resizer resizer-se"></div>
+    <div class="resizer resizer-n"></div>
+    <div class="resizer resizer-s"></div>
+    <div class="resizer resizer-w"></div>
+    <div class="resizer resizer-e"></div>
+    
+    <div style="padding: 10px;">
+      拖动边缘或角落可以调整大小
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const resizable = document.getElementById('resizable');
+      const allResizer = document.querySelectorAll('.resizer');
+      
+      let currentResizer;
+      let startX, startY;
+      let startWidth, startHeight;
+      let startLeft, startTop;
+      
+      allResizer.forEach(resizer => {
+        resizer.addEventListener('mousedown', initDrag);
+      });
+      
+      function initDrag(e) {
+        currentResizer = e.target;
+        startX = e.clientX;
+        startY = e.clientY;
+        startWidth = parseInt(document.defaultView.getComputedStyle(resizable).width, 10);
+        startHeight = parseInt(document.defaultView.getComputedStyle(resizable).height, 10);
+        startLeft = parseInt(document.defaultView.getComputedStyle(resizable).left, 10);
+        startTop = parseInt(document.defaultView.getComputedStyle(resizable).top, 10);
+        
+        document.addEventListener('mousemove', resize);
+        document.addEventListener('mouseup', stopDrag);
+        
+        e.preventDefault(); // 防止文本选中
+      }
+      
+      function resize(e) {
+        if (!currentResizer) return;
+        
+        const width = startWidth;
+        const height = startHeight;
+        const deltaX = e.clientX - startX;
+        const deltaY = e.clientY - startY;
+        
+        // 根据不同的调整点处理不同的调整逻辑
+        if (currentResizer.classList.contains('resizer-se')) {
+          resizable.style.width = (width + deltaX) + 'px';
+          resizable.style.height = (height + deltaY) + 'px';
+        } 
+        else if (currentResizer.classList.contains('resizer-sw')) {
+          resizable.style.width = (width - deltaX) + 'px';
+          resizable.style.height = (height + deltaY) + 'px';
+          resizable.style.left = (startLeft + deltaX) + 'px';
+        }
+        else if (currentResizer.classList.contains('resizer-ne')) {
+          resizable.style.width = (width + deltaX) + 'px';
+          resizable.style.height = (height - deltaY) + 'px';
+          resizable.style.top = (startTop + deltaY) + 'px';
+        }
+        else if (currentResizer.classList.contains('resizer-nw')) {
+          resizable.style.width = (width - deltaX) + 'px';
+          resizable.style.height = (height - deltaY) + 'px';
+          resizable.style.left = (startLeft + deltaX) + 'px';
+          resizable.style.top = (startTop + deltaY) + 'px';
+        }
+        else if (currentResizer.classList.contains('resizer-n')) {
+          resizable.style.height = (height - deltaY) + 'px';
+          resizable.style.top = (startTop + deltaY) + 'px';
+        }
+        else if (currentResizer.classList.contains('resizer-s')) {
+          resizable.style.height = (height + deltaY) + 'px';
+        }
+        else if (currentResizer.classList.contains('resizer-w')) {
+          resizable.style.width = (width - deltaX) + 'px';
+          resizable.style.left = (startLeft + deltaX) + 'px';
+        }
+        else if (currentResizer.classList.contains('resizer-e')) {
+          resizable.style.width = (width + deltaX) + 'px';
+        }
+      }
+      
+      function stopDrag() {
+        document.removeEventListener('mousemove', resize);
+        document.removeEventListener('mouseup', stopDrag);
+        currentResizer = null;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+Express.js 支持多种用于文件上传的中间件，这些中间件可以帮助处理 multipart/form-data 类型的表单数据，从而实现文件上传功能。以下是一些常用的文件上传中间件：
+
+Multer    4M
+Multer 是 Express 官方推荐的文件上传中间件，它基于 busboy 构建，用于处理文件上传。Multer 允许你设置文件大小限制、文件类型限制等，并且可以指定文件存储的目的地。
+
+安装 Multer:
+
+npm install multer --save
+使用示例:
+
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
+
+app.post('/upload', upload.single('file'), (req, res) => {
+  // 'file' 是表单字段的名称
+  // req.file 是文件对象
+});
+Express Fileupload
+express-fileupload 是一个用于 Express.js 的文件上传中间件，它提供了简单易用的 API 来处理文件上传。它允许设置文件大小限制，并支持将上传的文件暂存到临时目录。
+
+
+
+Busboy   10M
+busboy 是一个用于 Node.js 的解析 multipart/form-data 请求体的模块，它可以用于文件上传。虽然它不是专门针对 Express.js 的中间件，但它可以很容易地集成到 Express.js 应用程序中。
+
+
+
+Formidable   9M
+formidable 是一个用于 Node.js 的表单处理模块，它支持文件上传。它是一个比较底层的模块，提供了丰富的 API 来处理表单数据。

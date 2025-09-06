@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <button onclick="onCreateSetTimeout"></button>
+  <button id="cancelSetTimeout"></button>
+
+  <script>
+    // setTimeout 是一个由 JavaScript 提供的 API，它允许你在指定的毫秒数之后执行一段代码。这个函数在任何支持 JavaScript 的环境中都可以使用，包括 Web 浏览器和 Node.js 环境。
+
+    // 基本用法
+    //   setTimeout 接受两个参数：
+
+    //   要延迟执行的函数：这是一个在时间间隔之后执行的函数。
+    //   时间间隔：这是一个表示时间的整数，单位是毫秒。
+    //     setTimeout(function, delay);
+
+    //     function：要延迟执行的函数。
+    //     delay：延迟执行的时间，单位为毫秒。
+
+    function onCreateSetTimeout() {
+      let timeoutId = setTimeout(function() {
+        console.log('Hello, world!');
+      }, 2000);
+    }
+
+    document.getElementById('cancelSetTimeout').addEventListener('click', function() {
+        clearTimeout(timeoutId);
+      });
+  </script>
+</body>
+</html>

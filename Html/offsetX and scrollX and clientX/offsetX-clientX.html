@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <style>
+    *{
+        margin:0;
+        padding:0;
+    }
+
+    html{
+        font-size: 40px;
+    }
+
+    .firstBox, .secondBox {
+      position: relative;
+      background: rgb(236, 180, 190);
+      width: 600px;
+      height: 600px;
+      padding: 30px;
+      border: 20px solid rgb(233, 86, 113);
+      margin: 10px;
+    }
+
+    .firstBox .childDivOne {
+      background: rgb(227, 247, 126);
+      width: 100px;
+      height: 100px;
+      padding: 30px;
+      border: 20px solid rgb(233, 86, 113);
+      margin: 10px;
+    }
+
+    .secondBox .childDivTwo {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      /* top  left   是子元素的margin边缘相对于父元素的border内层、padding外层的变化 */
+      background: rgb(115, 240, 90);
+      width: 100px;
+      height: 100px;
+      padding: 30px;
+      border: 20px solid rgb(233, 86, 113);
+      margin: 10px;
+    }
+  </style>
+
+</head>
+
+<body>
+  <!-- 不脱离文档流 -->
+  
+  <div class="firstBox">
+    <div class="childDivOne"></div>
+  </div>
+
+  <div class="secondBox">
+    <div class="childDivTwo"></div>
+  </div>
+
+
+
+
+  <script>
+    let childDivOne = document.getElementsByClassName( 'childDivOne' )
+
+    console.log('offsetHeight', childDivOne[0].offsetHeight)    /* content + padding + border */
+    console.log('offsetWidth', childDivOne[0].offsetWidth)    /* content + padding + border */
+
+    console.log('offsetLeft', childDivOne[0].offsetLeft)    
+    console.log('offsetTop', childDivOne[0].offsetTop) 
+    // the distance of the outer border of the current element relative to the inner border of the top of the offsetParent, the closest positioned ancestor element.
+    
+    console.log('')
+    
+    console.log('clientHeight', childDivOne[0].clientHeight)    /* content + padding */
+    console.log('clientWidth', childDivOne[0].clientWidth)    /* content + padding */
+
+    console.log('clientLeft', childDivOne[0].clientLeft)    /* borderLeft */
+    console.log('clientTop', childDivOne[0].clientTop)         /* borderTop */
+
+    
+    console.log('')
+    console.log('')
+    console.log('')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    let childDivTwo = document.getElementsByClassName( 'childDivTwo' )
+
+    console.log('offsetHeight', childDivTwo[0].offsetHeight)    /* content + padding + border */
+    console.log('offsetWidth', childDivTwo[0].offsetWidth)    /* content + padding + border */
+
+    console.log('offsetLeft', childDivTwo[0].offsetLeft)    
+    console.log('offsetTop', childDivTwo[0].offsetTop)   
+
+  </script>
+</body>
+
+</html>

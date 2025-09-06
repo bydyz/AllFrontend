@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Learn h</title>
+    <link rel="stylesheet" href="../vueSource/style.css" />
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <script type="module">
+      import {
+        createApp,
+        ref,
+        watch,
+        h,
+      } from '../vueSource/vue.runtime.esm-bundler.js';
+
+      const app = createApp({
+        setup() {
+          function increment() {
+            count.value++;
+          }
+
+          // 使用 h() 构建虚拟 DOM
+          return () => {
+            let result = h(
+              'button',
+              { onClick: increment },
+              '+1'
+            );
+
+            // createVNode('button', { onClick: increment }, '+1')
+
+            // 调用 _createVNode 的传参
+            // function _createVNode(
+            //   type: 'button',
+            //   props: { onClick: increment },
+            //   children: '+1',
+            //   patchFlag: 0,
+            //   dynamicProps: null,
+            //   isBlockNode: false,
+            // )
+
+            // if (props) {
+            //   // for reactive or proxy objects, we need to clone it to enable mutation.
+            //   props = guardReactiveProps(props)!
+            //   let { class: klass, style } = props
+            //   if (klass && !isString(klass)) {
+            //     props.class = normalizeClass(klass)
+            //   }
+            //   if (isObject(style)) {
+            //     // reactive state objects need to be cloned since they are likely to be
+            //     // mutated
+            //     if (isProxy(style) && !isArray(style)) {
+            //       style = extend({}, style)
+            //     }
+            //     props.style = normalizeStyle(style)
+            //   }
+            // }
+
+            console.log(
+              '11111111111111111111111111111111111111111111111111111111',
+              result
+            );
+            return result;
+          };
+        },
+      });
+
+      app.mount('#app');
+    </script>
+  </body>
+</html>

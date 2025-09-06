@@ -1,0 +1,17 @@
+{
+  "name": "basic-use-puppeteer",
+  "version": "1.0.0",
+  "description": "contain basicUse of puppeteer",
+  "main": "a.js",
+  "scripts": {
+    "test": "node a.js"
+  },
+  "keywords": [
+    "puppeteer"
+  ],
+  "author": "rc",
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^21.6.1"
+  }
+}

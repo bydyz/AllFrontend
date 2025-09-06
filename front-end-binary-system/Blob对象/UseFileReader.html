@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 可以使用FileReader对象来查看Blob对象持有的二进制数据。FileReader是JavaScript中的一个API，它允许您异步读取Blob中的数据，并将其转换为字符串或其他数据格式。以下是一个示例，演示如何使用FileReader查看Blob对象中的文本数据：
+
+      // 创建一个包含文本数据的Blob对象
+      var text = "Hello, Blob666!";
+      var blob = new Blob([text], { type: "text/plain" });
+
+      // 创建一个FileReader对象
+      var reader = new FileReader();
+
+      //！ 读取Blob中的数据
+      reader.readAsText(blob); // 读取为 文本数据， 是以字符串的形式展示
+      // reader.readAsArrayBuffer(blob);     // 读取为 二进制数据， 是以ArrayBuffer这种对象的形式展示
+      // reader.readAsDataURL(blob);         // 读取为 图像数据， 是以Data URL的形式展示
+
+      // 定义FileReader的加载完成处理程序
+      reader.onload = function (event) {
+        // event.target.result 包含Blob中的数据
+        var data = event.target.result;
+        console.log("Blob数据的类型为：", typeof data);
+        console.log("Blob数据：", data);
+      };
+
+      console.log("证明上面的readAsText是异步的打印")
+
+      // 在这个示例中，我们首先创建了一个包含文本数据的Blob对象。然后，我们创建了一个FileReader对象，然后使用reader.readAsText(blob)方法异步读取Blob中的文本数据，然后定义了它的onload处理程序，当数据处理完成时，onload处理程序会在event.target.result中包含Blob对象中的数据。
+
+      // 这个示例演示了如何使用FileReader来查看Blob对象持有的二进制数据。您可以根据需要将reader.readAsText(blob)替换为其他读取方法，以处理不同类型的数据，例如readAsArrayBuffer用于二进制数据或readAsDataURL用于图像数据。
+    </script>
+  </body>
+</html>

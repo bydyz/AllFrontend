@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+  <hr><h1>ajax上传文件</h1>
+
+  <hr>
+
+  <p>文件：<input id="file_upload" type="file" name="testfile"></p>
+
+  <p><button id="js_post">原生js提交</button>  <button id="jquery_post">jquery提交</button></p>
+  
+  <div id="imgs">
+      {% for i in imglist %}
+          <img class="show-img" src="/{{ i.0 }}">
+      {% endfor %}
+  </div>
+
+  <script>
+    document.getElementById("js_post").onclick=function(){
+      var xml=new XMLHttpRequest();
+      var data=new FormData; //创建formdata对象
+      data.append("testfile",document.getElementById("file_upload").files[0]);//找到对象之后的file[0]对应的就是文件对象
+      xml.open("POST","/test/",true);
+      xml.onreadystatechange=function(){
+          if(xml.readyState==4 && xml.status==200){  //判断状态到4了并且返回状态码是200时才做操作
+              var rsp_data=JSON.parse(xml.responseText);  //反序列化
+              if (rsp_data.state){
+                  var url="/"+rsp_data.data;  //拼接路径
+                  var obj=document.createElement("img");  //创建标签
+                  obj.className="show-img";  //给标签加样式
+                  obj.src=url;  //给标签加url
+                  document.getElementById("imgs").appendChild(obj);
+              }
+          }
+      };
+      xml.send(data)
+    }
+  </script>
+</body>
+</html>

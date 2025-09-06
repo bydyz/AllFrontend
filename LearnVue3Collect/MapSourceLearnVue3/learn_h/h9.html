@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Learn Watch</title>
+    <link rel="stylesheet" href="../vueSource/style.css" />
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <script type="module">
+      import {
+        createApp,
+        ref,
+        watch,
+        h,
+      } from '../vueSource/vue.runtime.esm-bundler.js';
+
+      const app = createApp({
+        setup() {
+          const isLoading = ref(true);
+          const handleClick = function () {
+            console.log('666');
+          };
+
+          // 使用 h() 构建虚拟 DOM
+          return () => {
+            let result = h(
+              'button',
+              {
+                class: [
+                  'btn',
+                  { loading: isLoading.value },
+                ],
+                style: {
+                  width: isLoading.value ? '100px' : 'auto',
+                  opacity: isLoading.value ? 0.7 : 1,
+                },
+                onClick: handleClick,
+                disabled: isLoading.value,
+              },
+              isLoading.value ? 'Loading...' : 'Submit'
+            );
+            console.log(
+              '11111111111111111111111111111111111111111111111111111111',
+              result
+            );
+            return result;
+          };
+        },
+      });
+
+      app.mount('#app');
+    </script>
+  </body>
+</html>

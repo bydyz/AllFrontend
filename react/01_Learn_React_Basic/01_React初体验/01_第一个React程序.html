@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello React</title>
+</head>
+<body>
+
+  <div id="root"></div>
+  <div id="app"></div>
+  
+  <!-- 添加依赖 -->
+  <!-- 依赖三个包    有  CDN引入、下载引入、npm下载引入(脚手架) 三种方式 -->
+  <!-- CDN引入 -->
+
+  <!-- 
+    crossorigin 是 HTML 中 <script> 标签的一个属性，用于指定在加载外部脚本时是否应该跨域请求。该属性有两个可能的值：
+
+    anonymous: 表示脚本请求不应该包含凭据（如 cookie 或 HTTP 认证），即使当前文档是通过身份验证的。这有助于确保脚本不会以携带凭据的方式请求。
+    use-credentials: 表示脚本请求应该包含凭据。如果未指定此属性，请求将不包含凭据。
+
+    下面的使用中，crossorigin 属性设置为默认值，即不指定属性值。在默认情况下，脚本加载请求不包含凭据。
+    
+    这个属性通常在使用 CDN 加载脚本时，特别是当你的网站和 CDN 不在同一域时使用。 
+  -->
+
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script> 
+  <!-- babel -->
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+  <!-- 下载引入 -->
+
+  <!-- npm下载引入(脚手架) -->
+
+  <script type="text/babel">
+// 在这个代码片段中，type="text/babel" 是一个 <script> 标签的类型属性。它指定了脚本内容使用 Babel 编译器进行处理，这表明脚本中的代码是使用 JSX 语法和 ES6+ 特性编写的。
+
+// Babel 是一个 JavaScript 编译器，可以将新版本的 JavaScript 代码转换成旧版本的，以确保在不同环境中的兼容性。它还支持 JSX 语法的转换，将其转换为标准的 JavaScript。
+
+// 在这个例子中，type="text/babel" 告诉浏览器使用 Babel 编译器来处理脚本中的代码。这通常在开发阶段使用，因为在生产环境中，通常会在构建过程中预先编译 JSX 和 ES6+ 代码，而不需要浏览器运行时进行编译。
+
+
+    // 编写React代码(jsx语法)
+    // jsx语法 -> 普通的JavaScript代码 -> babel
+
+    // 渲染Hello World
+    // React18之前: ReactDOM.render
+    // ReactDOM.render(<h2>Hello World</h2>, document.querySelector("#root"))
+
+    // React18之后:
+    const root = ReactDOM.createRoot(document.querySelector("#root"))
+    root.render(<h2>Hello World</h2>)
+
+    const app = ReactDOM.createRoot(document.querySelector("#app"))
+    app.render(<h2>你好啊, 李银河</h2>)
+
+  </script>
+
+</body>
+</html>

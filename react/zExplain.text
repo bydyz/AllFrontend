@@ -1,0 +1,91 @@
+◼ Constructor
+◼ 如果不初始化 state 或不进行方法绑定，则不需要为 React 组件实现构造函数。
+◼ constructor中通常只做两件事情：
+   通过给 this.state 赋值对象来初始化内部的state；
+   为事件绑定实例（this）；
+
+
+
+
+
+
+
+
+
+
+◼ 父组件在展示子组件，可能会传递一些数据给子组件：
+   父组件通过 属性=值 的形式来传递给子组件数据；
+   子组件通过 props 参数获取父组件传递过来的数据；
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+context
+
+◼ React.createContext
+   创建一个需要共享的Context对象：
+   如果一个组件订阅了Context，那么这个组件会  从离自身最近  的那个匹配的 Provider 中读取到当前的context值；
+   defaultValue是组件在顶层查找过程中没有找到对应的Provider，那么就使用默认值
+
+  const MyContext = React.createContext(defaultValue)
+
+
+
+◼ Context.Provider
+   每个 Context 对象都会返回一个 Provider React 组件，它允许消费组件订阅 context 的变化：
+   Provider 接收一个 value 属性，传递给消费组件；
+   一个 Provider 可以和多个消费组件有对应关系；
+   多个 Provider 也可以嵌套使用，里层的会覆盖外层的数据；
+   当 Provider 的 value 值发生变化时，它内部的所有消费组件都会重新渲染；
+
+  <MyContext.Provider value = { 需要传递的值 }></MyContext.Provider>
+
+
+
+◼ Class.contextType
+   挂载在 class 上的 contextType 属性会被重赋值为一个由 React.createContext() 创建的 Context 对象：
+   这能让你使用 this.context 来消费最近 Context 上的那个值；
+   你可以在任何生命周期中访问到它，包括 render 函数中；
+
+  MyClass.contextType = MyContext
+  
+
+
+◼ Context.Consumer
+   这里，React 组件也可以订阅到 context 变更。这能让你在 函数式组件 中完成订阅 context。
+   这里需要 函数作为子元素（function as child）这种做法；
+   这个函数接收当前的 context 值，返回一个 React 节点；
+
+  <MyContext.Consumer>
+    { value = {}}
+  </MyContext.Consumer>
+
+
+
+
+
+
+
+
+
+
+
+
+

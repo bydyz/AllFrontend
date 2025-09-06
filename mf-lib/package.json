@@ -1,0 +1,65 @@
+{
+  "_from": "mf-lib@^1.0.3",
+  "_id": "mf-lib@1.0.3",
+  "_inBundle": false,
+  "_integrity": "sha512-IWDpcH1iMlId+QUlCg1kXs+zWwOm2XeiejpTsui7J6ko7F5vzmIICKXxkFaPk2nKnzH4EO53VbpgDIYKc/gBpw==",
+  "_location": "/mf-lib",
+  "_phantomChildren": {
+    "cssfilter": "0.0.10",
+    "lie": "3.3.0",
+    "pako": "1.0.11",
+    "readable-stream": "2.3.7",
+    "setimmediate": "1.0.5"
+  },
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "mf-lib@^1.0.3",
+    "name": "mf-lib",
+    "escapedName": "mf-lib",
+    "rawSpec": "^1.0.3",
+    "saveSpec": null,
+    "fetchSpec": "^1.0.3"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "http://nexus.armpc.cn/repository/npm-public/mf-lib/-/mf-lib-1.0.3.tgz",
+  "_shasum": "5daf760b226fc0a549ff78c227515155b20b94a1",
+  "_spec": "mf-lib@^1.0.3",
+  "_where": "D:\\desktop\\teach\\teach-client",
+  "author": {
+    "name": "Jie Feng"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "html2canvas": "^1.4.1",
+    "jszip": "^3.10.1",
+    "xss": "^1.0.14"
+  },
+  "deprecated": false,
+  "description": "",
+  "devDependencies": {
+    "@babel/core": "^7.20.5",
+    "@babel/plugin-transform-runtime": "^7.19.6",
+    "@babel/preset-env": "^7.20.2",
+    "babel-loader": "^9.1.0",
+    "eslint": "^8.30.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "path-browserify": "^1.0.1",
+    "prettier": "^2.8.1",
+    "prettier-eslint-cli": "^7.1.0",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
+  },
+  "license": "MIT",
+  "main": "dist/index.js",
+  "name": "mf-lib",
+  "scripts": {
+    "build": "webpack",
+    "login": "npm login -registry=https://nexus.armpc.cn/repository/npm-hosted/",
+    "pub": "npm publish -registry=https://nexus.armpc.cn/repository/npm-hosted/"
+  },
+  "version": "1.0.3"
+}

@@ -1,0 +1,374 @@
+Koa 是一种可以替代 Express 的Web框架。开发思路和 Express 差不多，最大的特点是可以避免异步嵌套，免除重复繁琐的回调函数嵌套。koa不在内核方法中绑定任何中间件，它仅仅提供了-个轻量优雅的函数库，使得编写Web应用变得得心应手。
+
+
+koa和express的区别:
+
+Koa采用洋葱模型
+通常都会说Koa是洋葱模型,这重点在于中间件的设计。但是按照上面的分析,会发现Express也是类似的，不同的是Express中间件机制使用了Callback 实现，这样如果出现异步则可能会使你在执行顺序上感到困惑，因此如果我们想做接口耗时统计、错误处理Koa的这种中间件模式处理起来更方便些。最后一点响应机制也很重要，Koa不是立即响应，是整个中间件处理完成在最外层进行了响应，而Express则是立即响应。
+
+Koa更轻量
+koa不提供内置的中间件;
+koa不提供路由，而是把路由这个库分离出来了(koa/router)
+
+Context对象
+koa增加了一个Context的对象，作为这次请求的上下文对象(在koa2中作为中间件的第一个参数传入)。同时Context上也挂载了Request和Response两个对象。Express类似, 这两个对象都提供了大量的便捷方法辅助开发，这样的话对于在保存一些公有的参数的话变得更加合情合理。
+
+异步流程控制
+express采用callback来处理异步，koa采用async/await。
+async/await使用同步的写法来处理异步，明显好于callback和promise,
+
+中间件模型
+express基于connect中间件,线性模型;
+koa中间件采用洋葱模型(对于每个中间件,在完成了一些事情后，可以非常优雅的将控制权传递给下一个中间件，并能够等待它完成，当后续的中间件完成处理后，控制权又回到了自己)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+koa是基于 Node.js 平台的下一代 web 开发框架。 由 Express 幕后的原班人马打造， 致力于成为 web 应用和 API 开发领域中的一个更小、更富有表现力、更健壮的基石。
+
+安装nodemon插件，便于实时监听后缀为js、mis、json文件的修改保存，避免多次重启服务
+1. npm install nodemon -g    全局安装，直接用 nodemon 文件路径即可
+2. npm install nodemon       安装到当前命令行所在的项目中  需要  npx nodemon 文件路径
+如，此处用  npx nodemon app4
+
+有时候从请求到响应的业务比较复杂, 将这些复杂的业务拆开成一个个功能独立的函数, 就是中间件，每一个中间件就是一个函数，互不影响，但又彼此协作。
+
+中间件函数队列，会在最后一个中间件或一个没有调用next的中间件那里停止。
+koa官方文档上把外层的中间件称为"上游"，内层的中间件为"下游"。
+一般的中间件都会执行两次，调用next之前为第一次，调用next时把控制传递给下游的下一个中间件。当下游不再有中间件或者没有执行next函数时，就将依次恢复上游中间件的行为，让上游中间件执行next之后的代码  （就像洋葱）
+
+
+路由
+建立URL和处理函数之间的对应关系
+主要作用: 根据不同的Method和URL返回不同的内容
+
+
+Koa原生支持body参数解析, 通常借助社区的中间件实现. 官方推荐的有
+koa-bodyparser
+koa-body （支持的方法更多，推荐使用）
+
+// 注册KoaBody中间件, 解析请求体中的参数, 挂载到ctx.request.body
+const KoaBody = require('koa-body')
+app.use(KoaBody())
+
+通过ctx.request.body获取请求体中的数据
+app.use(ctx=>{
+  ctx.body=`Request Body:${JSON.stringify(ctx.request.body)}`
+})
+
+需要注意的是，在使用koa-body获取post请求body参数时，一定要在注册路由前使用koa-body，否则ctx.request.body获取为空
+
+
+
+
+
+HTTP协议中，请求由请求行、请求头和请求体三部分组成。其中，请求体是可选的，它通常用于在POST请求中传递数据。请求体中的数据可以采用多种格式进行编码，例如application/x-www-form-urlencoded、multipart/form-data、application/json等
+
+在Web开发中，body参数通常指的是POST请求中的请求体参数。这些参数通常是以键值对的形式出现，例如：
+
+POST /api/user HTTP/1.1
+Host: example.com
+Content-Type: application/x-www-form-urlencoded
+
+username=johndoe&password=123456
+
+在上面的例子中，username和password就是POST请求中的body参数。这些参数会被编码后放在请求体中，然后发送给服务器.
+
+
+
+
+为什么使用错误处理
+  防止程序 down 掉
+  告诉用户错误信息
+  便于开发者调试
+
+一般Koa中的错误分为三类
+  404: 当请求的资源找不到, 或者没有通过ctx.body返回时, 由koa自动返回
+  手动抛出: 通过ctx.throw手动抛出
+  500: 运行时错误
+
+
+koa继承了emitter类，可以通过error监听错误，使用emit提交错误
+
+
+
+
+koa-json-error的使用
+npm i koa-json-error
+
+const error = require('koa-json-error')
+app.use(error())
+
+const error = require('koa-json-error')
+app.use(
+  error({
+    format: (err) => {
+      return { code: err.status, message: err.message, result: err.stack }
+    },
+    postFormat: (err, obj) => {
+      const { result, ...rest } = obj
+      return process.env.NODE_ENV == 'production' ? rest : obj
+    },
+  })
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Koa1.x 和 Koa2 的主要区别在于前者使用 Generator，后者使用 async 方法来进行中间件的管理。
+
+Koa1.x 对中间件的处理基于 co 模块，ES2017 的草案里增加了 async 函数，Koa 为此发布了 2.0 版本，这个版本舍弃了 Genrator 函数和 co 模块，完全是使用 async 函数来实现的，async 函数在 Node v7.6.0 之后才得到了完整的支持，因此要使用 Koa2 进行开发，本地的 Node 环境最好大于 7.6.0。
+
+Koa 和 Express 最大的不同之处在于 Koa 剥离了各种中间件，这种做法的优点是可以让框架变得更加轻量，缺点就是 Koa 发展时间还较短，各种中间件质量参差不齐，1.x 和 2.x 的中间件也存在一些兼容性问题，但对于多数常用的中间件来说，都已经实现了对Koa2.0 的支持。
+
+在 Koa 项目的 GitHub 主页 https:/github.com/Koajs 中，列出了 Koa 项目本身和被一些官方整理的中间件列表，开发者也可以在GitHub 中搜索，查找比较活跃的中间件。
+
+
+Node 提供了 request（IncomingMessage）和 response（ServerReponse）两个对象，Koa 把两者封装到了同一个对象中，即 context，缩写为 ctx。
+
+context 中封装了许多方法和属性，大部分是从 request 和response 对象中使用委托方式得来的，下面列出了 ctx 对象封装的一些属性以及它们的来源：
+
+From request
+  ctx.header
+  ctx.headers
+  ctx.method
+  ctx.url
+  ctx.originalUrl
+  ctx.origin
+  ctx.href
+  ctx.path
+  ctx.query
+  ctx.querystring
+  ctx.host
+  ctx.hostname
+  ctx.fresh
+  ctx.stale
+  ctx.socket
+  ctx.protocol
+  ctx.secure
+  ctx.ip
+  ctx.ips
+  ctx.subdomains
+  ctx.is()
+  ctx.accepts()
+  ctx.acceptsEncodings()
+  ctx.acceptsCharsets()
+  ctx.acceptsLanguages()
+  ctx.get()
+
+
+
+From response
+  ctx.body
+  ctx.status
+  ctx.message
+  ctx.length
+  ctx.type
+  ctx.headerSent
+  ctx.redirect()
+  ctx.attachment()
+  ctx.set()
+  ctx.append()
+  ctx.remove()
+  ctx.lastModified
+  ctx.etag
+
+除了自行封装的属性外，ctx 也提供了直接访问原生对象的手段，ctx.req 和 ctx.res 即代表原生的 request 和 response 对象，例如 ctx.req.url 和 ctx.url 就是同一个对象。
+
+除了上面列出的属性之外，ctx 对象还自行封装了一些对象，例如 ctx.request 和 ctx.response ，它们和原生对象之间的区别在于里面只有一部分常用的属性
+
+
+
+ctx.state
+state 属性是官方推荐的命名空间，如有开发者从后端的消息想要传递到前端，可以将属性挂在 ctx.state 下面，这和 react 中的概念有些相似，例如我们从数据库中查找一个用户 id：ctx.state.user = await User.find(id);
+
+
+
+ctx.app                                       // ctx 对 app 对象的引用
+ctx.cookies.get(name, [options])              // 获取 cookie
+ctx.cookies.set(name, value, [options])       // 设置 cookie
+ctx.throw([msg], [status], [properties])      // 用来抛出异常的方法
+// 例如
+// ctx.throw('name required', 400);
+// 这句代码相当于：
+// const err = new Error('name required');
+// err.status = 400;
+// err.expose = true;
+// throw err;
+
+
+
+
+Koa 在 ctx 对象中封装了 request 以及 response 对象，那么在处理 http 请求的时候，使用 ctx 就可以完成所有的处理。
+ctx.body = "Hello World";    相当于   res.statusCode = 200; res.end("Hello World");
+
+
+
+
+ctx 相当于 ctx.request 或者 ctx.response 的别名，判断 http 请求类型可以通过 ctx.method 来进行判断，get 请求的参数可以通过 ctx.query 获取。
+
+例如，当用户访问 localhost:3000?kindName=Node 时，可以设置如下的路由。
+app.get('/', async (ctx, next) => {
+  console.log(ctx.method); // GET
+  console.log(ctx.query); // { kindName: 'Node' }
+  // TODO
+  await next();
+});
+
+
+
+
+Koa 处理 get 请求比较简单，直接通过 ctx.req.<param> 就能拿到 get 参数的值，post 请求的处理稍微麻烦一些，通常使用 bodyParser 这一中间件进行处理，但也仅限于普通表单，获取格式为 ctx.request.body.<param> 。
+
+router.post('/login', (ctx, next) => {
+  const name = ctx.request.body.name;
+  const password = ctx.request.body.password;
+});
+
+
+
+
+Koa 中间件的设计思想大部分来自 Connect，而 Express 又是基于 Connect 扩展而来的。
+
+Express 本身是由路由和中间件构成的，从本质上来说，Express的运行就是在不断调用各种中间件。
+
+中间件本质上是接收请求并且做出相应动作的函数，该函数通常接收 req 和 res 作为参数，以便对 request 和 response 对象进行操作，在 Web 应用中，客户端发起的每一个请求，首先要经过中间件的处理才能继续向下。
+
+中间件的第三个参数一般写作 next，它代表一个方法，即下一个中间件。如果我们在中间件的方法体中调用了 next 方法，即表示请求会经过下一个中间件处理。
+
+next 方法
+
+无论是 Express 还是 Koa，中间件的调用都是通过 next 方法来执行的，该方法最早在 Connect 中提出，并被 Express 和 Koa 沿用。
+
+当我们调用 app.use 方法时，在内部形成了一个中间件数组，在框架内部会将执行下一个中间件的操作放在 next 方法内部，当我们执行 next 方法时，就会执行下一个中间件。如果在一个中间件中没有调用 next 方法，那么中间件的调用会中断，后续的中间件都不会被执行。
+
+对于整个应用来说，next 方法实现的无非就是嵌套调用，也可以理解成一个递归操作，执行完 next 对应的中间件后，还会返回原来的方法内部，继续向下执行后面的方法。
+
+“洋葱图”可以很形象地解释 Koa 中间件的工作原理，对于 request 对象，首先从最外围的中间件开始一层层向下，到达最底层的中间件后，再由内到外一层层返回给客户端。每个中间件都可能对 request 或者 response 对象进行修改。
+
+
+
+中间件的串行调用
+
+接下来讲述的是 Koa 设计的核心部分，在 Web 开发中，我们通常希望一些操作能够串行执行，例如等待写入日志完成后再进行数据库操作，最后再进行路由处理。
+
+在技术层面，上面的业务场景表现为串行调用某些异步中间件。比较容易想到的一种做法是把 next 方法放到回调里面。
+
+下面的代码定义了两个 Express 中间件，和之前不同之处在于第二个中间件中调用了 process.nextTick() 表示这是一个异步操作。
+
+const app = require('express')();
+app.use(function (req, res, next) {
+  next();
+  console.log("I am middleware1 ");
+});
+app.use(function (req, res, next) {
+  process.nextTick(function () {
+    console.log("I am middleware2");
+    next();
+  });
+});
+app.listen(3000);
+
+// 访问localhost:3000的输出结果
+// I am middleware1
+// I am middleware2
+
+按照上面的原理，next 方法在执行完毕后返回上层的中间件，那么应该先执行 middleware2，然后再执行 middleware1；但由于第二个中间件内的 process.nextTick 是一个异步调用，因此马上返回到第一个中间件，继续输出 I am middleware1，然后中间件二的回调函数执行，输出 I am middleware2。
+
+
+有些情况下，我们可能希望等待 middleware2 执行结束之后再输出结果。而在 Koa 中，借助 async / await 方法，事情变得简单了。
+
+const Koa = require("Koa");
+const app = new Koa();
+app.use(async (ctx, next) => {
+  await next()
+  console.log("I am middlewarel ");
+});
+app.use(async (ctx, next) => {
+  process.nextTick(function () {
+    console.log("I am middleware2")
+    next();
+  });
+});
+app.listen(3000);
+
+// 访问localhost:3000的输出结果
+// I am middleware2
+// I am middleware1
+
+使用 await 关键字后，直到 next 内部的异步方法完成之前，midddlware1 都不会向下执行。

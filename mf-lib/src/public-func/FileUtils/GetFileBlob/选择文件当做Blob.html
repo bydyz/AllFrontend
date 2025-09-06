@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script src="./对Blob的操作.js"></script>
+  <script src="./构造函数新建Blob.js"></script>
+  <script src="./下载Blob.js"></script>
+
+  <script>
+    //输出选中的文件列表相关的信息
+    function fileInfo(files) {
+      console.log('input元素选择的files', files)
+      for(var i = 0; i < files.length; i++) {//files是一个类数组对象
+          var f = files[i];
+          //a.txt 86 text/plain Mon Sep 19 2016 11:07:43 GMT+0800 (中国标准时间)
+          console.log(f.name, "\n",    //只是名字：没有路径
+                      f.size, f.type, "\n",   //size和type是Blob的属性
+                      f.lastModifiedDate);    //修改时间
+      }
+    }
+  </script>
+
+  <input type="file" multiple onchange="fileInfo(this.files)"/>     <!-- 最终在浏览器中的显示，有点奇怪 -->
+    <!-- input选择文件，将文件作为Blob -->
+    <!-- 选择的文件，将作为Blob，以数组的形式，一个个的放在this.files里 
+    
+    包含的属性有：
+    lastModified: 1663777507646
+    lastModifiedDate: Thu Sep 22 2022 00:25:07 GMT+0800 (中国标准时间) {}
+    name: "测试视频1.mp4"
+    size: 1261059
+    type: "video/mp4"
+    webkitRelativePath: ""
+    -->
+
+
+
+
+    <!-- 
+      文件作为Blob
+      在使用Blob之前，首先必须要获取Blob。其中一种方式就是把文件作为Blob
+
+      元素最初是用于在HTML表单中实现文件上传的。浏览器总是很小心地实现该元素，目的是为了只允许上传用户显式选择的文件。脚本是无法将该元素的value属性设置成一个文件名的，这样它们就无法实现将用户电脑上任意的文件进行上传。现在，浏览器已经对该元素进行了扩展，允许客户端可以访问用户选择的文件了
+      　　[注意]允许客户端脚本读取选择的文件内容不会引发安全问题，它和允许这些文件上传到服务器的安全级别是一样的
+
+      在支持本地文件访问的浏览器中，元素上的files属性则是一个FileList对象。该对象是一个类数组对象，其元素要么是0，要么是用户选择的多个File对象。一个File对象就是一个Blob，除此之外，还多了name和lastModifiedDate属性
+      -->
+      <!--  -->
+
+</body>
+</html>

@@ -1,0 +1,80 @@
+import React from 'react'
+
+import "./style.css"
+
+// ◼ 在Router6.x版本之后，代码类的API都迁移到了hooks的写法：
+//    如果我们希望进行代码跳转，需要通过useNavigate的Hook获取到navigate对象进行操作；
+//    那么如果是一个函数式组件，我们可以直接调用，但是如果是一个类组件呢？
+import { Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom'
+
+import Home from './pages/Home';
+import About from './pages/About';
+import Login from './pages/Login';
+import Category from './pages/Category';
+import NotFound from './pages/NotFound';
+
+import HomeRecommend from './pages/Home/HomeRecommend';
+import HomeRanking from './pages/Home/HomeRanking';
+
+
+
+export function App()  {
+
+  // 在函数组件内部使用 hooks 是，hook需要放在函数组件的最顶层，否则会报错
+  const navigate = useNavigate()
+  
+  function navigateTo(path) {
+    navigate(path)
+  }
+
+  return (
+    <div className="app">
+      <div className="header">
+        <span>Header</span>
+
+        <div className="nav">
+          {/* Link  最终会被渲染成a元素          to属性：Link中最重要的属性，用于设置跳转到的路径； */}
+          {/* 除Link外，还有  NavLink  区别是其 激活是默认有 active 这个className， 除此之外，它还有  style、className  允许传入函数，函数的参数是对象， 默认包含 isActive  激活时，其值为true */}
+          <Link to="/home">首页</Link>
+
+          <Link to="/about">关于</Link>
+
+          <Link to="/login">登录</Link>
+
+          <button onClick={() => navigateTo("/category")}>分类</button>
+        </div>
+        <hr />
+      </div>
+
+      <div className="content">
+
+        {/* 配置 映射关系   path => Component */}
+        <Routes>
+          <Route path='/' element={<Navigate to="/home"/>}></Route>
+
+          <Route path='/home' element={<Home/>}>
+            <Route path='/home' element={<Navigate to="/home/ranking"/>}></Route>
+            <Route path="/home/recommend" element={<HomeRecommend/>}></Route>
+            <Route path="/home/ranking" element={<HomeRanking/>}></Route>
+          </Route>
+
+          <Route path='/about' element={<About/>}></Route>
+
+          <Route path='/login' element={<Login/>}/>
+
+          <Route path='/category' element={<Category/>}/>
+
+          {/* 当前面的路由都没有匹配上，才会匹配上这个   *  表示通配   */}
+          <Route path='*' element={<NotFound/>}/>
+        </Routes>
+      </div>
+
+      <div className="footer">
+        Footer
+        <hr />
+      </div>
+    </div>
+  )
+}
+
+export default App

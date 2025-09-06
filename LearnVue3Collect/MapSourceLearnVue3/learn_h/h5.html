@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Learn h</title>
+    <link rel="stylesheet" href="../vueSource/style.css" />
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <script type="module">
+      import {
+        createApp,
+        ref,
+        watch,
+        h,
+      } from '../vueSource/vue.runtime.esm-bundler.js';
+
+      const app = createApp({
+        setup() {
+          const isActive = ref(true);
+          const errorState = ref(true);
+
+          // 使用 h() 构建虚拟 DOM
+          return () => {
+            let result = h(
+              'button',
+              {
+                // 数组里可以使用 字符串、对象、数组
+                class: [
+                  'btn',
+                  { active: isActive.value },
+                  errorState ? 'btn-error' : 'btn-normal',
+                  ['btn2'],
+                ],
+              },
+              'Submit'
+            );
+            console.log(
+              '11111111111111111111111111111111111111111111111111111111',
+              result
+            );
+            return result;
+          };
+        },
+      });
+
+      app.mount('#app');
+    </script>
+  </body>
+</html>

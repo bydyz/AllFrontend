@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>File</title>
+  </head>
+  <body>
+    <input type="file" name="fileName" id="fileId">
+
+    <form style="margin-top: 12px;">
+      <fieldset>
+        <legend>选择将选中的文件要转换成的格式</legend>
+  
+        <div>
+          <input type="radio" id="a1" name="fileTypeKey" value="readAsArrayBuffer">
+          <label for="a1">readAsArrayBuffer</label>
+        </div>
+  
+        <div>
+          <input type="radio" id="a2" name="fileTypeKey" value="readAsBinaryString">
+          <label for="a2">readAsBinaryString</label>
+        </div>
+  
+        <div>
+          <input type="radio" name="fileTypeKey" id="a3" value="readAsDataURL" checked>
+          <label for="a3">readAsDataURL</label>
+        </div>
+  
+        <div>
+          <input type="radio" name="fileTypeKey" id="a4" value="readAsText">
+          <label for="a4">readAsText</label>
+        </div>
+
+      </fieldset>
+    </form>
+
+    <button id="changeButton" style="margin-top: 12px;">转换</button>
+
+    <script>
+      const formEle = document.querySelector("form");
+      const changeButton = document.getElementById("changeButton")
+      const fileEle = document.getElementById("fileId")
+
+      let fileReader = new FileReader()
+      
+      changeButton.addEventListener("click", (event) => {
+        if(!fileEle.files[0]) {
+          return alert("先选择文件")
+        }
+
+        let formData = new FormData(formEle);
+        let toFileType = formData.get("fileTypeKey")
+
+        fileReader[toFileType](fileEle.files[0])
+        fileReader.onload = () => {
+          console.log("fileReader.result", fileReader.result)
+        }
+      })
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Learn Watch</title>
+    <link rel="stylesheet" href="../vueSource/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <button @click="increment">Increment</button>
+      <p>Count: {{ count }}</p>
+    </div>
+
+    <script type="module">
+      import { createApp, ref, watch } from "../vueSource/vue.runtime.esm-bundler.js";
+
+      const app = createApp({
+        setup() {
+          const count = ref(0);
+
+          function increment() {
+            count.value++;
+          }
+
+          // 使用 watch 监听 count 变化
+          watch(
+            () => count.value,
+            (newVal, oldVal) => {
+              console.log(`count changed from ${oldVal} to ${newVal}`);
+            }
+          );
+
+          return {
+            count,
+            increment,
+          };
+        },
+      });
+
+      app.mount("#app");
+    </script>
+  </body>
+</html>
