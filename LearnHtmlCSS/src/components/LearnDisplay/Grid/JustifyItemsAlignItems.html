@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSS Grid: justify-items 与 align-items</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        color: #2c3e50;
+      }
+
+      .description {
+        font-size: 1.2rem;
+        color: #7f8c8d;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      section {
+        background-color: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+
+      h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+      }
+
+      h3 {
+        color: #3498db;
+        margin: 20px 0 15px;
+      }
+
+      p {
+        margin-bottom: 15px;
+      }
+
+      .comparison {
+        display: flex;
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .comparison-box {
+        flex: 1;
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 5px;
+        background-color: #f8f9fa;
+      }
+
+      .grid-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(2, 150px);
+        gap: 15px;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 25px 0;
+        min-height: 350px;
+        background-color: #34495e;
+      }
+
+      .grid-item {
+        padding: 15px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: white;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .item-1 {
+        background-color: #e74c3c;
+      }
+      .item-2 {
+        background-color: #3498db;
+      }
+      .item-3 {
+        background-color: #2ecc71;
+      }
+      .item-4 {
+        background-color: #f39c12;
+      }
+      .item-5 {
+        background-color: #9b59b6;
+      }
+      .item-6 {
+        background-color: #1abc9c;
+      }
+
+      .code-example {
+        background-color: #2d3436;
+        color: #f5f7fa;
+        padding: 15px;
+        border-radius: 5px;
+        font-family: "Fira Code", monospace;
+        margin: 15px 0;
+        overflow-x: auto;
+      }
+
+      .css-selector {
+        color: #74b9ff;
+      }
+
+      .css-property {
+        color: #55efc4;
+      }
+
+      .css-value {
+        color: #ffeaa7;
+      }
+
+      .code-comment {
+        color: #a29bfe;
+      }
+
+      .note {
+        background-color: #e3f2fd;
+        border-left: 4px solid #2196f3;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 0 5px 5px 0;
+      }
+
+      .interactive-controls {
+        display: flex;
+        gap: 15px;
+        margin: 20px 0;
+        flex-wrap: wrap;
+      }
+
+      .control-group {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .control-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+
+      .control-group select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: white;
+      }
+
+      .visual-demo {
+        display: flex;
+        margin: 30px 0;
+        gap: 20px;
+      }
+
+      .demo-container {
+        flex: 1;
+        border: 2px dashed #bbb;
+        padding: 15px;
+        border-radius: 8px;
+        background-color: rgba(255, 255, 255, 0.8);
+      }
+
+      .demo-title {
+        text-align: center;
+        margin-bottom: 15px;
+        font-weight: bold;
+        color: #2c3e50;
+      }
+
+      .axis-visualization {
+        display: flex;
+        height: 200px;
+        margin: 15px 0;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8f9fa;
+        border-radius: 4px;
+        padding: 5px;
+        position: relative;
+      }
+
+      .axis {
+        position: relative;
+        width: 90%;
+        height: 90%;
+        border: 1px solid #ddd;
+      }
+
+      .main-axis {
+        position: absolute;
+        height: 2px;
+        width: 100%;
+        background-color: #e74c3c;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      .cross-axis {
+        position: absolute;
+        width: 2px;
+        height: 100%;
+        background-color: #3498db;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .axis-label {
+        position: absolute;
+        font-size: 12px;
+        color: #7f8c8d;
+        background: white;
+        padding: 2px 5px;
+        border-radius: 3px;
+      }
+
+      .main-label {
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #e74c3c;
+      }
+
+      .cross-label {
+        top: 50%;
+        right: -40px;
+        transform: translateY(-50%);
+        color: #3498db;
+      }
+
+      .property-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+      }
+
+      .property-table th,
+      .property-table td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+      }
+
+      .property-table th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+      }
+
+      .property-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      @media (max-width: 768px) {
+        .comparison,
+        .visual-demo {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>CSS Grid: justify-items 与 align-items</h1>
+        <p class="description">详解justify-items和align-items属性的区别、用法和应用场景</p>
+      </header>
+
+      <section>
+        <h2>justify-items 与 align-items 概述</h2>
+        <p>在CSS Grid布局中，<code>justify-items</code>和<code>align-items</code>属性用于控制网格项目在网格单元格内的对齐方式。</p>
+
+        <div class="note">
+          <p><strong>注意：</strong>这些属性应用于网格容器，并影响所有网格项目的对齐方式。</p>
+        </div>
+
+        <div class="comparison">
+          <div class="comparison-box">
+            <h3>justify-items</h3>
+            <p>控制网格项目在水平方向（行轴）上的对齐方式</p>
+            <div class="code-example">
+              <span class="css-selector">.grid-container</span> {<br />
+              &nbsp;&nbsp;<span class="css-property">justify-items</span>: <span class="css-value">center</span>;<br />
+              }
+            </div>
+          </div>
+
+          <div class="comparison-box">
+            <h3>align-items</h3>
+            <p>控制网格项目在垂直方向（列轴）上的对齐方式</p>
+            <div class="code-example">
+              <span class="css-selector">.grid-container</span> {<br />
+              &nbsp;&nbsp;<span class="css-property">align-items</span>: <span class="css-value">center</span>;<br />
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="axis-visualization">
+          <div class="axis">
+            <div class="main-axis"></div>
+            <div class="cross-axis"></div>
+            <div class="axis-label main-label">justify-items (行轴)</div>
+            <div class="axis-label cross-label">align-items (列轴)</div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>属性值详解</h2>
+
+        <table class="property-table">
+          <thead>
+            <tr>
+              <th>属性值</th>
+              <th>描述</th>
+              <th>justify-items效果</th>
+              <th>align-items效果</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>start</td>
+              <td>项目对齐到单元格的起始边缘</td>
+              <td>左对齐</td>
+              <td>上对齐</td>
+            </tr>
+            <tr>
+              <td>end</td>
+              <td>项目对齐到单元格的结束边缘</td>
+              <td>右对齐</td>
+              <td>下对齐</td>
+            </tr>
+            <tr>
+              <td>center</td>
+              <td>项目在单元格中居中对齐</td>
+              <td>水平居中</td>
+              <td>垂直居中</td>
+            </tr>
+            <tr>
+              <td>stretch</td>
+              <td>项目拉伸以填充整个单元格（默认值）</td>
+              <td>水平拉伸</td>
+              <td>垂直拉伸</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>实际效果演示</h2>
+        <p>使用下面的下拉菜单选择不同的属性值，观察网格项目的对齐方式变化：</p>
+
+        <div class="interactive-controls">
+          <div class="control-group">
+            <label for="justify-value">justify-items:</label>
+            <select id="justify-value">
+              <option value="stretch">stretch (默认)</option>
+              <option value="start">start</option>
+              <option value="end">end</option>
+              <option value="center">center</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label for="align-value">align-items:</label>
+            <select id="align-value">
+              <option value="stretch">stretch (默认)</option>
+              <option value="start">start</option>
+              <option value="end">end</option>
+              <option value="center">center</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-container" id="demo-grid">
+          <div class="grid-item item-1">项目 1</div>
+          <div class="grid-item item-2">项目 2</div>
+          <div class="grid-item item-3">项目 3</div>
+          <div class="grid-item item-4">项目 4</div>
+          <div class="grid-item item-5">项目 5</div>
+          <div class="grid-item item-6">项目 6</div>
+        </div>
+
+        <div class="code-example">
+          <span class="css-selector">#demo-grid</span> {<br />
+          &nbsp;&nbsp;<span class="css-property">justify-items</span>: <span class="css-value" id="justify-code">stretch</span>;<br />
+          &nbsp;&nbsp;<span class="css-property">align-items</span>: <span class="css-value" id="align-code">stretch</span>;<br />
+          }
+        </div>
+      </section>
+
+      <section>
+        <h2>justify-items 效果演示</h2>
+        <p>固定align-items为stretch，只改变justify-items的值：</p>
+
+        <div class="visual-demo">
+          <div class="demo-container">
+            <div class="demo-title">justify-items: start</div>
+            <div class="grid-container" style="align-items: stretch; justify-items: start">
+              <div class="grid-item item-1">1</div>
+              <div class="grid-item item-2">2</div>
+              <div class="grid-item item-3">3</div>
+            </div>
+          </div>
+
+          <div class="demo-container">
+            <div class="demo-title">justify-items: center</div>
+            <div class="grid-container" style="align-items: stretch; justify-items: center">
+              <div class="grid-item item-1">1</div>
+              <div class="grid-item item-2">2</div>
+              <div class="grid-item item-3">3</div>
+            </div>
+          </div>
+
+          <div class="demo-container">
+            <div class="demo-title">justify-items: end</div>
+            <div class="grid-container" style="align-items: stretch; justify-items: end">
+              <div class="grid-item item-1">1</div>
+              <div class="grid-item item-2">2</div>
+              <div class="grid-item item-3">3</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>align-items 效果演示</h2>
+        <p>固定justify-items为stretch，只改变align-items的值：</p>
+
+        <div class="visual-demo">
+          <div class="demo-container">
+            <div class="demo-title">align-items: start</div>
+            <div class="grid-container" style="justify-items: stretch; align-items: start">
+              <div class="grid-item item-1">1</div>
+              <div class="grid-item item-2">2</div>
+              <div class="grid-item item-3">3</div>
+            </div>
+          </div>
+
+          <div class="demo-container">
+            <div class="demo-title">align-items: center</div>
+            <div class="grid-container" style="justify-items: stretch; align-items: center">
+              <div class="grid-item item-1">1</div>
+              <div class="grid-item item-2">2</div>
+              <div class="grid-item item-3">3</div>
+            </div>
+          </div>
+
+          <div class="demo-container">
+            <div class="demo-title">align-items: end</div>
+            <div class="grid-container" style="justify-items: stretch; align-items: end">
+              <div class="grid-item item-1">1</div>
+              <div class="grid-item item-2">2</div>
+              <div class="grid-item item-3">3</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>组合使用示例</h2>
+        <p>justify-items和align-items可以组合使用，实现各种对齐效果：</p>
+
+        <div class="visual-demo">
+          <div class="demo-container">
+            <div class="demo-title">居中对齐<br />justify-items: center<br />align-items: center</div>
+            <div class="grid-container" style="justify-items: center; align-items: center">
+              <div class="grid-item item-1">1</div>
+              <div class="grid-item item-2">2</div>
+              <div class="grid-item item-3">3</div>
+            </div>
+          </div>
+
+          <div class="demo-container">
+            <div class="demo-title">右下对齐<br />justify-items: end<br />align-items: end</div>
+            <div class="grid-container" style="justify-items: end; align-items: end">
+              <div class="grid-item item-1">1</div>
+              <div class="grid-item item-2">2</div>
+              <div class="grid-item item-3">3</div>
+            </div>
+          </div>
+
+          <div class="demo-container">
+            <div class="demo-title">左上对齐<br />justify-items: start<br />align-items: start</div>
+            <div class="grid-container" style="justify-items: start; align-items: start">
+              <div class="grid-item item-1">1</div>
+              <div class="grid-item item-2">2</div>
+              <div class="grid-item item-3">3</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="code-example">
+          <span class="css-selector">.grid-container</span> {<br />
+          &nbsp;&nbsp;<span class="css-property">justify-items</span>: <span class="css-value">center</span>; <span class="code-comment">/* 水平居中 */</span><br />
+          &nbsp;&nbsp;<span class="css-property">align-items</span>: <span class="css-value">center</span>; <span class="code-comment">/* 垂直居中 */</span><br />
+          }
+        </div>
+      </section>
+
+      <section>
+        <h2>注意事项</h2>
+
+        <div class="note">
+          <p><strong>提示：</strong>可以使用<code>justify-self</code>和<code>align-self</code>属性对单个网格项目进行对齐设置，这会覆盖容器的<code>justify-items</code>和<code>align-items</code>设置。</p>
+        </div>
+
+        <div class="code-example">
+          <span class="css-selector">.special-item</span> {<br />
+          &nbsp;&nbsp;<span class="css-property">justify-self</span>: <span class="css-value">end</span>; <span class="code-comment">/* 单独设置水平对齐 */</span><br />
+          &nbsp;&nbsp;<span class="css-property">align-self</span>: <span class="css-value">start</span>; <span class="code-comment">/* 单独设置垂直对齐 */</span><br />
+          }
+        </div>
+
+        <p>在下面的示例中，所有项目默认居中对齐，但最后一个项目使用justify-self和align-self单独设置：</p>
+
+        <div class="grid-container" style="justify-items: center; align-items: center">
+          <div class="grid-item item-1">居中</div>
+          <div class="grid-item item-2">居中</div>
+          <div class="grid-item item-3">居中</div>
+          <div class="grid-item item-4">居中</div>
+          <div class="grid-item item-5">居中</div>
+          <div class="grid-item item-6" style="justify-self: end; align-self: start">单独对齐</div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      // 交互控制
+      const justifySelect = document.getElementById("justify-value");
+      const alignSelect = document.getElementById("align-value");
+      const demoGrid = document.getElementById("demo-grid");
+      const justifyCode = document.getElementById("justify-code");
+      const alignCode = document.getElementById("align-code");
+
+      justifySelect.addEventListener("change", updateGrid);
+      alignSelect.addEventListener("change", updateGrid);
+
+      function updateGrid() {
+        const justifyValue = justifySelect.value;
+        const alignValue = alignSelect.value;
+
+        demoGrid.style.justifyItems = justifyValue;
+        demoGrid.style.alignItems = alignValue;
+
+        justifyCode.textContent = justifyValue;
+        alignCode.textContent = alignValue;
+      }
+
+      // 初始化
+      updateGrid();
+    </script>
+  </body>
+</html>

@@ -1,6 +1,6 @@
 <script setup>
 import Flex from "./Flex/index.vue";
-// import Grid from "./Grid/index.vue";
+import Grid from "./Grid/index.vue";
 import { ref, shallowRef, markRaw } from "vue";
 
 let componentsArray = ref([
@@ -8,12 +8,12 @@ let componentsArray = ref([
     name: 'Flex',
     component: markRaw(Flex)
   },
-  // {
-  //   name: 'Grid',
-  //   component: markRaw(Grid)
-  // }
+  {
+    name: 'Grid',
+    component: markRaw(Grid)
+  }
 ])
-let componentId = shallowRef(Flex);
+let componentId = shallowRef(Grid);
 </script>
 
 <template>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSS Grid - grid-column与grid-row详解</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        color: #2c3e50;
+      }
+
+      .description {
+        font-size: 1.2rem;
+        color: #7f8c8d;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      /* 网格容器基础样式 */
+      .grid-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: repeat(3, 100px);
+        gap: 10px;
+        background-color: #34495e;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        margin-bottom: 40px;
+      }
+
+      .grid-item {
+        padding: 15px;
+        border-radius: 5px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        color: white;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .grid-item:hover {
+        transform: translateY(-5px);
+      }
+
+      .item-1 {
+        background-color: #e74c3c;
+        grid-column: 1 / 3; /* 从第1条线开始到第3条线结束 */
+        grid-row: 1; /* 在第1行 */
+      }
+
+      .item-2 {
+        background-color: #3498db;
+        grid-column: 3 / 5; /* 从第3条线开始到第5条线结束 */
+        grid-row: 1 / 3; /* 从第1条线开始到第3条线结束 */
+      }
+
+      .item-3 {
+        background-color: #2ecc71;
+        grid-column: 1 / 2; /* 从第1条线开始到第2条线结束 */
+        grid-row: 2 / 4; /* 从第2条线开始到第4条线结束 */
+      }
+
+      .item-4 {
+        background-color: #f39c12;
+        grid-column: 2 / 4; /* 从第2条线开始到第4条线结束 */
+        grid-row: 3; /* 在第3行 */
+      }
+
+      .item-5 {
+        background-color: #9b59b6;
+        grid-column: 4; /* 在第4列 */
+        grid-row: 3; /* 在第3行 */
+      }
+
+      /* 命名网格线示例 */
+      .named-grid {
+        display: grid;
+        grid-template-columns: [start] 1fr [main-start] 2fr [main-end] 1fr [end];
+        grid-template-rows: [header] 100px [content] 150px [footer] 80px;
+        gap: 10px;
+        background-color: #34495e;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        margin-bottom: 40px;
+      }
+
+      .named-item-1 {
+        background-color: #1abc9c;
+        grid-column: start / end; /* 从start线到end线 */
+        grid-row: header; /* 在header行 */
+      }
+
+      .named-item-2 {
+        background-color: #d35400;
+        grid-column: main-start / main-end; /* 从main-start线到main-end线 */
+        grid-row: content; /* 在content行 */
+      }
+
+      .named-item-3 {
+        background-color: #c0392b;
+        grid-column: start; /* 从start线开始 */
+        grid-row: footer; /* 在footer行 */
+      }
+
+      .named-item-4 {
+        background-color: #8e44ad;
+        grid-column: main-start / end; /* 从main-start线到end线 */
+        grid-row: footer; /* 在footer行 */
+      }
+
+      /* 代码示例样式 */
+      .code-example {
+        background-color: #2d3436;
+        color: #f5f7fa;
+        padding: 25px;
+        border-radius: 10px;
+        font-family: "Fira Code", monospace;
+        margin-bottom: 40px;
+        overflow-x: auto;
+      }
+
+      .code-example h3 {
+        color: #ff7675;
+        margin-bottom: 15px;
+      }
+
+      .code-comment {
+        color: #a29bfe;
+      }
+
+      .css-selector {
+        color: #74b9ff;
+      }
+
+      .css-property {
+        color: #55efc4;
+      }
+
+      .css-value {
+        color: #ffeaa7;
+      }
+
+      /* 解释区域样式 */
+      .explanation {
+        background-color: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+
+      .explanation h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+      }
+
+      .explanation p {
+        margin-bottom: 15px;
+      }
+
+      .highlight {
+        background-color: #fff8e1;
+        padding: 2px 5px;
+        border-radius: 3px;
+        font-weight: bold;
+        color: #e74c3c;
+      }
+
+      .note {
+        background-color: #e3f2fd;
+        border-left: 4px solid #2196f3;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 0 5px 5px 0;
+      }
+
+      /* 响应式设计 */
+      @media (max-width: 768px) {
+        .grid-container,
+        .named-grid {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto;
+        }
+
+        .grid-item,
+        .named-item {
+          grid-column: 1 !important;
+          grid-row: auto !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>CSS Grid - grid-column与grid-row详解</h1>
+        <p class="description">了解如何使用grid-column和grid-row属性在网格布局中精确定位元素。</p>
+      </header>
+
+      <div class="explanation">
+        <h2>grid-column与grid-row属性</h2>
+        <p><span class="highlight">grid-column</span> 和 <span class="highlight">grid-row</span> 属性用于指定网格项目在网格布局中的位置和跨度。</p>
+
+        <p>这些属性可以使用以下值：</p>
+        <ul>
+          <li><strong>线编号</strong>：例如 grid-column: 1 / 3（从第1条线开始到第3条线结束）</li>
+          <li><strong>命名线</strong>：例如 grid-column: main-start / main-end</li>
+          <li><strong>span关键字</strong>：例如 grid-column: 1 / span 2（从第1条线开始，跨越2列）</li>
+        </ul>
+
+        <div class="note">
+          <p><strong>注意：</strong>网格线编号从1开始，而不是0。每条垂直线定义列的边界，每条水平线定义行的边界。</p>
+        </div>
+      </div>
+
+      <div class="code-example">
+        <h3>基础网格示例代码</h3>
+        <pre><code><span class="css-selector">.grid-container</span> {
+  <span class="css-property">display</span>: <span class="css-value">grid</span>;
+  <span class="css-property">grid-template-columns</span>: <span class="css-value">repeat(4, 1fr)</span>;
+  <span class="css-property">grid-template-rows</span>: <span class="css-value">repeat(3, 100px)</span>;
+  <span class="css-property">gap</span>: <span class="css-value">10px</span>;
+}
+
+<span class="css-selector">.item-1</span> {
+  <span class="css-property">grid-column</span>: <span class="css-value">1 / 3</span>; <span class="code-comment">/* 从第1条线开始到第3条线结束 */</span>
+  <span class="css-property">grid-row</span>: <span class="css-value">1</span>; <span class="code-comment">/* 在第1行 */</span>
+}
+
+<span class="css-selector">.item-2</span> {
+  <span class="css-property">grid-column</span>: <span class="css-value">3 / 5</span>; <span class="code-comment">/* 从第3条线开始到第5条线结束 */</span>
+  <span class="css-property">grid-row</span>: <span class="css-value">1 / 3</span>; <span class="code-comment">/* 从第1条线开始到第3条线结束 */</span>
+}</code></pre>
+      </div>
+
+      <h2>基础网格示例</h2>
+      <div class="grid-container">
+        <div class="grid-item item-1">
+          grid-column: 1 / 3;<br />
+          grid-row: 1;
+        </div>
+        <div class="grid-item item-2">
+          grid-column: 3 / 5;<br />
+          grid-row: 1 / 3;
+        </div>
+        <div class="grid-item item-3">
+          grid-column: 1 / 2;<br />
+          grid-row: 2 / 4;
+        </div>
+        <div class="grid-item item-4">
+          grid-column: 2 / 4;<br />
+          grid-row: 3;
+        </div>
+        <div class="grid-item item-5">
+          grid-column: 4;<br />
+          grid-row: 3;
+        </div>
+      </div>
+
+      <div class="code-example">
+        <h3>命名网格线示例代码</h3>
+        <pre><code><span class="css-selector">.named-grid</span> {
+  <span class="css-property">display</span>: <span class="css-value">grid</span>;
+  <span class="css-property">grid-template-columns</span>: <span class="css-value">[start] 1fr [main-start] 2fr [main-end] 1fr [end]</span>;
+  <span class="css-property">grid-template-rows</span>: <span class="css-value">[header] 100px [content] 150px [footer] 80px</span>;
+  <span class="css-property">gap</span>: <span class="css-value">10px</span>;
+}
+
+<span class="css-selector">.named-item-1</span> {
+  <span class="css-property">grid-column</span>: <span class="css-value">start / end</span>; <span class="code-comment">/* 从start线到end线 */</span>
+  <span class="css-property">grid-row</span>: <span class="css-value">header</span>; <span class="code-comment">/* 在header行 */</span>
+}
+
+<span class="css-selector">.named-item-2</span> {
+  <span class="css-property">grid-column</span>: <span class="css-value">main-start / main-end</span>; <span class="code-comment">/* 从main-start线到main-end线 */</span>
+  <span class="css-property">grid-row</span>: <span class="css-value">content</span>; <span class="code-comment">/* 在content行 */</span>
+}</code></pre>
+      </div>
+
+      <h2>命名网格线示例</h2>
+      <div class="named-grid">
+        <div class="grid-item named-item-1">
+          grid-column: start / end;<br />
+          grid-row: header;
+        </div>
+        <div class="grid-item named-item-2">
+          grid-column: main-start / main-end;<br />
+          grid-row: content;
+        </div>
+        <div class="grid-item named-item-3">
+          grid-column: start;<br />
+          grid-row: footer;
+        </div>
+        <div class="grid-item named-item-4">
+          grid-column: main-start / end;<br />
+          grid-row: footer;
+        </div>
+      </div>
+
+      <div class="explanation">
+        <h2>属性值详解</h2>
+
+        <h3>grid-column属性</h3>
+        <p><span class="highlight">grid-column</span> 是以下两个属性的简写：</p>
+        <ul>
+          <li><strong>grid-column-start</strong>：定义项目开始的垂直网格线</li>
+          <li><strong>grid-column-end</strong>：定义项目结束的垂直网格线</li>
+        </ul>
+
+        <h3>grid-row属性</h3>
+        <p><span class="highlight">grid-row</span> 是以下两个属性的简写：</p>
+        <ul>
+          <li><strong>grid-row-start</strong>：定义项目开始的水平网格线</li>
+          <li><strong>grid-row-end</strong>：定义项目结束的水平网格线</li>
+        </ul>
+
+        <h3>使用span关键字</h3>
+        <p>可以使用span关键字指定项目应该跨越的轨道数量：</p>
+        <ul>
+          <li><strong>grid-column: 2 / span 3</strong>：从第2条线开始，跨越3列</li>
+          <li><strong>grid-row: span 2</strong>：自动跨越2行</li>
+          <li><strong>grid-column: span 2</strong>：自动跨越2列</li>
+        </ul>
+
+        <div class="note">
+          <p><strong>提示：</strong>如果只指定一个值，第二个值将设置为auto，项目默认跨越一个轨道。</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -83,7 +83,7 @@ let componentId = shallowRef(LearnDisplay);
 
 <template>
   <div>
-    <div style="display: flex">
+    <div style="display: flex; flex-wrap: wrap;">
       <div id="myDivButton" class="cursor-pointer" :class="componentId === item.component ? 'bg-[pink]' : ''" v-for="(item, index) in componentsArray" :key="index" @click="componentId = item.component">{{ item.name }}</div>
     </div>
 

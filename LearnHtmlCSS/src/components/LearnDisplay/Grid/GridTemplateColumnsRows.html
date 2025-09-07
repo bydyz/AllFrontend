@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSS Grid布局详解</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        color: #2c3e50;
+      }
+
+      .description {
+        font-size: 1.2rem;
+        color: #7f8c8d;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .grid-container {
+        display: grid;
+        /* 定义列：从[start]开始，一列自动宽度，一列1fr比例，到[end]结束 */
+        grid-template-columns: [start] auto [main] 1fr [end];
+        /* 定义行：header行80px，content行自动高度，footer行60px */
+        grid-template-rows: [header] 80px [content] auto [footer] 60px;
+        gap: 10px;
+        background-color: #34495e;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        margin-bottom: 40px;
+        min-height: 400px;
+      }
+
+      .grid-item {
+        padding: 20px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: white;
+      }
+
+      .header {
+        grid-column: start / end;
+        grid-row: header;
+        background-color: #e74c3c;
+      }
+
+      .sidebar {
+        grid-column: start / main;
+        grid-row: content;
+        background-color: #3498db;
+      }
+
+      .main-content {
+        grid-column: main / end;
+        grid-row: content;
+        background-color: #2ecc71;
+      }
+
+      .footer {
+        grid-column: start / end;
+        grid-row: footer;
+        background-color: #f39c12;
+      }
+
+      .code-example {
+        background-color: #2d3436;
+        color: #f5f7fa;
+        padding: 25px;
+        border-radius: 10px;
+        font-family: "Fira Code", monospace;
+        margin-bottom: 40px;
+        overflow-x: auto;
+      }
+
+      .code-example h3 {
+        color: #ff7675;
+        margin-bottom: 15px;
+      }
+
+      .code-comment {
+        color: #a29bfe;
+      }
+
+      .css-selector {
+        color: #74b9ff;
+      }
+
+      .css-property {
+        color: #55efc4;
+      }
+
+      .css-value {
+        color: #ffeaa7;
+      }
+
+      .explanation {
+        background-color: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .explanation h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+      }
+
+      .explanation p {
+        margin-bottom: 15px;
+      }
+
+      .highlight {
+        background-color: #fff8e1;
+        padding: 2px 5px;
+        border-radius: 3px;
+        font-weight: bold;
+        color: #e74c3c;
+      }
+
+      @media (max-width: 768px) {
+        .grid-container {
+          grid-template-columns: 1fr;
+          grid-template-rows: [header] 70px [sidebar] auto [content] auto [footer] 50px;
+        }
+
+        .header {
+          grid-column: 1;
+          grid-row: header;
+        }
+
+        .sidebar {
+          grid-column: 1;
+          grid-row: sidebar;
+        }
+
+        .main-content {
+          grid-column: 1;
+          grid-row: content;
+        }
+
+        .footer {
+          grid-column: 1;
+          grid-row: footer;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>CSS Grid布局详解</h1>
+        <p class="description">了解如何使用grid-template-columns和grid-template-rows属性创建网格布局，并使用命名的网格线定位元素。</p>
+      </header>
+
+      <div class="code-example">
+        <h3>CSS代码示例</h3>
+        <pre><code><span class="css-selector">.grid-container</span> {
+  <span class="css-property">display</span>: <span class="css-value">grid</span>;
+  <span class="css-comment">/* 定义列：从[start]开始，一列自动宽度，一列1fr比例，到[end]结束 */</span>
+  <span class="css-property">grid-template-columns</span>: [start] auto [main] 1fr [end];
+  <span class="css-comment">/* 定义行：header行80px，content行自动高度，footer行60px */</span>
+  <span class="css-property">grid-template-rows</span>: [header] 80px [content] auto [footer] 60px;
+  <span class="css-property">gap</span>: <span class="css-value">10px</span>;
+}</code></pre>
+      </div>
+
+      <div class="grid-container">
+        <div class="grid-item header">Header (grid-column: start / end; grid-row: header)</div>
+        <div class="grid-item sidebar">Sidebar (grid-column: start / main; grid-row: content)</div>
+        <div class="grid-item main-content">Main Content (grid-column: main / end; grid-row: content)</div>
+        <div class="grid-item footer">Footer (grid-column: start / end; grid-row: footer)</div>
+      </div>
+
+      <div class="explanation">
+        <h2>代码详解</h2>
+        <p><span class="highlight">grid-template-columns: [start] auto [main] 1fr [end];</span> 这行代码定义了网格的列结构：</p>
+        <ul>
+          <li>创建了两列布局</li>
+          <li>第一列的宽度为<strong>auto</strong>（根据内容自动调整）</li>
+          <li>第二列的宽度为<strong>1fr</strong>（占用剩余可用空间）</li>
+          <li>定义了三条垂直网格线：<strong>start</strong>, <strong>main</strong> 和 <strong>end</strong></li>
+        </ul>
+
+        <p><span class="highlight">grid-template-rows: [header] 80px [content] auto [footer] 60px;</span> 这行代码定义了网格的行结构：</p>
+        <ul>
+          <li>创建了三行布局</li>
+          <li>第一行高度为<strong>80px</strong></li>
+          <li>第二行高度为<strong>auto</strong>（根据内容自动调整）</li>
+          <li>第三行高度为<strong>60px</strong></li>
+          <li>定义了四条水平网格线：<strong>header</strong>, <strong>content</strong> 和 <strong>footer</strong></li>
+        </ul>
+
+        <p>通过使用这些命名的网格线，我们可以轻松地将网格项目放置到网格中的特定区域，例如：</p>
+        <ul>
+          <li><strong>Header</strong>: 从start到end（跨越所有列），位于header行</li>
+          <li><strong>Sidebar</strong>: 从start到main（第一列），位于content行</li>
+          <li><strong>Main Content</strong>: 从main到end（第二列），位于content行</li>
+          <li><strong>Footer</strong>: 从start到end（跨越所有列），位于footer行</li>
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>
