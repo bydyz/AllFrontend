@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>防止 &amp;nbsp; 被解析为空格的方法</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        color: #2c3e50;
+      }
+
+      .description {
+        font-size: 1.2rem;
+        color: #7f8c8d;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      section {
+        background-color: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+
+      h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+      }
+
+      h3 {
+        color: #3498db;
+        margin: 20px 0 15px;
+      }
+
+      p {
+        margin-bottom: 15px;
+      }
+
+      .comparison {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .comparison-box {
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 5px;
+        background-color: #f8f9fa;
+      }
+
+      .code-example {
+        background-color: #2d3436;
+        color: #f5f7fa;
+        padding: 15px;
+        border-radius: 5px;
+        font-family: "Fira Code", monospace;
+        margin: 15px 0;
+        overflow-x: auto;
+      }
+
+      .css-selector {
+        color: #74b9ff;
+      }
+
+      .css-property {
+        color: #55efc4;
+      }
+
+      .css-value {
+        color: #ffeaa7;
+      }
+
+      .code-comment {
+        color: #a29bfe;
+      }
+
+      .note {
+        background-color: #e3f2fd;
+        border-left: 4px solid #2196f3;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 0 5px 5px 0;
+      }
+
+      .warning {
+        background-color: #ffebee;
+        border-left: 4px solid #f44336;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 0 5px 5px 0;
+      }
+
+      .demo-area {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 5px;
+        margin: 20px 0;
+        border: 1px solid #e9ecef;
+      }
+
+      .demo-text {
+        font-family: "Fira Code", monospace;
+        background-color: #2d3436;
+        color: #f5f7fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 15px 0;
+      }
+
+      .method {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 15px 0;
+        border-left: 4px solid #3498db;
+      }
+
+      .method-title {
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+      }
+
+      .method-icon {
+        margin-right: 10px;
+        color: #3498db;
+      }
+
+      .result-box {
+        background-color: #2d3436;
+        color: #f5f7fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 15px 0;
+        font-family: "Fira Code", monospace;
+      }
+
+      .entity-display {
+        background-color: #ffeaa7;
+        color: #2d3436;
+        padding: 2px 5px;
+        border-radius: 3px;
+        font-weight: bold;
+      }
+
+      @media (max-width: 768px) {
+        .comparison {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* 特殊样式 */
+      .no-break-space {
+        white-space: pre;
+      }
+
+      .entity-escape {
+        font-family: "Fira Code", monospace;
+      }
+
+      .css-escape {
+        white-space: pre-wrap;
+      }
+
+      .js-rendering {
+        background-color: #1e272e;
+        padding: 15px;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>防止 &amp;nbsp; 被解析为空格的方法</h1>
+        <p class="description">探索多种方法来防止HTML实体 &amp;nbsp; 被浏览器解析为空格字符</p>
+      </header>
+
+      <section>
+        <h2>&amp;nbsp; 实体概述</h2>
+        <p><code>&amp;nbsp;</code> 是HTML中的"不换行空格"实体（Non-Breaking Space）。浏览器通常会将其解析并显示为一个空格字符。</p>
+
+        <div class="demo-area">
+          <h3>正常解析的 &amp;nbsp;</h3>
+          <div class="result-box">
+            <p>这是一个&nbsp;包含&nbsp;&nbsp;&nbsp;多个&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;空格的文本。</p>
+          </div>
+          <p>如上所示，浏览器通常会将 <code>&amp;nbsp;</code> 解析为空格字符。</p>
+        </div>
+
+        <div class="note">
+          <p><strong>注意：</strong><code>&amp;nbsp;</code> 的主要作用是创建不会换行的空格，常用于防止单词中间换行或创建多个连续空格。</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>防止 &amp;nbsp; 被解析的方法</h2>
+
+        <div class="method">
+          <div class="method-title">
+            <span class="method-icon">1</span>
+            <span>使用HTML转义</span>
+          </div>
+          <p>将 <code>&amp;</code> 字符进行HTML转义，使其不被解析为实体开始符。</p>
+
+          <div class="code-example">
+            <span class="code-comment">&lt;!-- 原始代码 --&gt;</span><br />
+            &amp;nbsp;<br />
+            <br />
+            <span class="code-comment">&lt;!-- 转义后的代码 --&gt;</span><br />
+            &amp;amp;nbsp;
+          </div>
+
+          <div class="demo-area">
+            <h4>示例效果：</h4>
+            <div class="result-box">
+              <p>未转义: 这里有一个&nbsp;空格</p>
+              <p>已转义: 这里有一个&amp;nbsp;空格</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="method">
+          <div class="method-title">
+            <span class="method-icon">2</span>
+            <span>使用JavaScript插入文本</span>
+          </div>
+          <p>使用JavaScript的<code>textContent</code>属性插入文本，避免HTML解析。</p>
+
+          <div class="code-example">
+            <span class="css-selector">// JavaScript代码</span><br />
+            <span class="css-selector">document</span>.<span class="css-property">getElementById</span>(<span class="css-value">'demo-element'</span>).<span class="css-property">textContent</span> = <span class="css-value">'这里有一个&nbsp;空格'</span>;
+          </div>
+
+          <div class="demo-area">
+            <h4>示例效果：</h4>
+            <div class="result-box">
+              <p id="js-demo">原始文本将被替换</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="method">
+          <div class="method-title">
+            <span class="method-icon">3</span>
+            <span>使用CSS的white-space属性</span>
+          </div>
+          <p>使用<code>white-space: pre;</code>可以保留文本中的实体字符。</p>
+
+          <div class="code-example">
+            <span class="css-selector">.pre-style</span> {<br />
+            &nbsp;&nbsp;<span class="css-property">white-space</span>: <span class="css-value">pre</span>;<br />
+            &nbsp;&nbsp;<span class="css-property">font-family</span>: <span class="css-value">monospace</span>;<br />
+            }
+          </div>
+
+          <div class="demo-area">
+            <h4>示例效果：</h4>
+            <div class="result-box no-break-space">
+              <p>这里有一个&nbsp;空格</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="method">
+          <div class="method-title">
+            <span class="method-icon">4</span>
+            <span>使用CSS伪元素和content属性</span>
+          </div>
+          <p>使用CSS的<code>content</code>属性显示实体代码。</p>
+
+          <div class="code-example">
+            <span class="css-selector">.entity-display::before</span> {<br />
+            &nbsp;&nbsp;<span class="css-property">content</span>: <span class="css-value">"&amp;nbsp;"</span>;<br />
+            }
+          </div>
+
+          <div class="demo-area">
+            <h4>示例效果：</h4>
+            <div class="result-box">
+              <p>这里有一个<span class="entity-display"></span>实体</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="method">
+          <div class="method-title">
+            <span class="method-icon">5</span>
+            <span>使用code或pre元素</span>
+          </div>
+          <p>使用<code>&lt;code&gt;</code>或<code>&lt;pre&gt;</code>元素显示实体代码。</p>
+
+          <div class="code-example">
+            <span class="code-comment">&lt;!-- 使用code元素 --&gt;</span><br />
+            &lt;code&gt;&amp;nbsp;&lt;/code&gt;<br />
+            <br />
+            <span class="code-comment">&lt;!-- 使用pre元素 --&gt;</span><br />
+            &lt;pre&gt;&amp;nbsp;&lt;/pre&gt;
+          </div>
+
+          <div class="demo-area">
+            <h4>示例效果：</h4>
+            <div class="result-box">
+              <p>这里有一个<code>&amp;nbsp;</code>实体</p>
+              <pre>&amp;nbsp;</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>方法比较</h2>
+
+        <table style="width: 100%; border-collapse: collapse; margin: 20px 0">
+          <thead>
+            <tr style="background-color: #f2f2f2">
+              <th style="border: 1px solid #ddd; padding: 12px; text-align: left">方法</th>
+              <th style="border: 1px solid #ddd; padding: 12px; text-align: left">优点</th>
+              <th style="border: 1px solid #ddd; padding: 12px; text-align: left">缺点</th>
+              <th style="border: 1px solid #ddd; padding: 12px; text-align: left">适用场景</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="border: 1px solid #ddd; padding: 12px">HTML转义</td>
+              <td style="border: 1px solid #ddd; padding: 12px">简单直接，无需额外代码</td>
+              <td style="border: 1px solid #ddd; padding: 12px">代码可读性较差</td>
+              <td style="border: 1px solid #ddd; padding: 12px">显示实体代码的教学示例</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #ddd; padding: 12px">JavaScript插入</td>
+              <td style="border: 1px solid #ddd; padding: 12px">灵活，可动态控制</td>
+              <td style="border: 1px solid #ddd; padding: 12px">需要JavaScript支持</td>
+              <td style="border: 1px solid #ddd; padding: 12px">动态内容生成</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #ddd; padding: 12px">CSS white-space</td>
+              <td style="border: 1px solid #ddd; padding: 12px">保持文本格式，无需转义</td>
+              <td style="border: 1px solid #ddd; padding: 12px">可能影响其他文本样式</td>
+              <td style="border: 1px solid #ddd; padding: 12px">代码显示和格式化文本</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #ddd; padding: 12px">CSS content</td>
+              <td style="border: 1px solid #ddd; padding: 12px">精确控制显示内容</td>
+              <td style="border: 1px solid #ddd; padding: 12px">只能用于伪元素</td>
+              <td style="border: 1px solid #ddd; padding: 12px">装饰性内容显示</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #ddd; padding: 12px">code/pre元素</td>
+              <td style="border: 1px solid #ddd; padding: 12px">语义化，易于理解</td>
+              <td style="border: 1px solid #ddd; padding: 12px">改变元素默认样式</td>
+              <td style="border: 1px solid #ddd; padding: 12px">代码示例和技术文档</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>实际应用示例</h2>
+
+        <div class="comparison">
+          <div class="comparison-box">
+            <h3>HTML实体教程页面</h3>
+            <p>在HTML实体教程中，需要显示实体代码而不是解析结果：</p>
+
+            <div class="code-example">
+              <span class="code-comment">&lt;!-- 显示实体代码 --&gt;</span><br />
+              &lt;p&gt;HTML实体 &amp;amp;nbsp; 表示一个&lt;code&gt;&amp;amp;nbsp;&lt;/code&gt;空格。&lt;/p&gt;
+            </div>
+
+            <div class="result-box">
+              <p>HTML实体 &amp;nbsp; 表示一个<code>&amp;nbsp;</code>空格。</p>
+            </div>
+          </div>
+
+          <div class="comparison-box">
+            <h3>代码编辑器显示</h3>
+            <p>在显示HTML代码时，需要保留原始实体格式：</p>
+
+            <div class="code-example">
+              <span class="css-selector">.code-display</span> {<br />
+              &nbsp;&nbsp;<span class="css-property">white-space</span>: <span class="css-value">pre</span>;<br />
+              &nbsp;&nbsp;<span class="css-property">font-family</span>: <span class="css-value">'Fira Code', monospace</span>;<br />
+              &nbsp;&nbsp;<span class="css-property">background-color</span>: <span class="css-value">#2d3436</span>;<br />
+              &nbsp;&nbsp;<span class="css-property">color</span>: <span class="css-value">#f5f7fa</span>;<br />
+              &nbsp;&nbsp;<span class="css-property">padding</span>: <span class="css-value">15px</span>;<br />
+              &nbsp;&nbsp;<span class="css-property">border-radius</span>: <span class="css-value">5px</span>;<br />
+              }
+            </div>
+
+            <div class="result-box no-break-space">
+              <p>&lt;div class="container"&gt; &lt;p&gt;这是一个包含&amp;nbsp;空格的段落&lt;/p&gt; &lt;/div</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ISO 8601 日期时间格式解释</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        color: #2c3e50;
+      }
+
+      .description {
+        font-size: 1.2rem;
+        color: #7f8c8d;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      section {
+        background-color: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+
+      h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+      }
+
+      h3 {
+        color: #3498db;
+        margin: 20px 0 15px;
+      }
+
+      p {
+        margin-bottom: 15px;
+      }
+
+      .code-example {
+        background-color: #2d3436;
+        color: #f5f7fa;
+        padding: 15px;
+        border-radius: 5px;
+        font-family: "Fira Code", monospace;
+        margin: 15px 0;
+        overflow-x: auto;
+      }
+
+      .iso-date {
+        color: #74b9ff;
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+
+      .date-component {
+        background-color: #ffeaa7;
+        color: #2d3436;
+        padding: 2px 5px;
+        border-radius: 3px;
+        font-weight: bold;
+      }
+
+      .note {
+        background-color: #e3f2fd;
+        border-left: 4px solid #2196f3;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 0 5px 5px 0;
+      }
+
+      .demo-area {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 5px;
+        margin: 20px 0;
+        border: 1px solid #e9ecef;
+      }
+
+      .demo-result {
+        background-color: #2d3436;
+        color: #f5f7fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 15px 0;
+        font-family: "Fira Code", monospace;
+      }
+
+      .component-breakdown {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .component {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        border: 1px solid #e9ecef;
+      }
+
+      .component-title {
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+      }
+
+      .component-icon {
+        margin-right: 10px;
+        color: #3498db;
+      }
+
+      .timezone-conversion {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .timezone-box {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        border: 1px solid #e9ecef;
+      }
+
+      .interactive-demo {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .input-group {
+        margin-bottom: 15px;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+
+      .input-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-family: "Fira Code", monospace;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background-color 0.3s ease;
+      }
+
+      .btn:hover {
+        background-color: #2980b9;
+      }
+
+      @media (max-width: 768px) {
+        .component-breakdown,
+        .timezone-conversion,
+        .interactive-demo {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* 特殊样式 */
+      .iso-standard {
+        background-color: #e8f5e9;
+        border-left: 4px solid #4caf50;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 0 5px 5px 0;
+      }
+
+      .utc-label {
+        background-color: #ff7675;
+        color: white;
+        padding: 3px 6px;
+        border-radius: 3px;
+        font-size: 0.9rem;
+        margin-left: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>ISO 8601 日期时间格式解释</h1>
+        <p class="description">详解日期时间格式：<span class="iso-date">2025-09-13T14:36:20.914Z</span></p>
+      </header>
+
+      <section>
+        <h2>ISO 8601 格式概述</h2>
+        <p>ISO 8601是国际标准化组织制定的日期和时间表示方法的标准格式。这种格式被广泛用于计算机系统、API和数据交换中，因为它无歧义且易于解析。</p>
+
+        <div class="iso-standard">
+          <p><strong>ISO 8601标准格式：</strong>YYYY-MM-DDTHH:mm:ss.sssZ</p>
+          <p>其中：</p>
+          <ul style="margin-left: 20px;">
+            <li>YYYY：四位数的年份</li>
+            <li>MM：两位数的月份（01-12）</li>
+            <li>DD：两位数的日期（01-31）</li>
+            <li>T：日期和时间的分隔符</li>
+            <li>HH：两位数的小时（00-23，24小时制）</li>
+            <li>mm：两位数的分钟（00-59）</li>
+            <li>ss：两位数的秒数（00-59）</li>
+            <li>sss：三位数的毫秒数（000-999）</li>
+            <li>Z：表示UTC时区（协调世界时）</li>
+          </ul>
+        </div>
+
+        <div class="demo-area">
+          <h3>示例日期时间</h3>
+          <div class="demo-result">
+            <span class="iso-date">2025-09-13T14:36:20.914Z</span>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>日期时间组件分解</h2>
+
+        <div class="component-breakdown">
+          <div class="component">
+            <div class="component-title">
+              <span class="component-icon">📅</span>
+              <span>日期部分</span>
+            </div>
+            <p><span class="date-component">2025</span> - 年份（2025年）</p>
+            <p><span class="date-component">09</span> - 月份（9月）</p>
+            <p><span class="date-component">13</span> - 日期（13日）</p>
+            <p>表示：2025年9月13日</p>
+          </div>
+
+          <div class="component">
+            <div class="component-title">
+              <span class="component-icon">⏰</span>
+              <span>时间部分</span>
+            </div>
+            <p><span class="date-component">14</span> - 小时（14时，下午2点）</p>
+            <p><span class="date-component">36</span> - 分钟（36分）</p>
+            <p><span class="date-component">20</span> - 秒数（20秒）</p>
+            <p><span class="date-component">914</span> - 毫秒（914毫秒）</p>
+            <p>表示：14:36:20.914（24小时制）</p>
+          </div>
+
+          <div class="component">
+            <div class="component-title">
+              <span class="component-icon">🔗</span>
+              <span>分隔符</span>
+            </div>
+            <p><span class="date-component">T</span> - 日期和时间的分隔符</p>
+            <p>ISO标准要求使用"T"将日期和时间部分分开</p>
+            <p>在一些宽松的实现中，可以用空格代替，但标准格式使用"T"</p>
+          </div>
+
+          <div class="component">
+            <div class="component-title">
+              <span class="component-icon">🌐</span>
+              <span>时区指示符</span>
+            </div>
+            <p><span class="date-component">Z</span> - 表示UTC时区（协调世界时）</p>
+            <p>"Z"代表"Zulu时间"，是航空和军事中对UTC的称呼</p>
+            <p>如果没有"Z"，可能表示本地时间或未指定时区</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>时区转换</h2>
+        <p>UTC时间需要根据本地时区进行转换。以下是将示例时间转换为不同时区的时间：</p>
+
+        <div class="timezone-conversion">
+          <div class="timezone-box">
+            <h3>北京时间 (UTC+8)</h3>
+            <div class="demo-result">2025年9月13日 22:36:20.914</div>
+            <p>UTC+8小时（中国标准时间）</p>
+          </div>
+
+          <div class="timezone-box">
+            <h3>东部时间 (UTC-5/UTC-4)</h3>
+            <div class="demo-result">2025年9月13日 09:36:20.914 (夏令时)</div>
+            <p>UTC-5小时（标准时间）或UTC-4小时（夏令时）</p>
+          </div>
+
+          <div class="timezone-box">
+            <h3>太平洋时间 (UTC-8/UTC-7)</h3>
+            <div class="demo-result">2025年9月13日 06:36:20.914 (夏令时)</div>
+            <p>UTC-8小时（标准时间）或UTC-7小时（夏令时）</p>
+          </div>
+
+          <div class="timezone-box">
+            <h3>格林尼治标准时间 (UTC)</h3>
+            <div class="demo-result">2025年9月13日 14:36:20.914</div>
+            <p>与原始时间相同（UTC+0）</p>
+          </div>
+        </div>
+
+        <div class="note">
+          <p><strong>注意：</strong>时区转换需要考虑夏令时（DST）的影响，上述示例中的北美时区已考虑2025年可能的夏令时情况。</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>在JavaScript中使用ISO日期时间</h2>
+        <p>JavaScript的Date对象可以直接解析ISO 8601格式的日期时间字符串。</p>
+
+        <div class="code-example">
+          <span class="js-comment">// 解析ISO日期时间字符串</span><br />
+          <span class="js-keyword">const</span> dateStr = <span class="js-string">"2025-09-13T14:36:20.914Z"</span>;<br />
+          <span class="js-keyword">const</span> date = <span class="js-keyword">new</span> <span class="js-function">Date</span>(dateStr);<br />
+          <br />
+          <span class="js-comment">// 获取各个组件</span><br />
+          <span class="js-keyword">const</span> year = date.<span class="js-function">getUTCFullYear</span>(); <span class="js-comment">// 2025</span><br />
+          <span class="js-keyword">const</span> month = date.<span class="js-function">getUTCMonth</span>() + 1; <span class="js-comment">// 9 (月份从0开始)</span><br />
+          <span class="js-keyword">const</span> day = date.<span class="js-function">getUTCDate</span>(); <span class="js-comment">// 13</span><br />
+          <span class="js-keyword">const</span> hours = date.<span class="js-function">getUTCHours</span>(); <span class="js-comment">// 14</span><br />
+          <span class="js-keyword">const</span> minutes = date.<span class="js-function">getUTCMinutes</span>(); <span class="js-comment">// 36</span><br />
+          <span class="js-keyword">const</span> seconds = date.<span class="js-function">getUTCSeconds</span>(); <span class="js-comment">// 20</span><br />
+          <span class="js-keyword">const</span> milliseconds = date.<span class="js-function">getUTCMilliseconds</span>(); <span class="js-comment">// 914</span><br />
+          <br />
+          <span class="js-comment">// 转换为本地时间</span><br />
+          <span class="js-keyword">const</span> localDateStr = date.<span class="js-function">toLocaleString</span>();<br />
+          <span class="js-comment">// 例如: "2025/9/13 22:36:20" (北京时间)</span>
+        </div>
+
+        <div class="demo-area">
+          <h3>实际JavaScript解析结果</h3>
+          <div class="demo-result" id="js-demo">
+            <!-- 将由JavaScript填充 -->
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>常见应用场景</h2>
+
+        <div class="component-breakdown">
+          <div class="component">
+            <div class="component-title">
+              <span class="component-icon">💾</span>
+              <span>数据存储和交换</span>
+            </div>
+            <p>ISO 8601是数据库、API和JSON数据中日期时间的标准格式。</p>
+            <p>确保不同系统之间的日期时间数据能够正确解析和交换。</p>
+          </div>
+
+          <div class="component">
+            <div class="component-title">
+              <span class="component-icon">📊</span>
+              <span>日志记录</span>
+            </div>
+            <p>服务器和应用程序日志通常使用ISO格式记录时间戳。</p>
+            <p>便于排序、过滤和分析时间序列数据。</p>
+          </div>
+
+          <div class="component">
+            <div class="component-title">
+              <span class="component-icon">🌐</span>
+              <span>国际化应用</span>
+            </div>
+            <p>使用UTC时间可以避免时区混乱，方便全球用户使用。</p>
+            <p>前端根据用户本地时区显示适当的时间格式。</p>
+          </div>
+
+          <div class="component">
+            <div class="component-title">
+              <span class="component-icon">⏱️</span>
+              <span>时间计算和比较</span>
+            </div>
+            <p>ISO格式的时间可以直接进行字符串比较（按时间顺序）。</p>
+            <p>便于计算时间差、排序和筛选时间范围。</p>
+          </div>
+        </div>
+
+        <div class="note">
+          <p><strong>最佳实践：</strong>在系统中始终使用UTC时间进行存储和计算，仅在显示时转换为本地时间。</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>交互式日期解析</h2>
+
+        <div class="interactive-demo">
+          <div>
+            <h3>输入ISO日期时间</h3>
+            <div class="input-group">
+              <label for="iso-input">ISO日期时间:</label>
+              <input type="text" id="iso-input" value="2025-09-13T14:36:20.914Z" />
+            </div>
+
+            <button class="btn" id="parse-btn">解析日期</button>
+          </div>
+
+          <div>
+            <h3>解析结果</h3>
+            <div class="demo-result" id="parse-result">结果将显示在这里</div>
+
+            <h4>本地时间</h4>
+            <div id="local-time">本地时间将显示在这里</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      // 显示当前日期时间
+      document.getElementById("current-date").textContent = new Date().toISOString();
+
+      // JavaScript解析示例
+      const dateStr = "2025-09-13T14:36:20.914Z";
+      const date = new Date(dateStr);
+
+      const jsDemo = document.getElementById("js-demo");
+      jsDemo.innerHTML = `
+            const date = new Date("2025-09-13T14:36:20.914Z");<br>
+            <br>
+            date.toISOString() = ${date.toISOString()}<br>
+            date.toLocaleString() = ${date.toLocaleString()}<br>
+            date.getTime() = ${date.getTime()} (时间戳)<br>
+            date.getUTCHours() = ${date.getUTCHours()}<br>
+            date.getHours() = ${date.getHours()} (本地时间)
+        `;
+
+      // 交互式解析
+      const parseBtn = document.getElementById("parse-btn");
+      const isoInput = document.getElementById("iso-input");
+      const parseResult = document.getElementById("parse-result");
+      const localTime = document.getElementById("local-time");
+
+      parseBtn.addEventListener("click", () => {
+        try {
+          const inputDateStr = isoInput.value;
+          const inputDate = new Date(inputDateStr);
+
+          if (isNaN(inputDate.getTime())) {
+            throw new Error("无效的日期格式");
+          }
+
+          parseResult.innerHTML = `
+                    <strong>解析成功:</strong><br>
+                    ISO格式: ${inputDate.toISOString()}<br>
+                    UTC时间: ${inputDate.toUTCString()}<br>
+                    时间戳: ${inputDate.getTime()}
+                `;
+
+          localTime.innerHTML = `
+                    本地时间: ${inputDate.toLocaleString()}<br>
+                    本地日期: ${inputDate.toLocaleDateString()}<br>
+                    本地时间: ${inputDate.toLocaleTimeString()}
+                `;
+        } catch (error) {
+          parseResult.innerHTML = `错误: ${error.message}`;
+          localTime.innerHTML = "";
+        }
+      });
+
+      // 初始解析
+      parseBtn.click();
+    </script>
+  </body>
+</html>

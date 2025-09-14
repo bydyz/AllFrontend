@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UTC时间与北京时间转换</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        color: #2c3e50;
+      }
+
+      .description {
+        font-size: 1.2rem;
+        color: #7f8c8d;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      section {
+        background-color: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+
+      h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+      }
+
+      h3 {
+        color: #3498db;
+        margin: 20px 0 15px;
+      }
+
+      p {
+        margin-bottom: 15px;
+      }
+
+      .code-example {
+        background-color: #2d3436;
+        color: #f5f7fa;
+        padding: 15px;
+        border-radius: 5px;
+        font-family: "Fira Code", monospace;
+        margin: 15px 0;
+        overflow-x: auto;
+      }
+
+      .js-keyword {
+        color: #74b9ff;
+      }
+
+      .js-function {
+        color: #55efc4;
+      }
+
+      .js-number {
+        color: #ffeaa7;
+      }
+
+      .js-string {
+        color: #fd79a8;
+      }
+
+      .js-comment {
+        color: #a29bfe;
+      }
+
+      .note {
+        background-color: #e3f2fd;
+        border-left: 4px solid #2196f3;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 0 5px 5px 0;
+      }
+
+      .warning {
+        background-color: #ffebee;
+        border-left: 4px solid #f44336;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 0 5px 5px 0;
+      }
+
+      .demo-area {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 5px;
+        margin: 20px 0;
+        border: 1px solid #e9ecef;
+      }
+
+      .demo-result {
+        background-color: #2d3436;
+        color: #f5f7fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 15px 0;
+        font-family: "Fira Code", monospace;
+      }
+
+      .comparison {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .comparison-box {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        border: 1px solid #e9ecef;
+      }
+
+      .timezone-explanation {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .timezone-box {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        border: 1px solid #e9ecef;
+      }
+
+      .interactive-demo {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .input-group {
+        margin-bottom: 15px;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+
+      .input-group input,
+      .input-group select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-family: "Fira Code", monospace;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background-color 0.3s ease;
+      }
+
+      .btn:hover {
+        background-color: #2980b9;
+      }
+
+      .time-display {
+        background-color: #2d3436;
+        color: #f5f7fa;
+        padding: 15px;
+        border-radius: 5px;
+        font-family: "Fira Code", monospace;
+        min-height: 100px;
+      }
+
+      .utc-label {
+        background-color: #ff7675;
+        color: white;
+        padding: 3px 6px;
+        border-radius: 3px;
+        font-size: 0.9rem;
+      }
+
+      .beijing-label {
+        background-color: #74b9ff;
+        color: white;
+        padding: 3px 6px;
+        border-radius: 3px;
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 768px) {
+        .comparison,
+        .timezone-explanation,
+        .interactive-demo {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>UTC时间与北京时间转换</h1>
+        <p class="description">详解JavaScript中Date对象和Date.UTC()方法，以及如何转换为北京时间</p>
+      </header>
+
+      <section>
+        <h2>UTC与北京时间的关系</h2>
+        <p>UTC（协调世界时）是世界标准时间，而北京时间是UTC+8时区的时间。</p>
+
+        <div class="note">
+          <p><strong>重要关系：</strong>北京时间 = UTC时间 + 8小时</p>
+          <p>中国使用单一标准时间（UTC+8），全国统一使用北京时间，没有夏令时。</p>
+        </div>
+
+        <div class="timezone-explanation">
+          <div class="timezone-box">
+            <h3>UTC（协调世界时）</h3>
+            <p>世界标准时间，基于原子时钟</p>
+            <p>是所有时区计算的基准</p>
+            <p>在JavaScript中，Date对象默认使用UTC时间</p>
+          </div>
+
+          <div class="timezone-box">
+            <h3>北京时间（UTC+8）</h3>
+            <p>中国标准时间，比UTC快8小时</p>
+            <p>覆盖全中国，包括北京、上海、广州等</p>
+            <p>与香港、澳门、台湾时间相同</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>new Date() 与 Date.UTC()</h2>
+
+        <div class="comparison">
+          <div class="comparison-box">
+            <h3>new Date()</h3>
+            <p>创建表示当前时间的Date对象，基于本地时区。</p>
+            <div class="code-example">
+              <span class="js-comment">// 创建当前时间的Date对象</span><br />
+              <span class="js-keyword">const</span> now = <span class="js-keyword">new</span> <span class="js-function">Date</span>();<br />
+              <span class="js-comment">// 输出ISO字符串（UTC时间）</span><br />
+              <span class="js-function">console.log</span>(now.<span class="js-function">toISOString</span>());
+            </div>
+            <div class="demo-result" id="new-date-demo">
+              <!-- 将由JavaScript填充 -->
+            </div>
+          </div>
+
+          <div class="comparison-box">
+            <h3>Date.UTC()</h3>
+            <p>返回指定UTC日期时间的时间戳（毫秒）。</p>
+            <div class="code-example">
+              <span class="js-comment">// 获取指定UTC时间的时间戳</span><br />
+              <span class="js-keyword">const</span> timestamp = <span class="js-function">Date.UTC</span>(<span class="js-number">2025</span>, <span class="js-number">8</span>, <span class="js-number">13</span>, <span class="js-number">14</span>, <span class="js-number">36</span>,
+              <span class="js-number">20</span>, <span class="js-number">914</span>);<br />
+              <span class="js-comment">// 使用时间戳创建Date对象</span><br />
+              <span class="js-keyword">const</span> date = <span class="js-keyword">new</span> <span class="js-function">Date</span>(timestamp);
+            </div>
+            <div class="demo-result" id="date-utc-demo">
+              <!-- 将由JavaScript填充 -->
+            </div>
+          </div>
+        </div>
+
+        <div class="note">
+          <p><strong>关键区别：</strong></p>
+          <ul style="margin-left: 20px;">
+            <li><code>new Date()</code> 创建基于本地时区的Date对象，但内部存储为UTC时间</li>
+            <li><code>Date.UTC()</code> 直接返回指定UTC时间的时间戳</li>
+            <li>两者都基于UTC时间，但使用方式不同</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>UTC时间与北京时间转换</h2>
+
+        <div class="demo-area">
+          <h3>UTC时间转换为北京时间</h3>
+          <div class="code-example">
+            <span class="js-comment">// 方法1：使用getUTC方法手动加8小时</span><br />
+            <span class="js-keyword">function</span> <span class="js-function">utcToBeijing</span>(date) {<br />
+            &nbsp;&nbsp;<span class="js-keyword">const</span> beijingDate = <span class="js-keyword">new</span> <span class="js-function">Date</span>(date);<br />
+            &nbsp;&nbsp;beijingDate.<span class="js-function">setHours</span>(beijingDate.<span class="js-function">getUTCHours</span>() + <span class="js-number">8</span>);<br />
+            &nbsp;&nbsp;<span class="js-keyword">return</span> beijingDate;<br />
+            }<br />
+            <br />
+            <span class="js-comment">// 方法2：使用toLocaleString指定时区</span><br />
+            <span class="js-keyword">function</span> <span class="js-function">utcToBeijingString</span>(date) {<br />
+            &nbsp;&nbsp;<span class="js-keyword">return</span> date.<span class="js-function">toLocaleString</span>(<span class="js-string">'zh-CN'</span>, {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;timeZone: <span class="js-string">'Asia/Shanghai'</span>,<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;hour12: <span class="js-keyword">false</span><br />
+            &nbsp;&nbsp;});<br />
+            }
+          </div>
+
+          <div class="demo-result" id="conversion-demo">
+            <!-- 将由JavaScript填充 -->
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h3>北京时间转换为UTC时间</h3>
+          <div class="code-example">
+            <span class="js-comment">// 北京时间转换为UTC时间</span><br />
+            <span class="js-keyword">function</span> <span class="js-function">beijingToUTC</span>(year, month, day, hour, minute, second) {<br />
+            &nbsp;&nbsp;<span class="js-comment">// 北京时间减8小时得到UTC时间</span><br />
+            &nbsp;&nbsp;<span class="js-keyword">const</span> utcHour = hour - <span class="js-number">8</span>;<br />
+            &nbsp;&nbsp;<span class="js-keyword">return</span> <span class="js-function">Date.UTC</span>(year, month - <span class="js-number">1</span>, day, utcHour, minute, second);<br />
+            }
+          </div>
+
+          <div class="demo-result" id="reverse-conversion-demo">
+            <!-- 将由JavaScript填充 -->
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>交互式时间转换工具</h2>
+
+        <div class="interactive-demo">
+          <div>
+            <h3>输入UTC时间</h3>
+            <div class="input-group">
+              <label for="utc-year">年份:</label>
+              <input type="number" id="utc-year" min="2000" max="2100" value="2025" />
+            </div>
+
+            <div class="input-group">
+              <label for="utc-month">月份:</label>
+              <input type="number" id="utc-month" min="1" max="12" value="9" />
+            </div>
+
+            <div class="input-group">
+              <label for="utc-day">日期:</label>
+              <input type="number" id="utc-day" min="1" max="31" value="13" />
+            </div>
+
+            <div class="input-group">
+              <label for="utc-hour">小时:</label>
+              <input type="number" id="utc-hour" min="0" max="23" value="14" />
+            </div>
+
+            <div class="input-group">
+              <label for="utc-minute">分钟:</label>
+              <input type="number" id="utc-minute" min="0" max="59" value="36" />
+            </div>
+
+            <div class="input-group">
+              <label for="utc-second">秒数:</label>
+              <input type="number" id="utc-second" min="0" max="59" value="20" />
+            </div>
+
+            <button class="btn" id="convert-to-beijing">转换为北京时间</button>
+          </div>
+
+          <div>
+            <h3>转换结果</h3>
+            <div class="time-display" id="utc-result">UTC时间将显示在这里</div>
+
+            <div class="time-display" id="beijing-result">北京时间将显示在这里</div>
+
+            <h4>转换说明</h4>
+            <div id="conversion-explanation">转换说明将显示在这里</div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>实际应用示例</h2>
+
+        <div class="demo-area">
+          <h3>从API获取UTC时间并转换为本地时间</h3>
+          <div class="code-example">
+            <span class="js-comment">// 假设从API获取的UTC时间字符串</span><br />
+            <span class="js-keyword">const</span> apiResponse = {<br />
+            &nbsp;&nbsp;timestamp: <span class="js-string">"2025-09-13T14:36:20.914Z"</span><br />
+            };<br />
+            <br />
+            <span class="js-comment">// 创建Date对象</span><br />
+            <span class="js-keyword">const</span> utcDate = <span class="js-keyword">new</span> <span class="js-function">Date</span>(apiResponse.timestamp);<br />
+            <br />
+            <span class="js-comment">// 转换为北京时间</span><br />
+            <span class="js-keyword">const</span> beijingDate = <span class="js-keyword">new</span> <span class="js-function">Date</span>(utcDate);<br />
+            beijingDate.<span class="js-function">setHours</span>(beijingDate.<span class="js-function">getUTCHours</span>() + <span class="js-number">8</span>);<br />
+            <br />
+            <span class="js-comment">// 格式化显示</span><br />
+            <span class="js-keyword">const</span> formattedTime = beijingDate.<span class="js-function">toLocaleString</span>(<span class="js-string">'zh-CN'</span>);
+          </div>
+
+          <div class="demo-result" id="api-demo">
+            <!-- 将由JavaScript填充 -->
+          </div>
+        </div>
+
+        <div class="note">
+          <p><strong>最佳实践：</strong></p>
+          <ul>
+            <li>在数据库中始终存储UTC时间</li>
+            <li>在前端根据用户时区转换为本地时间显示</li>
+            <li>对于中国用户，统一转换为北京时间（UTC+8）</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      // new Date() 示例
+      const now = new Date();
+      document.getElementById("new-date-demo").innerHTML = `
+            new Date() = ${now}<br>
+            toISOString() = ${now.toISOString()}<br>
+            toUTCString() = ${now.toUTCString()}
+        `;
+
+      // Date.UTC() 示例
+      const utcTimestamp = Date.UTC(2025, 8, 13, 14, 36, 20, 914);
+      const utcDate = new Date(utcTimestamp);
+      document.getElementById("date-utc-demo").innerHTML = `
+            Date.UTC(2025, 8, 13, 14, 36, 20, 914) = ${utcTimestamp}<br>
+            new Date(timestamp) = ${utcDate}<br>
+            toISOString() = ${utcDate.toISOString()}
+        `;
+
+      // UTC转北京时间示例
+      function utcToBeijing(date) {
+        const beijingDate = new Date(date);
+        beijingDate.setHours(beijingDate.getUTCHours() + 8);
+        return beijingDate;
+      }
+
+      function utcToBeijingString(date) {
+        return date.toLocaleString("zh-CN", {
+          timeZone: "Asia/Shanghai",
+          hour12: false,
+        });
+      }
+
+      const sampleUTCDate = new Date("2025-09-13T14:36:20.914Z");
+      const beijingTime = utcToBeijing(sampleUTCDate);
+      const beijingTimeStr = utcToBeijingString(sampleUTCDate);
+
+      document.getElementById("conversion-demo").innerHTML = `
+            UTC时间: ${sampleUTCDate.toISOString()}<br>
+            北京时间: ${beijingTime.toString()}<br>
+            格式化北京时间: ${beijingTimeStr}
+        `;
+
+      // 北京时间转UTC示例
+      function beijingToUTC(year, month, day, hour, minute, second) {
+        // 北京时间减8小时得到UTC时间
+        const utcHour = hour - 8;
+        return Date.UTC(year, month - 1, day, utcHour, minute, second);
+      }
+
+      const utcFromBeijing = beijingToUTC(2025, 9, 13, 22, 36, 20);
+      const utcFromBeijingDate = new Date(utcFromBeijing);
+
+      document.getElementById("reverse-conversion-demo").innerHTML = `
+            北京时间: 2025-09-13 22:36:20<br>
+            对应的UTC时间: ${utcFromBeijingDate.toISOString()}
+        `;
+
+      // API示例
+      const apiResponse = {
+        timestamp: "2025-09-13T14:36:20.914Z",
+      };
+
+      const apiUTCDate = new Date(apiResponse.timestamp);
+      const apiBeijingDate = new Date(apiUTCDate);
+      apiBeijingDate.setHours(apiBeijingDate.getUTCHours() + 8);
+      const apiFormattedTime = apiBeijingDate.toLocaleString("zh-CN");
+
+      document.getElementById("api-demo").innerHTML = `
+            API返回的UTC时间: ${apiResponse.timestamp}<br>
+            转换为北京时间: ${apiFormattedTime}
+        `;
+
+      // 交互式转换
+      const convertBtn = document.getElementById("convert-to-beijing");
+      const utcResult = document.getElementById("utc-result");
+      const beijingResult = document.getElementById("beijing-result");
+      const conversionExplanation = document.getElementById("conversion-explanation");
+
+      convertBtn.addEventListener("click", () => {
+        const year = parseInt(document.getElementById("utc-year").value);
+        const month = parseInt(document.getElementById("utc-month").value);
+        const day = parseInt(document.getElementById("utc-day").value);
+        const hour = parseInt(document.getElementById("utc-hour").value);
+        const minute = parseInt(document.getElementById("utc-minute").value);
+        const second = parseInt(document.getElementById("utc-second").value);
+
+        // 创建UTC时间
+        const utcTime = Date.UTC(year, month - 1, day, hour, minute, second);
+        const utcDate = new Date(utcTime);
+
+        // 转换为北京时间
+        const beijingDate = new Date(utcDate);
+        beijingDate.setHours(beijingDate.getUTCHours() + 8);
+
+        utcResult.innerHTML = `
+                <span class="utc-label">UTC时间</span><br>
+                ${utcDate.toISOString()}<br>
+                ${utcDate.toUTCString()}
+            `;
+
+        beijingResult.innerHTML = `
+                <span class="beijing-label">北京时间 (UTC+8)</span><br>
+                ${beijingDate.toString()}<br>
+                ${beijingDate.toLocaleString("zh-CN")}
+            `;
+
+        conversionExplanation.innerHTML = `
+                <p>转换过程：UTC时间 ${hour}:${minute}:${second} + 8小时 = 北京时间 ${beijingDate.getHours()}:${minute}:${second}</p>
+            `;
+      });
+
+      // 初始转换
+      convertBtn.click();
+    </script>
+  </body>
+</html>

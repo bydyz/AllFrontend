@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ArrayBuffer 详解</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f7fa;
+        color: #333;
+      }
+      h1 {
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+      .card {
+        flex: 1;
+        min-width: 300px;
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .card h2 {
+        color: #3498db;
+        margin-top: 0;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+      }
+      pre {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        overflow-x: auto;
+      }
+      code {
+        color: #e74c3c;
+      }
+      button {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 5px;
+        transition: background-color 0.3s;
+      }
+      button:hover {
+        background-color: #2980b9;
+      }
+      .output {
+        margin-top: 15px;
+        padding: 15px;
+        background-color: #edf2f7;
+        border-radius: 5px;
+        min-height: 50px;
+      }
+      .highlight {
+        background-color: #fffacd;
+        padding: 2px 4px;
+        border-radius: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>ArrayBuffer 详解与示例</h1>
+
+    <div class="container">
+      <div class="card">
+        <h2>ArrayBuffer 基础</h2>
+        <p>ArrayBuffer 是一个表示通用、固定长度的原始二进制数据缓冲区的对象。</p>
+        <p>创建一个 16 字节的 ArrayBuffer：</p>
+        <pre>const buffer = new ArrayBuffer(16);</pre>
+        <p>使用 Int32Array 视图操作这个缓冲区：</p>
+        <pre>const int32View = new Int32Array(buffer);</pre>
+        <button onclick="demoBasic()">运行示例</button>
+        <div id="outputBasic" class="output"></div>
+      </div>
+
+      <div class="card">
+        <h2>多视图操作</h2>
+        <p>同一个 ArrayBuffer 可以用不同的视图进行操作：</p>
+        <pre>
+          // 使用 Int32Array 写入数据
+          const int32View = new Int32Array(buffer);
+          int32View[0] = 42;
+
+          // 使用 Uint8Array 读取相同的缓冲区
+          const uint8View = new Uint8Array(buffer);</pre
+        >
+        <button onclick="demoMultipleViews()">运行示例</button>
+        <div id="outputMultipleViews" class="output"></div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="card">
+        <h2>DataView 示例</h2>
+        <p>DataView 提供了更灵活的方式来读写 ArrayBuffer 中的数据：</p>
+        <pre>
+          const dataView = new DataView(buffer);
+          // 在偏移量 0 处写入一个 32 位有符号整数
+          dataView.setInt32(0, 123456789);</pre
+        >
+        <button onclick="demoDataView()">运行示例</button>
+        <div id="outputDataView" class="output"></div>
+      </div>
+
+      <div class="card">
+        <h2>实际应用：编码字符串</h2>
+        <p>将字符串编码为 UTF-8 字节序列：</p>
+        <pre>
+          function stringToBuffer(str) {
+              const encoder = new TextEncoder();
+              return encoder.encode(str).buffer;
+          }</pre
+        >
+        <input type="text" id="inputString" value="Hello, ArrayBuffer!" placeholder="输入字符串" />
+        <button onclick="demoStringEncoding()">编码字符串</button>
+        <div id="outputString" class="output"></div>
+      </div>
+    </div>
+
+    <script>
+      function demoBasic() {
+        const output = document.getElementById("outputBasic");
+        output.innerHTML = "";
+
+        try {
+          // 创建 16 字节的 ArrayBuffer
+          const buffer = new ArrayBuffer(16);
+          output.innerHTML += `<p>创建了 ${buffer.byteLength} 字节的 ArrayBuffer</p>`;
+
+          // 使用 Int32Array 视图（每个元素 4 字节，可容纳 4 个元素）
+          const int32View = new Int32Array(buffer);
+
+          // 写入数据
+          for (let i = 0; i < int32View.length; i++) {
+            int32View[i] = i * 10;
+          }
+
+          output.innerHTML += `<p>写入的数据: ${Array.from(int32View)}</p>`;
+
+          // 使用 Uint8Array 查看原始字节
+          const uint8View = new Uint8Array(buffer);
+          output.innerHTML += `<p>字节表示: ${Array.from(uint8View)}</p>`;
+        } catch (error) {
+          output.innerHTML = `<p style="color: red;">错误: ${error.message}</p>`;
+        }
+      }
+
+      function demoMultipleViews() {
+        const output = document.getElementById("outputMultipleViews");
+        output.innerHTML = "";
+
+        try {
+          // 创建 8 字节的 ArrayBuffer
+          const buffer = new ArrayBuffer(8);
+          output.innerHTML += `<p>创建了 ${buffer.byteLength} 字节的 ArrayBuffer</p>`;
+
+          // 使用 Int32Array 视图写入数据
+          const int32View = new Int32Array(buffer);
+          int32View[0] = 123456789;
+          int32View[1] = 987654321;
+
+          output.innerHTML += `<p>Int32Array 视图: [${int32View[0]}, ${int32View[1]}]</p>`;
+
+          // 使用 Uint8Array 查看原始字节
+          const uint8View = new Uint8Array(buffer);
+          output.innerHTML += `<p>Uint8Array 视图（字节）: ${Array.from(uint8View)}</p>`;
+
+          // 修改 Uint8Array 会影响 Int32Array
+          uint8View[0] = 255;
+          output.innerHTML += `<p>修改第一个字节后 Int32Array: [${int32View[0]}, ${int32View[1]}]</p>`;
+        } catch (error) {
+          output.innerHTML = `<p style="color: red;">错误: ${error.message}</p>`;
+        }
+      }
+
+      function demoDataView() {
+        const output = document.getElementById("outputDataView");
+        output.innerHTML = "";
+
+        try {
+          // 创建 8 字节的 ArrayBuffer
+          const buffer = new ArrayBuffer(8);
+          output.innerHTML += `<p>创建了 ${buffer.byteLength} 字节的 ArrayBuffer</p>`;
+
+          // 使用 DataView 操作缓冲区
+          const dataView = new DataView(buffer);
+
+          // 写入不同类型的数据
+          dataView.setInt32(0, 123456789); // 4 字节有符号整数
+          dataView.setUint16(4, 65535); // 2 字节无符号整数
+          dataView.setUint8(6, 255); // 1 字节无符号整数
+
+          // 读取数据
+          const int32Value = dataView.getInt32(0);
+          const uint16Value = dataView.getUint16(4);
+          const uint8Value = dataView.getUint8(6);
+
+          output.innerHTML += `<p>读取的值: ${int32Value}, ${uint16Value}, ${uint8Value}</p>`;
+
+          // 显示字节内容
+          const uint8View = new Uint8Array(buffer);
+          output.innerHTML += `<p>字节表示: ${Array.from(uint8View)}</p>`;
+        } catch (error) {
+          output.innerHTML = `<p style="color: red;">错误: ${error.message}</p>`;
+        }
+      }
+
+      function demoStringEncoding() {
+        const output = document.getElementById("outputString");
+        const inputString = document.getElementById("inputString").value || "Hello, ArrayBuffer!";
+        output.innerHTML = "";
+
+        try {
+          // 使用 TextEncoder 将字符串编码为字节
+          const encoder = new TextEncoder();
+          const encoded = encoder.encode(inputString);
+
+          output.innerHTML += `<p>原始字符串: "${inputString}"</p>`;
+          output.innerHTML += `<p>UTF-8 编码的字节: ${Array.from(encoded)}</p>`;
+          output.innerHTML += `<p>ArrayBuffer 字节长度: ${encoded.buffer.byteLength}</p>`;
+
+          // 解码回字符串
+          const decoder = new TextDecoder();
+          const decodedString = decoder.decode(encoded.buffer);
+
+          output.innerHTML += `<p>解码后的字符串: "${decodedString}"</p>`;
+        } catch (error) {
+          output.innerHTML = `<p style="color: red;">错误: ${error.message}</p>`;
+        }
+      }
+
+      // 初始化页面时运行一个示例
+      window.onload = demoBasic;
+    </script>
+  </body>
+</html>

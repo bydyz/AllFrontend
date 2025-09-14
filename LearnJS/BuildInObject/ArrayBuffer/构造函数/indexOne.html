@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ArrayBuffer Options 参数详解</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
+        padding: 20px;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+      }
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+      }
+      .card-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+      }
+      .card {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .card h2 {
+        color: #3498db;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+      .code {
+        background: #2d3436;
+        color: #f5f6fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 15px 0;
+        overflow-x: auto;
+        font-family: "Fira Code", monospace;
+        font-size: 0.9rem;
+      }
+      .interactive-demo {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 40px;
+      }
+      .input-group {
+        margin: 15px 0;
+      }
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #2c3e50;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+      button {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background 0.3s;
+        margin: 10px 5px 10px 0;
+      }
+      button:hover {
+        background: #2980b9;
+      }
+      .result {
+        margin-top: 20px;
+        padding: 20px;
+        background: #edf2f7;
+        border-radius: 5px;
+        font-family: "Fira Code", monospace;
+        white-space: pre-wrap;
+      }
+      .success {
+        color: #27ae60;
+      }
+      .error {
+        color: #e74c3c;
+      }
+      .highlight {
+        background: #fffacd;
+        padding: 2px 5px;
+        border-radius: 3px;
+      }
+      .info-box {
+        background: #e1f5fe;
+        border-left: 4px solid #03a9f4;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 0 5px 5px 0;
+      }
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: #7f8c8d;
+        padding: 20px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+      }
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>ArrayBuffer(length, options) 参数详解</h1>
+        <p class="subtitle">探索ArrayBuffer构造函数中options参数的使用方法和应用场景</p>
+      </header>
+
+      <div class="card-container">
+        <div class="card">
+          <h2>options 参数概述</h2>
+          <p>ArrayBuffer构造函数接受一个可选的options参数，该参数是一个对象，可以包含以下属性：</p>
+
+          <div class="code">// 语法 new ArrayBuffer(length, { maxByteLength: number });</div>
+
+          <p><code>maxByteLength</code> 属性允许你设置ArrayBuffer可增长到的最大字节长度。</p>
+
+          <div class="info-box">
+            <p><strong>注意：</strong> 可增长的ArrayBuffer是一个相对较新的特性，并非所有浏览器都完全支持。</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>基本使用示例</h2>
+          <p>创建一个可调整大小的ArrayBuffer：</p>
+
+          <div class="code">
+            // 创建初始长度为16字节，最大可扩展到32字节的ArrayBuffer const buffer = new ArrayBuffer(16, { maxByteLength: 32 }); console.log(buffer.byteLength); // 16 console.log(buffer.maxByteLength); // 32 console.log(buffer.resizable); // true // 调整ArrayBuffer的大小 buffer.resize(24);
+            console.log(buffer.byteLength); // 24
+          </div>
+
+          <p>使用<code>maxByteLength</code>选项创建的ArrayBuffer可以后续调整大小。</p>
+        </div>
+
+        <div class="card">
+          <h2>应用场景</h2>
+          <p>可调整大小的ArrayBuffer在以下场景中非常有用：</p>
+
+          <ul style="padding-left: 20px; margin: 15px 0">
+            <li>动态数据缓冲区</li>
+            <li>流式数据处理</li>
+            <li>需要灵活内存管理的应用</li>
+            <li>大型数据集的渐进式加载</li>
+          </ul>
+
+          <div class="info-box">
+            <p><strong>性能提示：</strong> 调整ArrayBuffer大小可能导致分配新的内存块并复制数据，因此应谨慎使用。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="interactive-demo">
+        <h2>交互式演示</h2>
+        <p>尝试创建具有不同maxByteLength值的ArrayBuffer：</p>
+
+        <div class="input-group">
+          <label for="initialLength">初始长度 (byteLength):</label>
+          <input type="number" id="initialLength" value="16" min="1" max="1024" />
+        </div>
+
+        <div class="input-group">
+          <label for="maxByteLength">最大字节长度 (maxByteLength):</label>
+          <input type="number" id="maxByteLength" value="32" min="1" max="1024" />
+        </div>
+
+        <div class="input-group">
+          <label for="resizeValue">调整大小值 (可选):</label>
+          <input type="number" id="resizeValue" value="24" min="1" max="1024" />
+        </div>
+
+        <button onclick="createArrayBuffer()">创建 ArrayBuffer</button>
+        <button onclick="resizeArrayBuffer()">调整大小</button>
+        <button onclick="testTransfer()">测试传输</button>
+
+        <div class="result" id="demoResult">等待操作...</div>
+      </div>
+
+      <div class="interactive-demo">
+        <h2>浏览器兼容性检查</h2>
+        <p>检查当前浏览器对可调整大小ArrayBuffer的支持情况：</p>
+
+        <button onclick="checkCompatibility()">检查兼容性</button>
+
+        <div class="result" id="compatibilityResult">等待检查...</div>
+
+        <table>
+          <tr>
+            <th>特性</th>
+            <th>状态</th>
+          </tr>
+          <tr>
+            <td>ArrayBuffer构造函数options参数</td>
+            <td id="supportOptions">检查中...</td>
+          </tr>
+          <tr>
+            <td>ArrayBuffer.resize()方法</td>
+            <td id="supportResize">检查中...</td>
+          </tr>
+          <tr>
+            <td>ArrayBuffer.transfer()方法</td>
+            <td id="supportTransfer">检查中...</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <footer>
+      <p>© 2023 ArrayBuffer Options 参数详解 | JavaScript高级特性</p>
+    </footer>
+
+    <script>
+      let currentBuffer = null;
+
+      // 创建ArrayBuffer
+      function createArrayBuffer() {
+        const initialLength = parseInt(document.getElementById("initialLength").value);
+        const maxByteLength = parseInt(document.getElementById("maxByteLength").value);
+
+        if (maxByteLength < initialLength) {
+          document.getElementById("demoResult").innerHTML = `<span class="error">错误：maxByteLength必须大于或等于初始长度</span>`;
+          return;
+        }
+
+        try {
+          currentBuffer = new ArrayBuffer(initialLength, { maxByteLength });
+
+          document.getElementById("demoResult").innerHTML =
+            `创建成功！\n` +
+            `byteLength: ${currentBuffer.byteLength}\n` +
+            `maxByteLength: ${currentBuffer.maxByteLength}\n` +
+            `resizable: ${currentBuffer.resizable}\n\n` +
+            `ArrayBuffer详细信息:\n${JSON.stringify(
+              {
+                byteLength: currentBuffer.byteLength,
+                maxByteLength: currentBuffer.maxByteLength,
+                resizable: currentBuffer.resizable,
+              },
+              null,
+              2
+            )}`;
+        } catch (e) {
+          document.getElementById("demoResult").innerHTML = `<span class="error">错误: ${e.message}</span>`;
+        }
+      }
+
+      // 调整ArrayBuffer大小
+      function resizeArrayBuffer() {
+        if (!currentBuffer) {
+          document.getElementById("demoResult").innerHTML = `<span class="error">请先创建ArrayBuffer</span>`;
+          return;
+        }
+
+        const resizeValue = parseInt(document.getElementById("resizeValue").value);
+
+        if (resizeValue > currentBuffer.maxByteLength) {
+          document.getElementById("demoResult").innerHTML = `<span class="error">错误：调整大小值不能超过maxByteLength (${currentBuffer.maxByteLength})</span>`;
+          return;
+        }
+
+        try {
+          currentBuffer.resize(resizeValue);
+
+          document.getElementById("demoResult").innerHTML = `调整大小成功！\n` + `新byteLength: ${currentBuffer.byteLength}\n` + `maxByteLength: ${currentBuffer.maxByteLength}\n` + `resizable: ${currentBuffer.resizable}`;
+        } catch (e) {
+          document.getElementById("demoResult").innerHTML = `<span class="error">错误: ${e.message}</span>`;
+        }
+      }
+
+      // 测试传输功能
+      function testTransfer() {
+        if (!currentBuffer) {
+          document.getElementById("demoResult").innerHTML = `<span class="error">请先创建ArrayBuffer</span>`;
+          return;
+        }
+
+        try {
+          // 注意：transfer()方法目前还在提案阶段，可能不被所有浏览器支持
+          if (typeof ArrayBuffer.prototype.transfer !== "function") {
+            document.getElementById("demoResult").innerHTML = `<span class="error">当前浏览器不支持ArrayBuffer.transfer()方法</span>`;
+            return;
+          }
+
+          const newSize = parseInt(document.getElementById("resizeValue").value);
+          const transferredBuffer = currentBuffer.transfer(newSize);
+
+          document.getElementById("demoResult").innerHTML = `传输成功！\n` + `原始buffer byteLength: ${currentBuffer.byteLength}\n` + `新buffer byteLength: ${transferredBuffer.byteLength}\n` + `新buffer maxByteLength: ${transferredBuffer.maxByteLength}`;
+
+          currentBuffer = transferredBuffer;
+        } catch (e) {
+          document.getElementById("demoResult").innerHTML = `<span class="error">错误: ${e.message}</span>`;
+        }
+      }
+
+      // 检查浏览器兼容性
+      function checkCompatibility() {
+        let optionsSupport = false;
+        let resizeSupport = false;
+        let transferSupport = false;
+
+        try {
+          // 测试options参数支持
+          const buffer = new ArrayBuffer(16, { maxByteLength: 32 });
+          optionsSupport = true;
+
+          // 测试resize方法支持
+          if (typeof buffer.resize === "function") {
+            resizeSupport = true;
+          }
+
+          // 测试transfer方法支持
+          if (typeof ArrayBuffer.prototype.transfer === "function") {
+            transferSupport = true;
+          }
+        } catch (e) {
+          // 如果出现错误，说明不支持
+        }
+
+        document.getElementById("supportOptions").innerHTML = optionsSupport ? '<span class="success">支持</span>' : '<span class="error">不支持</span>';
+
+        document.getElementById("supportResize").innerHTML = resizeSupport ? '<span class="success">支持</span>' : '<span class="error">不支持</span>';
+
+        document.getElementById("supportTransfer").innerHTML = transferSupport ? '<span class="success">支持</span>' : '<span class="error">不支持</span>';
+
+        document.getElementById("compatibilityResult").innerHTML =
+          `当前浏览器对可调整大小ArrayBuffer的支持情况:\n` + `options参数: ${optionsSupport ? "支持" : "不支持"}\n` + `resize()方法: ${resizeSupport ? "支持" : "不支持"}\n` + `transfer()方法: ${transferSupport ? "支持" : "不支持"}\n\n` + `注意：这些是相对较新的特性，可能并非所有浏览器都支持。`;
+      }
+
+      // 初始加载时检查兼容性
+      window.onload = checkCompatibility;
+    </script>
+  </body>
+</html>

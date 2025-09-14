@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UTC与GMT的区别详解</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
+        padding: 20px;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+      }
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+      }
+      .card-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 40px;
+      }
+      .card {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .card h2 {
+        color: #3498db;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+      .code {
+        background: #2d3436;
+        color: #f5f6fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 15px 0;
+        overflow-x: auto;
+        font-family: "Fira Code", monospace;
+        font-size: 0.9rem;
+      }
+      .interactive-demo {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 40px;
+      }
+      .input-group {
+        margin: 15px 0;
+      }
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #2c3e50;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+      button {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background 0.3s;
+        margin: 10px 5px 10px 0;
+      }
+      button:hover {
+        background: #2980b9;
+      }
+      .result {
+        margin-top: 20px;
+        padding: 20px;
+        background: #edf2f7;
+        border-radius: 5px;
+        font-family: "Fira Code", monospace;
+        white-space: pre-wrap;
+      }
+      .success {
+        color: #27ae60;
+      }
+      .error {
+        color: #e74c3c;
+      }
+      .highlight {
+        background: #fffacd;
+        padding: 2px 5px;
+        border-radius: 3px;
+      }
+      .info-box {
+        background: #e1f5fe;
+        border-left: 4px solid #03a9f4;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 0 5px 5px 0;
+      }
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: #7f8c8d;
+        padding: 20px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+      }
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      .comparison-table {
+        width: 100%;
+        margin: 20px 0;
+      }
+      .comparison-table th,
+      .comparison-table td {
+        padding: 12px;
+        text-align: center;
+        border: 1px solid #ddd;
+      }
+      .comparison-table th {
+        background-color: #3498db;
+        color: white;
+      }
+      .comparison-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+      .time-display {
+        font-size: 1.5rem;
+        font-weight: bold;
+        text-align: center;
+        margin: 20px 0;
+        padding: 15px;
+        background: #2d3436;
+        color: #fff;
+        border-radius: 5px;
+        font-family: "Fira Code", monospace;
+      }
+      .history-timeline {
+        margin: 20px 0;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .timeline-item {
+        margin-bottom: 30px;
+        position: relative;
+        padding-left: 30px;
+      }
+      .timeline-item:before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 8px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #3498db;
+      }
+      .timeline-item:after {
+        content: "";
+        position: absolute;
+        left: 5px;
+        top: 20px;
+        width: 2px;
+        height: calc(100% + 10px);
+        background: #3498db;
+      }
+      .timeline-item:last-child:after {
+        display: none;
+      }
+      .timeline-year {
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>UTC与GMT的区别详解</h1>
+        <p class="subtitle">协调世界时与格林尼治标准时间的比较</p>
+      </header>
+
+      <div class="card-container">
+        <div class="card">
+          <h2>什么是GMT？</h2>
+          <p>GMT（Greenwich Mean Time，格林尼治标准时间）是指位于英国伦敦郊区的皇家格林尼治天文台的标准时间。</p>
+          <p>GMT基于地球的自转，以太阳穿越格林尼治子午线的时间作为中午12点。它是19世纪中期为了铁路和航海需要而确立的时间标准。</p>
+
+          <div class="code">// JavaScript中获取GMT时间 const date = new Date(); console.log(date.toGMTString()); // 示例输出: "Wed, 04 Oct 2023 12:34:56 GMT"</div>
+
+          <div class="info-box">
+            <p><strong>注意：</strong> toGMTString()方法已弃用，建议使用toUTCString()代替。</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>什么是UTC？</h2>
+          <p>UTC（Coordinated Universal Time，协调世界时）是以原子时秒长为基础，在时刻上尽量接近于世界时的时间计量系统。</p>
+          <p>UTC通过添加或删除闰秒来保持与UT1（基于地球自转的世界时）的接近，误差不超过0.9秒。</p>
+
+          <div class="code">// JavaScript中获取UTC时间 const date = new Date(); console.log(date.toUTCString()); // 示例输出: "Wed, 04 Oct 2023 12:34:56 GMT" // 获取UTC时间组件 console.log(date.getUTCHours()); // UTC小时 console.log(date.getUTCMinutes()); // UTC分钟</div>
+        </div>
+
+        <div class="card">
+          <h2>主要区别</h2>
+          <p>UTC和GMT的主要区别在于：</p>
+
+          <ul style="padding-left: 20px; margin: 15px 0">
+            <li><strong>基础不同</strong>：GMT基于地球自转，UTC基于原子时</li>
+            <li><strong>精度不同</strong>：UTC更精确，GMT受地球自转速度变化影响</li>
+            <li><strong>闰秒处理</strong>：UTC通过闰秒调整，GMT没有闰秒概念</li>
+            <li><strong>现代应用</strong>：UTC是国际标准，GMT更多是历史术语</li>
+          </ul>
+
+          <div class="info-box">
+            <p><strong>实际使用：</strong> 在日常生活中，UTC和GMT通常可以互换使用，因为它们的时区偏移量相同(UTC+0)。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="interactive-demo">
+        <h2>UTC与GMT对比表</h2>
+
+        <table class="comparison-table">
+          <tr>
+            <th>特性</th>
+            <th>GMT</th>
+            <th>UTC</th>
+          </tr>
+          <tr>
+            <td>全称</td>
+            <td>格林尼治标准时间</td>
+            <td>协调世界时</td>
+          </tr>
+          <tr>
+            <td>建立基础</td>
+            <td>地球自转</td>
+            <td>原子时</td>
+          </tr>
+          <tr>
+            <td>建立时间</td>
+            <td>1884年</td>
+            <td>1963年</td>
+          </tr>
+          <tr>
+            <td>精度</td>
+            <td>受地球自转速度变化影响</td>
+            <td>极高，基于原子振荡</td>
+          </tr>
+          <tr>
+            <td>闰秒调整</td>
+            <td>无</td>
+            <td>有</td>
+          </tr>
+          <tr>
+            <td>现代应用</td>
+            <td>较少，多为历史术语</td>
+            <td>国际标准，广泛使用</td>
+          </tr>
+          <tr>
+            <td>JavaScript方法</td>
+            <td>toGMTString() (已弃用)</td>
+            <td>toUTCString()</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="interactive-demo">
+        <h2>时间显示对比</h2>
+
+        <div class="time-display" id="currentLocalTime">本地时间: 加载中...</div>
+
+        <div class="time-display" id="currentUTCTime">UTC时间: 加载中...</div>
+
+        <div class="time-display" id="currentGMTTime">GMT时间: 加载中...</div>
+
+        <div class="input-group">
+          <label for="dateInput">选择一个日期时间:</label>
+          <input type="datetime-local" id="dateInput" value="" />
+        </div>
+
+        <button onclick="updateTime()">更新时间显示</button>
+        <button onclick="compareTimeRepresentations()">比较时间表示</button>
+
+        <div class="result" id="timeComparisonResult">时间对比结果将显示在这里...</div>
+      </div>
+
+      <div class="history-timeline">
+        <h2>时间标准发展历史</h2>
+
+        <div class="timeline-item">
+          <div class="timeline-year">1884年</div>
+          <p>国际子午线会议将格林尼治子午线定为本初子午线，GMT成为世界时间标准。</p>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-year">1928年</div>
+          <p>国际天文联合会首次提出"世界时(UT)"的概念，用于区分基于格林尼治平太阳时的GMT。</p>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-year">1960年</div>
+          <p>国际无线电咨询委员会提出了"协调世界时"的概念，试图协调原子时和世界时。</p>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-year">1963年</div>
+          <p>UTC时间系统正式建立，成为新的国际时间标准。</p>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-year">1972年</div>
+          <p>引入闰秒制度，使UTC与UT1的偏差保持在0.9秒以内。</p>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-year">现今</div>
+          <p>UTC已成为国际标准时间，广泛应用于科学、技术、航空和互联网等领域。</p>
+        </div>
+      </div>
+
+      <div class="interactive-demo">
+        <h2>JavaScript中的UTC和GMT</h2>
+
+        <div class="code">
+          // 创建一个日期对象 const date = new Date(); // 获取UTC/GMT时间表示 console.log(date.toUTCString()); // UTC表示 console.log(date.toGMTString()); // GMT表示 (已弃用) // 获取时间组件 console.log("UTC小时: " + date.getUTCHours()); console.log("UTC分钟: " + date.getUTCMinutes());
+          console.log("UTC秒: " + date.getUTCSeconds()); // 设置UTC时间 date.setUTCHours(12); date.setUTCMinutes(0); date.setUTCSeconds(0); console.log("设置后的UTC时间: " + date.toUTCString());
+        </div>
+
+        <button onclick="demoJavaScriptMethods()">运行JavaScript示例</button>
+
+        <div class="result" id="javascriptDemoResult">JavaScript示例结果将显示在这里...</div>
+      </div>
+    </div>
+
+    <footer>
+      <p>© 2023 UTC与GMT的区别详解 | 时间标准学习资源</p>
+    </footer>
+
+    <script>
+      // 初始化日期时间输入框为当前时间
+      window.onload = function () {
+        const now = new Date();
+        const localDateTime = now.toISOString().slice(0, 16);
+        document.getElementById("dateInput").value = localDateTime;
+
+        updateTime();
+
+        // 每秒更新一次时间显示
+        setInterval(updateTime, 1000);
+      };
+
+      // 更新时间显示
+      function updateTime() {
+        const now = new Date();
+
+        // 更新本地时间显示
+        document.getElementById("currentLocalTime").textContent = `本地时间: ${now.toLocaleString()}`;
+
+        // 更新UTC时间显示
+        document.getElementById("currentUTCTime").textContent = `UTC时间: ${now.toUTCString()}`;
+
+        // 更新GMT时间显示 (使用toGMTString，但注意已弃用)
+        document.getElementById("currentGMTTime").textContent = `GMT时间: ${now.toGMTString()}`;
+      }
+
+      // 比较时间表示
+      function compareTimeRepresentations() {
+        const dateInput = document.getElementById("dateInput").value;
+
+        if (!dateInput) {
+          document.getElementById("timeComparisonResult").innerHTML = `<span class="error">请选择日期时间</span>`;
+          return;
+        }
+
+        try {
+          // 创建日期对象
+          const date = new Date(dateInput);
+
+          // 获取各种时间表示
+          const localTime = date.toLocaleString();
+          const utcTime = date.toUTCString();
+          const gmtTime = date.toGMTString();
+          const isoTime = date.toISOString();
+
+          document.getElementById("timeComparisonResult").innerHTML =
+            `输入的时间: ${dateInput}\n\n` + `本地时间表示: ${localTime}\n` + `UTC时间表示: ${utcTime}\n` + `GMT时间表示: ${gmtTime}\n` + `ISO格式: ${isoTime}\n\n` + `注意: toGMTString()方法已弃用，建议使用toUTCString()代替。\n` + `在大多数情况下，UTC和GMT表示的时间值是相同的。`;
+        } catch (e) {
+          document.getElementById("timeComparisonResult").innerHTML = `<span class="error">错误: ${e.message}</span>`;
+        }
+      }
+
+      // 演示JavaScript方法
+      function demoJavaScriptMethods() {
+        try {
+          // 创建一个日期对象
+          const date = new Date();
+
+          // 获取UTC/GMT时间表示
+          const utcString = date.toUTCString();
+          const gmtString = date.toGMTString();
+
+          // 获取时间组件
+          const utcHours = date.getUTCHours();
+          const utcMinutes = date.getUTCMinutes();
+          const utcSeconds = date.getUTCSeconds();
+
+          // 设置UTC时间
+          date.setUTCHours(12);
+          date.setUTCMinutes(0);
+          date.setUTCSeconds(0);
+          const setUtcString = date.toUTCString();
+
+          document.getElementById("javascriptDemoResult").innerHTML =
+            `当前日期: ${new Date().toLocaleDateString()}\n\n` + `toUTCString(): ${utcString}\n` + `toGMTString(): ${gmtString}\n\n` + `UTC时间组件:\n` + `小时: ${utcHours}, 分钟: ${utcMinutes}, 秒: ${utcSeconds}\n\n` + `设置UTC时间为12:00:00后:\n` + `${setUtcString}`;
+        } catch (e) {
+          document.getElementById("javascriptDemoResult").innerHTML = `<span class="error">错误: ${e.message}</span>`;
+        }
+      }
+    </script>
+  </body>
+</html>

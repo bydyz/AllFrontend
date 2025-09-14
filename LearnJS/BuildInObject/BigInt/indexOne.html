@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BigInt 数据类型详解</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
+        padding: 20px;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+      }
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+      }
+      .card-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 40px;
+      }
+      .card {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .card h2 {
+        color: #3498db;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+      .code {
+        background: #2d3436;
+        color: #f5f6fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 15px 0;
+        overflow-x: auto;
+        font-family: "Fira Code", monospace;
+        font-size: 0.9rem;
+      }
+      .interactive-demo {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 40px;
+      }
+      .input-group {
+        margin: 15px 0;
+      }
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #2c3e50;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+      button {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background 0.3s;
+        margin: 10px 5px 10px 0;
+      }
+      button:hover {
+        background: #2980b9;
+      }
+      .result {
+        margin-top: 20px;
+        padding: 20px;
+        background: #edf2f7;
+        border-radius: 5px;
+        font-family: "Fira Code", monospace;
+        white-space: pre-wrap;
+      }
+      .success {
+        color: #27ae60;
+      }
+      .error {
+        color: #e74c3c;
+      }
+      .highlight {
+        background: #fffacd;
+        padding: 2px 5px;
+        border-radius: 3px;
+      }
+      .info-box {
+        background: #e1f5fe;
+        border-left: 4px solid #03a9f4;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 0 5px 5px 0;
+      }
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: #7f8c8d;
+        padding: 20px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+      }
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      .comparison-table {
+        width: 100%;
+        margin: 20px 0;
+      }
+      .comparison-table th,
+      .comparison-table td {
+        padding: 12px;
+        text-align: center;
+        border: 1px solid #ddd;
+      }
+      .comparison-table th {
+        background-color: #3498db;
+        color: white;
+      }
+      .comparison-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>BigInt 数据类型详解</h1>
+        <p class="subtitle">JavaScript中的大整数类型及其应用</p>
+      </header>
+
+      <div class="card-container">
+        <div class="card">
+          <h2>什么是 BigInt？</h2>
+          <p>BigInt 是 JavaScript 中的一种内置对象，它提供了一种方法来表示大于 2^53 - 1 的整数。</p>
+          <p>JavaScript 的 Number 类型只能安全地表示 -2^53 + 1 到 2^53 - 1 之间的整数，任何超出此范围的整数值都会失去精度。</p>
+
+          <div class="code">
+            // Number类型的最大安全整数 console.log(Number.MAX_SAFE_INTEGER); <br/>// 输出: 9007199254740991 <br/>// 超过这个值的计算会失去精度 console.log(9007199254740991 + 1); <br/>// 输出: 9007199254740992 (正确) console.log(9007199254740991 + 2); <br/>// 输出: 9007199254740992 (错误，应该是9007199254740993)
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>创建 BigInt</h2>
+          <p>有两种方式创建 BigInt：</p>
+          <ol style="padding-left: 20px; margin: 15px 0">
+            <li>在整数字面量后面加 n</li>
+            <li>调用 BigInt() 函数</li>
+          </ol>
+
+          <div class="code">
+            // 方法1: 使用n后缀 <br/>const bigInt1 = 123456789012345678901234567890n; <br/>// 方法2: 使用BigInt()函数 <br/>const bigInt2 = BigInt("123456789012345678901234567890"); <br/>console.log(bigInt1); <br/>// 123456789012345678901234567890n <br/>console.log(bigInt2); <br/>// 123456789012345678901234567890n
+          </div>
+
+          <div class="info-box">
+            <p><strong>注意：</strong> BigInt 和 Number 不能混合运算，需要先进行类型转换。</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>BigInt 的应用场景</h2>
+          <p>BigInt 在以下场景中非常有用：</p>
+
+          <ul style="padding-left: 20px; margin: 15px 0">
+            <li>大整数计算（如加密算法）</li>
+            <li>高精度时间戳</li>
+            <li>大数据ID处理</li>
+            <li>科学计算和数值分析</li>
+            <li>金融计算（需要高精度）</li>
+          </ul>
+
+          <div class="code">
+            // 大整数计算示例 <br/>const largeNumber1 = 123456789012345678901234567890n; <br/>const largeNumber2 = 987654321098765432109876543210n; <br/>// 加法 <br/>const sum = largeNumber1 + largeNumber2; <br/>console.log(sum); <br/>// 1111111110111111111011111111100n <br/>// 乘法 <br/>const product = largeNumber1 * largeNumber2;
+            <br/>console.log(product); <br/>// 121932631137021795226185032733622923332237463801111263526900n
+          </div>
+        </div>
+      </div>
+
+      <div class="interactive-demo">
+        <h2>BigInt 与 Number 的对比</h2>
+
+        <table class="comparison-table">
+          <tr>
+            <th>特性</th>
+            <th>Number</th>
+            <th>BigInt</th>
+          </tr>
+          <tr>
+            <td>最大安全值</td>
+            <td>2^53 - 1 (约9千万亿)</td>
+            <td>理论上无限制 (受内存限制)</td>
+          </tr>
+          <tr>
+            <td>精度</td>
+            <td>浮点数，可能丢失精度</td>
+            <td>整数，精确表示</td>
+          </tr>
+          <tr>
+            <td>运算速度</td>
+            <td>快 (硬件加速)</td>
+            <td>较慢 (软件实现)</td>
+          </tr>
+          <tr>
+            <td>兼容性</td>
+            <td>所有浏览器</td>
+            <td>现代浏览器 (IE不支持)</td>
+          </tr>
+          <tr>
+            <td>使用场景</td>
+            <td>一般数值计算</td>
+            <td>大整数精确计算</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="interactive-demo">
+        <h2>BigInt 操作示例</h2>
+
+        <div class="input-group">
+          <label for="bigIntValue1">第一个 BigInt 值:</label>
+          <input type="text" id="bigIntValue1" value="12345678901234567890" placeholder="输入大整数" />
+        </div>
+
+        <div class="input-group">
+          <label for="bigIntValue2">第二个 BigInt 值:</label>
+          <input type="text" id="bigIntValue2" value="98765432109876543210" placeholder="输入大整数" />
+        </div>
+
+        <div class="input-group">
+          <label for="operation">选择操作:</label>
+          <select id="operation">
+            <option value="add">加法 (+)</option>
+            <option value="subtract">减法 (-)</option>
+            <option value="multiply">乘法 (*)</option>
+            <option value="divide">除法 (/)</option>
+            <option value="modulus">取余 (%)</option>
+            <option value="exponentiation">幂运算 (**)</option>
+          </select>
+        </div>
+
+        <button onclick="performOperation()">执行运算</button>
+        <button onclick="compareWithNumber()">与Number类型对比</button>
+
+        <div class="result" id="operationResult">等待操作...</div>
+      </div>
+
+      <div class="interactive-demo">
+        <h2>浏览器兼容性检查</h2>
+        <p>检查当前浏览器对BigInt的支持情况：</p>
+
+        <button onclick="checkCompatibility()">检查兼容性</button>
+
+        <div class="result" id="compatibilityResult">等待检查...</div>
+
+        <table>
+          <tr>
+            <th>特性</th>
+            <th>状态</th>
+          </tr>
+          <tr>
+            <td>BigInt 基本支持</td>
+            <td id="supportBasic">检查中...</td>
+          </tr>
+          <tr>
+            <td>BigInt 字面量语法 (123n)</td>
+            <td id="supportLiteral">检查中...</td>
+          </tr>
+          <tr>
+            <td>BigInt 函数</td>
+            <td id="supportFunction">检查中...</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <footer>
+      <p>© 2023 BigInt 数据类型详解 | JavaScript高级特性</p>
+    </footer>
+
+    <script>
+      // 执行BigInt运算
+      function performOperation() {
+        const value1 = document.getElementById("bigIntValue1").value;
+        const value2 = document.getElementById("bigIntValue2").value;
+        const operation = document.getElementById("operation").value;
+
+        if (!value1 || !value2) {
+          document.getElementById("operationResult").innerHTML = `<span class="error">请输入两个值</span>`;
+          return;
+        }
+
+        try {
+          // 创建BigInt
+          const bigInt1 = BigInt(value1);
+          const bigInt2 = BigInt(value2);
+          let result;
+          let operationSymbol;
+
+          // 执行运算
+          switch (operation) {
+            case "add":
+              result = bigInt1 + bigInt2;
+              operationSymbol = "+";
+              break;
+            case "subtract":
+              result = bigInt1 - bigInt2;
+              operationSymbol = "-";
+              break;
+            case "multiply":
+              result = bigInt1 * bigInt2;
+              operationSymbol = "*";
+              break;
+            case "divide":
+              result = bigInt1 / bigInt2;
+              operationSymbol = "/";
+              break;
+            case "modulus":
+              result = bigInt1 % bigInt2;
+              operationSymbol = "%";
+              break;
+            case "exponentiation":
+              result = bigInt1 ** bigInt2;
+              operationSymbol = "**";
+              break;
+          }
+
+          document.getElementById("operationResult").innerHTML = `运算: ${bigInt1} ${operationSymbol} ${bigInt2}\n` + `结果: ${result}\n\n` + `结果类型: ${typeof result}\n` + `第一个值类型: ${typeof bigInt1}\n` + `第二个值类型: ${typeof bigInt2}`;
+        } catch (e) {
+          document.getElementById("operationResult").innerHTML = `<span class="error">错误: ${e.message}</span>`;
+        }
+      }
+
+      // 与Number类型对比
+      function compareWithNumber() {
+        const value1 = document.getElementById("bigIntValue1").value;
+        const value2 = document.getElementById("bigIntValue2").value;
+
+        if (!value1 || !value2) {
+          document.getElementById("operationResult").innerHTML = `<span class="error">请输入两个值</span>`;
+          return;
+        }
+
+        try {
+          // 使用BigInt计算
+          const bigInt1 = BigInt(value1);
+          const bigInt2 = BigInt(value2);
+          const bigIntSum = bigInt1 + bigInt2;
+
+          // 使用Number计算
+          const number1 = Number(value1);
+          const number2 = Number(value2);
+          const numberSum = number1 + number2;
+
+          // 检查精度是否丢失
+          const precise = BigInt(numberSum) === bigIntSum;
+
+          document.getElementById("operationResult").innerHTML =
+            `BigInt 计算: ${bigInt1} + ${bigInt2} = ${bigIntSum}\n` +
+            `Number 计算: ${number1} + ${number2} = ${numberSum}\n\n` +
+            `BigInt 结果类型: ${typeof bigIntSum}\n` +
+            `Number 结果类型: ${typeof numberSum}\n` +
+            `结果是否一致: ${precise ? "是" : "否"}\n` +
+            `${precise ? "" : "注意: Number类型计算可能丢失精度!"}`;
+        } catch (e) {
+          document.getElementById("operationResult").innerHTML = `<span class="error">错误: ${e.message}</span>`;
+        }
+      }
+
+      // 检查浏览器兼容性
+      function checkCompatibility() {
+        let basicSupport = false;
+        let literalSupport = false;
+        let functionSupport = false;
+
+        try {
+          // 测试基本支持
+          if (typeof BigInt !== "undefined") {
+            basicSupport = true;
+
+            // 测试字面量语法
+            eval("const testBigInt = 123n;");
+            literalSupport = true;
+
+            // 测试函数
+            const testBigInt = BigInt(123);
+            functionSupport = true;
+          }
+        } catch (e) {
+          // 如果出现错误，说明不支持
+        }
+
+        document.getElementById("supportBasic").innerHTML = basicSupport ? '<span class="success">支持</span>' : '<span class="error">不支持</span>';
+
+        document.getElementById("supportLiteral").innerHTML = literalSupport ? '<span class="success">支持</span>' : '<span class="error">不支持</span>';
+
+        document.getElementById("supportFunction").innerHTML = functionSupport ? '<span class="success">支持</span>' : '<span class="error">不支持</span>';
+
+        document.getElementById("compatibilityResult").innerHTML =
+          `当前浏览器对BigInt的支持情况:\n` + `基本支持: ${basicSupport ? "支持" : "不支持"}\n` + `字面量语法: ${literalSupport ? "支持" : "不支持"}\n` + `BigInt函数: ${functionSupport ? "支持" : "不支持"}\n\n` + `注意：BigInt是相对较新的特性，旧版浏览器可能不支持。`;
+      }
+
+      // 初始加载时检查兼容性
+      window.onload = checkCompatibility;
+    </script>
+  </body>
+</html>

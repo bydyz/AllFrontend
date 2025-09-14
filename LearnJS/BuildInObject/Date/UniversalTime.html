@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JavaScript 世界时(UTC) 详解</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
+        padding: 20px;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+      }
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+      }
+      .card-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 40px;
+      }
+      .card {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .card h2 {
+        color: #3498db;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+      .code {
+        background: #2d3436;
+        color: #f5f6fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 15px 0;
+        overflow-x: auto;
+        font-family: "Fira Code", monospace;
+        font-size: 0.9rem;
+      }
+      .interactive-demo {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 40px;
+      }
+      .input-group {
+        margin: 15px 0;
+      }
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #2c3e50;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+      button {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background 0.3s;
+        margin: 10px 5px 10px 0;
+      }
+      button:hover {
+        background: #2980b9;
+      }
+      .result {
+        margin-top: 20px;
+        padding: 20px;
+        background: #edf2f7;
+        border-radius: 5px;
+        font-family: "Fira Code", monospace;
+        white-space: pre-wrap;
+      }
+      .success {
+        color: #27ae60;
+      }
+      .error {
+        color: #e74c3c;
+      }
+      .highlight {
+        background: #fffacd;
+        padding: 2px 5px;
+        border-radius: 3px;
+      }
+      .info-box {
+        background: #e1f5fe;
+        border-left: 4px solid #03a9f4;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 0 5px 5px 0;
+      }
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: #7f8c8d;
+        padding: 20px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+      }
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      .comparison-table {
+        width: 100%;
+        margin: 20px 0;
+      }
+      .comparison-table th,
+      .comparison-table td {
+        padding: 12px;
+        text-align: center;
+        border: 1px solid #ddd;
+      }
+      .comparison-table th {
+        background-color: #3498db;
+        color: white;
+      }
+      .comparison-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+      .time-display {
+        font-size: 1.5rem;
+        font-weight: bold;
+        text-align: center;
+        margin: 20px 0;
+        padding: 15px;
+        background: #2d3436;
+        color: #fff;
+        border-radius: 5px;
+        font-family: "Fira Code", monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>JavaScript 世界时(UTC) 详解</h1>
+        <p class="subtitle">协调世界时在JavaScript中的应用与操作</p>
+      </header>
+
+      <div class="card-container">
+        <div class="card">
+          <h2>什么是世界时(UTC)？</h2>
+          <p>UTC（Coordinated Universal Time，协调世界时）是一种以原子时秒长为基础，在时刻上尽量接近于世界时的时间计量系统。</p>
+          <p>UTC是世界上调节时钟和时间的主要标准，它比GMT（格林尼治标准时间）更为精确，是JavaScript中处理时间的标准参考。</p>
+
+          <div class="code">// JavaScript Date对象基于UTC时间 <br/>const now = new Date(); <br/>console.log(now.toString()); <br/>// 本地时间 <br/>console.log(now.toUTCString()); <br/>// UTC时间</div>
+        </div>
+
+        <div class="card">
+          <h2>UTC与本地时间的区别</h2>
+          <p>UTC是全球统一的时间标准，而本地时间会根据时区进行调整。</p>
+
+          <div class="code">
+            const date = new Date(); <br/>// 获取UTC时间组件 const utcHours = date.getUTCHours(); <br/>const utcMinutes = date.getUTCMinutes(); <br/>// 获取本地时间组件 localHours = date.getHours(); <br/>localMinutes = date.getMinutes(); <br/>console.log(`UTC时间: ${utcHours}:${utcMinutes}`); <br/>console.log(`本地时间:
+            ${localHours}:${localMinutes}`);
+          </div>
+
+          <div class="info-box">
+            <p><strong>注意：</strong> JavaScript的Date对象在内部以UTC形式存储时间戳，但在显示时会转换为本地时间。</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>UTC的应用场景</h2>
+          <p>UTC在以下场景中非常有用：</p>
+
+          <ul style="padding-left: 20px; margin: 15px 0">
+            <li>跨时区的应用程序</li>
+            <li>日志记录和时间戳</li>
+            <li>国际化的日期时间显示</li>
+            <li>服务器和客户端时间同步</li>
+            <li>科学计算和数据分析</li>
+          </ul>
+
+          <div class="code">
+            // 在跨时区应用中使用UTC function formatUTCDate(date) { return date.getUTCFullYear() + '-' + (date.getUTCMonth() + 1).toString().padStart(2, '0') + '-' + date.getUTCDate().toString().padStart(2, '0'); } const utcDateStr = formatUTCDate(new Date()); console.log(utcDateStr); //
+            "2023-10-05" (UTC日期)
+          </div>
+        </div>
+      </div>
+
+      <div class="interactive-demo">
+        <h2>UTC与本地时间对比</h2>
+
+        <div class="time-display" id="currentLocalTime">本地时间: 加载中...</div>
+
+        <div class="time-display" id="currentUTCTime">UTC时间: 加载中...</div>
+
+        <div class="input-group">
+          <label for="dateInput">选择一个日期时间:</label>
+          <input type="datetime-local" id="dateInput" value="" />
+        </div>
+
+        <button onclick="updateTime()">更新时间显示</button>
+        <button onclick="compareTimes()">对比UTC与本地时间</button>
+
+        <div class="result" id="timeComparisonResult">时间对比结果将显示在这里...</div>
+      </div>
+
+      <div class="interactive-demo">
+        <h2>UTC方法示例</h2>
+
+        <table class="comparison-table">
+          <tr>
+            <th>方法</th>
+            <th>描述</th>
+            <th>示例</th>
+          </tr>
+          <tr>
+            <td>getUTCFullYear()</td>
+            <td>返回UTC年份</td>
+            <td id="utcYear">-</td>
+          </tr>
+          <tr>
+            <td>getUTCMonth()</td>
+            <td>返回UTC月份 (0-11)</td>
+            <td id="utcMonth">-</td>
+          </tr>
+          <tr>
+            <td>getUTCDate()</td>
+            <td>返回UTC日期 (1-31)</td>
+            <td id="utcDate">-</td>
+          </tr>
+          <tr>
+            <td>getUTCHours()</td>
+            <td>返回UTC小时 (0-23)</td>
+            <td id="utcHours">-</td>
+          </tr>
+          <tr>
+            <td>getUTCMinutes()</td>
+            <td>返回UTC分钟 (0-59)</td>
+            <td id="utcMinutes">-</td>
+          </tr>
+          <tr>
+            <td>getUTCSeconds()</td>
+            <td>返回UTC秒数 (0-59)</td>
+            <td id="utcSeconds">-</td>
+          </tr>
+        </table>
+
+        <button onclick="updateUTCMethods()">更新UTC方法示例</button>
+      </div>
+
+      <div class="interactive-demo">
+        <h2>实际应用示例</h2>
+
+        <div class="input-group">
+          <label for="unixTimestamp">Unix时间戳 (毫秒):</label>
+          <input type="text" id="unixTimestamp" value="" placeholder="输入Unix时间戳" />
+        </div>
+
+        <button onclick="convertTimestamp()">转换为UTC时间</button>
+
+        <div class="result" id="conversionResult">转换结果将显示在这里...</div>
+
+        <div class="code">// 将Unix时间戳转换为UTC日期字符串 <br/>function timestampToUTCString(timestamp) {<br/>&emsp; const date = new Date(timestamp);<br/>&emsp; return date.toUTCString(); <br/>} <br/>// 示例: 将当前时间戳转换为UTC字符串 <br/>const nowTimestamp = Date.now(); <br/>console.log(timestampToUTCString(nowTimestamp));</div>
+      </div>
+    </div>
+
+    <footer>
+      <p>© 2023 JavaScript UTC 详解 | 前端开发学习资源</p>
+    </footer>
+
+    <script>
+      // 初始化日期时间输入框为当前时间
+      window.onload = function () {
+        const now = new Date();
+        const localDateTime = now.toISOString().slice(0, 16);
+        document.getElementById("dateInput").value = localDateTime;
+
+        updateTime();
+        updateUTCMethods();
+
+        // 每秒更新一次时间显示
+        setInterval(updateTime, 1000);
+      };
+
+      // 更新时间显示
+      function updateTime() {
+        const now = new Date();
+
+        // 更新本地时间显示
+        document.getElementById("currentLocalTime").textContent = `本地时间: ${now.toLocaleString()}`;
+
+        // 更新UTC时间显示
+        document.getElementById("currentUTCTime").textContent = `UTC时间: ${now.toUTCString()}`;
+      }
+
+      // 对比UTC与本地时间
+      function compareTimes() {
+        const dateInput = document.getElementById("dateInput").value;
+
+        if (!dateInput) {
+          document.getElementById("timeComparisonResult").innerHTML = `<span class="error">请选择日期时间</span>`;
+          return;
+        }
+
+        try {
+          // 创建日期对象（本地时间）
+          const localDate = new Date(dateInput);
+
+          // 获取UTC时间组件
+          const utcHours = localDate.getUTCHours();
+          const utcMinutes = localDate.getUTCMinutes();
+
+          // 获取本地时间组件
+          const localHours = localDate.getHours();
+          const localMinutes = localDate.getMinutes();
+
+          // 计算时区偏移（分钟）
+          const timezoneOffset = localDate.getTimezoneOffset();
+          const timezoneHours = Math.abs(Math.floor(timezoneOffset / 60));
+          const timezoneMinutes = Math.abs(timezoneOffset % 60);
+          const timezoneSign = timezoneOffset > 0 ? "-" : "+";
+
+          document.getElementById("timeComparisonResult").innerHTML =
+            `输入的本地时间: ${localDate.toLocaleString()}\n` +
+            `对应的UTC时间: ${localDate.toUTCString()}\n\n` +
+            `时间组件对比:\n` +
+            `本地: ${localHours.toString().padStart(2, "0")}:${localMinutes.toString().padStart(2, "0")}\n` +
+            `UTC: ${utcHours.toString().padStart(2, "0")}:${utcMinutes.toString().padStart(2, "0")}\n\n` +
+            `时区偏移: UTC${timezoneSign}${timezoneHours}:${timezoneMinutes.toString().padStart(2, "0")}`;
+        } catch (e) {
+          document.getElementById("timeComparisonResult").innerHTML = `<span class="error">错误: ${e.message}</span>`;
+        }
+      }
+
+      // 更新UTC方法示例
+      function updateUTCMethods() {
+        const now = new Date();
+
+        document.getElementById("utcYear").textContent = now.getUTCFullYear();
+        document.getElementById("utcMonth").textContent = now.getUTCMonth();
+        document.getElementById("utcDate").textContent = now.getUTCDate();
+        document.getElementById("utcHours").textContent = now.getUTCHours();
+        document.getElementById("utcMinutes").textContent = now.getUTCMinutes();
+        document.getElementById("utcSeconds").textContent = now.getUTCSeconds();
+      }
+
+      // 转换时间戳
+      function convertTimestamp() {
+        const timestampStr = document.getElementById("unixTimestamp").value;
+
+        if (!timestampStr) {
+          document.getElementById("conversionResult").innerHTML = `<span class="error">请输入时间戳</span>`;
+          return;
+        }
+
+        try {
+          const timestamp = parseInt(timestampStr);
+
+          if (isNaN(timestamp)) {
+            document.getElementById("conversionResult").innerHTML = `<span class="error">请输入有效的时间戳</span>`;
+            return;
+          }
+
+          const date = new Date(timestamp);
+
+          document.getElementById("conversionResult").innerHTML = `时间戳: ${timestamp}\n` + `UTC时间: ${date.toUTCString()}\n` + `本地时间: ${date.toLocaleString()}\n\n` + `ISO格式: ${date.toISOString()}`;
+        } catch (e) {
+          document.getElementById("conversionResult").innerHTML = `<span class="error">错误: ${e.message}</span>`;
+        }
+      }
+    </script>
+  </body>
+</html>

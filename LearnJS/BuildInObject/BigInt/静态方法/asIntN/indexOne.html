@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BigInt.asIntN() 方法详解</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        color: #2c3e50;
+      }
+
+      .description {
+        font-size: 1.2rem;
+        color: #7f8c8d;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      section {
+        background-color: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+
+      h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+      }
+
+      h3 {
+        color: #3498db;
+        margin: 20px 0 15px;
+      }
+
+      p {
+        margin-bottom: 15px;
+      }
+
+      .code-example {
+        background-color: #2d3436;
+        color: #f5f7fa;
+        padding: 15px;
+        border-radius: 5px;
+        font-family: "Fira Code", monospace;
+        margin: 15px 0;
+        overflow-x: auto;
+      }
+
+      .js-keyword {
+        color: #74b9ff;
+      }
+
+      .js-function {
+        color: #55efc4;
+      }
+
+      .js-number {
+        color: #ffeaa7;
+      }
+
+      .js-comment {
+        color: #a29bfe;
+      }
+
+      .note {
+        background-color: #e3f2fd;
+        border-left: 4px solid #2196f3;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 0 5px 5px 0;
+      }
+
+      .demo-area {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 5px;
+        margin: 20px 0;
+        border: 1px solid #e9ecef;
+      }
+
+      .demo-result {
+        background-color: #2d3436;
+        color: #f5f7fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 15px 0;
+        font-family: "Fira Code", monospace;
+      }
+
+      .interactive-demo {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .input-group {
+        margin-bottom: 15px;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+
+      .input-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-family: "Fira Code", monospace;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background-color 0.3s ease;
+      }
+
+      .btn:hover {
+        background-color: #2980b9;
+      }
+
+      .bit-visualization {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin: 15px 0;
+      }
+
+      .bit {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #3498db;
+        color: white;
+        font-weight: bold;
+        border-radius: 4px;
+      }
+
+      .bit-sign {
+        background-color: #e74c3c;
+      }
+
+      .explanation-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+      }
+
+      .explanation-table th,
+      .explanation-table td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+      }
+
+      .explanation-table th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+      }
+
+      .explanation-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      @media (max-width: 768px) {
+        .interactive-demo {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>BigInt.asIntN() 方法详解</h1>
+        <p class="description">了解如何使用BigInt.asIntN()方法将BigInt值转换为指定位宽的有符号整数</p>
+      </header>
+
+      <section>
+        <h2>BigInt.asIntN() 概述</h2>
+        <p><code>BigInt.asIntN()</code> 静态方法将一个BigInt值转换为一个指定的有符号位宽的整数，即先对2^width取模，然后返回有符号整数。</p>
+
+        <div class="code-example"><span class="js-keyword">const</span> result = <span class="js-function">BigInt.asIntN</span>(width, bigint);</div>
+
+        <div class="note">
+          <p><strong>语法：</strong>BigInt.asIntN(width, bigint)</p>
+          <p><strong>参数：</strong></p>
+          <ul style="margin: 0 0 16px 20px;">
+            <li><code>width</code>：可存储整数的位数（0到2^53-1之间）</li>
+            <li><code>bigint</code>：要裁剪为指定位宽的BigInt值</li>
+          </ul>
+          <p><strong>返回值：</strong>对2^width取模后作为有符号整数的BigInt值</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>工作原理</h2>
+        <p><code>BigInt.asIntN()</code> 方法的工作原理：</p>
+
+        <ol style="margin-left: 30px;">
+          <li>计算模数：<code>mod = bigint % (2 ** width)</code></li>
+          <li>如果 <code>mod >= 2 ** (width - 1)</code>，则返回 <code>mod - (2 ** width)</code>（负数）</li>
+          <li>否则返回 <code>mod</code>（正数）</li>
+        </ol>
+
+        <div class="demo-area">
+          <h3>示例：8位有符号整数</h3>
+          <p>8位有符号整数的范围是 -128 到 127：</p>
+
+          <div class="code-example">
+            <span class="js-comment">// 8位有符号整数范围：-128 到 127</span><br />
+            <span class="js-keyword">const</span> a = <span class="js-function">BigInt.asIntN</span>(<span class="js-number">8</span>, <span class="js-number">127n</span>); <span class="js-comment">// 127n</span><br />
+            <span class="js-keyword">const</span> b = <span class="js-function">BigInt.asIntN</span>(<span class="js-number">8</span>, <span class="js-number">128n</span>); <span class="js-comment">// -128n</span><br />
+            <span class="js-keyword">const</span> c = <span class="js-function">BigInt.asIntN</span>(<span class="js-number">8</span>, <span class="js-number">129n</span>); <span class="js-comment">// -127n</span><br />
+            <span class="js-keyword">const</span> d = <span class="js-function">BigInt.asIntN</span>(<span class="js-number">8</span>, <span class="js-number">-129n</span>); <span class="js-comment">// 127n</span>
+          </div>
+
+          <div class="demo-result" id="demo1">
+            <!-- 将由JavaScript填充 -->
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>有符号整数表示法</h2>
+        <p>有符号整数使用二进制补码表示法，最高位是符号位：</p>
+
+        <table class="explanation-table">
+          <thead>
+            <tr>
+              <th>位宽</th>
+              <th>最小值</th>
+              <th>最大值</th>
+              <th>范围</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>8位</td>
+              <td>-128</td>
+              <td>127</td>
+              <td>-2<sup>7</sup> 到 2<sup>7</sup>-1</td>
+            </tr>
+            <tr>
+              <td>16位</td>
+              <td>-32,768</td>
+              <td>32,767</td>
+              <td>-2<sup>15</sup> 到 2<sup>15</sup>-1</td>
+            </tr>
+            <tr>
+              <td>32位</td>
+              <td>-2,147,483,648</td>
+              <td>2,147,483,647</td>
+              <td>-2<sup>31</sup> 到 2<sup>31</sup>-1</td>
+            </tr>
+            <tr>
+              <td>64位</td>
+              <td>-9,223,372,036,854,775,808</td>
+              <td>9,223,372,036,854,775,807</td>
+              <td>-2<sup>63</sup> 到 2<sup>63</sup>-1</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="demo-area">
+          <h3>二进制补码示例（4位）</h3>
+          <div class="bit-visualization">
+            <div class="bit bit-sign">0</div>
+            <div class="bit">1</div>
+            <div class="bit">1</div>
+            <div class="bit">1</div>
+          </div>
+          <p>
+            符号位为0，表示正数：<code>0111<sub>2</sub> = 7<sub>10</sub></code>
+          </p>
+
+          <div class="bit-visualization">
+            <div class="bit bit-sign">1</div>
+            <div class="bit">0</div>
+            <div class="bit">0</div>
+            <div class="bit">0</div>
+          </div>
+          <p>
+            符号位为1，表示负数：<code>1000<sub>2</sub> = -8<sub>10</sub></code>
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <h2>实际应用示例</h2>
+
+        <div class="demo-area">
+          <h3>模拟低级编程中的整数行为</h3>
+          <div class="code-example">
+            <span class="js-comment">// 模拟16位有符号整数（常用于低级编程）</span><br />
+            <span class="js-keyword">const</span> max16 = <span class="js-function">BigInt.asIntN</span>(<span class="js-number">16</span>, <span class="js-number">32767n</span>); <span class="js-comment">// 32767n</span><br />
+            <span class="js-keyword">const</span> overflow16 = <span class="js-function">BigInt.asIntN</span>(<span class="js-number">16</span>, <span class="js-number">32768n</span>); <span class="js-comment">// -32768n</span><br />
+            <br />
+            <span class="js-comment">// 模拟32位有符号整数</span><br />
+            <span class="js-keyword">const</span> max32 = <span class="js-function">BigInt.asIntN</span>(<span class="js-number">32</span>, <span class="js-number">2147483647n</span>); <span class="js-comment">// 2147483647n</span><br />
+            <span class="js-keyword">const</span> overflow32 = <span class="js-function">BigInt.asIntN</span>(<span class="js-number">32</span>, <span class="js-number">2147483648n</span>); <span class="js-comment">// -2147483648n</span>
+          </div>
+
+          <div class="demo-result" id="demo2">
+            <!-- 将由JavaScript填充 -->
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h3>处理大数溢出</h3>
+          <div class="code-example">
+            <span class="js-comment">// 处理可能溢出的大数计算</span><br />
+            <span class="js-keyword">function</span> <span class="js-function">safe32BitMultiply</span>(a, b) {<br />
+            &nbsp;&nbsp;<span class="js-keyword">const</span> result = <span class="js-function">BigInt.asIntN</span>(<span class="js-number">32</span>, a * b);<br />
+            &nbsp;&nbsp;<span class="js-keyword">return</span> result;<br />
+            }<br />
+            <br />
+            <span class="js-keyword">const</span> bigProduct = <span class="js-function">safe32BitMultiply</span>(<span class="js-number">1000000n</span>, <span class="js-number">1000000n</span>);<br />
+            <span class="js-comment">// 结果会被限制在32位有符号整数范围内</span>
+          </div>
+
+          <div class="demo-result" id="demo3">
+            <!-- 将由JavaScript填充 -->
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>交互式演示</h2>
+
+        <div class="interactive-demo">
+          <div>
+            <h3>输入参数</h3>
+            <div class="input-group">
+              <label for="width">位宽 (width):</label>
+              <input type="number" id="width" min="1" max="64" value="8" />
+            </div>
+
+            <div class="input-group">
+              <label for="bigint">BigInt值 (bigint):</label>
+              <input type="text" id="bigint" value="255" />
+            </div>
+
+            <button class="btn" id="calculate-btn">计算</button>
+          </div>
+
+          <div>
+            <h3>计算结果</h3>
+            <div class="demo-result" id="interactive-result">结果将显示在这里</div>
+
+            <h4>解释</h4>
+            <div id="explanation">解释将显示在这里</div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>与 BigInt.asUintN() 的比较</h2>
+        <p><code>BigInt.asIntN()</code> 返回有符号整数，而 <code>BigInt.asUintN()</code> 返回无符号整数：</p>
+
+        <div class="code-example">
+          <span class="js-comment">// 8位有符号整数（范围：-128 到 127）</span><br />
+          <span class="js-keyword">const</span> signed = <span class="js-function">BigInt.asIntN</span>(<span class="js-number">8</span>, <span class="js-number">200n</span>); <span class="js-comment">// -56n</span><br />
+          <br />
+          <span class="js-comment">// 8位无符号整数（范围：0 到 255）</span><br />
+          <span class="js-keyword">const</span> unsigned = <span class="js-function">BigInt.asUintN</span>(<span class="js-number">8</span>, <span class="js-number">200n</span>); <span class="js-comment">// 200n</span>
+        </div>
+
+        <div class="demo-result" id="demo4">
+          <!-- 将由JavaScript填充 -->
+        </div>
+
+        <div class="note">
+          <p><strong>注意：</strong>选择使用有符号还是无符号整数取决于您的应用场景。有符号整数可以表示负数，但正数范围较小；无符号整数不能表示负数，但正数范围较大。</p>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      // 示例1：8位有符号整数
+      const demo1 = document.getElementById("demo1");
+      const a = BigInt.asIntN(8, 127n);
+      const b = BigInt.asIntN(8, 128n);
+      const c = BigInt.asIntN(8, 129n);
+      const d = BigInt.asIntN(8, -129n);
+
+      demo1.innerHTML = `
+            BigInt.asIntN(8, 127n) = ${a}<br>
+            BigInt.asIntN(8, 128n) = ${b}<br>
+            BigInt.asIntN(8, 129n) = ${c}<br>
+            BigInt.asIntN(8, -129n) = ${d}
+        `;
+
+      // 示例2：模拟低级编程
+      const demo2 = document.getElementById("demo2");
+      const max16 = BigInt.asIntN(16, 32767n);
+      const overflow16 = BigInt.asIntN(16, 32768n);
+      const max32 = BigInt.asIntN(32, 2147483647n);
+      const overflow32 = BigInt.asIntN(32, 2147483648n);
+
+      demo2.innerHTML = `
+            16位有符号整数最大值: ${max16}<br>
+            16位有符号整数溢出: ${overflow16}<br>
+            32位有符号整数最大值: ${max32}<br>
+            32位有符号整数溢出: ${overflow32}
+        `;
+
+      // 示例3：处理大数溢出
+      const demo3 = document.getElementById("demo3");
+      function safe32BitMultiply(a, b) {
+        const result = BigInt.asIntN(32, a * b);
+        return result;
+      }
+
+      const bigProduct = safe32BitMultiply(1000000n, 1000000n);
+      demo3.innerHTML = `
+            safe32BitMultiply(1000000n, 1000000n) = ${bigProduct}
+        `;
+
+      // 示例4：与asUintN比较
+      const demo4 = document.getElementById("demo4");
+      const signed = BigInt.asIntN(8, 200n);
+      const unsigned = BigInt.asUintN(8, 200n);
+
+      demo4.innerHTML = `
+            BigInt.asIntN(8, 200n) = ${signed} (有符号)<br>
+            BigInt.asUintN(8, 200n) = ${unsigned} (无符号)
+        `;
+
+      // 交互式演示
+      const calculateBtn = document.getElementById("calculate-btn");
+      const widthInput = document.getElementById("width");
+      const bigintInput = document.getElementById("bigint");
+      const resultDiv = document.getElementById("interactive-result");
+      const explanationDiv = document.getElementById("explanation");
+
+      calculateBtn.addEventListener("click", () => {
+        try {
+          const width = parseInt(widthInput.value);
+          const bigintValue = BigInt(bigintInput.value);
+
+          if (width < 1 || width > 64) {
+            throw new Error("位宽必须在1到64之间");
+          }
+
+          const result = BigInt.asIntN(width, bigintValue);
+          const modulus = 2n ** BigInt(width);
+          const modResult = bigintValue % modulus;
+
+          // 计算有符号范围
+          const minValue = -(2n ** BigInt(width - 1));
+          const maxValue = 2n ** BigInt(width - 1) - 1n;
+
+          resultDiv.innerHTML = `
+                    BigInt.asIntN(${width}, ${bigintValue}n) = ${result}
+                `;
+
+          explanationDiv.innerHTML = `
+                    <p>计算过程：</p>
+                    <ol>
+                        <li>计算模数：${bigintValue} % 2<sup>${width}</sup> = ${bigintValue} % ${modulus} = ${modResult}</li>
+                        <li>${width}位有符号整数范围：${minValue} 到 ${maxValue}</li>
+                        <li>${modResult} ${modResult >= 2n ** BigInt(width - 1) ? "≥" : "<"} 2<sup>${width - 1}</sup> (${2n ** BigInt(width - 1)})</li>
+                        <li>因此返回：${result}</li>
+                    </ol>
+                `;
+        } catch (error) {
+          resultDiv.innerHTML = `错误: ${error.message}`;
+          explanationDiv.innerHTML = "";
+        }
+      });
+
+      // 初始计算
+      calculateBtn.click();
+    </script>
+  </body>
+</html>
