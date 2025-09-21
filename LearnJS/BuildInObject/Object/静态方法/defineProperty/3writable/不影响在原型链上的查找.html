@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>writable: false 与原型链属性查找</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        color: #2c3e50;
+      }
+
+      .description {
+        font-size: 1.2rem;
+        color: #7f8c8d;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      section {
+        background-color: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+
+      h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+      }
+
+      h3 {
+        color: #3498db;
+        margin: 20px 0 15px;
+      }
+
+      p {
+        margin-bottom: 15px;
+      }
+
+      .code-example {
+        background-color: #2d3436;
+        color: #f5f7fa;
+        padding: 15px;
+        border-radius: 5px;
+        font-family: "Fira Code", monospace;
+        margin: 15px 0;
+        overflow-x: auto;
+      }
+
+      .js-keyword {
+        color: #74b9ff;
+      }
+
+      .js-function {
+        color: #55efc4;
+      }
+
+      .js-number {
+        color: #ffeaa7;
+      }
+
+      .js-string {
+        color: #fd79a8;
+      }
+
+      .js-comment {
+        color: #a29bfe;
+      }
+
+      .note {
+        background-color: #e3f2fd;
+        border-left: 4px solid #2196f3;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 0 5px 5px 0;
+      }
+
+      .warning {
+        background-color: #ffebee;
+        border-left: 4px solid #f44336;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 0 5px 5px 0;
+      }
+
+      .demo-area {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 5px;
+        margin: 20px 0;
+        border: 1px solid #e9ecef;
+      }
+
+      .demo-result {
+        background-color: #2d3436;
+        color: #f5f7fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 15px 0;
+        font-family: "Fira Code", monospace;
+      }
+
+      .comparison {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .comparison-box {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        border: 1px solid #e9ecef;
+      }
+
+      .property-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+      }
+
+      .property-table th,
+      .property-table td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+      }
+
+      .property-table th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+      }
+
+      .property-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      .visual-explanation {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin: 20px 0;
+      }
+
+      .visual-step {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        border: 1px solid #e9ecef;
+      }
+
+      .step-number {
+        background-color: #3498db;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        font-weight: bold;
+      }
+
+      .step-description {
+        flex: 1;
+      }
+
+      .property-highlight {
+        background-color: #ffeaa7;
+        color: #2d3436;
+        padding: 2px 5px;
+        border-radius: 3px;
+        font-weight: bold;
+      }
+
+      @media (max-width: 768px) {
+        .comparison {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>writable: false 与原型链属性查找</h1>
+        <p class="description">详解 writable: false 如何影响属性赋值但不影响原型链上的属性查找</p>
+      </header>
+
+      <section>
+        <h2>属性描述符与 writable 属性</h2>
+        <p>在JavaScript中，每个属性都有一个属性描述符，用于定义属性的特性。其中<code>writable</code>属性决定是否可以修改属性的值。</p>
+
+        <div class="note">
+          <p><strong>属性描述符包含以下属性：</strong></p>
+          <ul style="margin-left: 40px;">
+            <li><code>value</code>：属性的值</li>
+            <li><code>writable</code>：是否可写（默认为<code>false</code>）</li>
+            <li><code>enumerable</code>：是否可枚举</li>
+            <li><code>configurable</code>：是否可配置</li>
+          </ul>
+        </div>
+
+        <div class="code-example">
+          <span class="js-comment">// 使用 Object.defineProperty 定义属性</span><br />
+          <span class="js-keyword">const</span> obj = {};<br />
+          <span class="js-function">Object.defineProperty</span>(obj, <span class="js-string">'readOnlyProp'</span>, {<br />
+          &nbsp;&nbsp;<span class="js-keyword">value</span>: <span class="js-string">'初始值'</span>,<br />
+          &nbsp;&nbsp;<span class="js-keyword">writable</span>: <span class="js-keyword">false</span>, <span class="js-comment">// 不可写</span><br />
+          &nbsp;&nbsp;<span class="js-keyword">enumerable</span>: <span class="js-keyword">true</span>,<br />
+          &nbsp;&nbsp;<span class="js-keyword">configurable</span>: <span class="js-keyword">false</span><br />
+          });<br />
+          <br />
+          <span class="js-comment">// 尝试修改只读属性</span><br />
+          obj.readOnlyProp = <span class="js-string">'新值'</span>; <span class="js-comment">// 静默失败或TypeError（严格模式）</span><br />
+          <span class="js-function">console.log</span>(obj.readOnlyProp); <span class="js-comment">// '初始值'</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>writable: false 的含义</h2>
+
+        <div class="comparison">
+          <div class="comparison-box">
+            <h3>writable: true</h3>
+            <p>属性值可以被修改</p>
+            <div class="code-example">
+              <span class="js-keyword">const</span> obj = {};<br />
+              <span class="js-function">Object.defineProperty</span>(obj, <span class="js-string">'prop'</span>, {<br />
+              &nbsp;&nbsp;<span class="js-keyword">value</span>: <span class="js-string">'可修改'</span>,<br />
+              &nbsp;&nbsp;<span class="js-keyword">writable</span>: <span class="js-keyword">true</span><br />
+              });<br />
+              <br />
+              obj.prop = <span class="js-string">'新值'</span>; <span class="js-comment">// 成功</span><br />
+              <span class="js-function">console.log</span>(obj.prop); <span class="js-comment">// '新值'</span>
+            </div>
+          </div>
+
+          <div class="comparison-box">
+            <h3>writable: false</h3>
+            <p>属性值不能被修改</p>
+            <div class="code-example">
+              <span class="js-keyword">const</span> obj = {};<br />
+              <span class="js-function">Object.defineProperty</span>(obj, <span class="js-string">'prop'</span>, {<br />
+              &nbsp;&nbsp;<span class="js-keyword">value</span>: <span class="js-string">'不可修改'</span>,<br />
+              &nbsp;&nbsp;<span class="js-keyword">writable</span>: <span class="js-keyword">false</span><br />
+              });<br />
+              <br />
+              obj.prop = <span class="js-string">'新值'</span>; <span class="js-comment">// 静默失败</span><br />
+              <span class="js-function">console.log</span>(obj.prop); <span class="js-comment">// '不可修改'</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="warning">
+          <p><strong>注意：</strong>在严格模式下，尝试修改<code>writable: false</code>的属性会抛出<code>TypeError</code>。</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>原型链属性查找机制</h2>
+        <p>JavaScript对象有一个指向另一个对象（原型）的内部链接。当访问对象属性时，如果对象自身没有该属性，JavaScript会沿着原型链向上查找。</p>
+
+        <div class="visual-explanation">
+          <div class="visual-step">
+            <div class="step-number">1</div>
+            <div class="step-description">在对象自身查找属性</div>
+          </div>
+
+          <div class="visual-step">
+            <div class="step-number">2</div>
+            <div class="step-description">如果对象自身没有该属性，查找其原型</div>
+          </div>
+
+          <div class="visual-step">
+            <div class="step-number">3</div>
+            <div class="step-description">如果原型上也没有，继续查找原型的原型</div>
+          </div>
+
+          <div class="visual-step">
+            <div class="step-number">4</div>
+            <div class="step-description">直到找到属性或到达原型链末端（null）</div>
+          </div>
+        </div>
+
+        <div class="code-example">
+          <span class="js-comment">// 原型链示例</span><br />
+          <span class="js-keyword">const</span> parent = {<br />
+          &nbsp;&nbsp;<span class="js-keyword">parentProp</span>: <span class="js-string">'父属性'</span><br />
+          };<br />
+          <br />
+          <span class="js-keyword">const</span> child = <span class="js-function">Object.create</span>(parent);<br />
+          child.childProp = <span class="js-string">'子属性'</span>;<br />
+          <br />
+          <span class="js-comment">// 属性查找</span><br />
+          <span class="js-function">console.log</span>(child.childProp); <span class="js-comment">// '子属性'（自身属性）</span><br />
+          <span class="js-function">console.log</span>(child.parentProp); <span class="js-comment">// '父属性'（原型链上的属性）</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>writable: false 不影响原型链属性查找</h2>
+        <p>关键点：<code>writable: false</code>只影响属性赋值操作，不影响属性查找过程。</p>
+
+        <div class="demo-area">
+          <h3>示例：原型上的只读属性</h3>
+          <div class="code-example">
+            <span class="js-comment">// 创建原型对象，包含一个只读属性</span><br />
+            <span class="js-keyword">const</span> prototypeObj = {};<br />
+            <span class="js-function">Object.defineProperty</span>(prototypeObj, <span class="js-string">'readOnly'</span>, {<br />
+            &nbsp;&nbsp;<span class="js-keyword">value</span>: <span class="js-string">'原型上的只读值'</span>,<br />
+            &nbsp;&nbsp;<span class="js-keyword">writable</span>: <span class="js-keyword">false</span>,<br />
+            &nbsp;&nbsp;<span class="js-keyword">enumerable</span>: <span class="js-keyword">true</span><br />
+            });<br />
+            <br />
+            <span class="js-comment">// 创建子对象，继承自原型</span><br />
+            <span class="js-keyword">const</span> childObj = <span class="js-function">Object.create</span>(prototypeObj);<br />
+            <br />
+            <span class="js-comment">// 1. 属性查找 - 可以正常访问原型上的只读属性</span><br />
+            <span class="js-function">console.log</span>(childObj.readOnly); <span class="js-comment">// '原型上的只读值'</span><br />
+            <br />
+            <span class="js-comment">// 2. 属性赋值 - 尝试修改只读属性</span><br />
+            childObj.readOnly = <span class="js-string">'新值'</span>; <span class="js-comment">// 静默失败（非严格模式）</span><br />
+            <br />
+            <span class="js-comment">// 3. 属性查找 - 仍然访问原型上的值</span><br />
+            <span class="js-function">console.log</span>(childObj.readOnly); <span class="js-comment">// '原型上的只读值'</span><br />
+            <br />
+            <span class="js-comment">// 4. 创建同名自有属性（遮蔽原型属性）</span><br />
+            <span class="js-function">Object.defineProperty</span>(childObj, <span class="js-string">'readOnly'</span>, {<br />
+            &nbsp;&nbsp;<span class="js-keyword">value</span>: <span class="js-string">'自有属性值'</span>,<br />
+            &nbsp;&nbsp;<span class="js-keyword">writable</span>: <span class="js-keyword">true</span>,<br />
+            &nbsp;&nbsp;<span class="js-keyword">enumerable</span>: <span class="js-keyword">true</span><br />
+            });<br />
+            <br />
+            <span class="js-comment">// 5. 现在访问的是自有属性</span><br />
+            <span class="js-function">console.log</span>(childObj.readOnly); <span class="js-comment">// '自有属性值'</span>
+          </div>
+
+          <div class="demo-result" id="prototype-readonly-demo">
+            <!-- 将由JavaScript填充 -->
+          </div>
+        </div>
+
+        <div class="note">
+          <p><strong>关键理解：</strong></p>
+          <ul style="margin-left: 40px;">
+            <li><code>writable: false</code>阻止的是赋值操作，不是读取操作</li>
+            <li>属性查找过程完全不受<code>writable</code>标志的影响</li>
+            <li>即使原型属性是只读的，仍然可以创建同名的自有属性来"遮蔽"它</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>属性设置与遮蔽</h2>
+        <p>当给对象属性赋值时，JavaScript会执行一系列步骤来决定如何处理这个赋值操作。</p>
+
+        <div class="visual-explanation">
+          <div class="visual-step">
+            <div class="step-number">1</div>
+            <div class="step-description">如果对象自身有该属性且可写，直接修改值</div>
+          </div>
+
+          <div class="visual-step">
+            <div class="step-number">2</div>
+            <div class="step-description">如果对象自身有该属性但不可写，赋值失败（严格模式抛出错误）</div>
+          </div>
+
+          <div class="visual-step">
+            <div class="step-number">3</div>
+            <div class="step-description">如果对象自身没有该属性，继续在原型链上查找</div>
+          </div>
+
+          <div class="visual-step">
+            <div class="step-number">4</div>
+            <div class="step-description">如果原型链上的属性可写，在原始对象上创建新属性（遮蔽）</div>
+          </div>
+
+          <div class="visual-step">
+            <div class="step-number">5</div>
+            <div class="step-description">如果原型链上的属性不可写，赋值失败（严格模式抛出错误）</div>
+          </div>
+
+          <div class="visual-step">
+            <div class="step-number">6</div>
+            <div class="step-description">如果原型链上没有该属性，在原始对象上创建新属性</div>
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h3>属性赋值规则示例</h3>
+          <div class="code-example">
+            <span class="js-comment">// 情况1：原型属性可写</span><br />
+            <span class="js-keyword">const</span> proto1 = { writableProp: <span class="js-string">'可写'</span> };<br />
+            <span class="js-keyword">const</span> obj1 = <span class="js-function">Object.create</span>(proto1);<br />
+            obj1.writableProp = <span class="js-string">'新值'</span>; <span class="js-comment">// 成功 - 在obj1上创建新属性</span><br />
+            <span class="js-function">console.log</span>(obj1.writableProp); <span class="js-comment">// '新值'</span><br />
+            <span class="js-function">console.log</span>(proto1.writableProp); <span class="js-comment">// '可写'（未被修改）</span><br />
+            <br />
+            <span class="js-comment">// 情况2：原型属性不可写</span><br />
+            <span class="js-keyword">const</span> proto2 = {};<br />
+            <span class="js-function">Object.defineProperty</span>(proto2, <span class="js-string">'readOnlyProp'</span>, {<br />
+            &nbsp;&nbsp;<span class="js-keyword">value</span>: <span class="js-string">'不可写'</span>,<br />
+            &nbsp;&nbsp;<span class="js-keyword">writable</span>: <span class="js-keyword">false</span><br />
+            });<br />
+            <span class="js-keyword">const</span> obj2 = <span class="js-function">Object.create</span>(proto2);<br />
+            obj2.readOnlyProp = <span class="js-string">'新值'</span>; <span class="js-comment">// 失败（非严格模式静默失败）</span><br />
+            <span class="js-function">console.log</span>(obj2.readOnlyProp); <span class="js-comment">// '不可写'（仍然访问原型属性）</span>
+          </div>
+
+          <div class="demo-result" id="property-assignment-demo">
+            <!-- 将由JavaScript填充 -->
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>实际应用场景</h2>
+
+        <div class="comparison">
+          <div class="comparison-box">
+            <h3>防止意外修改</h3>
+            <p>使用<code>writable: false</code>可以防止重要属性被意外修改。</p>
+            <div class="code-example">
+              <span class="js-keyword">function</span> <span class="js-function">createConstants</span>() {<br />
+              &nbsp;&nbsp;<span class="js-keyword">const</span> constants = {};<br />
+              &nbsp;&nbsp;<span class="js-function">Object.defineProperty</span>(constants, <span class="js-string">'PI'</span>, {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;<span class="js-keyword">value</span>: <span class="js-number">3.14159</span>,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;<span class="js-keyword">writable</span>: <span class="js-keyword">false</span><br />
+              &nbsp;&nbsp;});<br />
+              &nbsp;&nbsp;<span class="js-keyword">return</span> constants;<br />
+              }<br />
+              <br />
+              <span class="js-keyword">const</span> math = <span class="js-function">createConstants</span>();<br />
+              math.PI = <span class="js-number">3</span>; <span class="js-comment">// 静默失败</span><br />
+              <span class="js-function">console.log</span>(math.PI); <span class="js-comment">// 3.14159</span>
+            </div>
+          </div>
+
+          <div class="comparison-box">
+            <h3>保护原型属性</h3>
+            <p>保护原型上的重要方法不被覆盖。</p>
+            <div class="code-example">
+              <span class="js-keyword">function</span> <span class="js-function">SafeArray</span>() {<br />
+              &nbsp;&nbsp;<span class="js-comment">// 调用父构造函数</span><br />
+              &nbsp;&nbsp;Array.call(<span class="js-keyword">this</span>);<br />
+              }<br />
+              <br />
+              <span class="js-comment">// 继承Array原型</span><br />
+              SafeArray.prototype = <span class="js-function">Object.create</span>(Array.prototype);<br />
+              <br />
+              <span class="js-comment">// 保护重要方法</span><br />
+              <span class="js-function">Object.defineProperty</span>(SafeArray.prototype, <span class="js-string">'push'</span>, {<br />
+              &nbsp;&nbsp;<span class="js-keyword">value</span>: Array.prototype.push,<br />
+              &nbsp;&nbsp;<span class="js-keyword">writable</span>: <span class="js-keyword">false</span>,<br />
+              &nbsp;&nbsp;<span class="js-keyword">configurable</span>: <span class="js-keyword">false</span><br />
+              });<br />
+              <br />
+              <span class="js-keyword">const</span> safeArr = <span class="js-keyword">new</span> <span class="js-function">SafeArray</span>();<br />
+              safeArr.push = <span class="js-keyword">function</span>() { <span class="js-comment">/* 恶意代码 */</span> }; <span class="js-comment">// 失败</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      // 演示代码 - 原型上的只读属性
+      const prototypeDemo = () => {
+        const prototypeObj = {};
+        Object.defineProperty(prototypeObj, "readOnly", {
+          value: "原型上的只读值",
+          writable: false,
+          enumerable: true,
+        });
+
+        const childObj = Object.create(prototypeObj);
+        let output = "";
+
+        // 1. 属性查找
+        output += `初始读取: ${childObj.readOnly}<br>`;
+
+        // 2. 属性赋值
+        childObj.readOnly = "新值";
+        output += `赋值后读取: ${childObj.readOnly}<br>`;
+
+        // 3. 创建自有属性
+        Object.defineProperty(childObj, "readOnly", {
+          value: "自有属性值",
+          writable: true,
+          enumerable: true,
+        });
+
+        output += `创建自有属性后: ${childObj.readOnly}<br>`;
+        output += `原型属性值: ${prototypeObj.readOnly}`;
+
+        return output;
+      };
+
+      document.getElementById("prototype-readonly-demo").innerHTML = prototypeDemo();
+
+      // 演示代码 - 属性赋值规则
+      const assignmentDemo = () => {
+        let output = "";
+
+        // 情况1：原型属性可写
+        const proto1 = { writableProp: "可写" };
+        const obj1 = Object.create(proto1);
+        obj1.writableProp = "新值";
+        output += `可写属性 - 修改后: ${obj1.writableProp}<br>`;
+        output += `可写属性 - 原型值: ${proto1.writableProp}<br><br>`;
+
+        // 情况2：原型属性不可写
+        const proto2 = {};
+        Object.defineProperty(proto2, "readOnlyProp", {
+          value: "不可写",
+          writable: false,
+        });
+        const obj2 = Object.create(proto2);
+        obj2.readOnlyProp = "新值"; // 静默失败
+        output += `只读属性 - 修改后: ${obj2.readOnlyProp}<br>`;
+        output += `只读属性 - 原型值: ${proto2.readOnlyProp}`;
+
+        return output;
+      };
+
+      document.getElementById("property-assignment-demo").innerHTML = assignmentDemo();
+    </script>
+  </body>
+</html>

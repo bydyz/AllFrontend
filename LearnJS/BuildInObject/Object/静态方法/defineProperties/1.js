@@ -1,3 +1,5 @@
+// defineProperty  的批量操作版本
+
 const object1 = {};
 
 Object.defineProperties(object1, {

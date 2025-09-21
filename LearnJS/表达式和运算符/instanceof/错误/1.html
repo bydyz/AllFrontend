@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>instanceof 检查错误详解</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
+        padding: 20px;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+      }
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+      }
+      .card-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 40px;
+      }
+      .card {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .card h2 {
+        color: #3498db;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+      .code {
+        background: #2d3436;
+        color: #f5f6fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 15px 0;
+        overflow-x: auto;
+        font-family: "Fira Code", monospace;
+        font-size: 0.9rem;
+      }
+      .interactive-demo {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 40px;
+      }
+      .input-group {
+        margin: 15px 0;
+      }
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #2c3e50;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+      button {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background 0.3s;
+        margin: 10px 5px 10px 0;
+      }
+      button:hover {
+        background: #2980b9;
+      }
+      .result {
+        margin-top: 20px;
+        padding: 20px;
+        background: #edf2f7;
+        border-radius: 5px;
+        font-family: "Fira Code", monospace;
+        white-space: pre-wrap;
+      }
+      .success {
+        color: #27ae60;
+      }
+      .error {
+        color: #e74c3c;
+      }
+      .highlight {
+        background: #fffacd;
+        padding: 2px 5px;
+        border-radius: 3px;
+      }
+      .info-box {
+        background: #e1f5fe;
+        border-left: 4px solid #03a9f4;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 0 5px 5px 0;
+      }
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: #7f8c8d;
+        padding: 20px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+      }
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      .comparison-table {
+        width: 100%;
+        margin: 20px 0;
+      }
+      .comparison-table th,
+      .comparison-table td {
+        padding: 12px;
+        text-align: center;
+        border: 1px solid #ddd;
+      }
+      .comparison-table th {
+        background-color: #3498db;
+        color: white;
+      }
+      .comparison-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+      .explanation {
+        margin: 20px 0;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .step-by-step {
+        margin: 20px 0;
+        padding: 20px;
+        background: #fff9e6;
+        border-radius: 10px;
+        border-left: 4px solid #ffcc00;
+      }
+      .step {
+        margin-bottom: 15px;
+        padding-left: 20px;
+        position: relative;
+      }
+      .step:before {
+        content: "→";
+        position: absolute;
+        left: 0;
+        color: #ff9900;
+        font-weight: bold;
+      }
+      .control-panel {
+        display: flex;
+        gap: 10px;
+        margin: 15px 0;
+        flex-wrap: wrap;
+      }
+      .method-section {
+        margin: 20px 0;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+      }
+      .use-case {
+        margin: 20px 0;
+        padding: 20px;
+        background: #ffebee;
+        border-radius: 10px;
+        border-left: 4px solid #f44336;
+      }
+      .solution {
+        margin: 20px 0;
+        padding: 20px;
+        background: #e8f5e9;
+        border-radius: 10px;
+        border-left: 4px solid #4caf50;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>instanceof 检查错误详解</h1>
+        <p class="subtitle">理解"Function has non-object prototype 'undefined' in instanceof check"错误</p>
+      </header>
+
+      <div class="card-container">
+        <div class="card">
+          <h2>错误含义</h2>
+          <p><code>Uncaught TypeError: Function has non-object prototype 'undefined' in instanceof check</code> 错误发生在JavaScript中，当你尝试使用<code>instanceof</code>运算符检查一个对象是否为某个构造函数的实例，但该构造函数的prototype属性为<code>undefined</code>或不是对象时。</p>
+
+          <div class="code" style="white-space: pre;">
+// 示例：会导致此错误的情况
+const MyClass = undefined;
+const obj = {};
+
+// 这会导致错误
+console.log(obj instanceof MyClass);
+// Uncaught TypeError: Function has non-object prototype 
+// 'undefined' in instanceof check
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>instanceof 工作原理</h2>
+          <p><code>instanceof</code>运算符用于检查对象的原型链中是否包含特定构造函数的prototype属性：</p>
+
+          <div class="code" style="white-space: pre;">
+// instanceof 的内部工作原理
+function instanceOf(obj, constructor) {
+  // 如果constructor不是函数，或者没有prototype属性，会抛出错误
+  let proto = Object.getPrototypeOf(obj);
+  while (proto !== null) {
+    if (proto === constructor.prototype) {
+      return true;
+    }
+    proto = Object.getPrototypeOf(proto);
+  }
+  return false;
+}
+          </div>
+
+          <div class="info-box">
+            <p><strong>关键点：</strong> instanceof运算符需要访问构造函数的prototype属性，如果该属性无效，就会抛出错误。</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>常见原因</h2>
+          <p>导致此错误的常见情况：</p>
+
+          <ul style="padding-left: 20px; margin: 15px 0">
+            <li>构造函数是<code>undefined</code></li>
+            <li>构造函数是<code>null</code></li>
+            <li>构造函数的prototype属性被设置为<code>undefined</code></li>
+            <li>使用了未正确导入的模块</li>
+            <li>循环依赖导致构造函数未正确初始化</li>
+          </ul>
+
+          <div class="code" style="white-space: pre;">
+// 各种会导致错误的情况
+
+// 1. 构造函数是undefined
+let Constructor;
+const obj = {};
+obj instanceof Constructor; // 错误
+
+// 2. 构造函数是null
+obj instanceof null; // 错误
+
+// 3. 构造函数的prototype是undefined
+function MyClass() {}
+MyClass.prototype = undefined;
+obj instanceof MyClass; // 错误
+          </div>
+        </div>
+      </div>
+
+      <div class="explanation">
+        <h2>错误发生机制详解</h2>
+
+        <div class="step-by-step">
+          <h3>instanceof 检查过程:</h3>
+
+          <div class="step">检查右侧操作数是否为函数对象</div>
+          <div class="step">获取右侧操作数的prototype属性</div>
+          <div class="step">如果prototype不是对象类型，抛出TypeError</div>
+          <div class="step">遍历左侧对象的原型链，查找匹配的prototype</div>
+          <div class="step">返回true找到匹配，false未找到匹配</div>
+        </div>
+
+        <div class="code" style="white-space: pre;">
+// JavaScript引擎内部实现类似这样
+function instanceofOperator(obj, constructor) {
+  // 第一步：检查constructor是否是函数
+  if (typeof constructor !== 'function') {
+    throw new TypeError(
+      `Function has non-object prototype '${String(constructor)}' ` +
+      `in instanceof check`
+    );
+  }
+  
+  // 第二步：检查constructor.prototype是否是对象
+  if (typeof constructor.prototype !== 'object' || 
+      constructor.prototype === null) {
+    throw new TypeError(
+      `Function has non-object prototype '${String(constructor.prototype)}' ` +
+      `in instanceof check`
+    );
+  }
+  
+  // 第三步：遍历原型链
+  let proto = Object.getPrototypeOf(obj);
+  while (proto !== null) {
+    if (proto === constructor.prototype) {
+      return true;
+    }
+    proto = Object.getPrototypeOf(proto);
+  }
+  return false;
+}
+        </div>
+      </div>
+
+      <div class="interactive-demo">
+        <h2>错误场景演示</h2>
+
+        <div class="control-panel">
+          <button onclick="demoUndefinedConstructor()">undefined构造函数</button>
+          <button onclick="demoNullConstructor()">null构造函数</button>
+          <button onclick="demoUndefinedPrototype()">undefined prototype</button>
+          <button onclick="demoValidInstanceof()">有效的instanceof</button>
+        </div>
+
+        <div class="result" id="demoResult">演示结果将显示在这里...</div>
+      </div>
+
+      <div class="use-case">
+        <h2>实际开发中的常见场景</h2>
+
+        <div class="code" style="white-space: pre;">
+// 场景1: 模块导入失败
+// 假设SomeClass是从外部模块导入的
+// 但如果模块路径错误或导出问题，可能得到undefined
+import SomeClass from './non-existent-module.js';
+
+const obj = {};
+// 会导致错误
+try {
+  console.log(obj instanceof SomeClass);
+} catch (e) {
+  console.error('模块导入失败:', e.message);
+}
+
+// 场景2: 条件加载
+let MyFeature;
+if (someCondition) {
+  MyFeature = require('some-optional-dependency');
+} else {
+  // MyFeature保持undefined
+}
+
+const instance = {};
+// 可能导致错误
+try {
+  if (instance instanceof MyFeature) {
+    // 使用特性
+  }
+} catch (e) {
+  console.error('条件加载问题:', e.message);
+}
+
+// 场景3: 循环依赖
+// a.js
+import { B } from './b.js';
+export class A {
+  constructor() {
+    this.b = new B();
+  }
+}
+
+// b.js
+import { A } from './a.js';
+export class B {
+  constructor() {
+    // 在某些情况下，A可能还未完全定义
+    this.a = new A(); // 可能导致问题
+  }
+}
+        </div>
+
+        <button onclick="demoCommonScenarios()">演示常见场景</button>
+
+        <div class="result" id="scenariosResult">常见场景演示结果将显示在这里...</div>
+      </div>
+
+      <div class="solution">
+        <h2>解决方案和预防措施</h2>
+
+        <div class="code" style="white-space: pre;">
+// 解决方案1: 在使用instanceof前进行检查
+function safeInstanceOf(obj, constructor) {
+  // 检查constructor是否存在且是一个函数
+  if (typeof constructor !== 'function') {
+    return false;
+  }
+  
+  // 检查constructor.prototype是否是对象
+  if (typeof constructor.prototype !== 'object' || 
+      constructor.prototype === null) {
+    return false;
+  }
+  
+  // 安全地使用instanceof
+  return obj instanceof constructor;
+}
+
+// 使用安全函数
+const obj = {};
+console.log(safeInstanceOf(obj, undefined)); // false
+console.log(safeInstanceOf(obj, null));      // false
+
+// 解决方案2: 使用可选链和类型检查
+if (typeof MyClass === 'function' && 
+    MyClass.prototype && 
+    obj instanceof MyClass) {
+  // 安全地使用MyClass
+}
+
+// 解决方案3: 使用Symbol.hasInstance自定义instanceof行为
+class SafeClass {
+  static [Symbol.hasInstance](instance) {
+    // 自定义instanceof逻辑
+    return typeof instance === 'object' && instance !== null;
+  }
+}
+
+// 即使SafeClass.prototype有问题，也不会抛出错误
+console.log({} instanceof SafeClass); // true
+        </div>
+
+        <div class="info-box">
+          <p><strong>最佳实践：</strong> 在使用instanceof之前，始终检查构造函数是否为函数并且具有有效的prototype属性。</p>
+        </div>
+
+        <button onclick="demoSolutions()">演示解决方案</button>
+
+        <div class="result" id="solutionsResult">解决方案演示结果将显示在这里...</div>
+      </div>
+
+      <div class="method-section">
+        <h2>替代方案</h2>
+
+        <p>除了使用安全的instanceof检查外，还可以考虑以下替代方案：</p>
+
+        <div class="code" style="white-space: pre;">
+// 1. 使用鸭子类型检查
+function isLikeArray(obj) {
+  return obj && 
+         typeof obj.length === 'number' && 
+         typeof obj.slice === 'function';
+}
+
+// 2. 使用Symbol.toStringTag
+class MyClass {
+  get [Symbol.toStringTag]() {
+    return 'MyClass';
+  }
+}
+
+const instance = new MyClass();
+console.log(Object.prototype.toString.call(instance)); // [object MyClass]
+
+// 3. 使用自定义属性标记
+function createMarkedObject(type) {
+  const obj = {};
+  obj.__type = type;
+  return obj;
+}
+
+function isType(obj, type) {
+  return obj && obj.__type === type;
+}
+
+// 4. 使用Object.prototype.isPrototypeOf
+const proto = { x: 1 };
+const obj = Object.create(proto);
+
+console.log(proto.isPrototypeOf(obj)); // true
+// 这比instanceof更安全，因为它不需要构造函数
+        </div>
+
+        <div class="info-box">
+          <p><strong>注意：</strong> 每种方法都有其优缺点，应根据具体场景选择最合适的方法。</p>
+        </div>
+      </div>
+
+      <div class="method-section">
+        <h2>调试技巧</h2>
+
+        <p>当遇到"Function has non-object prototype 'undefined' in instanceof check"错误时，可以采取以下调试步骤：</p>
+
+        <div class="code" style="white-space: pre;">
+// 1. 检查构造函数是否正确定义
+console.log('Constructor type:', typeof Constructor);
+console.log('Constructor value:', Constructor);
+
+// 2. 检查构造函数的prototype属性
+if (typeof Constructor === 'function') {
+  console.log('Constructor prototype:', Constructor.prototype);
+} else {
+  console.log('Not a function, cannot check prototype');
+}
+
+// 3. 使用try-catch包装instanceof检查
+try {
+  if (obj instanceof Constructor) {
+    console.log('Instance of Constructor');
+  } else {
+    console.log('Not instance of Constructor');
+  }
+} catch (e) {
+  console.error('instanceof error:', e.message);
+  console.log('Constructor is likely undefined or invalid');
+}
+
+// 4. 检查模块导入/导出
+// 确保导入的模块正确导出构造函数
+// ES6模块
+export class MyClass { /* ... */ }
+import { MyClass } from './my-module.js';
+
+// CommonJS模块
+class MyClass { /* ... */ }
+module.exports = MyClass;
+const MyClass = require('./my-module');
+        </div>
+
+        <button onclick="demoDebugging()">演示调试技巧</button>
+
+        <div class="result" id="debuggingResult">调试技巧演示结果将显示在这里...</div>
+      </div>
+    </div>
+
+    <footer>
+      <p>© 2023 instanceof 检查错误详解 | JavaScript调试指南</p>
+    </footer>
+
+    <script>
+      // 演示undefined构造函数
+      function demoUndefinedConstructor() {
+        const obj = {};
+        let Constructor; // undefined
+
+        try {
+          const result = obj instanceof Constructor;
+          document.getElementById("demoResult").innerHTML = `结果: ${result}`;
+        } catch (e) {
+          document.getElementById("demoResult").innerHTML = `错误: ${e.toString()}\n\n` + `原因: Constructor是undefined`;
+        }
+      }
+
+      // 演示null构造函数
+      function demoNullConstructor() {
+        const obj = {};
+        const Constructor = null;
+
+        try {
+          const result = obj instanceof Constructor;
+          document.getElementById("demoResult").innerHTML = `结果: ${result}`;
+        } catch (e) {
+          document.getElementById("demoResult").innerHTML = `错误: ${e.toString()}\n\n` + `原因: Constructor是null`;
+        }
+      }
+
+      // 演示undefined prototype
+      function demoUndefinedPrototype() {
+        const obj = {};
+
+        function Constructor() {}
+        Constructor.prototype = undefined;
+
+        try {
+          const result = obj instanceof Constructor;
+          document.getElementById("demoResult").innerHTML = `结果: ${result}`;
+        } catch (e) {
+          document.getElementById("demoResult").innerHTML = `错误: ${e.toString()}\n\n` + `原因: Constructor.prototype是undefined`;
+        }
+      }
+
+      // 演示有效的instanceof
+      function demoValidInstanceof() {
+        function Constructor() {}
+        const obj = new Constructor();
+
+        try {
+          const result = obj instanceof Constructor;
+          document.getElementById("demoResult").innerHTML = `obj instanceof Constructor: ${result}\n\n` + `Constructor类型: ${typeof Constructor}\n` + `Constructor.prototype类型: ${typeof Constructor.prototype}`;
+        } catch (e) {
+          document.getElementById("demoResult").innerHTML = `错误: ${e.toString()}`;
+        }
+      }
+
+      // 演示常见场景
+      function demoCommonScenarios() {
+        let result = "常见场景演示:\n\n";
+
+        // 场景1: 模块导入失败模拟
+        result += "1. 模块导入失败:\n";
+        const fakeModuleExport = undefined;
+        try {
+          const obj = {};
+          const isInstance = obj instanceof fakeModuleExport;
+          result += `   结果: ${isInstance}\n`;
+        } catch (e) {
+          result += `   错误: ${e.message}\n`;
+        }
+
+        // 场景2: 条件加载
+        result += "\n2. 条件加载:\n";
+        let ConditionalClass;
+        const condition = false;
+        if (condition) {
+          ConditionalClass = class {};
+        }
+        // ConditionalClass保持undefined
+
+        try {
+          const obj = {};
+          const isInstance = obj instanceof ConditionalClass;
+          result += `   结果: ${isInstance}\n`;
+        } catch (e) {
+          result += `   错误: ${e.message}\n`;
+        }
+
+        document.getElementById("scenariosResult").innerHTML = result;
+      }
+
+      // 演示解决方案
+      function demoSolutions() {
+        let result = "解决方案演示:\n\n";
+
+        // 解决方案1: 安全instanceof函数
+        result += "1. 安全instanceof函数:\n";
+        function safeInstanceOf(obj, constructor) {
+          if (typeof constructor !== "function") {
+            return false;
+          }
+          if (typeof constructor.prototype !== "object" || constructor.prototype === null) {
+            return false;
+          }
+          return obj instanceof constructor;
+        }
+
+        const obj = {};
+        result += `   safeInstanceOf(obj, undefined): ${safeInstanceOf(obj, undefined)}\n`;
+        result += `   safeInstanceOf(obj, null): ${safeInstanceOf(obj, null)}\n`;
+
+        // 解决方案2: 使用可选链和类型检查
+        result += "\n2. 可选链和类型检查:\n";
+        let PossiblyUndefinedClass;
+        let checkResult = false;
+
+        if (typeof PossiblyUndefinedClass === "function" && PossiblyUndefinedClass.prototype && obj instanceof PossiblyUndefinedClass) {
+          checkResult = true;
+        }
+
+        result += `   检查结果: ${checkResult}\n`;
+
+        document.getElementById("solutionsResult").innerHTML = result;
+      }
+
+      // 演示调试技巧
+      function demoDebugging() {
+        let result = "调试技巧演示:\n\n";
+
+        // 调试场景
+        let SuspectConstructor;
+
+        result += "调试步骤:\n";
+        result += `1. Constructor类型: ${typeof SuspectConstructor}\n`;
+        result += `2. Constructor值: ${SuspectConstructor}\n`;
+
+        if (typeof SuspectConstructor === "function") {
+          result += `3. Constructor.prototype: ${typeof SuspectConstructor.prototype}\n`;
+        } else {
+          result += "3. 不是函数，无法检查prototype\n";
+        }
+
+        result += "\n4. 使用try-catch包装:\n";
+        try {
+          const obj = {};
+          const isInstance = obj instanceof SuspectConstructor;
+          result += `   结果: ${isInstance}\n`;
+        } catch (e) {
+          result += `   错误: ${e.message}\n`;
+          result += "   结论: Constructor可能未正确定义\n";
+        }
+
+        document.getElementById("debuggingResult").innerHTML = result;
+      }
+    </script>
+  </body>
+</html>
