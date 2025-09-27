@@ -14,7 +14,7 @@
 // Reflect.apply() 通过指定的参数列表发起对目标 (target) 函数的调用。
 
 
-console.log(Reflect.apply(Math.floor, undefined, [1.75]));
+console.log(Reflect.apply(Math.floor, undefined, [1.75, 2.75]));
 // Expected output: 1
 
 console.log(

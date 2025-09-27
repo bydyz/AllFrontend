@@ -24,3 +24,4 @@ const myMap = new Map([
 ]);
 
 console.log(myMap)
+// Map(3) { 1 => 'one', 2 => 'two', 3 => 'three' }
