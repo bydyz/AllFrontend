@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.advanced-textarea {
+  margin: 20px;
+  padding: 20px;
+}
+
+.form-group {
+  margin: 20px 0;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #bdc3c7;
+  border-radius: 5px;
+  font-size: 14px;
+  font-family: 'Courier New', monospace;
+  resize: vertical;
+  transition: all 0.3s ease;
+}
+
+textarea:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+}
+
+.counter {
+  text-align: right;
+  font-size: 12px;
+  color: #7f8c8d;
+  margin-top: 5px;
+}
+
+.counter.warning {
+  color: #e74c3c;
+}
+
+.auto-expand {
+  min-height: 60px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.preview {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  padding: 15px;
+  margin-top: 10px;
+  white-space: pre-wrap;
+}
+</style>
+</head>
+<body>
+  <script src="/run.js"></script>
+  <div>
+    <button onclick="window.MyUtils.onBackToParent()">返回上一级</button>
+  </div>
+
+  <div class="advanced-textarea">
+    <h3>Textarea 高级功能</h3>
+    
+    <!-- 字符计数器 -->
+    <div class="form-group">
+      <label for="with-counter">带字符计数器的文本域:</label>
+      <textarea id="with-counter" maxlength="200" 
+                placeholder="最多输入200个字符"></textarea>
+      <div class="counter" id="counter">0/200</div>
+    </div>
+
+    <!-- 自动高度调整 -->
+    <div class="form-group">
+      <label for="auto-expand">自动高度调整:</label>
+      <textarea id="auto-expand" class="auto-expand" 
+                placeholder="输入内容会自动调整高度..."></textarea>
+    </div>
+
+    <!-- 代码编辑器样式 -->
+    <div class="form-group">
+      <label for="code-editor">代码编辑器样式:</label>
+      <textarea id="code-editor" 
+                placeholder="function hello() {\n  console.log('Hello World!');\n}"
+                style="font-family: 'Courier New', monospace; background: #2c3e50; color: #ecf0f1; border: 1px solid #34495e;"></textarea>
+    </div>
+
+    <!-- Markdown 预览 -->
+    <div class="form-group">
+      <label for="markdown">Markdown 编辑器:</label>
+      <textarea id="markdown" placeholder="输入 Markdown 文本..." 
+                rows="6"></textarea>
+      <div class="preview" id="preview">预览区域</div>
+    </div>
+
+    <!-- 带提示的文本域 -->
+    <div class="form-group">
+      <label for="with-tips">带格式提示的文本域:</label>
+      <textarea id="with-tips" 
+                placeholder="请按照以下格式输入：\n姓名: \n电话: \n地址: "
+                style="background: #fff8e1; border-color: #ffd54f;"></textarea>
+    </div>
+  </div>
+
+  <script>
+    // 字符计数器
+    const counter = document.getElementById('counter');
+    const textarea = document.getElementById('with-counter');
+    
+    textarea.addEventListener('input', function() {
+      const length = this.value.length;
+      const maxLength = this.getAttribute('maxlength');
+      counter.textContent = `${length}/${maxLength}`;
+      
+      if (length > maxLength * 0.8) {
+        counter.classList.add('warning');
+      } else {
+        counter.classList.remove('warning');
+      }
+    });
+
+    // 自动高度调整
+    const autoExpand = document.getElementById('auto-expand');
+    autoExpand.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = this.scrollHeight + 'px';
+    });
+
+    // Markdown 预览（简化版）
+    const markdown = document.getElementById('markdown');
+    const preview = document.getElementById('preview');
+    
+    markdown.addEventListener('input', function() {
+      // 简单的 Markdown 转换
+      let html = this.value
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/`(.*?)`/g, '<code>$1</code>')
+        .replace(/\n/g, '<br>');
+      
+      preview.innerHTML = html || '预览区域';
+    });
+  </script>
+</body>
+</html>

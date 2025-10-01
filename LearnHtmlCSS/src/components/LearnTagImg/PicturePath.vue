@@ -10,7 +10,7 @@
     <!-- <img src="/雏田.gif" /> -->
      
     <!-- 如果是简单的 html 去打开的话，这个无论是 open with live server 或者 双击打开 都不可 -->
-    <img src="D:\allProject\Mine\why-vue3\LearnHtmlCSS\src\components\LearnTagImg\雏田.gif" />
+    <img src="E:\Project\AAA_All_MINE\all-frontend\LearnHtmlCSS\src\components\LearnTagImg\雏田.gif" />
     <!-- 这个最复杂的，在http协议（利用Open with Live Server）中不能打开图片，在file（利用View In 
         Browser或者双击HTML文件）中可以 -->
 

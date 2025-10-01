@@ -1,35 +1,19 @@
 <script setup>
-import link from "./link.vue";
-import visited from "./visited.vue";
-import active from "./active.vue";
-import hover from "./hover.vue";
-
-import FirstChild from "./FirstChild/index.vue";
+import firstChild from "./first-child.vue";
+import firstOfType from "./first-of-type.vue";
 import { ref, shallowRef, markRaw } from "vue";
 
 let componentsArray = ref([
   {
-    name: 'link',
-    component: markRaw(link)
+    name: ':first-child',
+    component: markRaw(firstChild)
   },
   {
-    name: 'visited',
-    component: markRaw(visited)
-  },
-  {
-    name: 'active',
-    component: markRaw(active)
-  },
-  {
-    name: 'hover',
-    component: markRaw(hover)
-  },
-  {
-    name: 'FirstChild',
-    component: markRaw(FirstChild)
+    name: ':first-of-type',
+    component: markRaw(firstOfType)
   },
 ])
-let componentId = shallowRef(link);
+let componentId = shallowRef(firstChild);
 </script>
 
 <template>

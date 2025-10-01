@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>滚动条样式示例</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 40px 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        text-align: center;
+        color: white;
+        margin-bottom: 40px;
+        font-size: 2.5em;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .scrollbar-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .scrollbar-demo {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease;
+      }
+
+      .scrollbar-demo:hover {
+        transform: translateY(-5px);
+      }
+
+      .demo-title {
+        font-size: 1.4em;
+        color: #333;
+        margin-bottom: 15px;
+        text-align: center;
+      }
+
+      /* 简约风格 */
+      .minimal-demo {
+        height: 200px;
+        overflow: auto;
+      }
+
+      .minimal-demo::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .minimal-demo::-webkit-scrollbar-track {
+        background: #f8f9fa;
+      }
+
+      .minimal-demo::-webkit-scrollbar-thumb {
+        background: #6c757d;
+        border-radius: 3px;
+      }
+
+      /* 渐变风格 */
+      .gradient-demo {
+        height: 200px;
+        overflow: auto;
+        background: #2c3e50;
+        color: white;
+      }
+
+      .gradient-demo::-webkit-scrollbar {
+        width: 12px;
+      }
+
+      .gradient-demo::-webkit-scrollbar-track {
+        background: linear-gradient(180deg, #34495e, #2c3e50);
+        border-radius: 6px;
+      }
+
+      .gradient-demo::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #e74c3c, #c0392b);
+        border-radius: 6px;
+      }
+
+      /* 玻璃风格 */
+      .glass-demo {
+        height: 200px;
+        overflow: auto;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .glass-demo::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .glass-demo::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+      }
+
+      .glass-demo::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 4px;
+      }
+
+      /* 内容样式 */
+      .demo-content {
+        height: 400px;
+      }
+
+      .demo-content p {
+        margin-bottom: 15px;
+        line-height: 1.6;
+      }
+
+      .demo-content h3 {
+        margin: 20px 0 10px 0;
+        color: #2c3e50;
+      }
+
+      .gradient-demo .demo-content h3 {
+        color: #ecf0f1;
+      }
+
+      /* 响应式设计 */
+      @media (max-width: 768px) {
+        .scrollbar-grid {
+          grid-template-columns: 1fr;
+        }
+
+        h1 {
+          font-size: 2em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🎨 滚动条样式画廊</h1>
+
+      <div class="scrollbar-grid">
+        <!-- 简约风格 -->
+        <div class="scrollbar-demo">
+          <h2 class="demo-title">简约风格</h2>
+          <div class="minimal-demo">
+            <div class="demo-content">
+              <h3>简约优雅</h3>
+              <p>这种风格适合大多数现代网站，简洁而不失功能性。</p>
+              <!-- 更多内容 -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 渐变风格 -->
+        <div class="scrollbar-demo">
+          <h2 class="demo-title">渐变风格</h2>
+          <div class="gradient-demo">
+            <div class="demo-content">
+              <h3>渐变色彩</h3>
+              <p>使用渐变颜色让滚动条更加生动有趣。</p>
+              <!-- 更多内容 -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 玻璃风格 -->
+        <div class="scrollbar-demo">
+          <h2 class="demo-title">玻璃拟物</h2>
+          <div class="glass-demo">
+            <div class="demo-content">
+              <h3>透明效果</h3>
+              <p>毛玻璃效果让滚动条融入背景，创造深度感。</p>
+              <!-- 更多内容 -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

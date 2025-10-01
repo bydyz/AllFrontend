@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.advanced-input {
+  margin: 20px;
+  padding: 20px;
+}
+
+.form-group {
+  margin: 15px 0;
+}
+
+input {
+  padding: 10px;
+  border: 2px solid #bdc3c7;
+  border-radius: 5px;
+  font-size: 14px;
+  width: 300px;
+  transition: all 0.3s ease;
+}
+
+input:valid {
+  border-color: #2ecc71;
+}
+
+input:invalid {
+  border-color: #e74c3c;
+}
+
+input:required {
+  border-left: 4px solid #e74c3c;
+}
+
+input:disabled {
+  background-color: #ecf0f1;
+  cursor: not-allowed;
+}
+
+.validation-message {
+  color: #e74c3c;
+  font-size: 12px;
+  margin-top: 5px;
+}
+</style>
+</head>
+<body>
+  <div class="advanced-input">
+    <h3>Input 高级属性和验证</h3>
+    
+    <form id="advancedForm">
+      <!-- 必填字段 -->
+      <div class="form-group">
+        <label for="required">必填字段 (required):</label>
+        <input type="text" id="required" required placeholder="这个字段必须填写">
+      </div>
+
+      <!-- 最小最大长度 -->
+      <div class="form-group">
+        <label for="minmax">长度限制 (minlength/maxlength):</label>
+        <input type="text" id="minmax" minlength="3" maxlength="10" 
+               placeholder="3-10个字符">
+      </div>
+
+      <!-- 正则表达式验证 -->
+      <div class="form-group">
+        <label for="pattern">正则验证 (pattern):</label>
+        <input type="text" id="pattern" pattern="[A-Za-z]{3,}" 
+               placeholder="至少3个字母" title="请输入至少3个英文字母">
+      </div>
+
+      <!-- 禁用字段 -->
+      <div class="form-group">
+        <label for="disabled">禁用字段 (disabled):</label>
+        <input type="text" id="disabled" value="这个字段被禁用" disabled>
+      </div>
+
+      <!-- 只读字段 -->
+      <div class="form-group">
+        <label for="readonly">只读字段 (readonly):</label>
+        <input type="text" id="readonly" value="这个字段只读" readonly>
+      </div>
+
+      <!-- 自动完成 -->
+      <div class="form-group">
+        <label for="autocomplete">自动完成 (autocomplete):</label>
+        <input type="text" id="autocomplete" autocomplete="on" 
+               placeholder="输入时会显示历史记录">
+      </div>
+
+      <!-- 自动聚焦 -->
+      <div class="form-group">
+        <label for="autofocus">自动聚焦 (autofocus):</label>
+        <input type="text" id="autofocus" autofocus placeholder="页面加载自动聚焦到这里">
+      </div>
+
+      <button type="submit">提交表单</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('advancedForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('表单验证通过！');
+    });
+  </script>
+</body>
+</html>

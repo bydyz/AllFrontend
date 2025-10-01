@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Webkit 前缀示例</title>
+<style>
+/* 基础样式 */
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: -webkit-linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  min-height: 100vh;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* 玻璃拟态卡片 */
+.glass-card {
+  background: rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 400px;
+  width: 100%;
+  -webkit-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  -webkit-transform: translateY(-10px);
+  transform: translateY(-10px);
+  -webkit-box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* 渐变标题 */
+.glass-card h2 {
+  background: -webkit-linear-gradient(45deg, #fff, #f0f0f0);
+  background: linear-gradient(45deg, #fff, #f0f0f0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  margin-bottom: 20px;
+  font-size: 2em;
+}
+
+/* 自定义滚动条 */
+.scroll-content {
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 10px;
+  margin: 20px 0;
+}
+
+.scroll-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scroll-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.scroll-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+  -webkit-transition: background 0.3s ease;
+  transition: background 0.3s ease;
+}
+
+.scroll-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* 自定义按钮 */
+.glass-button {
+  background: -webkit-linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  padding: 12px 24px;
+  color: white;
+  font-size: 16px;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.glass-button:hover {
+  background: -webkit-linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2));
+  background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.2));
+  -webkit-transform: translateY(-2px);
+  transform: translateY(-2px);
+}
+
+.glass-button:active {
+  -webkit-transform: translateY(0);
+  transform: translateY(0);
+}
+
+/* 移动端优化 */
+@media (max-width: 768px) {
+  .glass-card {
+    padding: 30px 20px;
+    margin: 10px;
+  }
+  
+  body {
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
+  }
+}
+
+/* 备用方案：如果不支持 backdrop-filter */
+@supports not ((-webkit-backdrop-filter: blur(20px)) or (backdrop-filter: blur(20px))) {
+  .glass-card {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+  }
+  
+  .glass-card h2 {
+    background: -webkit-linear-gradient(45deg, #333, #666);
+    background: linear-gradient(45deg, #333, #666);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+}
+</style>
+</head>
+<body>
+  <div class="glass-card">
+    <h2>Webkit 前缀演示</h2>
+    <div class="scroll-content">
+      <p>这个卡片展示了多种 -webkit- 前缀属性的使用：</p>
+      <ul>
+        <li>-webkit-backdrop-filter: 毛玻璃效果</li>
+        <li>-webkit-background-clip: 文字渐变</li>
+        <li>-webkit-scrollbar: 自定义滚动条</li>
+        <li>-webkit-transition: 平滑动画</li>
+        <li>-webkit-transform: 变换效果</li>
+        <li>-webkit-tap-highlight-color: 触摸反馈</li>
+        <li>-webkit-user-select: 文本选择控制</li>
+        <li>-webkit-box-sizing: 盒模型</li>
+      </ul>
+    </div>
+    <button class="glass-button">体验 Webkit 效果</button>
+  </div>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.container {
+  margin: 20px;
+  padding: 20px;
+}
+
+textarea {
+  width: 300px;
+  height: 100px;
+  padding: 10px;
+  border: 2px solid #bdc3c7;
+  border-radius: 5px;
+  font-size: 14px;
+  margin: 10px 0;
+}
+
+.readonly-demo {
+  border-color: #3498db;
+  background: #f8f9fa;
+}
+</style>
+</head>
+<body>
+  <script src="/run.js"></script>
+  <div>
+    <button onclick="window.MyUtils.onBackToParent()">返回上一级</button>
+  </div>
+  
+  <div class="container">
+    <h3>1. 使用 readonly 属性阻止输入</h3>
+    
+    <textarea class="readonly-demo" readonly>
+这是一个只读的文本域
+用户可以看到内容但不能修改
+可以通过JavaScript修改内容
+    </textarea>
+    
+    <p>特点：</p>
+    <ul>
+      <li>内容可选中、可复制</li>
+      <li>可以获得焦点</li>
+      <li>不能通过键盘修改</li>
+      <li>可以通过 JavaScript 修改 value</li>
+    </ul>
+  </div>
+</body>
+</html>

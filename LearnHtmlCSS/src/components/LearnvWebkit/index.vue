@@ -1,35 +1,15 @@
 <script setup>
-import link from "./link.vue";
-import visited from "./visited.vue";
-import active from "./active.vue";
-import hover from "./hover.vue";
+import ObjectFit from "./ObjectFit.vue";
 
-import FirstChild from "./FirstChild/index.vue";
 import { ref, shallowRef, markRaw } from "vue";
 
 let componentsArray = ref([
   {
-    name: 'link',
-    component: markRaw(link)
-  },
-  {
-    name: 'visited',
-    component: markRaw(visited)
-  },
-  {
-    name: 'active',
-    component: markRaw(active)
-  },
-  {
-    name: 'hover',
-    component: markRaw(hover)
-  },
-  {
-    name: 'FirstChild',
-    component: markRaw(FirstChild)
+    name: '图片object-fit',
+    component: markRaw(ObjectFit)
   },
 ])
-let componentId = shallowRef(link);
+let componentId = shallowRef(ObjectFit);
 </script>
 
 <template>

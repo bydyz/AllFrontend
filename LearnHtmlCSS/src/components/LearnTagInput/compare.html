@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.comparison {
+  margin: 20px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.comparison-table th,
+.comparison-table td {
+  border: 1px solid #dee2e6;
+  padding: 12px;
+  text-align: left;
+}
+
+.comparison-table th {
+  background: #3498db;
+  color: white;
+}
+
+.comparison-table tr:nth-child(even) {
+  background: #e9ecef;
+}
+
+.feature {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.demo-area {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.demo-box {
+  padding: 20px;
+  border: 2px solid #bdc3c7;
+  border-radius: 8px;
+  background: white;
+}
+
+.demo-box h4 {
+  margin-top: 0;
+  color: #2c3e50;
+}
+
+.usage-example {
+  background: #e8f4fd;
+  padding: 15px;
+  border-radius: 5px;
+  margin: 15px 0;
+}
+</style>
+</head>
+<body>
+  <div class="comparison">
+    <h3>Input 和 Textarea 对比</h3>
+    
+    <div class="comparison-table">
+      <table>
+        <thead>
+          <tr>
+            <th>特性</th>
+            <th>Input</th>
+            <th>Textarea</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="feature">输入类型</td>
+            <td>单行文本、密码、数字、日期等</td>
+            <td>多行文本</td>
+          </tr>
+          <tr>
+            <td class="feature">闭合标签</td>
+            <td>自闭合标签 &lt;input&gt;</td>
+            <td>需要结束标签 &lt;textarea&gt;&lt;/textarea&gt;</td>
+          </tr>
+          <tr>
+            <td class="feature">默认值</td>
+            <td>使用 value 属性</td>
+            <td>在标签之间设置</td>
+          </tr>
+          <tr>
+            <td class="feature">尺寸控制</td>
+            <td>使用 size 属性或 CSS</td>
+            <td>使用 rows 和 cols 属性或 CSS</td>
+          </tr>
+          <tr>
+            <td class="feature">调整大小</td>
+            <td>不可调整</td>
+            <td>可通过 resize 属性控制</td>
+          </tr>
+          <tr>
+            <td class="feature">适用场景</td>
+            <td>用户名、密码、邮箱、搜索等短文本</td>
+            <td>评论、描述、文章内容等长文本</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="demo-area">
+      <div class="demo-box">
+        <h4>Input 适用场景</h4>
+        <div class="usage-example">
+          <label>搜索框:</label>
+          <input type="search" placeholder="搜索...">
+        </div>
+        <div class="usage-example">
+          <label>邮箱地址:</label>
+          <input type="email" placeholder="user@example.com">
+        </div>
+        <div class="usage-example">
+          <label>密码:</label>
+          <input type="password" placeholder="请输入密码">
+        </div>
+      </div>
+
+      <div class="demo-box">
+        <h4>Textarea 适用场景</h4>
+        <div class="usage-example">
+          <label>文章内容:</label>
+          <textarea placeholder="请输入文章内容..." rows="4"></textarea>
+        </div>
+        <div class="usage-example">
+          <label>用户评论:</label>
+          <textarea placeholder="留下您的评论..." rows="3"></textarea>
+        </div>
+        <div class="usage-example">
+          <label>产品描述:</label>
+          <textarea placeholder="详细的产品描述..." rows="4"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="usage-example">
+      <h4>实际表单示例</h4>
+      <form>
+        <div style="display: grid; gap: 15px; max-width: 500px;">
+          <div>
+            <label>姓名:</label>
+            <input type="text" placeholder="请输入姓名" required>
+          </div>
+          <div>
+            <label>邮箱:</label>
+            <input type="email" placeholder="请输入邮箱" required>
+          </div>
+          <div>
+            <label>电话:</label>
+            <input type="tel" placeholder="请输入电话号码">
+          </div>
+          <div>
+            <label>留言内容:</label>
+            <textarea placeholder="请输入您的留言..." rows="4" required></textarea>
+          </div>
+          <button type="submit" style="padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            提交表单
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,11 +1,15 @@
 <template>
   <div class="container text-[red]">
     <div>第一个div</div>
-    <div>第二个div</div>
+    <div>
+      第二个div1
+      <p>666</p>
+      第二个div2
+    </div>
     <div>第三个div</div>
 
     <p>第一个p</p>
-    <p>第二个p</p>
+    <p>第二个p1</p>
   </div>
 </template>
 

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.container {
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ddd;
+}
+
+.form-group {
+  margin: 15px 0;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input {
+  padding: 10px;
+  border: 2px solid #bdc3c7;
+  border-radius: 5px;
+  font-size: 14px;
+  width: 300px;
+}
+
+input:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+</style>
+</head>
+<body>
+  <div class="container">
+    <h3>Input 输入框类型示例</h3>
+    
+    <!-- 文本输入 -->
+    <div class="form-group">
+      <label for="text">文本输入 (text):</label>
+      <input type="text" id="text" placeholder="请输入文本">
+    </div>
+
+    <!-- 密码输入 -->
+    <div class="form-group">
+      <label for="password">密码输入 (password):</label>
+      <input type="password" id="password" placeholder="请输入密码">
+    </div>
+
+    <!-- 邮箱输入 -->
+    <div class="form-group">
+      <label for="email">邮箱输入 (email):</label>
+      <input type="email" id="email" placeholder="example@email.com">
+    </div>
+
+    <!-- 数字输入 -->
+    <div class="form-group">
+      <label for="number">数字输入 (number):</label>
+      <input type="number" id="number" min="0" max="100" step="1" placeholder="0-100">
+    </div>
+
+    <!-- 日期输入 -->
+    <div class="form-group">
+      <label for="date">日期选择 (date):</label>
+      <input type="date" id="date">
+    </div>
+
+    <!-- 时间输入 -->
+    <div class="form-group">
+      <label for="time">时间选择 (time):</label>
+      <input type="time" id="time">
+    </div>
+
+    <!-- 颜色选择 -->
+    <div class="form-group">
+      <label for="color">颜色选择 (color):</label>
+      <input type="color" id="color" value="#3498db">
+    </div>
+
+    <!-- 范围滑块 -->
+    <div class="form-group">
+      <label for="range">范围选择 (range):</label>
+      <input type="range" id="range" min="0" max="100" value="50">
+      <span id="range-value">50</span>
+    </div>
+
+    <!-- 文件上传 -->
+    <div class="form-group">
+      <label for="file">文件上传 (file):</label>
+      <input type="file" id="file" accept=".jpg,.png,.pdf">
+    </div>
+  </div>
+
+  <script>
+    // 范围滑块值显示
+    document.getElementById('range').addEventListener('input', function() {
+      document.getElementById('range-value').textContent = this.value;
+    });
+  </script>
+</body>
+</html>

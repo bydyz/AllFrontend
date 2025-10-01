@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.container {
+  border: 2px solid #333;
+  margin: 20px;
+  padding: 15px;
+}
+
+/* first-child 选择器 */
+.first-child-demo p:first-child {
+  background-color: #ff6b6b;
+  color: white;
+}
+
+/* first-of-type 选择器 */
+.first-of-type-demo p:first-of-type {
+  background-color: #4ecdc4;
+  color: white;
+}
+
+.demo-item {
+  padding: 8px;
+  margin: 5px 0;
+  border: 1px solid #ddd;
+}
+</style>
+</head>
+<body>
+  <!-- 示例1：第一个子元素就是 p -->
+  <div class="container first-child-demo">
+    <h4>first-child 示例1：</h4>
+    <p class="demo-item">第一个p（被选中）</p>
+    <p class="demo-item">第二个p</p>
+    <span class="demo-item">span元素</span>
+  </div>
+
+  <div class="container first-of-type-demo">
+    <h4>first-of-type 示例1：</h4>
+    <p class="demo-item">第一个p（被选中）</p>
+    <p class="demo-item">第二个p</p>
+    <span class="demo-item">span元素</span>
+  </div>
+
+  
+
+  <!-- 示例2：第一个子元素不是 p -->
+  <div class="container first-child-demo">
+    <h4>first-child 示例2：</h4>
+    <span class="demo-item">第一个span（不是p）</span>
+    <p class="demo-item">第一个p（不是第一个子元素，不被选中）</p>
+    <p class="demo-item">第二个p</p>
+  </div>
+
+  <div class="container first-of-type-demo">
+    <h4>first-of-type 示例2：</h4>
+    <span class="demo-item">第一个span</span>
+    <p class="demo-item">第一个p（被选中）</p>
+    <p class="demo-item">第二个p</p>
+  </div>
+</body>
+</html>

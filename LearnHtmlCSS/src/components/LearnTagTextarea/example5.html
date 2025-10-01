@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.container {
+  margin: 20px;
+  padding: 20px;
+}
+
+.ime-js-demo {
+  width: 300px;
+  height: 120px;
+  padding: 10px;
+  border: 2px solid #e67e22;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.ime-status {
+  background: #34495e;
+  color: #ecf0f1;
+  padding: 8px;
+  margin: 10px 0;
+  border-radius: 5px;
+  font-family: monospace;
+}
+
+.warning {
+  background: #e74c3c;
+  color: white;
+  padding: 5px;
+  border-radius: 3px;
+}
+</style>
+</head>
+<body>
+  <script src="/run.js"></script>
+  <div>
+    <button onclick="window.MyUtils.onBackToParent()">返回上一级</button>
+  </div>
+
+  <div class="container">
+    <h3>5. 使用 JavaScript 检测和阻止 IME 输入</h3>
+    
+    <textarea id="imeJsBlock" class="ime-js-demo" placeholder="尝试用中文输入法输入..."></textarea>
+    
+    <div class="ime-status" id="imeStatus">
+      IME 状态: 等待输入...
+    </div>
+    
+    <div>
+      <button onclick="toggleIMEBlock()">切换 IME 阻止</button>
+      <span id="blockStatus" class="warning">IME 阻止已启用</span>
+    </div>
+  </div>
+
+  <script>
+    const textarea = document.getElementById('imeJsBlock');
+    const imeStatus = document.getElementById('imeStatus');
+    const blockStatus = document.getElementById('blockStatus');
+    
+    let isIMEBlockEnabled = true;
+    let isComposing = false;
+
+    function toggleIMEBlock() {
+      isIMEBlockEnabled = !isIMEBlockEnabled;
+      blockStatus.textContent = isIMEBlockEnabled ? 'IME 阻止已启用' : 'IME 阻止已禁用';
+      blockStatus.style.background = isIMEBlockEnabled ? '#e74c3c' : '#2ecc71';
+    }
+
+    // 检测 IME 输入开始
+    textarea.addEventListener('compositionstart', function(e) {
+      isComposing = true;
+      imeStatus.textContent = 'IME 状态: 正在输入中...';
+      imeStatus.style.background = '#e67e22';
+      
+      if (isIMEBlockEnabled) {
+        imeStatus.innerHTML += ' <span style="color:#e74c3c">(已被阻止)</span>';
+        e.preventDefault();
+      }
+    });
+
+    // 检测 IME 输入更新
+    textarea.addEventListener('compositionupdate', function(e) {
+      if (isIMEBlockEnabled) {
+        imeStatus.textContent = `IME 状态: 正在输入 "${e.data}" (已被阻止)`;
+        e.preventDefault();
+      } else {
+        imeStatus.textContent = `IME 状态: 正在输入 "${e.data}"`;
+      }
+    });
+
+    // 检测 IME 输入结束
+    textarea.addEventListener('compositionend', function(e) {
+      isComposing = false;
+      imeStatus.textContent = 'IME 状态: 输入完成';
+      imeStatus.style.background = '#34495e';
+      
+      if (isIMEBlockEnabled) {
+        // 阻止最终的输入
+        e.preventDefault();
+        
+        // 清除可能已经输入的内容
+        const currentValue = textarea.value;
+        const lastComma = currentValue.lastIndexOf('，');
+        if (lastComma !== -1) {
+          textarea.value = currentValue.substring(0, lastComma);
+        }
+      }
+    });
+
+    // 阻止键盘输入时的 IME 相关操作
+    textarea.addEventListener('keydown', function(e) {
+      if (!isIMEBlockEnabled) return;
+      
+      // 阻止空格键确认 IME 输入
+      if (isComposing && e.keyCode === 32) {
+        e.preventDefault();
+        imeStatus.innerHTML += ' <span style="color:#e74c3c">(空格键被阻止)</span>';
+      }
+      
+      // 阻止回车键确认 IME 输入
+      if (isComposing && e.keyCode === 13) {
+        e.preventDefault();
+        imeStatus.innerHTML += ' <span style="color:#e74c3c">(回车键被阻止)</span>';
+      }
+    });
+
+    // 输入事件处理
+    textarea.addEventListener('input', function(e) {
+      if (isIMEBlockEnabled && isComposing) {
+        // 在 IME 输入过程中阻止实际输入
+        textarea.value = textarea.value.replace(/[\u4e00-\u9fa5]/g, '');
+      }
+    });
+  </script>
+</body>
+</html>

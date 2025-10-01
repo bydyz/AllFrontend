@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.container {
+  margin: 20px;
+  padding: 20px;
+}
+
+.ime-block-demo {
+  width: 300px;
+  height: 100px;
+  padding: 10px;
+  border: 2px solid #9b59b6;
+  border-radius: 5px;
+  font-size: 14px;
+  
+  /* 禁用 IME 输入法 */
+  ime-mode: disabled;
+  -webkit-ime-mode: disabled;
+  -moz-ime-mode: disabled;
+}
+
+.ime-active-demo {
+  border: 2px solid #e74c3c;
+  
+  /* 激活时禁用 IME */
+  ime-mode: inactive;
+}
+
+.ime-info {
+  background: #f8f9fa;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  font-size: 12px;
+  color: #7f8c8d;
+}
+</style>
+</head>
+<body>
+  <script src="/run.js"></script>
+  <div>
+    <button onclick="window.MyUtils.onBackToParent()">返回上一级</button>
+  </div>
+
+  <div class="container">
+    <h3>4. 使用 ime-mode 阻止 IME 输入</h3>
+    
+    <div class="ime-info">
+      <strong>注意：</strong> ime-mode 属性不是标准属性，浏览器支持有限。
+      主要在现代浏览器中有效。
+    </div>
+    
+    <textarea class="ime-block-demo" placeholder="尝试用输入法输入...">
+这个文本域禁用了 IME 输入法
+只能输入英文字符和数字
+    </textarea>
+    
+    <textarea class="ime-active-demo" placeholder="获得焦点时禁用 IME...">
+获得焦点时自动禁用输入法
+失去焦点时恢复
+    </textarea>
+  </div>
+</body>
+</html>

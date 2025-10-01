@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.container {
+  margin: 20px;
+  padding: 20px;
+}
+.disabled-demo {
+  border-color: #e74c3c;
+  background: #ecf0f1;
+  color: #7f8c8d;
+  cursor: not-allowed;
+}
+</style>
+</head>
+<body>
+  <script src="/run.js"></script>
+  <div>
+    <button onclick="window.MyUtils.onBackToParent()">返回上一级</button>
+  </div>
+
+  <div class="container">
+    <h3>2. 使用 disabled 属性阻止输入</h3>
+    
+    <textarea class="disabled-demo" disabled>
+这是一个禁用的文本域
+用户不能交互
+表单提交时不会包含此字段
+    </textarea>
+    
+    <p>特点：</p>
+    <ul>
+      <li>内容不可选中、不可复制</li>
+      <li>不能获得焦点</li>
+      <li>颜色变灰显示禁用状态</li>
+      <li>表单提交时排除此字段</li>
+    </ul>
+  </div>
+</body>
+</html>

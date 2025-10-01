@@ -6,6 +6,7 @@ import IdSelector from "./IdSelector.vue";
 import GroupSonSelector from "./GroupSonSelector.vue";
 import PseudoSelector from "./PseudoSelector/index.vue";
 import SelectorWeight from "./SelectorWeight/index.vue";
+import ChildCombinator from "./ChildCombinator.vue";
 import { ref, shallowRef, markRaw } from "vue";
 
 let componentsArray = ref([
@@ -36,6 +37,10 @@ let componentsArray = ref([
   {
     name: '选择器权重',
     component: markRaw(SelectorWeight)
+  },
+  {
+    name: '子元素选择器 >',
+    component: markRaw(ChildCombinator)
   },
 ])
 let componentId = shallowRef(UniversalSelector);

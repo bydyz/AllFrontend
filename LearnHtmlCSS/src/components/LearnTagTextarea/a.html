@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .container {
+        margin: 20px;
+        padding: 20px;
+      }
+
+      .form-group {
+        margin: 15px 0;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+
+      textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #bdc3c7;
+        border-radius: 5px;
+        font-size: 14px;
+        font-family: Arial, sans-serif;
+        resize: vertical; /* 允许垂直调整大小 */
+        min-height: 100px;
+        transition: all 0.3s ease;
+      }
+
+      textarea:focus {
+        border-color: #3498db;
+        outline: none;
+        box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+      }
+
+      /* 禁用调整大小 */
+      .no-resize {
+        resize: none;
+      }
+
+      /* 限制调整方向 */
+      .horizontal-resize {
+        resize: horizontal;
+      }
+
+      .both-resize {
+        resize: both;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="/run.js"></script>
+    <div>
+      <button onclick="window.MyUtils.onBackToParent()">返回上一级</button>
+    </div>
+
+    <div class="container">
+      <h3>Textarea 文本域示例</h3>
+
+      <!-- 基本文本域 -->
+      <div class="form-group">
+        <label for="basic">基本文本域:</label>
+        <textarea id="basic" placeholder="请输入多行文本..."></textarea>
+      </div>
+
+      <!-- 固定行数列数 -->
+      <div class="form-group">
+        <label for="rows-cols">指定行数和列数 (rows/cols):</label>
+        <textarea id="rows-cols" rows="5" cols="50" placeholder="这个文本域有5行50列"></textarea>
+      </div>
+
+      <!-- 禁用调整大小 -->
+      <div class="form-group">
+        <label for="no-resize">禁用调整大小 (resize: none):</label>
+        <textarea id="no-resize" class="no-resize" placeholder="不能调整大小"></textarea>
+      </div>
+
+      <!-- 只能水平调整 -->
+      <div class="form-group">
+        <label for="horizontal">只能水平调整 (resize: horizontal):</label>
+        <textarea id="horizontal" class="horizontal-resize" placeholder="只能水平调整大小"></textarea>
+      </div>
+
+      <!-- 可以双向调整 -->
+      <div class="form-group">
+        <label for="both">可以双向调整 (resize: both):</label>
+        <textarea id="both" class="both-resize" placeholder="可以水平和垂直调整大小"></textarea>
+      </div>
+
+      <!-- 禁用状态 -->
+      <div class="form-group">
+        <label for="disabled">禁用状态:</label>
+        <textarea id="disabled" disabled>这个文本域被禁用</textarea>
+      </div>
+
+      <!-- 只读状态 -->
+      <div class="form-group">
+        <label for="readonly">只读状态:</label>
+        <textarea id="readonly" readonly>这个文本域是只读的\n第二行内容</textarea>
+      </div>
+    </div>
+  </body>
+</html>

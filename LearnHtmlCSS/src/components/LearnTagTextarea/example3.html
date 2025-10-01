@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.container {
+  margin: 20px;
+  padding: 20px;
+}
+
+.event-block-demo {
+  border-color: #2ecc71;
+}
+
+.status {
+  margin: 10px 0;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 5px;
+}
+
+.key-log {
+  height: 600px;
+  overflow-y: auto;
+  background: #2c3e50;
+  color: #ecf0f1;
+  padding: 10px;
+  font-family: monospace;
+  border-radius: 5px;
+}
+</style>
+</head>
+<body>
+  <script src="/run.js"></script>
+  <div>
+    <button onclick="window.MyUtils.onBackToParent()">返回上一级</button>
+  </div>
+
+  <div class="container">
+    <h3>3. 使用 JavaScript 事件阻止输入</h3>
+    
+    <textarea id="eventBlock" class="event-block-demo" placeholder="尝试输入..."></textarea>
+    
+    <div class="status">
+      <label>
+        <input type="checkbox" id="blockInput" checked> 阻止键盘输入
+      </label>
+      <label>
+        <input type="checkbox" id="blockPaste" checked> 阻止粘贴
+      </label>
+      <label>
+        <input type="checkbox" id="blockDrop" checked> 阻止拖放
+      </label>
+    </div>
+    
+    <div class="key-log" id="keyLog">按键记录：</div>
+  </div>
+
+  <script>
+    const textarea = document.getElementById('eventBlock');
+    const keyLog = document.getElementById('keyLog');
+    const blockInput = document.getElementById('blockInput');
+    const blockPaste = document.getElementById('blockPaste');
+    const blockDrop = document.getElementById('blockDrop');
+
+    // 阻止键盘输入
+    textarea.addEventListener('keydown', function(e) {
+      if (blockInput.checked) {
+        keyLog.innerHTML += `阻止了按键: ${e.key} (代码: ${e.keyCode})<br>`;
+        e.preventDefault();
+        return false;
+      }
+    });
+
+    // 阻止粘贴
+    textarea.addEventListener('paste', function(e) {
+      if (blockPaste.checked) {
+        keyLog.innerHTML += '阻止了粘贴操作<br>';
+        e.preventDefault();
+        return false;
+      }
+    });
+
+    // 阻止拖放
+    textarea.addEventListener('drop', function(e) {
+      if (blockDrop.checked) {
+        keyLog.innerHTML += '阻止了拖放操作<br>';
+        e.preventDefault();
+        return false;
+      }
+    });
+
+    // 阻止右键菜单（可选）
+    textarea.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      return false;
+    });
+
+    // 清空日志
+    setInterval(() => {
+      if (keyLog.children.length > 10) {
+        keyLog.innerHTML = '按键记录：<br>';
+      }
+    }, 5000);
+  </script>
+</body>
+</html>

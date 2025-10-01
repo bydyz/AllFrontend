@@ -1,5 +1,6 @@
 <script setup>
 import ASimpleWrite from "./components/ASimpleWrite.vue";
+
 import LearnCenter from "./components/LearnCenter.vue";
 import LearnTagImg from "./components/LearnTagImg/index.vue";
 import CommonTags from "./components/CommonTags.vue";
@@ -11,9 +12,13 @@ import CustomList from "./components/CustomList.vue";
 import LearnTagA from "./components/LearnTagA/index.vue"
 import LearnTable from "./components/LearnTable/index.vue"
 import LearnTagForm from "./components/LearnTagForm/index.vue"
+
 import LearnFont from "./components/LearnFont/index.vue"
 import LearnDisplay from "./components/LearnDisplay/index.vue"
+import LearnScrollbar from "./components/LearnScrollbar/index.vue"
+
 import LearnSelector from "./components/LearnSelector/index.vue"
+
 import { ref, shallowRef, markRaw } from "vue";
 
 let componentsArray = ref([
@@ -72,6 +77,10 @@ let componentsArray = ref([
   {
     name: 'display',
     component: markRaw(LearnDisplay)
+  },
+  {
+    name: '滚动条样式',
+    component: markRaw(LearnScrollbar)
   },
   {
     name: 'CSS选择器',
