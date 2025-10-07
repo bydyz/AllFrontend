@@ -1,3 +1,11 @@
+// const proxy = new Proxy(target, {
+//   set: function(target, property, value, receiver) {
+//     // 拦截属性设置操作
+//     // 必须返回布尔值表示是否设置成功
+//   }
+// });
+
+
 let validator = {
   set: function (obj, prop, value) {
     if (prop === "age") {
