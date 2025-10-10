@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>无限滚动和虚拟列表</title>
+    <style>
+        .virtual-list {
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            position: relative;
+        }
+        .list-item {
+            position: absolute;
+            width: 100%;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            box-sizing: border-box;
+            transition: top 0.3s ease;
+        }
+        .list-item:nth-child(odd) {
+            background: #f8f9fa;
+        }
+        .list-item:nth-child(even) {
+            background: #ffffff;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+        .viewport-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="viewport-info" id="viewportInfo">
+        视口信息加载中...
+    </div>
+    
+    <h2>虚拟列表演示 (1000个项目)</h2>
+    <div class="virtual-list" id="virtualList">
+        <div class="loading" id="loading">加载中...</div>
+    </div>
+
+    <script>
+        class VirtualList {
+            constructor() {
+                this.container = document.getElementById('virtualList');
+                this.viewportInfo = document.getElementById('viewportInfo');
+                this.loading = document.getElementById('loading');
+                
+                this.itemHeight = 50; // 每个项目的高度
+                this.totalItems = 1000; // 总项目数
+                this.visibleItems = []; // 当前可见的项目
+                this.buffer = 5; // 缓冲区项目数
+                
+                this.init();
+            }
+            
+            init() {
+                // 设置容器高度
+                this.container.style.height = '400px';
+                
+                // 监听滚动事件
+                this.container.addEventListener('scroll', this.handleScroll.bind(this));
+                
+                // 初始渲染
+                this.renderVisibleItems();
+                
+                // 更新视口信息
+                this.updateViewportInfo();
+            }
+            
+            handleScroll() {
+                this.renderVisibleItems();
+                this.updateViewportInfo();
+            }
+            
+            renderVisibleItems() {
+                const scrollTop = this.container.scrollTop;
+                const containerHeight = this.container.clientHeight;
+                
+                // 计算可见范围
+                const startIndex = Math.max(0, Math.floor(scrollTop / this.itemHeight) - this.buffer);
+                const endIndex = Math.min(
+                    this.totalItems - 1,
+                    Math.ceil((scrollTop + containerHeight) / this.itemHeight) + this.buffer
+                );
+                
+                // 移除不可见的项目
+                this.visibleItems.forEach(item => {
+                    if (item.index < startIndex || item.index > endIndex) {
+                        item.element.remove();
+                    }
+                });
+                
+                // 过滤出需要保留的项目
+                this.visibleItems = this.visibleItems.filter(item => 
+                    item.index >= startIndex && item.index <= endIndex
+                );
+                
+                // 添加新的可见项目
+                for (let i = startIndex; i <= endIndex; i++) {
+                    if (!this.visibleItems.find(item => item.index === i)) {
+                        const element = this.createListItem(i);
+                        this.visibleItems.push({ index: i, element });
+                        this.container.appendChild(element);
+                    }
+                }
+                
+                // 更新项目位置
+                this.visibleItems.forEach(item => {
+                    item.element.style.top = (item.index * this.itemHeight) + 'px';
+                    item.element.style.height = this.itemHeight + 'px';
+                });
+                
+                // 隐藏/显示加载提示
+                this.loading.style.display = endIndex >= this.totalItems - 1 ? 'block' : 'none';
+            }
+            
+            createListItem(index) {
+                const element = document.createElement('div');
+                element.className = 'list-item';
+                element.innerHTML = `
+                    <strong>项目 ${index + 1}</strong>
+                    <span style="float: right; color: #6c757d;">
+                        位置: ${(index * this.itemHeight).toLocaleString()}px
+                    </span>
+                `;
+                return element;
+            }
+            
+            updateViewportInfo() {
+                const scrollTop = this.container.scrollTop;
+                const containerHeight = this.container.clientHeight;
+                const scrollHeight = this.container.scrollHeight;
+                
+                const visibleStart = Math.floor(scrollTop / this.itemHeight);
+                const visibleEnd = Math.ceil((scrollTop + containerHeight) / this.itemHeight);
+                
+                this.viewportInfo.innerHTML = `
+                    <strong>虚拟列表信息:</strong><br>
+                    可见项目: ${visibleStart}-${visibleEnd}<br>
+                    总项目: ${this.totalItems}<br>
+                    渲染项目: ${this.visibleItems.length}<br>
+                    滚动位置: ${scrollTop}px<br>
+                    进度: ${((scrollTop / (scrollHeight - containerHeight)) * 100).toFixed(1)}%
+                `;
+            }
+        }
+
+        // 初始化虚拟列表
+        new VirtualList();
+    </script>
+</body>
+</html>

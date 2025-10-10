@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>响应式卡片设计</title>
+    <style>
+        /* 最佳实践：全局设置 border-box */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+        
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .card-image {
+            height: 200px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-content {
+            padding: 25px;
+        }
+        
+        .card-title {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #2d3436;
+        }
+        
+        .card-description {
+            color: #636e72;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid #dfe6e9;
+        }
+        
+        .price {
+            font-size: 1.25em;
+            font-weight: bold;
+            color: #00b894;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            background: #0984e3;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #074b83;
+        }
+        
+        /* 演示 border-box 的优势 */
+        .demo-controls {
+            background: rgba(255,255,255,0.9);
+            padding: 20px;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+        }
+        
+        .value-display {
+            text-align: center;
+            font-family: monospace;
+            background: #2d3436;
+            color: white;
+            padding: 5px;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-controls">
+        <h3>布局控制面板</h3>
+        
+        <div class="control-group">
+            <label>卡片内边距 (Padding)</label>
+            <input type="range" id="paddingRange" min="10" max="50" value="25">
+            <div class="value-display" id="paddingValue">25px</div>
+        </div>
+        
+        <div class="control-group">
+            <label>卡片间距 (Gap)</label>
+            <input type="range" id="gapRange" min="10" max="50" value="30">
+            <div class="value-display" id="gapValue">30px</div>
+        </div>
+        
+        <div class="control-group">
+            <label>边框宽度 (Border)</label>
+            <input type="range" id="borderRange" min="0" max="10" value="0">
+            <div class="value-display" id="borderValue">0px</div>
+        </div>
+        
+        <button onclick="toggleBoxSizing()" id="toggleBtn">切换为 content-box</button>
+    </div>
+    
+    <div class="cards-container" id="cardsContainer">
+        <div class="card">
+            <div class="card-image"></div>
+            <div class="card-content">
+                <h3 class="card-title">产品设计课程</h3>
+                <p class="card-description">学习现代产品设计原则和方法，掌握用户界面和用户体验设计技能。</p>
+                <div class="card-meta">
+                    <span class="price">¥299</span>
+                    <button class="btn">立即购买</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-image" style="background: linear-gradient(45deg, #a29bfe, #6c5ce7);"></div>
+            <div class="card-content">
+                <h3 class="card-title">前端开发实战</h3>
+                <p class="card-description">从零开始学习现代前端开发技术，包括 HTML、CSS、JavaScript 和流行框架。</p>
+                <div class="card-meta">
+                    <span class="price">¥399</span>
+                    <button class="btn">立即购买</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-image" style="background: linear-gradient(45deg, #fd79a8, #e84393);"></div>
+            <div class="card-content">
+                <h3 class="card-title">数据科学入门</h3>
+                <p class="card-description">掌握数据分析和机器学习基础，使用 Python 进行数据科学项目开发。</p>
+                <div class="card-meta">
+                    <span class="price">¥499</span>
+                    <button class="btn">立即购买</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isBorderBox = true;
+        
+        // 更新卡片样式
+        function updateCardStyles() {
+            const padding = document.getElementById('paddingRange').value;
+            const gap = document.getElementById('gapRange').value;
+            const border = document.getElementById('borderRange').value;
+            
+            const cards = document.querySelectorAll('.card');
+            const container = document.getElementById('cardsContainer');
+            
+            // 应用样式
+            cards.forEach(card => {
+                card.style.padding = padding + 'px';
+                card.style.border = border + 'px solid #ddd';
+            });
+            
+            container.style.gap = gap + 'px';
+            
+            // 更新显示值
+            document.getElementById('paddingValue').textContent = padding + 'px';
+            document.getElementById('gapValue').textContent = gap + 'px';
+            document.getElementById('borderValue').textContent = border + 'px';
+            
+            // 显示布局信息
+            showLayoutInfo();
+        }
+        
+        // 切换 box-sizing
+        function toggleBoxSizing() {
+            const btn = document.getElementById('toggleBtn');
+            const cards = document.querySelectorAll('.card');
+            
+            isBorderBox = !isBorderBox;
+            
+            if (isBorderBox) {
+                cards.forEach(card => {
+                    card.style.boxSizing = 'border-box';
+                });
+                btn.textContent = '切换为 content-box';
+            } else {
+                cards.forEach(card => {
+                    card.style.boxSizing = 'content-box';
+                });
+                btn.textContent = '切换为 border-box';
+            }
+            
+            showLayoutInfo();
+        }
+        
+        // 显示布局信息
+        function showLayoutInfo() {
+            const card = document.querySelector('.card');
+            const rect = card.getBoundingClientRect();
+            
+            console.log('卡片尺寸信息:', {
+                boxSizing: isBorderBox ? 'border-box' : 'content-box',
+                设置宽度: '300px (minmax)',
+                实际宽度: Math.round(rect.width) + 'px',
+                设置高度: '自适应',
+                实际高度: Math.round(rect.height) + 'px',
+                包含Padding: card.style.padding,
+                包含Border: card.style.border
+            });
+        }
+        
+        // 初始化事件监听
+        document.getElementById('paddingRange').addEventListener('input', updateCardStyles);
+        document.getElementById('gapRange').addEventListener('input', updateCardStyles);
+        document.getElementById('borderRange').addEventListener('input', updateCardStyles);
+        
+        // 初始更新
+        updateCardStyles();
+    </script>
+</body>
+</html>

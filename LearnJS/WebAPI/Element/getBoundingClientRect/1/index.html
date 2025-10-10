@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>offsetX</title>
+
+  <style>
+    body{
+      margin: 0px;
+
+      width: 3000px;
+      height: 3000px;
+    }
+
+    .box1, .box2, .box3{
+      height: 300px;
+      width: 500px;
+      
+    }
+
+    .box1{
+      background-color: #8c9dc2;
+    }
+
+
+    .box2{
+      display: flex;
+      position: relative;
+    }
+
+    .box2 .first, .box2 .second{
+      height: 200px;
+      width: 200px;
+    }
+    /* 通常，设置宽高，是限定  content + padding + border 加起来的宽度和高度
+    
+    margin是不算在内的
+    */
+
+    .box2 .first{
+      margin-top: 80px;
+      background-color: rgb(140, 187, 189);
+    }
+
+    .box2 .second{
+      box-sizing: border-box;
+      padding: 30px;
+      border: 20px solid #999;
+      margin: 10px;
+      background-color: rgb(73, 94, 73);
+    }
+
+
+    .box3{
+      background-color: #74694a;
+    }
+  </style>
+
+</head>
+
+<!-- https://blog.csdn.net/lefex/article/details/104682178?spm=1001.2014.3001.5506 -->
+
+<body>
+
+  <!-- HTML元素 -->
+  <div class="box1">
+    300*500 box1
+    <div></div>
+  </div>
+
+  <div class="box2">
+    <!-- 300*500 -->
+    <div class="first">
+      200*200 box2 1
+    </div>
+    <div class="second" id="second">200*200<br/>second<br/>margin  10<br/>border  20<br/>padding 30</div>
+  </div>
+
+  <div class="box3">
+    300*500 box3
+    <div ref="div"></div>
+  </div>
+
+
+
+  <!-- js区域 -->
+  <!-- <script src="./innerX.js"></script>
+  <script src="./scrollX.js"></script> -->
+  <script src="./getBoundingClientRect.js"></script>
+  
+
+</body>
+
+</html>

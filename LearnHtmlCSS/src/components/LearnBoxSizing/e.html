@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>box-sizing 最佳实践</title>
+    <style>
+        /* 最佳实践：全局设置 border-box */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+        
+        /* 可选：为特定元素恢复 content-box */
+        .content-box-element {
+            box-sizing: content-box;
+        }
+        
+        .demo-section {
+            padding: 40px;
+            margin: 20px;
+            border: 2px solid;
+            border-radius: 10px;
+        }
+        
+        .best-practice {
+            background: #d4edda;
+            border-color: #c3e6cb;
+        }
+        
+        .old-practice {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        
+        .comparison {
+            background: #fff3cd;
+            border-color: #ffeaa7;
+        }
+        
+        .box {
+            width: 200px;
+            height: 100px;
+            padding: 20px;
+            border: 10px solid;
+            margin: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        code {
+            background: #2d3436;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        
+        .info-box {
+            background: #e9ecef;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-section best-practice">
+        <h2>✅ 现代最佳实践</h2>
+        <div class="info-box">
+            <strong>推荐使用：</strong>
+            <code>* { box-sizing: border-box; }</code>
+        </div>
+        
+        <div class="box" style="border-color: #28a745;">
+            border-box<br>
+            设置: 200×100<br>
+            实际: 200×100
+        </div>
+        
+        <pre><code>
+/* CSS Reset 最佳实践 */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* 这样设置后： */
+.element {
+    width: 300px;      /* 总宽度就是 300px */
+    padding: 20px;     /* 包含在 300px 内 */
+    border: 2px solid; /* 包含在 300px 内 */
+}
+        </code></pre>
+    </div>
+    
+    <div class="demo-section old-practice">
+        <h2>❌ 传统做法（不推荐）</h2>
+        <div class="info-box">
+            <strong>问题：</strong> 需要手动计算内容宽度，布局容易出错
+        </div>
+        
+        <div class="box content-box-element" style="border-color: #dc3545;">
+            content-box<br>
+            设置: 200×100<br>
+            实际: 260×160
+        </div>
+        
+        <pre><code>
+/* 传统做法的问题 */
+.element {
+    width: 300px;      /* 只是内容宽度 */
+    padding: 20px;     /* +40px = 340px */
+    border: 2px solid; /* +4px = 344px */
+    /* 实际占用 344px，不是预期的 300px */
+}
+
+/* 需要手动计算 */
+.element {
+    width: 256px;      /* 300 - 20×2 - 2×2 = 256 */
+    padding: 20px;
+    border: 2px solid;
+    /* 现在实际是 300px，但计算复杂 */
+}
+        </code></pre>
+    </div>
+    
+    <div class="demo-section comparison">
+        <h2>📊 两种模式的对比</h2>
+        
+        <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+            <thead>
+                <tr style="background: #34495e; color: white;">
+                    <th style="padding: 12px; text-align: left;">特性</th>
+                    <th style="padding: 12px; text-align: left;">border-box</th>
+                    <th style="padding: 12px; text-align: left;">content-box</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="background: white;">
+                    <td style="padding: 12px; border: 1px solid #ddd;">布局计算</td>
+                    <td style="padding: 12px; border: 1px solid #ddd;">简单直观</td>
+                    <td style="padding: 12px; border: 1px solid #ddd;">复杂易错</td>
+                </tr>
+                <tr style="background: #f8f9fa;">
+                    <td style="padding: 12px; border: 1px solid #ddd;">响应式设计</td>
+                    <td style="padding: 12px; border: 1px solid #ddd;">友好</td>
+                    <td style="padding: 12px; border: 1px solid #ddd;">困难</td>
+                </tr>
+                <tr style="background: white;">
+                    <td style="padding: 12px; border: 1px solid #ddd;">维护性</td>
+                    <td style="padding: 12px; border: 1px solid #ddd;">高</td>
+                    <td style="padding: 12px; border: 1px solid #ddd;">低</td>
+                </tr>
+                <tr style="background: #f8f9fa;">
+                    <td style="padding: 12px; border: 1px solid #ddd;">现代框架</td>
+                    <td style="padding: 12px; border: 1px solid #ddd;">默认使用</td>
+                    <td style="padding: 12px; border: 1px solid #ddd;">很少使用</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="info-box">
+            <strong>行业标准：</strong> Bootstrap、Tailwind CSS、Material-UI 等现代框架都使用 <code>border-box</code>
+        </div>
+    </div>
+
+    <script>
+        // 显示实际尺寸
+        document.querySelectorAll('.box').forEach(box => {
+            const rect = box.getBoundingClientRect();
+            const info = document.createElement('div');
+            info.style.fontSize = '12px';
+            info.style.marginTop = '5px';
+            info.style.color = '#666';
+            info.textContent = `实测: ${Math.round(rect.width)}×${Math.round(rect.height)}`;
+            box.appendChild(info);
+        });
+    </script>
+</body>
+</html>

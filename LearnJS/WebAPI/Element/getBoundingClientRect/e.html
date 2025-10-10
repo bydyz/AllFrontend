@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>响应式布局和元素跟踪</title>
+    <style>
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: #3498db;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        .card.visible::before {
+            transform: scaleX(1);
+        }
+        .card.highlight {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            border-color: #3498db;
+        }
+        .tracker {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            max-width: 300px;
+        }
+        .heatmap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.1;
+        }
+    </style>
+</head>
+<body>
+    <div class="tracker" id="tracker">
+        元素跟踪器初始化中...
+    </div>
+    
+    <div class="grid" id="grid">
+        <!-- 卡片将通过 JavaScript 动态生成 -->
+    </div>
+
+    <script>
+        class ElementTracker {
+            constructor() {
+                this.grid = document.getElementById('grid');
+                this.tracker = document.getElementById('tracker');
+                this.cards = [];
+                this.visibilityData = new Map();
+                
+                this.init();
+            }
+            
+            init() {
+                // 生成测试卡片
+                this.generateCards(20);
+                
+                // 监听事件
+                window.addEventListener('scroll', this.updateTracker.bind(this));
+                window.addEventListener('resize', this.updateTracker.bind(this));
+                window.addEventListener('mousemove', this.handleMouseMove.bind(this));
+                
+                // 初始更新
+                this.updateTracker();
+            }
+            
+            generateCards(count) {
+                for (let i = 0; i < count; i++) {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <h3>卡片 ${i + 1}</h3>
+                        <p>这是第 ${i + 1} 张卡片的内容描述。</p>
+                        <div class="heatmap" style="background: hsl(${i * 18}, 70%, 60%)"></div>
+                    `;
+                    
+                    this.grid.appendChild(card);
+                    this.cards.push(card);
+                    
+                    // 初始化可见性数据
+                    this.visibilityData.set(card, {
+                        totalTime: 0,
+                        lastSeen: null,
+                        viewCount: 0
+                    });
+                }
+            }
+            
+            updateTracker() {
+                const viewportHeight = window.innerHeight;
+                let visibleCards = 0;
+                let mostVisibleCard = null;
+                let maxVisibility = 0;
+                
+                this.cards.forEach(card => {
+                    const rect = card.getBoundingClientRect();
+                    const cardData = this.visibilityData.get(card);
+                    
+                    // 计算可见比例
+                    const visibleHeight = Math.max(0, 
+                        Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0)
+                    );
+                    const visibilityRatio = visibleHeight / rect.height;
+                    
+                    // 更新可见性状态
+                    if (visibilityRatio > 0.1) {
+                        card.classList.add('visible');
+                        visibleCards++;
+                        
+                        // 跟踪最可见的卡片
+                        if (visibilityRatio > maxVisibility) {
+                            maxVisibility = visibilityRatio;
+                            mostVisibleCard = card;
+                        }
+                        
+                        // 更新可见时间
+                        if (!cardData.lastSeen) {
+                            cardData.lastSeen = Date.now();
+                            cardData.viewCount++;
+                        }
+                    } else {
+                        card.classList.remove('visible');
+                        
+                        // 更新总可见时间
+                        if (cardData.lastSeen) {
+                            cardData.totalTime += Date.now() - cardData.lastSeen;
+                            cardData.lastSeen = null;
+                        }
+                    }
+                });
+                
+                // 高亮最可见的卡片
+                this.cards.forEach(card => {
+                    card.classList.remove('highlight');
+                });
+                if (mostVisibleCard) {
+                    mostVisibleCard.classList.add('highlight');
+                }
+                
+                // 更新跟踪器信息
+                this.updateTrackerDisplay(visibleCards, mostVisibleCard);
+            }
+            
+            handleMouseMove(e) {
+                // 可以添加鼠标悬停效果
+                this.cards.forEach(card => {
+                    const rect = card.getBoundingClientRect();
+                    const isHovering = (
+                        e.clientX >= rect.left &&
+                        e.clientX <= rect.right &&
+                        e.clientY >= rect.top &&
+                        e.clientY <= rect.bottom
+                    );
+                    
+                    if (isHovering) {
+                        card.style.transform = 'translateY(-2px)';
+                    } else {
+                        card.style.transform = '';
+                    }
+                });
+            }
+            
+            updateTrackerDisplay(visibleCount, mostVisibleCard) {
+                let visibilityStats = '';
+                this.visibilityData.forEach((data, card) => {
+                    const cardIndex = this.cards.indexOf(card) + 1;
+                    visibilityStats += `卡片 ${cardIndex}: ${Math.round(data.totalTime/1000)}s 查看\n`;
+                });
+                
+                this.tracker.innerHTML = `
+                    <strong>布局跟踪器</strong><br>
+                    可见卡片: ${visibleCount}/${this.cards.length}<br>
+                    最可见: ${mostVisibleCard ? this.cards.indexOf(mostVisibleCard) + 1 : '无'}<br>
+                    视口高度: ${window.innerHeight}px<br>
+                    <hr>
+                    <strong>可见时间统计:</strong><br>
+                    <pre style="font-size: 10px;">${visibilityStats}</pre>
+                `;
+            }
+        }
+
+        // 初始化元素跟踪器
+        new ElementTracker();
+    </script>
+</body>
+</html>

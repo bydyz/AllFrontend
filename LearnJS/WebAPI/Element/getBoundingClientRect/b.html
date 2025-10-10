@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>元素可见性检测</title>
+    <style>
+        .container {
+            height: 500px;
+            overflow-y: scroll;
+            border: 2px solid #ddd;
+            padding: 20px;
+        }
+        .item {
+            height: 100px;
+            margin: 10px 0;
+            padding: 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .item.visible {
+            background: #2ecc71;
+            color: white;
+        }
+        .item.hidden {
+            background: #e74c3c;
+            color: white;
+        }
+        .item.partial {
+            background: #f39c12;
+            color: white;
+        }
+        .status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="status" id="status">滚动查看元素可见性</div>
+    
+    <div class="container" id="container">
+        <div class="item" id="item1">元素 1</div>
+        <div class="item" id="item2">元素 2</div>
+        <div class="item" id="item3">元素 3</div>
+        <div class="item" id="item4">元素 4</div>
+        <div class="item" id="item5">元素 5</div>
+        <div class="item" id="item6">元素 6</div>
+        <div class="item" id="item7">元素 7</div>
+        <div class="item" id="item8">元素 8</div>
+    </div>
+
+    <script>
+        function checkVisibility() {
+            const container = document.getElementById('container');
+            const containerRect = container.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+            
+            let visibleCount = 0;
+            let partialCount = 0;
+            let hiddenCount = 0;
+            
+            // 检查每个元素
+            for (let i = 1; i <= 8; i++) {
+                const element = document.getElementById('item' + i);
+                const rect = element.getBoundingClientRect();
+                
+                // 重置类名
+                element.className = 'item';
+                
+                // 检查元素是否在视口内
+                const isCompletelyVisible = (
+                    rect.top >= 0 &&
+                    rect.bottom <= viewportHeight
+                );
+                
+                const isPartiallyVisible = (
+                    rect.top < viewportHeight && 
+                    rect.bottom > 0
+                );
+                
+                if (isCompletelyVisible) {
+                    element.classList.add('visible');
+                    visibleCount++;
+                } else if (isPartiallyVisible) {
+                    element.classList.add('partial');
+                    partialCount++;
+                } else {
+                    element.classList.add('hidden');
+                    hiddenCount++;
+                }
+            }
+            
+            // 更新状态显示
+            const status = document.getElementById('status');
+            status.innerHTML = `
+                <strong>可见性统计:</strong><br>
+                ✅ 完全可见: ${visibleCount}<br>
+                ⚠️ 部分可见: ${partialCount}<br>
+                ❌ 不可见: ${hiddenCount}
+            `;
+        }
+
+        // 监听滚动和调整大小
+        document.getElementById('container').addEventListener('scroll', checkVisibility);
+        window.addEventListener('resize', checkVisibility);
+        
+        // 初始检查
+        checkVisibility();
+    </script>
+</body>
+</html>

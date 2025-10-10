@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>getBoundingClientRect 基础示例</title>
+    <style>
+        .demo-box {
+            width: 200px;
+            height: 150px;
+            padding: 20px;
+            margin: 50px;
+            border: 5px solid #3498db;
+            background: #ecf0f1;
+            position: relative;
+        }
+        .info {
+            background: #2c3e50;
+            color: white;
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-box" id="targetElement">
+        <h3>测试元素</h3>
+        <p>这是一个演示元素</p>
+    </div>
+    
+    <button onclick="showRectInfo()">显示位置信息</button>
+    <button onclick="scrollToElement()">滚动到元素</button>
+    
+    <div class="info" id="info"></div>
+
+    <div style="height: 1000px; background: linear-gradient(#f1f2f6, #dfe4ea);"></div>
+
+    <script>
+        function showRectInfo() {
+            const element = document.getElementById('targetElement');
+            const rect = element.getBoundingClientRect();
+            
+            const info = document.getElementById('info');
+            info.innerHTML = `
+                <h4>元素位置信息:</h4>
+                <p><strong>x:</strong> ${rect.x}px</p>
+                <p><strong>y:</strong> ${rect.y}px</p>
+                <p><strong>width:</strong> ${rect.width}px</p>
+                <p><strong>height:</strong> ${rect.height}px</p>
+                <p><strong>top:</strong> ${rect.top}px</p>
+                <p><strong>right:</strong> ${rect.right}px</p>
+                <p><strong>bottom:</strong> ${rect.bottom}px</p>
+                <p><strong>left:</strong> ${rect.left}px</p>
+                <p><strong>视口高度:</strong> ${window.innerHeight}px</p>
+                <p><strong>视口宽度:</strong> ${window.innerWidth}px</p>
+            `;
+        }
+
+        function scrollToElement() {
+            const element = document.getElementById('targetElement');
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 实时更新位置信息
+        window.addEventListener('scroll', showRectInfo);
+        window.addEventListener('resize', showRectInfo);
+        
+        // 初始显示
+        showRectInfo();
+    </script>
+</body>
+</html>
