@@ -1,0 +1,1 @@
+# 在 Vue 3 中，app.use() 用于注册插件，如 Vue Router、Vuex/Pinia、自定义插件等。
