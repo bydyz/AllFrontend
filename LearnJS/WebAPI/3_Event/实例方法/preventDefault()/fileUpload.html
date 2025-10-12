@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>文件上传控制</title>
+    <style>
+      .upload-area {
+        border: 2px dashed #007bff;
+        border-radius: 10px;
+        padding: 40px;
+        text-align: center;
+        margin: 20px 0;
+        transition: all 0.3s ease;
+      }
+      .upload-area.dragover {
+        background: #e3f2fd;
+        border-color: #0056b3;
+      }
+      .file-list {
+        margin: 20px 0;
+      }
+      .file-item {
+        padding: 10px;
+        margin: 5px 0;
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+      }
+      .file-item.error {
+        background: #f8d7da;
+        border-color: #f5c6cb;
+      }
+      .file-item.success {
+        background: #d1edff;
+        border-color: #b8daff;
+      }
+      .progress {
+        height: 5px;
+        background: #e9ecef;
+        margin: 5px 0;
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      .progress-bar {
+        height: 100%;
+        background: #007bff;
+        width: 0%;
+        transition: width 0.3s ease;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>文件上传控制演示</h2>
+
+    <div class="upload-area" id="uploadArea">
+      <p>📁 拖放文件到这里 或 <input type="file" id="fileInput" multiple /></p>
+      <p class="hint">支持多个文件，最大 10MB，仅限图片和文档</p>
+    </div>
+
+    <div class="file-list" id="fileList"></div>
+
+    <script>
+      class FileUploadController {
+        constructor() {
+          this.uploadArea = document.getElementById("uploadArea");
+          this.fileInput = document.getElementById("fileInput");
+          this.fileList = document.getElementById("fileList");
+          this.maxSize = 10 * 1024 * 1024; // 10MB
+          this.allowedTypes = ["image/jpeg", "image/png", "image/gif", "application/pdf", "text/plain"];
+
+          this.setupEventListeners();
+        }
+
+        setupEventListeners() {
+          // 文件输入变化
+          this.fileInput.addEventListener("change", event => {
+            this.handleFiles(event.target.files);
+          });
+
+          // 拖放事件
+          this.uploadArea.addEventListener("dragover", event => {
+            event.preventDefault(); // 必须阻止默认行为才能成为有效的放置目标
+            this.uploadArea.classList.add("dragover");
+            event.dataTransfer.dropEffect = "copy";
+          });
+
+          this.uploadArea.addEventListener("dragleave", event => {
+            this.uploadArea.classList.remove("dragover");
+          });
+
+          this.uploadArea.addEventListener("drop", event => {
+            event.preventDefault(); // 阻止浏览器默认的打开文件行为
+            this.uploadArea.classList.remove("dragover");
+
+            const files = event.dataTransfer.files;
+            this.handleFiles(files);
+          });
+
+          // 阻止文档其他区域的默认拖放行为
+          document.addEventListener("dragover", event => {
+            if (!event.target.closest("#uploadArea")) {
+              event.preventDefault();
+            }
+          });
+
+          document.addEventListener("drop", event => {
+            if (!event.target.closest("#uploadArea")) {
+              event.preventDefault();
+            }
+          });
+        }
+
+        handleFiles(files) {
+          for (let file of files) {
+            if (this.validateFile(file)) {
+              this.addFileToList(file);
+              this.simulateUpload(file);
+            }
+          }
+        }
+
+        validateFile(file) {
+          // 检查文件类型
+          if (!this.allowedTypes.includes(file.type)) {
+            this.showError(`不支持的文件类型: ${file.type}`);
+            return false;
+          }
+
+          // 检查文件大小
+          if (file.size > this.maxSize) {
+            this.showError(`文件太大: ${(file.size / 1024 / 1024).toFixed(2)}MB (最大10MB)`);
+            return false;
+          }
+
+          return true;
+        }
+
+        addFileToList(file) {
+          const fileItem = document.createElement("div");
+          fileItem.className = "file-item";
+          fileItem.innerHTML = `
+                    <div><strong>${file.name}</strong> (${(file.size / 1024).toFixed(2)}KB)</div>
+                    <div class="progress">
+                        <div class="progress-bar" id="progress-${file.name}"></div>
+                    </div>
+                    <div class="status">准备上传...</div>
+                `;
+
+          this.fileList.appendChild(fileItem);
+          return fileItem;
+        }
+
+        simulateUpload(file) {
+          const progressBar = document.getElementById(`progress-${file.name}`);
+          const statusDiv = progressBar.parentElement.nextElementSibling;
+
+          let progress = 0;
+          const interval = setInterval(() => {
+            progress += Math.random() * 10;
+            if (progress >= 100) {
+              progress = 100;
+              clearInterval(interval);
+
+              progressBar.style.background = "#28a745";
+              statusDiv.textContent = "✅ 上传完成";
+              statusDiv.parentElement.classList.add("success");
+
+              this.onUploadComplete(file);
+            } else {
+              progressBar.style.width = `${progress}%`;
+              statusDiv.textContent = `上传中... ${Math.round(progress)}%`;
+            }
+          }, 200);
+        }
+
+        onUploadComplete(file) {
+          console.log(`文件上传完成: ${file.name}`);
+          // 这里可以执行实际的上传逻辑
+        }
+
+        showError(message) {
+          const errorItem = document.createElement("div");
+          errorItem.className = "file-item error";
+          errorItem.textContent = `❌ ${message}`;
+          this.fileList.appendChild(errorItem);
+
+          console.error(message);
+        }
+      }
+
+      // 初始化文件上传控制器
+      const uploadController = new FileUploadController();
+
+      // 添加一些额外的安全控制
+      document.addEventListener("contextmenu", event => {
+        // 在文件上传区域禁用右键菜单
+        if (event.target.closest("#uploadArea")) {
+          event.preventDefault();
+        }
+      });
+
+      // 防止文件被拖出浏览器
+      document.addEventListener("dragstart", event => {
+        if (event.target.tagName === "IMG") {
+          event.preventDefault();
+        }
+      });
+    </script>
+  </body>
+</html>

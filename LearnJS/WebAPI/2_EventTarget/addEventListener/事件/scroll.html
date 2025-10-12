@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>scroll事件</title>
+  </head>
+  <body>
+    <div id="canScrollContainerId" style="width: 500px; height: 300px; overflow: auto;">
+      <div style="width: 300px; height: 3000px;"></div>
+    </div>
+
+    <div style="width: 300px; height: 3000px;"></div>
+
+    <script>
+      // 节流：固定时间间隔执行
+      function throttle(func, delay) {
+        let lastCall = 0;
+        return function (...args) {
+          const now = Date.now();
+          if (now - lastCall >= delay) {
+            lastCall = now;
+            func.apply(this, args);
+          }
+        };
+      }
+
+      // 不给 html  body  设置 overflow 时，超过视口，会给  window 添加滚动条
+      window.addEventListener(
+        "scroll",
+        throttle(function () {
+          console.log("监听 window 滚动位置:", window.scrollY);
+        }, 200)
+      );
+
+      document.documentElement.addEventListener(
+        "scroll",
+        throttle(function () {
+          console.log("监听 document.documentElement 滚动位置:", window.scrollY);
+        }, 200)
+      );
+
+      document.body.addEventListener(
+        "scroll",
+        throttle(function () {
+          console.log("监听 document.body 滚动位置:", window.scrollY);
+        }, 200)
+      );
+
+      // dom 滚动时，才会且仅会触发这里面的函数
+      document.getElementById('canScrollContainerId').addEventListener(
+        "scroll",
+        throttle(function () {
+          console.log("监听 指定dom 滚动位置:", window.scrollY);
+        }, 200)
+      );
+    </script>
+  </body>
+</html>

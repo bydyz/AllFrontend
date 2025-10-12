@@ -1,0 +1,35 @@
+<ul id="taskList">
+  <li data-id="1">任务1 <button class="delete">删除</button></li>
+  <li data-id="2">任务2 <button class="delete">删除</button></li>
+  <li data-id="3">任务3 <button class="delete">删除</button></li>
+</ul>
+
+<script>
+  // ❌ 不好的做法：为每个按钮单独添加监听器
+  // document.querySelectorAll('.delete').forEach(btn => {
+  //     btn.addEventListener('click', handleDelete);
+  // });
+
+  // ✅ 好的做法：事件委托（利用冒泡）
+  document.getElementById("taskList").addEventListener("click", function (event) {
+    // 检查点击的是删除按钮
+    if (event.target.classList.contains("delete")) {
+      const taskId = event.target.closest("li").dataset.id;
+      console.log(`删除任务 ${taskId}`);
+      event.target.closest("li").remove();
+    }
+
+    // 检查点击的是任务本身
+    if (event.target.tagName === "LI") {
+      event.target.classList.toggle("completed");
+    }
+  });
+
+  // 动态添加新任务时，不需要重新绑定事件
+  function addNewTask(text) {
+    const newTask = document.createElement("li");
+    newTask.innerHTML = `${text} <button class="delete">删除</button>`;
+    document.getElementById("taskList").appendChild(newTask);
+    // 不需要为新任务单独添加事件监听！
+  }
+</script>

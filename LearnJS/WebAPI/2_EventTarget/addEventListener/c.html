@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>event的属性</title>
+  </head>
+  <body>
+    <button id="eventObjBtn">点击查看事件对象</button>
+    <input id="eventObjInput" placeholder="输入文字" />
+    <div id="eventOutput"></div>
+
+    <script>
+      const eventOutput = document.getElementById("eventOutput");
+
+      document.getElementById("eventObjBtn").addEventListener(
+        "click",
+        function (event) {
+          eventOutput.innerHTML += `
+          <h3>事件对象属性：</h3>
+          <p>type: ${event.type}</p>
+          <p>target: ${event.target.tagName}#${event.target.id}</p>
+          <p>currentTarget: ${event.currentTarget.tagName}#${event.currentTarget.id}</p>
+          <p>timestamp: ${event.timeStamp}</p>
+          <p>bubbles: ${event.bubbles}</p>
+          <p>cancelable: ${event.cancelable}</p>
+          <p>clientX: ${event.clientX}, clientY: ${event.clientY}</p>
+        `;
+        },
+        { once: true }
+      );
+
+      document.getElementById("eventObjInput").addEventListener(
+        "keydown",
+        function (event) {
+          eventOutput.innerHTML += `
+          <h3>键盘事件：</h3>
+          <p>key: ${event.key}</p>
+          <p>code: ${event.code}</p>
+          <p>ctrlKey: ${event.ctrlKey}</p>
+          <p>shiftKey: ${event.shiftKey}</p>
+          <p>altKey: ${event.altKey}</p>
+          <p>metaKey: ${event.metaKey}</p>
+          <p>repeat: ${event.repeat}</p>
+        `;
+        },
+        { once: true }
+      );
+    </script>
+  </body>
+</html>

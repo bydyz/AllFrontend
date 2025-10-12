@@ -1,0 +1,14 @@
+<script>
+  // 对于 focus/blur，使用 focusin/focusout（它们会冒泡）
+  document.addEventListener("focusin", function (event) {
+    if (event.target.matches(".form-input")) {
+      console.log("输入框获得焦点");
+    }
+  });
+
+  document.addEventListener("focusout", function (event) {
+    if (event.target.matches(".form-input")) {
+      console.log("输入框失去焦点");
+    }
+  });
+</script>

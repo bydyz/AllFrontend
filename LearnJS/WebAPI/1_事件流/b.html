@@ -1,0 +1,73 @@
+<div id="container">
+  <button id="testBubble">测试冒泡事件</button>
+  <input id="testNonBubble" placeholder="测试非冒泡事件" />
+</div>
+<div id="output"></div>
+
+<script>
+  const container = document.getElementById("container");
+  const output = document.getElementById("output");
+
+  function log(message) {
+    output.innerHTML += `<div>${message}</div>`;
+  }
+
+  // 重置日志
+  function clearLog() {
+    output.innerHTML = "";
+  }
+
+  // 测试冒泡事件（click）
+  document.getElementById("testBubble").addEventListener("click", function () {
+    clearLog();
+    log("=== 测试 click 事件（冒泡事件）===");
+
+    // 在捕获阶段监听
+    container.addEventListener(
+      "click",
+      function (e) {
+        if (e.eventPhase === Event.CAPTURING_PHASE) {
+          log("container - 捕获阶段");
+        }
+      },
+      true
+    );
+
+    // 在冒泡阶段监听
+    container.addEventListener("click", function (e) {
+      if (e.eventPhase === Event.BUBBLING_PHASE) {
+        log("container - 冒泡阶段");
+      }
+    });
+  });
+
+
+
+  // 测试非冒泡事件（focus）
+  document.getElementById("testNonBubble").addEventListener("focus", function () {
+    clearLog();
+    log("=== 测试 focus 事件（非冒泡事件）===");
+
+    // 在捕获阶段监听
+    container.addEventListener(
+      "focus",
+      function (e) {
+        if (e.eventPhase === Event.CAPTURING_PHASE) {
+          log("container - 捕获阶段");
+        }
+      },
+      true
+    );
+
+    // 在冒泡阶段监听（这个不会触发）
+    container.addEventListener("focus", function (e) {
+      log("container - 冒泡阶段（这个不会出现）");
+    });
+  });
+
+
+
+  // 测试 mouseenter vs mouseover
+  // container.addEventListener("mouseenter", () => log("mouseenter - 不冒泡"));
+  // container.addEventListener("mouseover", () => log("mouseover - 冒泡"));
+</script>

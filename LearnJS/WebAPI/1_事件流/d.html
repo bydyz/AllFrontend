@@ -1,0 +1,25 @@
+<script>
+  // ✅ 适合事件委托（冒泡事件）
+  document.addEventListener("click", function (event) {
+    if (event.target.matches(".delete-btn")) {
+      // 处理删除逻辑
+    }
+  });
+
+  // ❌ 不适合事件委托（非冒泡事件）
+  document.addEventListener("focus", function (event) {
+    // 这只会处理直接在 document 上触发 focus 的情况
+    // 不会处理子元素的 focus 事件
+  });
+
+  // ✅ 对于非冒泡事件，使用捕获阶段
+  document.addEventListener(
+    "focus",
+    function (event) {
+      if (event.target.matches(".form-input")) {
+        // 处理输入框获得焦点
+      }
+    },
+    true
+  ); // 使用捕获阶段
+</script>

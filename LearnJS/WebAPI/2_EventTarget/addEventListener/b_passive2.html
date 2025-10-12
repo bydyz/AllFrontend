@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>事件阻塞机制详解</title>
+  </head>
+  <body>
+    <script>
+      // 性能测试：对比 passive 和非 passive 的差异
+      function measureEventLatency() {
+        const results = {
+          passive: [],
+          nonPassive: [],
+        };
+
+        const testElement = document.createElement("div");
+        document.body.appendChild(testElement);
+
+        // 测试 passive 监听器
+        const passiveController = new AbortController();
+        testElement.addEventListener(
+          "wheel",
+          event => {
+            const latency = performance.now() - event.timeStamp;
+            results.passive.push(latency);
+          },
+          {
+            passive: true,
+            signal: passiveController.signal,
+          }
+        );
+
+        // 测试非 passive 监听器
+        const nonPassiveController = new AbortController();
+        testElement.addEventListener(
+          "wheel",
+          event => {
+            const latency = performance.now() - event.timeStamp;
+            results.nonPassive.push(latency);
+          },
+          {
+            passive: false,
+            signal: nonPassiveController.signal,
+          }
+        );
+
+        // 触发多个滚轮事件
+        for (let i = 0; i < 1000; i++) {
+          const wheelEvent = new WheelEvent("wheel", {
+            deltaX: 0,
+            deltaY: 10,
+            deltaMode: 0,
+          });
+
+          testElement.dispatchEvent(wheelEvent);
+        }
+
+        // 清理
+        passiveController.abort();
+        nonPassiveController.abort();
+        testElement.remove();
+
+        // 分析结果
+        const passiveAvg = results.passive.reduce((a, b) => a + b) / results.passive.length;
+        const nonPassiveAvg = results.nonPassive.reduce((a, b) => a + b) / results.nonPassive.length;
+
+        console.log("平均延迟对比:");
+        console.log(`Passive: ${passiveAvg.toFixed(2)}ms`);
+        console.log(`非Passive: ${nonPassiveAvg.toFixed(2)}ms`);
+        console.log(`性能提升: ${(((nonPassiveAvg - passiveAvg) / nonPassiveAvg) * 100).toFixed(1)}%`);
+
+        return { passiveAvg, nonPassiveAvg };
+      }
+
+      // 运行测试
+      measureEventLatency();
+    </script>
+  </body>
+</html>

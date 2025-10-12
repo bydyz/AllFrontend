@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>事件流详解</title>
+    <style>
+      div {
+        padding: 30px;
+        margin: 10px;
+        border: 2px solid #333;
+      }
+      #grandparent {
+        background: #ffcccc;
+      }
+      #parent {
+        background: #ccffcc;
+      }
+      #child {
+        background: #ccccff;
+      }
+      .log {
+        margin: 5px 0;
+        padding: 5px;
+        border-left: 3px solid #666;
+      }
+      .capture {
+        border-color: red;
+        background: #ffe6e6;
+      }
+      .target {
+        border-color: blue;
+        background: #e6e6ff;
+      }
+      .bubble {
+        border-color: green;
+        background: #e6ffe6;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="grandparent">
+      祖父元素
+      <div id="parent">
+        父元素
+        <div id="child">子元素（点击我）</div>
+      </div>
+    </div>
+
+    <button id="clearLogs">清空日志</button>
+    <div id="eventLogs"></div>
+
+    <script>
+      const logs = document.getElementById("eventLogs");
+
+      function logEvent(message, phase) {
+        const log = document.createElement("div");
+        log.className = `log ${phase}`;
+        log.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+        logs.appendChild(log);
+        logs.scrollTop = logs.scrollHeight;
+      }
+
+      // 清空日志
+      document.getElementById("clearLogs").addEventListener("click", () => {
+        logs.innerHTML = "";
+      });
+
+      // 获取所有元素
+      const grandparent = document.getElementById("grandparent");
+      const parent = document.getElementById("parent");
+      const child = document.getElementById("child");
+
+      // === 捕获阶段监听（从上到下）===
+      // 使用 addEventListener 的第三个参数 true 表示在捕获阶段触发
+
+      window.addEventListener(
+        "click",
+        function (e) {
+          if (e.eventPhase === Event.CAPTURING_PHASE) {
+            logEvent("📥 Window - 捕获阶段", "capture");
+          }
+        },
+        true
+      );
+
+      document.addEventListener(
+        "click",
+        function (e) {
+          if (e.eventPhase === Event.CAPTURING_PHASE) {
+            logEvent("📥 Document - 捕获阶段", "capture");
+          }
+        },
+        true
+      );
+
+      document.documentElement.addEventListener(
+        "click",
+        function (e) {
+          if (e.eventPhase === Event.CAPTURING_PHASE) {
+            logEvent("📥 HTML - 捕获阶段", "capture");
+          }
+        },
+        true
+      );
+
+      document.body.addEventListener(
+        "click",
+        function (e) {
+          if (e.eventPhase === Event.CAPTURING_PHASE) {
+            logEvent("📥 Body - 捕获阶段", "capture");
+          }
+        },
+        true
+      );
+
+      grandparent.addEventListener(
+        "click",
+        function (e) {
+          if (e.eventPhase === Event.CAPTURING_PHASE) {
+            logEvent("📥 祖父元素 - 捕获阶段", "capture");
+          }
+        },
+        true
+      );
+
+      parent.addEventListener(
+        "click",
+        function (e) {
+          if (e.eventPhase === Event.CAPTURING_PHASE) {
+            logEvent("📥 父元素 - 捕获阶段", "capture");
+          }
+        },
+        true
+      );
+
+      // === 目标阶段监听 ===
+      child.addEventListener("click", function (e) {
+        logEvent("🎯 子元素 - 目标阶段", "target");
+      });
+
+      // === 冒泡阶段监听（从下到上）===
+      // 默认情况下，addEventListener 在冒泡阶段触发
+
+      parent.addEventListener("click", function (e) {
+        if (e.eventPhase === Event.BUBBLING_PHASE) {
+          logEvent("📤 父元素 - 冒泡阶段", "bubble");
+        }
+      });
+
+      grandparent.addEventListener("click", function (e) {
+        if (e.eventPhase === Event.BUBBLING_PHASE) {
+          logEvent("📤 祖父元素 - 冒泡阶段", "bubble");
+        }
+      });
+
+      document.body.addEventListener("click", function (e) {
+        if (e.eventPhase === Event.BUBBLING_PHASE) {
+          logEvent("📤 Body - 冒泡阶段", "bubble");
+        }
+      });
+
+      document.documentElement.addEventListener("click", function (e) {
+        if (e.eventPhase === Event.BUBBLING_PHASE) {
+          logEvent("📤 HTML - 冒泡阶段", "bubble");
+        }
+      });
+
+      document.addEventListener("click", function (e) {
+        if (e.eventPhase === Event.BUBBLING_PHASE) {
+          logEvent("📤 Document - 冒泡阶段", "bubble");
+        }
+      });
+
+      window.addEventListener("click", function (e) {
+        if (e.eventPhase === Event.BUBBLING_PHASE) {
+          logEvent("📤 Window - 冒泡阶段", "bubble");
+        }
+      });
+    </script>
+  </body>
+</html>

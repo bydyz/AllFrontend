@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>阻止表单默认行为</title>
+  </head>
+  <body>
+    <h3>1. 阻止表单提交</h3>
+    <form id="myForm" action="/submit" method="post">
+      <input type="text" name="username" placeholder="用户名" required />
+      <button type="submit">提交表单</button>
+    </form>
+    <div id="formResult"></div>
+
+
+
+    <h3>2. 阻止链接跳转</h3>
+    <a href="https://www.example.com" id="preventLink">这个链接不会跳转</a>
+
+
+
+    <h3>3. 阻止右键菜单</h3>
+    <div id="noContextMenu" style="padding: 20px; background: #f0f0f0">在这个区域右键点击不会出现菜单</div>
+
+    <script>
+      // 1. 阻止表单提交
+      document.getElementById("myForm").addEventListener("submit", function (event) {
+        event.preventDefault(); // 阻止表单提交到服务器
+
+        const resultDiv = document.getElementById("formResult");
+        resultDiv.innerHTML = `
+                <p style="color: green;">表单提交被阻止，执行了自定义验证逻辑</p>
+                <p>用户名: ${this.username.value}</p>
+            `;
+
+        // 可以在这里执行 AJAX 提交或其他自定义逻辑
+        console.log("执行自定义表单处理逻辑");
+      });
+
+
+
+      // 2. 阻止链接跳转
+      document.getElementById("preventLink").addEventListener("click", function (event) {
+        event.preventDefault(); // 阻止链接跳转
+
+        alert("链接跳转被阻止，执行自定义导航逻辑");
+        // 可以在这里执行单页应用的路由跳转
+        console.log("执行自定义导航逻辑");
+      });
+
+
+
+      // 3. 阻止右键菜单
+      document.getElementById("noContextMenu").addEventListener("contextmenu", function (event) {
+        event.preventDefault(); // 阻止浏览器默认的右键菜单
+
+        // 显示自定义右键菜单
+        showCustomContextMenu(event.clientX, event.clientY);
+      });
+      // 显示自定义菜单
+      function showCustomContextMenu(x, y) {
+        const customMenu = document.createElement("div");
+        customMenu.style.cssText = `
+                position: fixed;
+                left: ${x}px;
+                top: ${y}px;
+                background: white;
+                border: 1px solid #ccc;
+                padding: 10px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                z-index: 1000;
+            `;
+        customMenu.innerHTML = `
+                <div>自定义菜单</div>
+                <div>选项1</div>
+                <div>选项2</div>
+            `;
+
+        document.body.appendChild(customMenu);
+
+        // 点击其他地方移除菜单
+        setTimeout(() => {
+          document.addEventListener(
+            "click",
+            function removeMenu() {
+              document.body.removeChild(customMenu);
+              document.removeEventListener("click", removeMenu);
+            },
+            { once: true }
+          );
+        }, 0);
+      }
+    </script>
+  </body>
+</html>

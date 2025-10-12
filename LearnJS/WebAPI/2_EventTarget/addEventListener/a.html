@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>addEventListener的基本使用</title>
+  </head>
+  <body>
+    <button id="btn1">按钮1</button>
+    <button id="btn2">按钮2</button>
+    <button id="btn3">按钮3</button>
+    <button id="btn4">按钮4</button>
+
+    <div id="output">
+      <p>匿名函数、箭头函数、具名函数（可重用）的 this、target</p>
+    </div>
+
+    <script>
+      const output = document.getElementById("output");
+
+      // 方式1: 匿名函数
+      document.getElementById("btn1").addEventListener("click", function (event) {
+        output.innerHTML += "<p>按钮1被点击 - 匿名函数</p>";
+        console.log("this:", this); // this 指向触发事件的元素
+        console.log("event:", event);
+        console.log("event.target:", event.target); // 实际触发事件的元素
+
+        console.log("this === event", this === event) // false
+        console.log("this.target === event.target", this.target === event.target) // false
+        console.log("this === event.target", this === event.target) // true
+      });
+
+
+
+      // 方式2: 箭头函数
+      document.getElementById("btn2").addEventListener("click", event => {
+        output.innerHTML += "<p>按钮2被点击 - 箭头函数</p>";
+        console.log("this:", this); // this 继承自外层作用域
+        console.log("event:", event);
+        console.log("event.target:", event.target); // 实际触发事件的元素
+      });
+
+
+
+      // 方式3: 具名函数（可重用）
+      function buttonClickHandler(event) {
+        console.log("this:", this); // this 指向触发事件的元素
+        console.log("event:", event);
+        console.log("event.target:", event.target); // 实际触发事件的元素
+
+        output.innerHTML += `<p>${event.target.textContent}被点击 - 具名函数</p>`;
+        console.log("事件类型:", event.type);
+        console.log("触发元素:", event.target.tagName);
+      }
+
+      document.getElementById("btn3").addEventListener("click", buttonClickHandler);
+
+
+
+      // 方式4: 对象方法
+      const buttonHandler = {
+        name: "按钮处理器",
+        handleClick: function (event) {
+          output.innerHTML += `<p>${this.name} 处理了点击事件</p>`;
+          console.log("this:", this); // this 指向 buttonHandler 对象
+          console.log("event:", event);
+          console.log("event.target:", event.target); // 实际触发事件的元素
+        },
+      };
+
+      // 需要绑定 this
+      document.getElementById("btn4").addEventListener("click", buttonHandler.handleClick.bind(buttonHandler));
+    </script>
+  </body>
+</html>

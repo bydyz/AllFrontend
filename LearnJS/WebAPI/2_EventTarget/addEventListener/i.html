@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form id="myForm">
+      <input type="email" id="email" placeholder="邮箱" required />
+      <input type="password" id="password" placeholder="密码" minlength="6" />
+      <button type="submit">提交</button>
+    </form>
+    <div id="formMessages"></div>
+
+    <script>
+      const form = document.getElementById("myForm");
+      const messages = document.getElementById("formMessages");
+
+      // 实时验证
+      document.getElementById("email").addEventListener("input", function (event) {
+        const email = event.target.value;
+        if (!email.includes("@")) {
+          showMessage("请输入有效的邮箱地址", "error");
+        } else {
+          clearMessage();
+        }
+      });
+
+      // 表单提交
+      form.addEventListener("submit", function (event) {
+        event.preventDefault(); // 阻止默认提交行为
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        if (!email || !password) {
+          showMessage("请填写所有字段", "error");
+          return;
+        }
+
+        if (password.length < 6) {
+          showMessage("密码至少6位", "error");
+          return;
+        }
+
+        showMessage("表单提交成功！", "success");
+        // 实际这里会发送 AJAX 请求
+      });
+
+      function showMessage(text, type) {
+        messages.textContent = text;
+        messages.className = type;
+      }
+
+      function clearMessage() {
+        messages.textContent = "";
+        messages.className = "";
+      }
+    </script>
+
+    <style>
+      .error {
+        color: red;
+      }
+      .success {
+        color: green;
+      }
+    </style>
+  </body>
+</html>

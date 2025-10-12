@@ -1,0 +1,21 @@
+<script>
+  // stopImmediatePropagation()  vs  stopPropagation()
+  const button = document.getElementById("myButton");
+
+  // 第一个监听器
+  button.addEventListener("click", function (event) {
+    console.log("第一个监听器");
+    event.stopImmediatePropagation(); // 阻止其他监听器执行
+    // event.stopPropagation(); // 只阻止传播，不阻止其他监听器
+  });
+
+  // 第二个监听器（如果使用 stopImmediatePropagation，这个不会执行）
+  button.addEventListener("click", function () {
+    console.log("第二个监听器");
+  });
+
+  // 父元素的监听器（如果使用 stopPropagation 或 stopImmediatePropagation，这个不会执行）
+  button.parentElement.addEventListener("click", function () {
+    console.log("父元素监听器");
+  });
+</script>

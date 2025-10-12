@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SPA 路由控制</title>
+    <style>
+      nav {
+        background: #f8f9fa;
+        padding: 10px;
+        margin-bottom: 20px;
+      }
+      nav a {
+        margin: 0 10px;
+        text-decoration: none;
+        color: #007bff;
+      }
+      nav a:hover {
+        text-decoration: underline;
+      }
+      .page {
+        display: none;
+        padding: 20px;
+        border: 1px solid #ddd;
+      }
+      .active {
+        display: block;
+      }
+      .current-route {
+        margin: 10px 0;
+        padding: 10px;
+        background: #e9ecef;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="/home" class="nav-link">首页</a>
+      <a href="/about" class="nav-link">关于</a>
+      <a href="/contact" class="nav-link">联系</a>
+      <a href="https://external.com" class="nav-link">外部链接</a>
+    </nav>
+
+    <div class="current-route" id="currentRoute">当前路由: /home</div>
+
+    <div id="home" class="page active">
+      <h2>首页</h2>
+      <p>这是单页应用的首页内容</p>
+    </div>
+
+    <div id="about" class="page">
+      <h2>关于我们</h2>
+      <p>这是关于我们的页面内容</p>
+    </div>
+
+    <div id="contact" class="page">
+      <h2>联系我们</h2>
+      <p>这是联系我们的页面内容</p>
+    </div>
+
+    <script>
+      class SPARouter {
+        constructor() {
+          this.currentPage = "home";
+          this.setupNavigation();
+          this.updateRouteDisplay();
+        }
+
+        setupNavigation() {
+          // 阻止所有导航链接的默认行为
+          document.querySelectorAll(".nav-link").forEach(link => {
+            link.addEventListener("click", event => {
+              event.preventDefault(); // 阻止默认的页面跳转
+
+              const href = link.getAttribute("href");
+              this.handleNavigation(href);
+            });
+          });
+
+          // 阻止浏览器前进后退的默认行为
+          window.addEventListener("popstate", event => {
+            event.preventDefault();
+            const route = window.location.pathname || "/home";
+            this.navigateTo(route.replace("/", ""));
+          });
+        }
+
+        handleNavigation(href) {
+          if (href.startsWith("http")) {
+            // 外部链接 - 确认后跳转
+            this.handleExternalLink(href);
+          } else {
+            // 内部路由
+            const route = href.replace("/", "");
+            this.navigateTo(route);
+
+            // 更新浏览器历史记录
+            window.history.pushState({ route }, "", href);
+          }
+        }
+
+        navigateTo(route) {
+          // 隐藏当前页面
+          document.getElementById(this.currentPage).classList.remove("active");
+
+          // 显示新页面
+          const newPage = document.getElementById(route) || document.getElementById("home");
+          newPage.classList.add("active");
+          this.currentPage = route;
+
+          this.updateRouteDisplay();
+          this.onRouteChange(route);
+        }
+
+        handleExternalLink(url) {
+          if (confirm("这是外部链接，确定要离开当前页面吗？")) {
+            // 允许默认行为（页面跳转）
+            window.location.href = url;
+          } else {
+            console.log("用户取消了外部链接跳转");
+          }
+        }
+
+        updateRouteDisplay() {
+          document.getElementById("currentRoute").textContent = `当前路由: /${this.currentPage}`;
+        }
+
+        onRouteChange(route) {
+          console.log(`路由改变到: ${route}`);
+          // 这里可以执行路由改变后的逻辑，如加载数据等
+
+          // 模拟数据加载
+          if (route === "about") {
+            setTimeout(() => {
+              document.getElementById("about").innerHTML += "<p>✅ 关于页面数据加载完成</p>";
+            }, 500);
+          }
+        }
+      }
+
+      // 初始化路由器
+      const router = new SPARouter();
+
+      // 添加一些动态链接来测试
+      setTimeout(() => {
+        const dynamicNav = document.createElement("nav");
+        dynamicNav.innerHTML = `
+                <h3>动态添加的链接:</h3>
+                <a href="/dynamic" class="nav-link">动态页面</a>
+                <a href="https://example.com" class="nav-link">动态外部链接</a>
+            `;
+        document.body.appendChild(dynamicNav);
+
+        // 重新绑定事件监听器
+        router.setupNavigation();
+      }, 2000);
+    </script>
+  </body>
+</html>

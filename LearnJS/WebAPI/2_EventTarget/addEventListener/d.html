@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>event的属性</title>
+  </head>
+  <body>
+    <ul id="itemList">
+      <li data-id="1">项目 1 <button class="delete">删除</button></li>
+      <li data-id="2">项目 2 <button class="delete">删除</button></li>
+      <li data-id="3">项目 3 <button class="delete">删除</button></li>
+    </ul>
+    <button id="addItem">添加项目</button>
+    <div id="delegateOutput"></div>
+
+    <script>
+      const delegateOutput = document.getElementById("delegateOutput");
+      let itemId = 3;
+
+      // 事件委托：在父元素上监听
+      document.getElementById("itemList").addEventListener("click", function (event) {
+        const output = [];
+
+        // event.target 是实际点击的元素
+        output.push(`点击了: ${event.target.tagName}`);
+
+        // 检查点击的是删除按钮
+        if (event.target.classList.contains("delete")) {
+          const listItem = event.target.closest("li");
+          const itemId = listItem.dataset.id;
+          output.push(`删除项目 ID: ${itemId}`);
+          listItem.remove();
+        }
+
+        // 检查点击的是列表项
+        if (event.target.tagName === "LI") {
+          const itemId = event.target.dataset.id;
+          output.push(`选择了项目 ID: ${itemId}`);
+          event.target.classList.toggle("selected");
+        }
+
+        // event.currentTarget 是监听器所在的元素
+        output.push(`委托容器: ${event.currentTarget.id}`);
+
+        delegateOutput.innerHTML = output.join("<br>");
+      });
+
+      // 添加新项目
+      document.getElementById("addItem").addEventListener("click", function () {
+        itemId++;
+        const newItem = document.createElement("li");
+        newItem.dataset.id = itemId;
+        newItem.innerHTML = `项目 ${itemId} <button class="delete">删除</button>`;
+        document.getElementById("itemList").appendChild(newItem);
+      });
+    </script>
+
+    <style>
+      .selected {
+        background-color: yellow;
+      }
+    </style>
+  </body>
+</html>

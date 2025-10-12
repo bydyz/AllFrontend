@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>事件冒泡验证</title>
+    <style>
+      #outer {
+        padding: 50px;
+        background: lightblue;
+        margin: 20px;
+      }
+      #inner {
+        padding: 30px;
+        background: lightcoral;
+      }
+      .event-log {
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #ccc;
+      }
+      .bubbles {
+        background: #e8f5e8;
+      }
+      .non-bubbles {
+        background: #ffe8e8;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="outer">
+      外层元素
+      <div id="inner">内层元素（点击这里测试）</div>
+    </div>
+
+    <div id="results"></div>
+
+    <script>
+      const outer = document.getElementById("outer");
+      const inner = document.getElementById("inner");
+      const results = document.getElementById("results");
+
+      // 测试函数
+      function testEventBubbling(eventName, element) {
+        const event = new Event(eventName, { bubbles: true });
+        let bubbles = false;
+
+        // 在 outer 上监听冒泡
+        outer.addEventListener(eventName, () => {
+          bubbles = true;
+        });
+
+        // 触发事件
+        element.dispatchEvent(event);
+
+        // 清理
+        outer.removeEventListener(eventName, () => {});
+
+        return bubbles;
+      }
+
+      // 常见事件的冒泡特性
+      const events = [
+        // 冒泡事件
+        "click",
+        "dblclick",
+        "mousedown",
+        "mouseup",
+        "mousemove",
+        "keydown",
+        "keyup",
+        "keypress",
+        "input",
+        "change",
+        "submit",
+        "focusin",
+        "focusout",
+        "scroll",
+        "resize",
+
+        // 非冒泡事件
+        "focus",
+        "blur",
+        "mouseenter",
+        "mouseleave",
+        "load",
+        "unload",
+        "abort",
+        "error",
+        "select",
+        "change",
+      ];
+
+      let bubblesEvents = [];
+      let nonBubblesEvents = [];
+
+      // 逐个测试（注意：有些事件需要特定元素）
+      setTimeout(() => {
+        events.forEach(eventName => {
+          try {
+            // 创建测试元素
+            const testElement = document.createElement("div");
+            // appendChild 是 Node 的实例方法，用以将元素添加到 调用元素 的最后
+            document.body.appendChild(testElement);
+
+            let hasBubbles = false;
+            const testEvent = new Event(eventName, { bubbles: true });
+
+            // 监听冒泡
+            document.body.addEventListener(eventName, function handler() {
+              hasBubbles = true;
+              document.body.removeEventListener(eventName, handler);
+            });
+
+            // 触发事件
+            testElement.dispatchEvent(testEvent);
+            // remove 是 Element 的示例方法，用以将 节点 从DOM树中移除
+            testElement.remove();
+
+            if (hasBubbles) {
+              bubblesEvents.push(eventName);
+            } else {
+              nonBubblesEvents.push(eventName);
+            }
+          } catch (e) {
+            console.log(`事件 ${eventName} 测试失败:`, e.message);
+          }
+        });
+
+        // 显示结果
+        displayResults();
+      }, 100);
+
+      function displayResults() {
+        results.innerHTML = `
+          <h3>冒泡事件（有完整三个阶段）：</h3>
+          <div class="event-log bubbles">
+              ${bubblesEvents.map(e => `<div>${e}</div>`).join("")}
+          </div>
+          
+          <h3>非冒泡事件（只有捕获和目标阶段）：</h3>
+          <div class="event-log non-bubbles">
+              ${nonBubblesEvents.map(e => `<div>${e}</div>`).join("")}
+          </div>
+        `;
+      }
+
+      // 实时演示
+      function logEventPhase(event, elementName) {
+        let phase = "";
+        switch (event.eventPhase) {
+          case Event.CAPTURING_PHASE:
+            phase = "捕获";
+            break;
+          case Event.AT_TARGET:
+            phase = "目标";
+            break;
+          case Event.BUBBLING_PHASE:
+            phase = "冒泡";
+            break;
+        }
+        console.log(`${elementName} - ${event.type} - ${phase}阶段`);
+      }
+
+      // 监听冒泡事件
+      outer.addEventListener("click", e => logEventPhase(e, "outer"), true); // 捕获
+      outer.addEventListener("click", e => logEventPhase(e, "outer")); // 冒泡
+      inner.addEventListener("click", e => logEventPhase(e, "inner")); // 目标
+
+      // 监听非冒泡事件
+      inner.addEventListener("focus", e => {
+        console.log(`focus事件 - 阶段: ${e.eventPhase} (不会冒泡到outer)`);
+      });
+    </script>
+  </body>
+</html>

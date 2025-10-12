@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>输入控制示例</title>
+    <style>
+      .input-demo {
+        margin: 20px 0;
+      }
+      input {
+        padding: 8px;
+        margin: 5px;
+      }
+      .hint {
+        color: #666;
+        font-size: 0.9em;
+      }
+      .error {
+        color: red;
+      }
+      .success {
+        color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>输入控制演示</h2>
+
+    <div class="input-demo">
+      <label>1. 只允许数字输入:</label>
+      <input type="text" id="numbersOnly" placeholder="只能输入数字" />
+      <div class="hint">尝试输入字母或符号</div>
+    </div>
+
+
+
+    <div class="input-demo">
+      <label>2. 限制最大长度:</label>
+      <input type="text" id="maxLength" placeholder="最多10个字符" maxlength="10" />
+      <div class="hint" id="lengthHint"></div>
+    </div>
+
+
+
+    <div class="input-demo">
+      <label>3. 阻止复制粘贴:</label>
+      <input type="text" id="noPaste" placeholder="不能复制粘贴内容" />
+      <div class="hint">尝试复制粘贴内容到这里</div>
+    </div>
+
+
+
+    <div class="input-demo">
+      <label>4. 自定义键盘快捷键:</label>
+      <input type="text" id="customShortcuts" placeholder="按 Ctrl+S 试试" />
+      <div class="hint" id="shortcutHint"></div>
+    </div>
+
+    <script>
+      // 1. 只允许数字输入
+      document.getElementById("numbersOnly").addEventListener("keypress", function (event) {
+        const charCode = event.charCode || event.keyCode;
+        // 只允许数字 (0-9)
+        if (charCode < 48 || charCode > 57) {
+          event.preventDefault();
+          showTemporaryMessage(this, "只能输入数字!", "error");
+        }
+      });
+
+
+
+      // 2. 限制最大长度（更严格的限制）
+      const maxLengthInput = document.getElementById("maxLength");
+      const lengthHint = document.getElementById("lengthHint");
+
+      maxLengthInput.addEventListener("input", function (event) {
+        const maxLength = parseInt(this.getAttribute("maxlength")) || 10;
+        if (this.value.length > maxLength) {
+          // 如果超过长度，截断并阻止默认输入
+          this.value = this.value.slice(0, maxLength);
+          event.preventDefault();
+        }
+        updateLengthHint();
+      });
+
+      function updateLengthHint() {
+        const currentLength = maxLengthInput.value.length;
+        const maxLength = parseInt(maxLengthInput.getAttribute("maxlength")) || 10;
+        lengthHint.textContent = `${currentLength}/${maxLength} 字符`;
+        lengthHint.className = currentLength >= maxLength ? "error" : "success";
+      }
+      updateLengthHint();
+
+
+      
+      // 3. 阻止复制粘贴
+      document.getElementById("noPaste").addEventListener("paste", function (event) {
+        event.preventDefault();
+        showTemporaryMessage(this, "不允许粘贴内容!", "error");
+      });
+
+      document.getElementById("noPaste").addEventListener("copy", function (event) {
+        event.preventDefault();
+        showTemporaryMessage(this, "不允许复制内容!", "error");
+      });
+
+
+
+      // 4. 自定义键盘快捷键
+      const shortcutInput = document.getElementById("customShortcuts");
+      const shortcutHint = document.getElementById("shortcutHint");
+
+      shortcutInput.addEventListener("keydown", function (event) {
+        // 阻止 Ctrl+S 的默认保存行为
+        if (event.ctrlKey && event.key === "s") {
+          event.preventDefault();
+          shortcutHint.textContent = "已阻止浏览器保存，执行自定义保存逻辑...";
+          shortcutHint.className = "success";
+
+          // 执行自定义保存逻辑
+          setTimeout(() => {
+            performCustomSave(this.value);
+          }, 500);
+        }
+
+        // 阻止其他快捷键
+        if (event.ctrlKey && (event.key === "p" || event.key === "o")) {
+          event.preventDefault();
+          shortcutHint.textContent = `已阻止 ${event.ctrlKey ? "Ctrl+" : ""}${event.key} 的默认行为`;
+          shortcutHint.className = "error";
+        }
+      });
+
+      function performCustomSave(content) {
+        console.log("执行自定义保存:", content);
+        shortcutHint.textContent = "内容已自定义保存!";
+      }
+
+      // 工具函数：显示临时消息
+      function showTemporaryMessage(element, message, type) {
+        const hint = document.createElement("div");
+        hint.textContent = message;
+        hint.className = type;
+        hint.style.cssText = `
+                position: absolute;
+                background: white;
+                border: 1px solid ${type === "error" ? "red" : "green"};
+                padding: 5px;
+                margin-top: 5px;
+                z-index: 100;
+            `;
+
+        element.parentNode.appendChild(hint);
+
+        setTimeout(() => {
+          element.parentNode.removeChild(hint);
+        }, 2000);
+      }
+    </script>
+  </body>
+</html>

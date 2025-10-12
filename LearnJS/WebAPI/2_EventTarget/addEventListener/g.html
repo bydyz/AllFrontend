@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <input id="searchInput" placeholder="输入文字" />
+
+    <div id="canScrollContainerId" style="width: 500px; height: 300px; overflow: auto;">
+      <div style="width: 300px; height: 3000px;"></div>
+    </div>
+    <div style="width: 300px; height: 3000px;"></div>
+
+    <script>
+      const searchInput = document.getElementById("searchInput");
+
+      // 防抖：等待用户停止输入后再执行
+      function debounce(func, delay) {
+        let timeoutId;
+        return function (...args) {
+          clearTimeout(timeoutId);
+          timeoutId = setTimeout(() => func.apply(this, args), delay);
+        };
+      }
+
+      searchInput.addEventListener(
+        "input",
+        debounce(function (event) {
+          console.log("搜索:", event.target.value);
+          // 实际这里会发送 AJAX 请求
+        }, 500)
+      );
+
+
+      // 节流：固定时间间隔执行
+      function throttle(func, delay) {
+        let lastCall = 0;
+        return function (...args) {
+          const now = Date.now();
+          if (now - lastCall >= delay) {
+            lastCall = now;
+            func.apply(this, args);
+          }
+        };
+      }
+
+      window.addEventListener(
+        "scroll",
+        throttle(function () {
+          console.log("滚动位置:", window.scrollY);
+        }, 200)
+      );
+
+      document.getElementById('canScrollContainerId').addEventListener(
+        "scroll",
+        throttle(function () {
+          console.log("滚动位置:", window.scrollY);
+        }, 200)
+      );
+    </script>
+  </body>
+</html>

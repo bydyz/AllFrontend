@@ -1,0 +1,42 @@
+<script>
+  // 方法1：检查事件的 bubbles 属性
+  function checkEventBubbles(eventType) {
+    const element = document.createElement("div");
+    const event = new Event(eventType, { bubbles: true });
+
+    return event.bubbles;
+  }
+
+  // 方法2：实际测试
+  function testEventBubbling(eventType) {
+    return new Promise(resolve => {
+      const parent = document.createElement("div");
+      const child = document.createElement("div");
+
+      parent.appendChild(child);
+      document.body.appendChild(parent);
+
+      let bubbled = false;
+
+      parent.addEventListener(eventType, () => {
+        bubbled = true;
+      });
+
+      const event = new Event(eventType, { bubbles: true });
+      child.dispatchEvent(event);
+
+      document.body.removeChild(parent);
+      resolve(bubbled);
+    });
+  }
+
+  // 使用示例
+  console.log("click 事件冒泡:", checkEventBubbles("click")); // true
+  console.log("focus 事件冒泡:", checkEventBubbles("focus")); // false
+
+  // 测试多个事件
+  ["click", "focus", "blur", "mouseover", "mouseenter"].forEach(async eventType => {
+    const bubbles = await testEventBubbling(eventType);
+    console.log(`${eventType} 冒泡: ${bubbles}`);
+  });
+</script>

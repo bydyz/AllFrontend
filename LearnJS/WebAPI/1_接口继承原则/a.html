@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>接口继承原则的验证</title>
+  </head>
+  <body>
+    <script>
+      // 验证继承关系的方法
+      function verifyInheritance(obj, interfaceName) {
+        console.log(`\n🔍 验证 ${obj.constructor.name} 的 ${interfaceName} 方法:`);
+
+        // 测试 EventTarget 的方法
+        if (interfaceName === "EventTarget" || interfaceName === "所有接口") {
+          console.log("  addEventListener:", typeof obj.addEventListener);
+          console.log("  removeEventListener:", typeof obj.removeEventListener);
+          console.log("  dispatchEvent:", typeof obj.dispatchEvent);
+        }
+
+        // 测试 Node 的方法
+        if (interfaceName === "Node" || interfaceName === "所有接口") {
+          console.log("  appendChild:", typeof obj.appendChild);
+          console.log("  removeChild:", typeof obj.removeChild);
+          console.log("  parentNode:", obj.parentNode !== undefined);
+        }
+
+        // 测试 Element 的方法
+        if (interfaceName === "Element" || interfaceName === "所有接口") {
+          console.log("  querySelector:", typeof obj.querySelector);
+          console.log("  getAttribute:", typeof obj.getAttribute);
+          console.log("  id:", obj.id !== undefined);
+        }
+
+        // 测试 HTMLElement 的方法
+        if (interfaceName === "HTMLElement" || interfaceName === "所有接口") {
+          console.log("  innerHTML:", obj.innerHTML !== undefined);
+          console.log("  style:", obj.style !== undefined);
+          console.log("  click:", typeof obj.click);
+        }
+      }
+
+      // 创建测试对象
+      const div = document.createElement("div");
+      const textNode = document.createTextNode("hello");
+      const eventTarget = new EventTarget();
+
+      console.log("=== 完整继承链验证 ===");
+      verifyInheritance(div, "所有接口");
+      verifyInheritance(textNode, "所有接口"); // Text 节点没有 Element 的方法
+      verifyInheritance(eventTarget, "EventTarget");
+    </script>
+  </body>
+</html>

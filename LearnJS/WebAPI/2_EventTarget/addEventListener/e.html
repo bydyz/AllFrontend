@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button id="multiEventBtn">button</button>
+
+    <script>
+      const button = document.getElementById("multiEventBtn");
+
+      // 为多个事件类型绑定同一个处理函数
+      ["click", "mouseenter", "mouseleave"].forEach(eventType => {
+        button.addEventListener(eventType, function (event) {
+          console.log(`事件类型: ${event.type}`);
+
+          switch (event.type) {
+            case "click":
+              this.style.backgroundColor = "lightblue";
+              break;
+            case "mouseenter":
+              this.style.transform = "scale(1.1)";
+              break;
+            case "mouseleave":
+              this.style.transform = "scale(1.0)";
+              this.style.backgroundColor = "";
+              break;
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

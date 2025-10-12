@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button id="paramBtn">button</button>
+
+    <script>
+      // 使用 bind 传递额外参数   这种情况下，event需要放在最后
+      function eventHandler(customParam1, customParam2, event) {
+        console.log("事件:", event.type);
+        console.log("自定义参数:", customParam1, customParam2);
+        console.log("元素:", this);
+
+        console.log('')
+      }
+
+      const button = document.getElementById("paramBtn");
+      // 默认将 event 放到最后，等同于
+      // button.addEventListener("click", eventHandler.bind(button, "参数1", "参数2", event));
+      // 但是尤其需要注意的是，不能自己添加 event
+      button.addEventListener("click", eventHandler.bind(button, "参数1", "参数2"));
+
+      // 或者使用箭头函数
+      button.addEventListener("click", event => {
+        eventHandler.call(button, event, "参数11", "参数22");
+      });
+    </script>
+  </body>
+</html>

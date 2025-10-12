@@ -1,0 +1,57 @@
+<div id="container1">
+  <button id="btn1">停止传播的按钮</button>
+</div>
+<div id="container2">
+  <button id="btn2">正常按钮</button>
+</div>
+<div id="propagationLogs"></div>
+
+<script>
+  const propagationLogs = document.getElementById("propagationLogs");
+
+  function logPropagation(message) {
+    propagationLogs.innerHTML += `<div>${message}</div>`;
+  }
+
+  // 容器1的事件监听
+  document.getElementById("container1").addEventListener(
+    "click",
+    function () {
+      logPropagation("容器1 - 捕获阶段");
+    },
+    true
+  );
+
+  document.getElementById("container1").addEventListener("click", function () {
+    logPropagation("容器1 - 冒泡阶段");
+  });
+
+  // 按钮1：停止传播
+  document.getElementById("btn1").addEventListener("click", function (event) {
+    logPropagation("按钮1被点击 - 停止传播");
+    event.stopPropagation(); // 阻止事件继续传播
+  });
+
+  // 容器2的事件监听
+  document.getElementById("container2").addEventListener(
+    "click",
+    function () {
+      logPropagation("容器2 - 捕获阶段");
+    },
+    true
+  );
+
+  document.getElementById("container2").addEventListener("click", function () {
+    logPropagation("容器2 - 冒泡阶段");
+  });
+
+  // 按钮2：正常传播
+  document.getElementById("btn2").addEventListener("click", function () {
+    logPropagation("按钮2被点击 - 正常传播");
+  });
+
+  // 清空日志
+  document.getElementById("clearLogs").addEventListener("click", () => {
+    propagationLogs.innerHTML = "";
+  });
+</script>

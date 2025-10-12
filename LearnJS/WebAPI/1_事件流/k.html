@@ -1,0 +1,22 @@
+<script>
+  // 有些事件不冒泡，只有捕获和目标阶段
+  const input = document.getElementById("myInput");
+
+  input.addEventListener("focus", function (event) {
+    console.log("focus 事件 - 阶段:", event.eventPhase); // 通常是 AT_TARGET (2)
+  });
+
+  // 父元素监听不到 focus 事件的冒泡
+  input.parentElement.addEventListener("focus", function () {
+    console.log("这个不会执行，因为 focus 不冒泡");
+  });
+
+  // 但可以在捕获阶段监听
+  input.parentElement.addEventListener(
+    "focus",
+    function () {
+      console.log("这个会执行，因为在捕获阶段");
+    },
+    true
+  );
+</script>

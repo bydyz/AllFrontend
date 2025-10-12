@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>事件阻塞机制详解</title>
+    <style>
+      #scrollArea {
+        height: 500px;
+        overflow-y: scroll;
+        border: 2px solid #333;
+        padding: 20px;
+      }
+      .content {
+        height: 2000px;
+        background: linear-gradient(to bottom, #f0f0f0, #e0e0e0);
+      }
+      .log {
+        margin: 10px;
+        padding: 10px;
+        background: #fff;
+        border: 1px solid #ccc;
+        font-family: monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="scrollArea">
+      <div class="content">
+        <h2>滚动测试区域</h2>
+        <p>尝试快速滚动这个区域，观察不同模式下的性能表现</p>
+      </div>
+    </div>
+
+    <button onclick="enableBlockingMode()">启用阻塞模式</button>
+    <button onclick="enablePassiveMode()">启用 Passive 模式</button>
+    <button onclick="clearListeners()">清除监听器</button>
+
+    <div class="log" id="performanceLog"></div>
+
+    <script>
+      const scrollArea = document.getElementById("scrollArea");
+      const performanceLog = document.getElementById("performanceLog");
+      let currentListener = null;
+
+      function logPerformance(message) {
+        performanceLog.innerHTML += `<div>${new Date().toLocaleTimeString()}: ${message}</div>`;
+        performanceLog.scrollTop = performanceLog.scrollHeight;
+      }
+
+      function simulateHeavyComputation() {
+        // 模拟繁重的 JavaScript 计算
+        let result = 0;
+        const startTime = performance.now();
+
+        for (let i = 0; i < 500000000; i++) {
+          result += Math.sin(i) * Math.cos(i);
+        }
+
+        const endTime = performance.now();
+        return endTime - startTime;
+      }
+
+      // 启用阻塞模式
+      function enableBlockingMode() {
+        clearListeners();
+        logPerformance("🚨 启用阻塞模式");
+
+        currentListener = function (event) {
+          const computationTime = simulateHeavyComputation();
+          logPerformance(`阻塞模式: 计算耗时 ${computationTime.toFixed(2)}ms, 滚动被阻塞`);
+        };
+
+        scrollArea.addEventListener("scroll", currentListener, { passive: false });
+        // 默认 { passive: false }，浏览器必须等待函数执行完毕
+      }
+
+      // 启用 Passive 模式
+      function enablePassiveMode() {
+        clearListeners();
+        logPerformance("✅ 启用 Passive 模式");
+
+        currentListener = function (event) {
+          const computationTime = simulateHeavyComputation();
+          logPerformance(`Passive模式: 计算耗时 ${computationTime.toFixed(2)}ms, 滚动不受影响`);
+        };
+
+        scrollArea.addEventListener("scroll", currentListener, { passive: true });
+        // 浏览器知道不会调用 preventDefault()，立即滚动
+      }
+
+      // 清除监听器
+      function clearListeners() {
+        if (currentListener) {
+          scrollArea.removeEventListener("scroll", currentListener);
+          currentListener = null;
+        }
+        logPerformance("清除所有监听器");
+      }
+
+      // 初始状态
+      logPerformance("请选择测试模式");
+    </script>
+  </body>
+</html>

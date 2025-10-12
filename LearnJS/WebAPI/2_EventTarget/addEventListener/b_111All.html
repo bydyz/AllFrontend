@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>addEventListener的第三个参数</title>
+  </head>
+  <body>
+    <button id="optionsBtn">选项按钮</button>
+    <div id="optionsOutput"></div>
+
+    <script>
+      const optionsOutput = document.getElementById("optionsOutput");
+      const button = document.getElementById("optionsBtn");
+
+      // 1. capture: 在捕获阶段触发
+      button.addEventListener(
+        "click",
+        function () {
+          optionsOutput.innerHTML += "<p>捕获阶段触发</p>";
+        },
+        { capture: true }
+      );
+
+
+
+      // 2. once: 只触发一次
+      button.addEventListener(
+        "click",
+        function () {
+          optionsOutput.innerHTML += "<p>这个只会出现一次！</p>";
+        },
+        { once: true }
+      );
+
+
+
+      // 3. passive: 被动监听（性能优化）
+      button.addEventListener(
+        "touchstart",
+        function (event) {
+          // 在 passive 为 true 时，不能调用 event.preventDefault()
+          optionsOutput.innerHTML += "<p>触摸开始（被动监听）</p>";
+        },
+        { passive: true }
+      );
+
+
+
+      // 4. signal: 使用 AbortController 控制监听器
+      const controller = new AbortController();
+
+      button.addEventListener(
+        "click",
+        function () {
+          optionsOutput.innerHTML += "<p>这个监听器可以被移除</p>";
+        },
+        { signal: controller.signal }
+      );
+      
+      // 5秒后移除上面的监听器
+      setTimeout(() => {
+        controller.abort();
+        optionsOutput.innerHTML += "<p>监听器已被移除</p>";
+      }, 5000);
+
+
+
+      // 5. 多个选项组合
+      button.addEventListener(
+        "click",
+        function () {
+          optionsOutput.innerHTML += "<p>一次性被动监听器</p>";
+        },
+        {
+          once: true,
+          passive: true,
+          capture: false,
+        }
+      );
+    </script>
+  </body>
+</html>
