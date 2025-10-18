@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>innerWidth 属性详解</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+      }
+
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 2.8rem;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 1.3rem;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .content-wrapper {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 40px;
+      }
+
+      .explanation {
+        flex: 1;
+        min-width: 350px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        backdrop-filter: blur(10px);
+        margin-bottom: 40px;
+      }
+
+      .demo-area {
+        flex: 1;
+        min-width: 350px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        backdrop-filter: blur(10px);
+      }
+
+      h2 {
+        color: #667eea;
+        margin: 25px 0 18px;
+        padding-bottom: 12px;
+        border-bottom: 3px solid #f0f0f0;
+        font-size: 1.8rem;
+      }
+
+      h3 {
+        color: #2c3e50;
+        margin: 20px 0 12px;
+        font-size: 1.3rem;
+      }
+
+      p {
+        margin-bottom: 18px;
+        font-size: 1.05rem;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 18px 25px;
+      }
+
+      li {
+        margin-bottom: 10px;
+        position: relative;
+        padding-left: 10px;
+      }
+
+      li:before {
+        content: "•";
+        color: #667eea;
+        font-weight: bold;
+        position: absolute;
+        left: -15px;
+      }
+
+      .demo-container {
+        position: relative;
+        width: 100%;
+        height: 300px;
+        background: linear-gradient(135deg, #e8f4f8, #d1e7f0);
+        border: 3px dashed #667eea;
+        margin: 25px 0;
+        padding: 20px;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .viewport-indicator {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        right: 20px;
+        bottom: 20px;
+        border: 2px solid #ff6b6b;
+        background: rgba(255, 107, 107, 0.1);
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      .viewport-label {
+        position: absolute;
+        top: -25px;
+        left: 10px;
+        background: #ff6b6b;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: bold;
+      }
+
+      .content-box {
+        width: 80%;
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 30px;
+        background: linear-gradient(135deg, #4ecdc4, #44a08d);
+        color: white;
+        border-radius: 10px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      .content-box:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      }
+
+      .dimension-label {
+        font-size: 1rem;
+        opacity: 0.9;
+        margin-top: 10px;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 6px 12px;
+        border-radius: 6px;
+        display: inline-block;
+      }
+
+      .info-panel {
+        background: linear-gradient(135deg, #2c3e50, #34495e);
+        color: white;
+        padding: 25px;
+        border-radius: 10px;
+        margin-top: 25px;
+        font-family: "Courier New", monospace;
+        line-height: 1.8;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 25px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 12px 18px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        flex: 1;
+        min-width: 140px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        background: linear-gradient(135deg, #5a6fd8, #6a4190);
+      }
+
+      .code-example {
+        background: linear-gradient(135deg, #2c3e50, #34495e);
+        color: #ecf0f1;
+        padding: 25px;
+        border-radius: 10px;
+        margin: 25px 0;
+        overflow-x: auto;
+        font-family: "Courier New", monospace;
+        line-height: 1.6;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        border-left: 5px solid #667eea;
+      }
+
+      .comparison {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 25px;
+        margin-top: 35px;
+      }
+
+      .comparison-item {
+        flex: 1;
+        min-width: 280px;
+        padding: 25px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        backdrop-filter: blur(10px);
+      }
+
+      .comparison-item:hover {
+        transform: translateY(-5px);
+      }
+
+      .comparison-item h3 {
+        color: #667eea;
+        margin-top: 0;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f0f0f0;
+        font-size: 1.4rem;
+      }
+
+      .note {
+        background: linear-gradient(135deg, #fff8e1, #ffecb3);
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 5px solid #ffc107;
+        margin: 25px 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      }
+
+      .property-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 25px 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      }
+
+      .property-table th,
+      .property-table td {
+        border: 1px solid #ddd;
+        padding: 15px;
+        text-align: left;
+      }
+
+      .property-table th {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        font-weight: 600;
+      }
+
+      .property-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      .property-table tr:hover {
+        background-color: #f1f8ff;
+      }
+
+      .visual-guide {
+        display: flex;
+        justify-content: space-around;
+        margin: 25px 0;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .guide-item {
+        text-align: center;
+        flex: 1;
+        min-width: 180px;
+      }
+
+      .guide-box {
+        width: 120px;
+        height: 80px;
+        margin: 0 auto 15px;
+        border: 3px solid #667eea;
+        position: relative;
+        background: #e8f4f8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #2c3e50;
+      }
+
+      .guide-label {
+        font-size: 1rem;
+        color: #2c3e50;
+        font-weight: 600;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 50px;
+        padding: 25px;
+        color: white;
+        font-size: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+      }
+
+      @media (max-width: 768px) {
+        .content-wrapper {
+          flex-direction: column;
+        }
+
+        .comparison {
+          flex-direction: column;
+        }
+
+        h1 {
+          font-size: 2.2rem;
+        }
+
+        .controls {
+          flex-direction: column;
+        }
+
+        button {
+          min-width: 100%;
+        }
+      }
+
+      .calculation {
+        background: #e8f4f8;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border-left: 4px solid #667eea;
+      }
+
+      .formula {
+        font-family: "Courier New", monospace;
+        font-size: 1.2rem;
+        font-weight: bold;
+        text-align: center;
+        margin: 15px 0;
+        color: #2c3e50;
+        background: white;
+        padding: 15px;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .responsive-test {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border: 2px solid #667eea;
+      }
+
+      .breakpoint-indicator {
+        display: flex;
+        justify-content: space-between;
+        margin: 15px 0;
+        padding: 10px;
+        background: white;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .breakpoint {
+        text-align: center;
+        flex: 1;
+        padding: 10px;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+      }
+
+      .breakpoint.active {
+        background: #667eea;
+        color: white;
+        transform: scale(1.05);
+      }
+
+      .device-emulator {
+        background: #2c3e50;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+        color: white;
+      }
+
+      .device-screen {
+        background: white;
+        height: 200px;
+        border-radius: 5px;
+        margin: 10px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>innerWidth 属性详解</h1>
+        <p class="subtitle">深入理解浏览器视口宽度与响应式设计</p>
+      </header>
+
+      <div class="content-wrapper">
+        <div class="explanation">
+          <h2>什么是 innerWidth？</h2>
+          <p><code>window.innerWidth</code> 是 JavaScript 中 Window 对象的只读属性，返回浏览器视口(viewport)的内部宽度，包括垂直滚动条的宽度（如果存在）。</p>
+
+          <div class="code-example">
+            // 获取浏览器视口宽度<br />
+            let viewportWidth = window.innerWidth;<br />
+            console.log(viewportWidth); // 输出视口宽度（像素）<br />
+            <br />
+            // 监听窗口大小变化<br />
+            window.addEventListener('resize', function() {<br />
+            &nbsp;&nbsp;console.log('新视口宽度:', window.innerWidth);<br />
+            });
+          </div>
+
+          <h3>核心特性：</h3>
+          <ul>
+            <li><strong>Window 对象属性</strong> - 属于 window 对象，不是 DOM 元素属性</li>
+            <li><strong>包含滚动条</strong> - 计算包含垂直滚动条的宽度</li>
+            <li><strong>动态更新</strong> - 随浏览器窗口大小变化自动更新</li>
+            <li><strong>响应式关键</strong> - 响应式设计的核心测量工具</li>
+          </ul>
+
+          <div class="note"><strong>重要提示：</strong> innerWidth 返回的是浏览器视口(viewport)的宽度，不是整个网页文档的宽度，并且包含垂直滚动条的宽度。</div>
+
+          <h3>innerWidth 与其他宽度属性的区别</h3>
+
+          <div class="calculation">
+            <h4>视口相关宽度属性对比：</h4>
+            <div class="formula">innerWidth = 视口宽度 + 垂直滚动条宽度</div>
+            <div class="formula">clientWidth = 视口宽度 (不含滚动条)</div>
+            <div class="formula">outerWidth = 浏览器窗口总宽度</div>
+          </div>
+
+          <div class="visual-guide">
+            <div class="guide-item">
+              <div class="guide-box" style="background: #667eea; color: white">视口区域</div>
+              <div class="guide-label">innerWidth</div>
+            </div>
+            <div class="guide-item">
+              <div class="guide-box" style="border-right: 15px solid #ff6b6b; background: #e8f4f8">滚动条</div>
+              <div class="guide-label">滚动条宽度</div>
+            </div>
+            <div class="guide-item">
+              <div class="guide-box" style="border: 8px solid #2c3e50; background: #e8f4f8">浏览器</div>
+              <div class="guide-label">outerWidth</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h2>交互演示</h2>
+          <p>调整浏览器窗口大小，观察 innerWidth 的变化：</p>
+
+          <div class="demo-container">
+            <div class="viewport-indicator">
+              <div class="viewport-label">视口区域 (innerWidth)</div>
+            </div>
+            <div class="content-box" id="contentBox">
+              <h3>浏览器视口演示</h3>
+              <div class="dimension-label" id="dimensionLabel">当前 innerWidth: 计算中...</div>
+            </div>
+          </div>
+
+          <div class="info-panel" id="infoPanel">
+            // 视口尺寸属性<br />
+            innerWidth: <strong>--</strong><br />
+            innerHeight: <strong>--</strong><br />
+            outerWidth: <strong>--</strong><br />
+            outerHeight: <strong>--</strong><br />
+            devicePixelRatio: <strong>--</strong>
+          </div>
+
+          <div class="responsive-test">
+            <h3>响应式断点测试</h3>
+            <p>根据当前 innerWidth 值，检测设备类型：</p>
+            <div class="breakpoint-indicator">
+              <div class="breakpoint" id="breakpoint-xs">📱 手机<br />&lt; 576px</div>
+              <div class="breakpoint" id="breakpoint-sm">📱 大手机<br />576px - 768px</div>
+              <div class="breakpoint" id="breakpoint-md">💻 平板<br />768px - 992px</div>
+              <div class="breakpoint" id="breakpoint-lg">🖥️ 桌面<br />992px - 1200px</div>
+              <div class="breakpoint" id="breakpoint-xl">🖥️ 大桌面<br />&gt; 1200px</div>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button id="simulateMobile">模拟手机</button>
+            <button id="simulateTablet">模拟平板</button>
+            <button id="simulateDesktop">模拟桌面</button>
+            <button id="toggleScrollbar">切换滚动条</button>
+          </div>
+
+          <h3>视口属性对比</h3>
+          <table class="property-table">
+            <tr>
+              <th>属性</th>
+              <th>描述</th>
+              <th>包含滚动条</th>
+              <th>应用对象</th>
+            </tr>
+            <tr>
+              <td>window.innerWidth</td>
+              <td>浏览器视口宽度</td>
+              <td>是</td>
+              <td>Window</td>
+            </tr>
+            <tr>
+              <td>window.outerWidth</td>
+              <td>浏览器窗口总宽度</td>
+              <td>是</td>
+              <td>Window</td>
+            </tr>
+            <tr>
+              <td>document.documentElement.clientWidth</td>
+              <td>视口宽度</td>
+              <td>否</td>
+              <td>Document</td>
+            </tr>
+            <tr>
+              <td>screen.width</td>
+              <td>屏幕总宽度</td>
+              <td>不适用</td>
+              <td>Screen</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="comparison">
+        <div class="comparison-item">
+          <h3>innerWidth 与相关属性</h3>
+          <p><strong>innerWidth:</strong> 视口宽度（含滚动条）</p>
+          <p><strong>innerHeight:</strong> 视口高度（含滚动条）</p>
+          <p><strong>outerWidth:</strong> 浏览器窗口总宽度</p>
+          <p><strong>clientWidth:</strong> 视口宽度（不含滚动条）</p>
+          <p><strong>screen.width:</strong> 显示器屏幕宽度</p>
+        </div>
+
+        <div class="comparison-item">
+          <h3>实际应用场景</h3>
+          <p>• 响应式布局设计</p>
+          <p>• 移动端适配</p>
+          <p>• 媒体查询JavaScript实现</p>
+          <p>• 动态加载资源</p>
+          <p>• 视口检测与优化</p>
+        </div>
+
+        <div class="comparison-item">
+          <h3>注意事项</h3>
+          <p>• 包含垂直滚动条宽度</p>
+          <p>• 随窗口大小动态变化</p>
+          <p>• 与CSS媒体查询对应</p>
+          <p>• 受浏览器缩放影响</p>
+          <p>• 移动端有特殊行为</p>
+        </div>
+      </div>
+
+      <div class="calculation">
+        <h3>innerWidth 实际应用示例</h3>
+        <p>在响应式设计中的典型应用：</p>
+        <div class="code-example">
+          // 响应式布局控制<br />
+          function handleResponsiveLayout() {<br />
+          &nbsp;&nbsp;const width = window.innerWidth;<br />
+          &nbsp;&nbsp;<br />
+          &nbsp;&nbsp;if (width < 768) {<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;// 移动端布局<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;document.body.classList.add('mobile-layout');<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;document.body.classList.remove('tablet-layout', 'desktop-layout');<br />
+          &nbsp;&nbsp;} else if (width < 1024) {<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;// 平板布局<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;document.body.classList.add('tablet-layout');<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;document.body.classList.remove('mobile-layout', 'desktop-layout');<br />
+          &nbsp;&nbsp;} else {<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;// 桌面布局<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;document.body.classList.add('desktop-layout');<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;document.body.classList.remove('mobile-layout', 'tablet-layout');<br />
+          &nbsp;&nbsp;}<br />
+          }<br />
+          <br />
+          // 监听窗口大小变化<br />
+          window.addEventListener('resize', handleResponsiveLayout);<br />
+          <br />
+          // 初始执行<br />
+          handleResponsiveLayout();
+        </div>
+      </div>
+
+      <div class="code-example">
+        // 高级应用：性能优化的懒加载<br />
+        function lazyLoadImages() {<br />
+        &nbsp;&nbsp;const images = document.querySelectorAll('img[data-src]');<br />
+        &nbsp;&nbsp;const viewportHeight = window.innerHeight;<br />
+        &nbsp;&nbsp;const scrollTop = window.pageYOffset;<br />
+        &nbsp;&nbsp;<br />
+        &nbsp;&nbsp;images.forEach(img => {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;const imgTop = img.getBoundingClientRect().top + scrollTop;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;if (imgTop < scrollTop + viewportHeight + 100) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;img.src = img.dataset.src;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;img.removeAttribute('data-src');<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+        &nbsp;&nbsp;});<br />
+        }<br />
+        <br />
+        // 防抖优化的事件监听<br />
+        function debounce(func, wait) {<br />
+        &nbsp;&nbsp;let timeout;<br />
+        &nbsp;&nbsp;return function executedFunction(...args) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;const later = () => {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;clearTimeout(timeout);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func(...args);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;};<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;clearTimeout(timeout);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;timeout = setTimeout(later, wait);<br />
+        &nbsp;&nbsp;};<br />
+        }<br />
+        <br />
+        // 使用防抖优化resize事件<br />
+        window.addEventListener('resize', debounce(lazyLoadImages, 250));
+      </div>
+
+      <footer>
+        <p>innerWidth 属性详解 &copy; 2023 - 交互式前端教程 | 深入理解浏览器视口与响应式设计</p>
+      </footer>
+    </div>
+
+    <script>
+      // 获取DOM元素
+      const contentBox = document.getElementById("contentBox");
+      const dimensionLabel = document.getElementById("dimensionLabel");
+      const infoPanel = document.getElementById("infoPanel");
+      const breakpoints = {
+        xs: document.getElementById("breakpoint-xs"),
+        sm: document.getElementById("breakpoint-sm"),
+        md: document.getElementById("breakpoint-md"),
+        lg: document.getElementById("breakpoint-lg"),
+        xl: document.getElementById("breakpoint-xl"),
+      };
+
+      const simulateMobileBtn = document.getElementById("simulateMobile");
+      const simulateTabletBtn = document.getElementById("simulateTablet");
+      const simulateDesktopBtn = document.getElementById("simulateDesktop");
+      const toggleScrollbarBtn = document.getElementById("toggleScrollbar");
+
+      // 更新信息面板
+      function updateInfo() {
+        const innerWidth = window.innerWidth;
+        const innerHeight = window.innerHeight;
+        const outerWidth = window.outerWidth;
+        const outerHeight = window.outerHeight;
+        const devicePixelRatio = window.devicePixelRatio;
+        const clientWidth = document.documentElement.clientWidth;
+
+        dimensionLabel.innerHTML = `
+                当前 innerWidth: <strong>${innerWidth}px</strong><br>
+                当前 clientWidth: <strong>${clientWidth}px</strong>
+            `;
+
+        infoPanel.innerHTML = `
+                // 视口尺寸属性<br>
+                innerWidth: <strong>${innerWidth}px</strong><br>
+                innerHeight: <strong>${innerHeight}px</strong><br>
+                outerWidth: <strong>${outerWidth}px</strong><br>
+                outerHeight: <strong>${outerHeight}px</strong><br>
+                devicePixelRatio: <strong>${devicePixelRatio}</strong>
+            `;
+
+        // 更新断点指示器
+        updateBreakpointIndicator(innerWidth);
+      }
+
+      // 更新断点指示器
+      function updateBreakpointIndicator(width) {
+        // 移除所有active类
+        Object.values(breakpoints).forEach(bp => bp.classList.remove("active"));
+
+        // 根据宽度激活对应的断点
+        if (width < 576) {
+          breakpoints.xs.classList.add("active");
+        } else if (width < 768) {
+          breakpoints.sm.classList.add("active");
+        } else if (width < 992) {
+          breakpoints.md.classList.add("active");
+        } else if (width < 1200) {
+          breakpoints.lg.classList.add("active");
+        } else {
+          breakpoints.xl.classList.add("active");
+        }
+      }
+
+      // 初始更新
+      updateInfo();
+
+      // 监听窗口大小变化
+      window.addEventListener("resize", updateInfo);
+
+      // 模拟设备尺寸
+      simulateMobileBtn.addEventListener("click", function () {
+        // 注意：实际项目中不能直接修改窗口大小
+        // 这里只是演示效果
+        alert("在实际浏览器中，请手动调整窗口大小到移动端尺寸（如 375px）");
+        dimensionLabel.innerHTML = "模拟移动端视图 (375px)";
+      });
+
+      simulateTabletBtn.addEventListener("click", function () {
+        alert("在实际浏览器中，请手动调整窗口大小到平板端尺寸（如 768px）");
+        dimensionLabel.innerHTML = "模拟平板端视图 (768px)";
+      });
+
+      simulateDesktopBtn.addEventListener("click", function () {
+        alert("在实际浏览器中，请手动调整窗口大小到桌面端尺寸（如 1200px）");
+        dimensionLabel.innerHTML = "模拟桌面端视图 (1200px)";
+      });
+
+      // 切换滚动条演示
+      let scrollbarVisible = true;
+      toggleScrollbarBtn.addEventListener("click", function () {
+        scrollbarVisible = !scrollbarVisible;
+        if (scrollbarVisible) {
+          document.body.style.overflow = "auto";
+          this.textContent = "隐藏滚动条";
+        } else {
+          document.body.style.overflow = "hidden";
+          this.textContent = "显示滚动条";
+        }
+        // 给一点延迟让浏览器更新
+        setTimeout(updateInfo, 100);
+      });
+
+      // 添加性能优化的resize监听（防抖）
+      let resizeTimeout;
+      window.addEventListener("resize", function () {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(updateInfo, 100);
+      });
+
+      // 页面加载完成后执行
+      window.addEventListener("load", updateInfo);
+
+      // 初始信息显示
+      setTimeout(updateInfo, 100);
+    </script>
+  </body>
+</html>

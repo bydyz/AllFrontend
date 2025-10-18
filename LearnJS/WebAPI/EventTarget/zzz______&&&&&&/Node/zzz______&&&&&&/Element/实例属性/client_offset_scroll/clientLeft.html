@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>clientLeft 属性详解</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 2.5rem;
+      }
+
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 1.3rem;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .content {
+        display: grid;
+        grid-template-columns: 1fr;
+        margin-bottom: 40px;
+      }
+
+      .demo-section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+
+      .explanation-section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #3498db;
+      }
+
+      h3 {
+        color: #2c3e50;
+        margin: 25px 0 15px 0;
+      }
+
+      .demo-container {
+        position: relative;
+        width: 100%;
+        height: 400px;
+        border: 2px solid #34495e;
+        margin: 25px 0;
+        background: #ecf0f1;
+        padding: 40px;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .target-element {
+        width: 300px;
+        height: 200px;
+        padding: 25px;
+        margin: 0 auto;
+        border: 10px solid #3498db;
+        background: #3498db33;
+        border-radius: 8px;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      .content-area {
+        width: 100%;
+        height: 100%;
+        background: #2ecc7133;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        border: 2px dashed #2ecc71;
+        border-radius: 4px;
+        padding: 15px;
+      }
+
+      .border-visualization {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+      }
+
+      .left-border-highlight {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 0;
+        background: rgba(52, 152, 219, 0.6);
+        transition: width 0.3s ease;
+      }
+
+      .clientLeft-indicator {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #3498db;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        font-weight: bold;
+        white-space: nowrap;
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin: 20px 0;
+      }
+
+      button {
+        padding: 12px 15px;
+        background: #3498db;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      button:hover {
+        background: #2980b9;
+        transform: translateY(-2px);
+      }
+
+      button.special {
+        background: #9b59b6;
+      }
+
+      button.special:hover {
+        background: #8e44ad;
+      }
+
+      .property-display {
+        background: #2c3e50;
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+
+      .property-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 10px 0;
+        padding: 8px 12px;
+        background: #34495e;
+        border-radius: 6px;
+      }
+
+      .property-name {
+        font-weight: bold;
+        font-size: 1.1rem;
+      }
+
+      .property-value {
+        font-family: "Courier New", monospace;
+        font-size: 1.2rem;
+        color: #f1c40f;
+        font-weight: bold;
+      }
+
+      .border-controls {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+
+      .control-group {
+        margin: 15px 0;
+      }
+
+      .control-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #2c3e50;
+      }
+
+      .range-slider {
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: #ddd;
+        outline: none;
+        -webkit-appearance: none;
+      }
+
+      .range-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #3498db;
+        cursor: pointer;
+      }
+
+      .range-value {
+        text-align: center;
+        font-weight: bold;
+        color: #3498db;
+        margin-top: 5px;
+      }
+
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .comparison-table th {
+        background: #3498db;
+        color: white;
+        padding: 12px 15px;
+        text-align: left;
+      }
+
+      .comparison-table td {
+        padding: 10px 15px;
+        border-bottom: 1px solid #ecf0f1;
+      }
+
+      .comparison-table tr:nth-child(even) {
+        background: #f8f9fa;
+      }
+
+      .code-block {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 20px;
+        border-radius: 10px;
+        font-family: "Courier New", monospace;
+        margin: 20px 0;
+        overflow-x: auto;
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      .special-cases {
+        background: #fff9e6;
+        padding: 20px;
+        border-radius: 10px;
+        border-left: 4px solid #f1c40f;
+        margin: 20px 0;
+      }
+
+      .case-example {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 10px 0;
+        border: 1px solid #e9ecef;
+      }
+
+      .rtl-demo {
+        direction: rtl;
+        text-align: right;
+        padding: 20px;
+        background: #e8f4f8;
+        border-radius: 8px;
+        margin: 15px 0;
+        border: 2px solid #3498db;
+      }
+
+      @media (max-width: 968px) {
+        .content {
+          grid-template-columns: 1fr;
+        }
+
+        .controls {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>clientLeft 属性详解</h1>
+        <p class="subtitle">深入理解 clientLeft 的工作原理、特殊案例和实际应用</p>
+      </header>
+
+      <div class="content">
+        <div class="demo-section">
+          <h2>交互演示</h2>
+          <p>调整左边框宽度，观察 clientLeft 值的变化</p>
+
+          <div class="demo-container">
+            <div class="target-element" id="targetElement">
+              <div class="border-visualization" id="borderVisualization">
+                <div class="left-border-highlight" id="leftBorderHighlight"></div>
+                <div class="clientLeft-indicator" id="clientLeftIndicator">clientLeft: 10px</div>
+              </div>
+              <div class="content-area">
+                <h3>目标元素</h3>
+                <p>clientLeft = 左边框宽度</p>
+                <p>当前左边框: <span id="currentBorderLeft">10px</span></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-controls">
+            <div class="control-group">
+              <label class="control-label">左边框宽度 (border-left-width):</label>
+              <input type="range" min="0" max="50" value="10" class="range-slider" id="borderLeftSlider" />
+              <div class="range-value" id="borderLeftValue">10px</div>
+            </div>
+
+            <div class="control-group">
+              <label class="control-label">边框样式:</label>
+              <select class="range-slider" id="borderStyleSelect" style="padding: 8px">
+                <option value="solid">solid</option>
+                <option value="dashed">dashed</option>
+                <option value="dotted">dotted</option>
+                <option value="double">double</option>
+                <option value="groove">groove</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button onclick="setBorderLeft(5)">薄边框 (5px)</button>
+            <button onclick="setBorderLeft(20)">厚边框 (20px)</button>
+            <button onclick="setBorderLeft(0)">无边框</button>
+            <button class="special" onclick="setAsymmetricBorder()">不对称边框</button>
+            <button class="special" onclick="toggleRTL()">切换RTL模式</button>
+            <button onclick="resetAll()">重置</button>
+          </div>
+
+          <div class="property-display">
+            <h3 style="color: white; margin-top: 0">属性值对比</h3>
+            <div class="property-item">
+              <span class="property-name">clientLeft:</span>
+              <span class="property-value" id="clientLeftVal">10px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">border-left-width:</span>
+              <span class="property-value" id="borderLeftWidthVal">10px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">clientWidth:</span>
+              <span class="property-value" id="clientWidthVal">300px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">offsetWidth:</span>
+              <span class="property-value" id="offsetWidthVal">340px</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="explanation-section">
+          <h2>clientLeft 详解</h2>
+
+          <div class="special-cases">
+            <h3>📌 clientLeft 核心定义</h3>
+            <p><strong>clientLeft = 元素左边框的宽度 (border-left-width)</strong></p>
+            <p>这是一个只读属性，返回元素的左侧边框宽度，以像素为单位。</p>
+          </div>
+
+          <h3>基本计算公式</h3>
+          <div class="code-block" style="white-space: pre;">
+// clientLeft 等于左边框宽度
+element.clientLeft === parseInt(getComputedStyle(element).borderLeftWidth)
+
+// 元素总宽度计算
+element.offsetWidth = element.clientWidth + element.clientLeft + 右边框宽度
+
+// 注意：没有 clientRight 属性
+          </div>
+
+          <h3>与其他边框属性的关系</h3>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>属性</th>
+                <th>描述</th>
+                <th>对应CSS</th>
+                <th>是否可写</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>clientLeft</strong></td>
+                <td>左边框宽度</td>
+                <td>border-left-width</td>
+                <td>只读</td>
+              </tr>
+              <tr>
+                <td>clientTop</td>
+                <td>上边框宽度</td>
+                <td>border-top-width</td>
+                <td>只读</td>
+              </tr>
+              <tr>
+                <td>offsetWidth</td>
+                <td>包含边框的整体宽度</td>
+                <td>width + padding + border</td>
+                <td>只读</td>
+              </tr>
+              <tr>
+                <td>clientWidth</td>
+                <td>不包含边框的内容宽度</td>
+                <td>width + padding</td>
+                <td>只读</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>特殊情况和注意事项</h3>
+
+          <div class="case-example">
+            <h4>情况 1: 不同边框样式</h4>
+            <p>clientLeft 只关心边框宽度，不关心边框样式：</p>
+            <div class="code-block" style="white-space: pre;">
+// 无论边框样式如何，clientLeft 都返回宽度值
+element.style.borderLeft = '5px solid red';      // clientLeft = 5
+element.style.borderLeft = '5px dashed blue';    // clientLeft = 5
+element.style.borderLeft = '5px dotted green';   // clientLeft = 5
+            </div>
+          </div>
+
+          <div class="case-example">
+            <h4>情况 2: 不对称边框</h4>
+            <p>clientLeft 只返回左边框宽度，与其他边框无关：</p>
+            <div class="code-block" style="white-space: pre;">
+// 设置不对称边框
+element.style.borderTop = '10px solid red';
+element.style.borderRight = '20px solid blue';
+element.style.borderBottom = '30px solid green';
+element.style.borderLeft = '5px solid yellow';
+
+console.log(element.clientLeft);    // 5 (左边框宽度)
+console.log(element.clientTop);     // 10 (上边框宽度)
+            </div>
+          </div>
+
+          <div class="case-example">
+            <h4>情况 3: RTL（从右到左）文本方向</h4>
+            <p>在RTL模式下，clientLeft 可能包含垂直滚动条宽度：</p>
+            <div class="rtl-demo" id="rtlDemo">
+              <h4>RTL 模式演示</h4>
+              <p>这个元素设置了 direction: rtl</p>
+              <p>注意 clientLeft 的行为变化</p>
+            </div>
+            <div class="code-block" style="white-space: pre;">
+// 在RTL模式下
+element.style.direction = 'rtl';
+element.style.overflow = 'auto';
+
+// clientLeft 可能包含滚动条宽度
+console.log(element.clientLeft); // 左边框宽度 + 垂直滚动条宽度
+            </div>
+          </div>
+
+          <h3>实际应用场景</h3>
+          <div class="code-block" style="white-space: pre;">
+// 应用 1: 精确定位计算
+function positionRelativeToBorder(element, targetX, targetY) {
+    // 考虑边框偏移
+    const x = targetX - element.clientLeft;
+    const y = targetY - element.clientTop;
+    return { x, y };
+}
+
+// 应用 2: 精确尺寸计算
+function getInnerDimensions(element) {
+    return {
+        width: element.clientWidth,
+        height: element.clientHeight,
+        leftBorder: element.clientLeft,
+        topBorder: element.clientTop
+    };
+}
+
+// 应用 3: 边框检测
+function hasLeftBorder(element) {
+    return element.clientLeft > 0;
+}
+
+// 应用 4: 动态布局调整
+function adjustForLeftBorder(container, children) {
+    const leftOffset = container.clientLeft;
+    children.forEach(child => {
+        child.style.marginLeft = leftOffset + 'px';
+    });
+}
+
+// 应用 5: 画布或游戏中的精确碰撞检测
+function getCollisionBox(element) {
+    return {
+        x: element.offsetLeft + element.clientLeft,
+        y: element.offsetTop + element.clientTop,
+        width: element.clientWidth,
+        height: element.clientHeight
+    };
+}
+          </div>
+
+          <h3>常见误区</h3>
+          <div class="special-cases">
+            <p>❌ <strong>误区1:</strong> clientLeft 是元素到父元素左侧的距离</p>
+            <p>✅ <strong>正确:</strong> clientLeft 是元素自身的左边框宽度</p>
+
+            <p>❌ <strong>误区2:</strong> clientLeft 包含滚动条（在LTR模式下）</p>
+            <p>✅ <strong>正确:</strong> 在LTR模式下，clientLeft 只包含边框</p>
+
+            <p>❌ <strong>误区3:</strong> clientLeft 可以设置</p>
+            <p>✅ <strong>正确:</strong> clientLeft 是只读属性，要通过 CSS border 属性修改</p>
+
+            <p>❌ <strong>误区4:</strong> clientLeft 包含内边距</p>
+            <p>✅ <strong>正确:</strong> clientLeft 只包含边框，内边距影响 clientWidth</p>
+          </div>
+
+          <h3>与 clientTop 的对比</h3>
+          <div class="code-block" style="white-space: pre;">
+// clientLeft 和 clientTop 的对比
+const element = document.getElementById('myElement');
+
+console.log('左边框宽度:', element.clientLeft);
+console.log('上边框宽度:', element.clientTop);
+
+// 它们都是只读的边框宽度属性
+// 主要区别在于方向和应用场景
+
+// 检查元素是否有边框
+const hasBorders = element.clientLeft > 0 || element.clientTop > 0;
+console.log('元素有边框:', hasBorders);
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 获取DOM元素
+      const targetElement = document.getElementById("targetElement");
+      const leftBorderHighlight = document.getElementById("leftBorderHighlight");
+      const clientLeftIndicator = document.getElementById("clientLeftIndicator");
+      const borderLeftSlider = document.getElementById("borderLeftSlider");
+      const borderLeftValue = document.getElementById("borderLeftValue");
+      const borderStyleSelect = document.getElementById("borderStyleSelect");
+      const currentBorderLeft = document.getElementById("currentBorderLeft");
+      const rtlDemo = document.getElementById("rtlDemo");
+
+      // 获取属性显示元素
+      const clientLeftVal = document.getElementById("clientLeftVal");
+      const borderLeftWidthVal = document.getElementById("borderLeftWidthVal");
+      const clientWidthVal = document.getElementById("clientWidthVal");
+      const offsetWidthVal = document.getElementById("offsetWidthVal");
+
+      // 更新属性显示
+      function updateProperties() {
+        const clientLeft = targetElement.clientLeft;
+        const computedStyle = window.getComputedStyle(targetElement);
+        const borderLeftWidth = computedStyle.borderLeftWidth;
+
+        clientLeftVal.textContent = clientLeft + "px";
+        borderLeftWidthVal.textContent = borderLeftWidth;
+        clientWidthVal.textContent = targetElement.clientWidth + "px";
+        offsetWidthVal.textContent = targetElement.offsetWidth + "px";
+        currentBorderLeft.textContent = borderLeftWidth;
+
+        // 更新可视化
+        updateVisualization();
+
+        // 更新RTL演示
+        updateRTLDemo();
+      }
+
+      // 更新可视化
+      function updateVisualization() {
+        const clientLeft = targetElement.clientLeft;
+
+        // 更新高亮区域宽度
+        leftBorderHighlight.style.width = clientLeft + "px";
+
+        // 更新指示器位置和文本
+        clientLeftIndicator.textContent = `clientLeft: ${clientLeft}px`;
+        clientLeftIndicator.style.left = clientLeft / 2 - 40 + "px";
+      }
+
+      // 更新RTL演示
+      function updateRTLDemo() {
+        const rtlClientLeft = rtlDemo.clientLeft;
+        const rtlComputedStyle = window.getComputedStyle(rtlDemo);
+        const rtlBorderLeft = rtlComputedStyle.borderLeftWidth;
+
+        console.log("RTL元素 - clientLeft:", rtlClientLeft, "border-left-width:", rtlBorderLeft);
+      }
+
+      // 设置左边框宽度
+      function setBorderLeft(width) {
+        const borderStyle = borderStyleSelect.value;
+        targetElement.style.borderLeft = `${width}px ${borderStyle} #3498db`;
+        borderLeftSlider.value = width;
+        borderLeftValue.textContent = width + "px";
+        updateProperties();
+      }
+
+      // 设置不对称边框
+      function setAsymmetricBorder() {
+        targetElement.style.borderTop = "10px solid #e74c3c";
+        targetElement.style.borderRight = "25px solid #2ecc71";
+        targetElement.style.borderBottom = "15px solid #f39c12";
+        targetElement.style.borderLeft = "8px solid #3498db";
+        updateProperties();
+      }
+
+      // 切换RTL模式
+      function toggleRTL() {
+        if (targetElement.style.direction === "rtl") {
+          targetElement.style.direction = "ltr";
+          targetElement.style.textAlign = "center";
+        } else {
+          targetElement.style.direction = "rtl";
+          targetElement.style.textAlign = "right";
+        }
+        updateProperties();
+      }
+
+      // 重置所有
+      function resetAll() {
+        targetElement.style.border = "10px solid #3498db";
+        targetElement.style.direction = "ltr";
+        targetElement.style.textAlign = "center";
+        borderLeftSlider.value = 10;
+        borderLeftValue.textContent = "10px";
+        borderStyleSelect.value = "solid";
+        updateProperties();
+      }
+
+      // 事件监听
+      borderLeftSlider.addEventListener("input", function () {
+        setBorderLeft(parseInt(this.value));
+      });
+
+      borderStyleSelect.addEventListener("change", function () {
+        setBorderLeft(parseInt(borderLeftSlider.value));
+      });
+
+      // 初始化
+      updateProperties();
+
+      // 控制台演示
+      setTimeout(() => {
+        console.log("=== clientLeft 属性演示 ===");
+        console.log("clientLeft:", targetElement.clientLeft, "px");
+        console.log("CSS border-left-width:", getComputedStyle(targetElement).borderLeftWidth);
+        console.log("clientWidth:", targetElement.clientWidth, "px");
+        console.log("offsetWidth:", targetElement.offsetWidth, "px");
+
+        console.log("\n🔍 验证 clientLeft = border-left-width:");
+        console.log("相等:", targetElement.clientLeft === parseInt(getComputedStyle(targetElement).borderLeftWidth));
+
+        console.log("\n🌍 RTL模式测试:");
+        console.log("RTL元素clientLeft:", rtlDemo.clientLeft);
+        console.log("RTL元素border-left-width:", getComputedStyle(rtlDemo).borderLeftWidth);
+      }, 1000);
+    </script>
+  </body>
+</html>

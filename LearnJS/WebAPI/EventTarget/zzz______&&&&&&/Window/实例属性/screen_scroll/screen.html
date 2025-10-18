@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>window.screen 属性详解</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 2.5rem;
+      }
+
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 1.2rem;
+      }
+
+      .content-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .explanation {
+        flex: 1;
+        min-width: 350px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .demo-area {
+        flex: 1;
+        min-width: 350px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      h2 {
+        color: #667eea;
+        margin: 20px 0 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+
+      h3 {
+        color: #2c3e50;
+        margin: 15px 0 10px;
+      }
+
+      p {
+        margin-bottom: 15px;
+      }
+
+      .code-example {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        overflow-x: auto;
+        font-family: "Courier New", monospace;
+        line-height: 1.5;
+        border-left: 4px solid #667eea;
+      }
+
+      .screen-visualization {
+        width: 100%;
+        height: 300px;
+        border: 3px solid #2c3e50;
+        border-radius: 10px;
+        margin: 20px 0;
+        position: relative;
+        background: linear-gradient(135deg, #e8f4f8, #d1e7f0);
+        overflow: hidden;
+      }
+
+      .screen-boundary {
+        position: absolute;
+        border: 2px dashed #667eea;
+        background: rgba(102, 126, 234, 0.1);
+      }
+
+      .screen-label {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .avail-screen {
+        position: absolute;
+        border: 2px solid #4ecdc4;
+        background: rgba(78, 205, 196, 0.2);
+      }
+
+      .info-panel {
+        background: #2c3e50;
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 20px;
+        font-family: "Courier New", monospace;
+        line-height: 1.8;
+      }
+
+      .property-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+      }
+
+      .property-card {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #667eea;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .property-name {
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 5px;
+      }
+
+      .property-value {
+        color: #667eea;
+        font-family: "Courier New", monospace;
+      }
+
+      .property-desc {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+        margin-top: 5px;
+      }
+
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .comparison-table th,
+      .comparison-table td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+      }
+
+      .comparison-table th {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        font-weight: 600;
+      }
+
+      .comparison-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 10px 15px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        flex: 1;
+        min-width: 120px;
+      }
+
+      button:hover {
+        background: #5a6fd8;
+        transform: translateY(-2px);
+      }
+
+      .note {
+        background: #fff8e1;
+        padding: 15px;
+        border-radius: 6px;
+        border-left: 4px solid #ffc107;
+        margin: 20px 0;
+      }
+
+      .warning {
+        background: #ffebee;
+        padding: 15px;
+        border-radius: 6px;
+        border-left: 4px solid #f44336;
+        margin: 20px 0;
+      }
+
+      .visual-guide {
+        display: flex;
+        justify-content: space-around;
+        margin: 20px 0;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .guide-item {
+        text-align: center;
+        flex: 1;
+        min-width: 150px;
+      }
+
+      .guide-box {
+        width: 100px;
+        height: 80px;
+        margin: 0 auto 10px;
+        border: 2px solid #667eea;
+        position: relative;
+        background: #e8f4f8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        padding: 20px;
+        color: white;
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 768px) {
+        .content-wrapper {
+          flex-direction: column;
+        }
+
+        .property-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .color-depth {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 10px 0;
+      }
+
+      .color-bar {
+        height: 20px;
+        background: linear-gradient(90deg, #000000, #ffffff);
+        border-radius: 10px;
+        flex: 1;
+        position: relative;
+      }
+
+      .color-marker {
+        position: absolute;
+        top: -5px;
+        width: 2px;
+        height: 30px;
+        background: #ff6b6b;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>window.screen 属性详解</h1>
+        <p class="subtitle">深入理解屏幕信息检测与设备识别</p>
+      </header>
+
+      <div class="content-wrapper">
+        <div class="explanation">
+          <h2>什么是 window.screen？</h2>
+          <p><code>window.screen</code> 是一个只读对象，返回当前屏幕的详细信息，包括尺寸、颜色深度、像素密度等。</p>
+
+          <div class="code-example">
+            // 访问 screen 对象<br />
+            console.log(window.screen);<br /><br />
+
+            // 获取屏幕宽度和高度<br />
+            console.log('屏幕宽度:', screen.width);<br />
+            console.log('屏幕高度:', screen.height);<br />
+            console.log('可用宽度:', screen.availWidth);<br />
+            console.log('可用高度:', screen.availHeight);
+          </div>
+
+          <h3>核心特性</h3>
+          <ul>
+            <li><strong>只读对象</strong> - 所有属性都是只读的</li>
+            <li><strong>屏幕信息</strong> - 提供物理屏幕的详细信息</li>
+            <li><strong>设备识别</strong> - 用于响应式设计和设备检测</li>
+            <li><strong>跨浏览器兼容</strong> - 在现代浏览器中表现一致</li>
+          </ul>
+
+          <div class="note"><strong>注意：</strong> screen 对象提供的是物理屏幕的信息，而不是浏览器窗口的信息。</div>
+
+          <h3>screen 对象属性概览</h3>
+
+          <div class="property-grid">
+            <div class="property-card">
+              <div class="property-name">screen.width</div>
+              <div class="property-value" id="propWidth">--</div>
+              <div class="property-desc">屏幕总宽度（像素）</div>
+            </div>
+
+            <div class="property-card">
+              <div class="property-name">screen.height</div>
+              <div class="property-value" id="propHeight">--</div>
+              <div class="property-desc">屏幕总高度（像素）</div>
+            </div>
+
+            <div class="property-card">
+              <div class="property-name">screen.availWidth</div>
+              <div class="property-value" id="propAvailWidth">--</div>
+              <div class="property-desc">可用屏幕宽度</div>
+            </div>
+
+            <div class="property-card">
+              <div class="property-name">screen.availHeight</div>
+              <div class="property-value" id="propAvailHeight">--</div>
+              <div class="property-desc">可用屏幕高度</div>
+            </div>
+
+            <div class="property-card">
+              <div class="property-name">screen.colorDepth</div>
+              <div class="property-value" id="propColorDepth">--</div>
+              <div class="property-desc">颜色深度（位）</div>
+            </div>
+
+            <div class="property-card">
+              <div class="property-name">screen.pixelDepth</div>
+              <div class="property-value" id="propPixelDepth">--</div>
+              <div class="property-desc">像素深度（位）</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h2>屏幕信息可视化</h2>
+
+          <div class="screen-visualization" id="screenVisualization">
+            <!-- 通过JavaScript动态生成屏幕可视化 -->
+          </div>
+
+          <div class="info-panel">
+            // 当前屏幕信息<br />
+            screen.width: <span id="screenWidth">--</span><br />
+            screen.height: <span id="screenHeight">--</span><br />
+            screen.availWidth: <span id="screenAvailWidth">--</span><br />
+            screen.availHeight: <span id="screenAvailHeight">--</span><br />
+            screen.colorDepth: <span id="screenColorDepth">--</span><br />
+            screen.pixelDepth: <span id="screenPixelDepth">--</span><br />
+            screen.orientation: <span id="screenOrientation">--</span>
+          </div>
+
+          <div class="color-depth">
+            <span>颜色深度:</span>
+            <div class="color-bar" id="colorBar">
+              <div class="color-marker" id="colorMarker"></div>
+            </div>
+            <span id="colorDepthValue">-- 位</span>
+          </div>
+
+          <div class="controls">
+            <button id="refreshInfo">刷新信息</button>
+            <button id="simulateMobile">模拟移动端</button>
+            <button id="simulateTablet">模拟平板</button>
+            <button id="fullScreen">全屏测试</button>
+          </div>
+        </div>
+      </div>
+
+      <table class="comparison-table">
+        <tr>
+          <th>属性</th>
+          <th>描述</th>
+          <th>示例值</th>
+          <th>应用场景</th>
+        </tr>
+        <tr>
+          <td>screen.width</td>
+          <td>屏幕总宽度（像素）</td>
+          <td>1920</td>
+          <td>设备检测、响应式设计</td>
+        </tr>
+        <tr>
+          <td>screen.height</td>
+          <td>屏幕总高度（像素）</td>
+          <td>1080</td>
+          <td>设备检测、响应式设计</td>
+        </tr>
+        <tr>
+          <td>screen.availWidth</td>
+          <td>可用屏幕宽度（减去任务栏等）</td>
+          <td>1920</td>
+          <td>窗口大小设置</td>
+        </tr>
+        <tr>
+          <td>screen.availHeight</td>
+          <td>可用屏幕高度（减去任务栏等）</td>
+          <td>1040</td>
+          <td>窗口大小设置</td>
+        </tr>
+        <tr>
+          <td>screen.colorDepth</td>
+          <td>颜色深度（位）</td>
+          <td>24</td>
+          <td>图形质量检测</td>
+        </tr>
+        <tr>
+          <td>screen.pixelDepth</td>
+          <td>像素深度（位）</td>
+          <td>24</td>
+          <td>显示质量检测</td>
+        </tr>
+        <tr>
+          <td>screen.orientation</td>
+          <td>屏幕方向</td>
+          <td>landscape-primary</td>
+          <td>移动端方向检测</td>
+        </tr>
+      </table>
+
+      <div class="content-wrapper">
+        <div class="explanation">
+          <h2>实际应用场景</h2>
+
+          <h3>1. 设备检测与响应式设计</h3>
+          <div class="code-example">
+            // 根据屏幕尺寸加载不同资源<br />
+            function loadAppropriateAssets() {<br />
+            &nbsp;&nbsp;if (screen.width < 768) {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;// 移动端资源<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;loadMobileAssets();<br />
+            &nbsp;&nbsp;} else if (screen.width < 1024) {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;// 平板端资源<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;loadTabletAssets();<br />
+            &nbsp;&nbsp;} else {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;// 桌面端资源<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;loadDesktopAssets();<br />
+            &nbsp;&nbsp;}<br />
+            }
+          </div>
+
+          <h3>2. 窗口位置与大小控制</h3>
+          <div class="code-example">
+            // 将窗口居中显示<br />
+            function centerWindow(width, height) {<br />
+            &nbsp;&nbsp;const left = (screen.availWidth - width) / 2;<br />
+            &nbsp;&nbsp;const top = (screen.availHeight - height) / 2;<br />
+            &nbsp;&nbsp;<br />
+            &nbsp;&nbsp;window.moveTo(left, top);<br />
+            &nbsp;&nbsp;window.resizeTo(width, height);<br />
+            }<br /><br />
+
+            // 打开居中弹出窗口<br />
+            function openCenteredPopup(url, width, height) {<br />
+            &nbsp;&nbsp;const left = (screen.availWidth - width) / 2;<br />
+            &nbsp;&nbsp;const top = (screen.availHeight - height) / 2;<br />
+            &nbsp;&nbsp;<br />
+            &nbsp;&nbsp;window.open(url, '', `<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;width=${width},height=${height},<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;left=${left},top=${top}<br />
+            &nbsp;&nbsp;`);<br />
+            }
+          </div>
+
+          <h3>3. 高DPI屏幕检测</h3>
+          <div class="code-example">
+            // 检测高DPI屏幕并加载高清资源<br />
+            function detectHighDPI() {<br />
+            &nbsp;&nbsp;// 方法1：使用 devicePixelRatio<br />
+            &nbsp;&nbsp;const isHighDPI = window.devicePixelRatio > 1;<br />
+            &nbsp;&nbsp;<br />
+            &nbsp;&nbsp;// 方法2：结合屏幕物理尺寸<br />
+            &nbsp;&nbsp;const physicalWidth = screen.width * window.devicePixelRatio;<br />
+            &nbsp;&nbsp;const isRetina = physicalWidth > 2000;<br />
+            &nbsp;&nbsp;<br />
+            &nbsp;&nbsp;if (isHighDPI) {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;console.log('高DPI屏幕，加载2x图片');<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;loadHighResImages();<br />
+            &nbsp;&nbsp;} else {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;console.log('标准DPI屏幕');<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;loadStandardImages();<br />
+            &nbsp;&nbsp;}<br />
+            }
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h2>高级功能演示</h2>
+
+          <h3>屏幕方向检测</h3>
+          <div class="code-example">
+            // 检测屏幕方向<br />
+            function getOrientation() {<br />
+            &nbsp;&nbsp;if (screen.orientation) {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;return {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type: screen.orientation.type,<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;angle: screen.orientation.angle<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;};<br />
+            &nbsp;&nbsp;} else {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;// 回退方案<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;return window.innerHeight > window.innerWidth <br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;? 'portrait' : 'landscape';<br />
+            &nbsp;&nbsp;}<br />
+            }<br /><br />
+
+            // 监听方向变化<br />
+            screen.orientation.addEventListener('change', function() {<br />
+            &nbsp;&nbsp;console.log('屏幕方向改变:', screen.orientation.type);<br />
+            &nbsp;&nbsp;adjustLayoutForOrientation();<br />
+            });
+          </div>
+
+          <h3>多屏幕支持</h3>
+          <div class="code-example">
+            // 检测是否有多屏幕<br />
+            function getScreenInfo() {<br />
+            &nbsp;&nbsp;return {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;currentScreen: {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;width: screen.width,<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;height: screen.height,<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;availWidth: screen.availWidth,<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;availHeight: screen.availHeight<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;},<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;windowPosition: {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;screenX: window.screenX,<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;screenY: window.screenY<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+            &nbsp;&nbsp;};<br />
+            }
+          </div>
+
+          <div class="warning"><strong>安全限制：</strong> 由于隐私和安全考虑，现代浏览器对 screen 对象的访问有一定限制，特别是在跨域iframe中。</div>
+
+          <div class="note"><strong>最佳实践：</strong> 结合 screen 信息和其他设备检测方法（如 User Agent、特性检测）来获得更准确的设备信息。</div>
+        </div>
+      </div>
+
+      <footer>
+        <p>window.screen 属性详解 &copy; 2023 - 屏幕信息检测与设备识别指南</p>
+      </footer>
+    </div>
+
+    <script>
+      // 更新屏幕信息显示
+      function updateScreenInfo() {
+        // 更新属性卡片
+        document.getElementById("propWidth").textContent = screen.width + "px";
+        document.getElementById("propHeight").textContent = screen.height + "px";
+        document.getElementById("propAvailWidth").textContent = screen.availWidth + "px";
+        document.getElementById("propAvailHeight").textContent = screen.availHeight + "px";
+        document.getElementById("propColorDepth").textContent = screen.colorDepth + "位";
+        document.getElementById("propPixelDepth").textContent = screen.pixelDepth + "位";
+
+        // 更新信息面板
+        document.getElementById("screenWidth").textContent = screen.width + "px";
+        document.getElementById("screenHeight").textContent = screen.height + "px";
+        document.getElementById("screenAvailWidth").textContent = screen.availWidth + "px";
+        document.getElementById("screenAvailHeight").textContent = screen.availHeight + "px";
+        document.getElementById("screenColorDepth").textContent = screen.colorDepth + "位";
+        document.getElementById("screenPixelDepth").textContent = screen.pixelDepth + "位";
+
+        // 更新屏幕方向
+        if (screen.orientation) {
+          document.getElementById("screenOrientation").textContent = `${screen.orientation.type} (${screen.orientation.angle}°)`;
+        } else {
+          document.getElementById("screenOrientation").textContent = "不支持";
+        }
+
+        // 更新颜色深度可视化
+        updateColorDepthVisualization();
+
+        // 更新屏幕可视化
+        updateScreenVisualization();
+      }
+
+      // 更新颜色深度可视化
+      function updateColorDepthVisualization() {
+        const colorDepth = screen.colorDepth;
+        const maxDepth = 32;
+        const percentage = (colorDepth / maxDepth) * 100;
+
+        document.getElementById("colorMarker").style.left = percentage + "%";
+        document.getElementById("colorDepthValue").textContent = colorDepth + " 位";
+      }
+
+      // 更新屏幕可视化
+      function updateScreenVisualization() {
+        const container = document.getElementById("screenVisualization");
+        const scale = 0.2; // 缩放比例
+
+        // 清空容器
+        container.innerHTML = "";
+
+        // 创建屏幕边界
+        const screenBoundary = document.createElement("div");
+        screenBoundary.className = "screen-boundary";
+        screenBoundary.style.width = screen.width * scale + "px";
+        screenBoundary.style.height = screen.height * scale + "px";
+        screenBoundary.style.left = "50%";
+        screenBoundary.style.top = "50%";
+        screenBoundary.style.transform = "translate(-50%, -50%)";
+
+        // 创建可用区域
+        const availScreen = document.createElement("div");
+        availScreen.className = "avail-screen";
+        availScreen.style.width = screen.availWidth * scale + "px";
+        availScreen.style.height = screen.availHeight * scale + "px";
+        availScreen.style.left = "50%";
+        availScreen.style.top = "50%";
+        availScreen.style.transform = "translate(-50%, -50%)";
+
+        // 创建标签
+        const screenLabel = document.createElement("div");
+        screenLabel.className = "screen-label";
+        screenLabel.textContent = `屏幕: ${screen.width} × ${screen.height}`;
+        screenLabel.style.top = "10px";
+        screenLabel.style.left = "10px";
+
+        const availLabel = document.createElement("div");
+        availLabel.className = "screen-label";
+        availLabel.textContent = `可用: ${screen.availWidth} × ${screen.availHeight}`;
+        availLabel.style.bottom = "10px";
+        availLabel.style.right = "10px";
+        availLabel.style.background = "#4ecdc4";
+        availLabel.style.color = "#fff";
+
+        // 添加到容器
+        container.appendChild(screenBoundary);
+        container.appendChild(availScreen);
+        container.appendChild(screenLabel);
+        container.appendChild(availLabel);
+      }
+
+      // 模拟移动端
+      function simulateMobile() {
+        // 注意：这只是在演示中修改显示值，实际screen对象是只读的
+        alert("在实际环境中，screen对象是只读的，无法修改。\n这里只是演示如何根据屏幕信息进行设备检测。");
+
+        // 更新显示为模拟的移动端值
+        document.getElementById("screenWidth").textContent = "375px (模拟)";
+        document.getElementById("screenHeight").textContent = "667px (模拟)";
+        document.getElementById("screenAvailWidth").textContent = "375px (模拟)";
+        document.getElementById("screenAvailHeight").textContent = "635px (模拟)";
+      }
+
+      // 模拟平板
+      function simulateTablet() {
+        alert("在实际环境中，screen对象是只读的，无法修改。\n这里只是演示如何根据屏幕信息进行设备检测。");
+
+        document.getElementById("screenWidth").textContent = "768px (模拟)";
+        document.getElementById("screenHeight").textContent = "1024px (模拟)";
+        document.getElementById("screenAvailWidth").textContent = "768px (模拟)";
+        document.getElementById("screenAvailHeight").textContent = "1004px (模拟)";
+      }
+
+      // 全屏测试
+      function testFullScreen() {
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+          document.documentElement.webkitRequestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) {
+          document.documentElement.msRequestFullscreen();
+        }
+      }
+
+      // 初始更新
+      updateScreenInfo();
+
+      // 绑定按钮事件
+      document.getElementById("refreshInfo").addEventListener("click", updateScreenInfo);
+      document.getElementById("simulateMobile").addEventListener("click", simulateMobile);
+      document.getElementById("simulateTablet").addEventListener("click", simulateTablet);
+      document.getElementById("fullScreen").addEventListener("click", testFullScreen);
+
+      // 监听屏幕方向变化
+      if (screen.orientation) {
+        screen.orientation.addEventListener("change", updateScreenInfo);
+      }
+
+      // 监听窗口大小变化（虽然screen不变，但可用区域可能变化）
+      window.addEventListener("resize", updateScreenInfo);
+
+      // 页面加载完成后输出详细信息
+      window.addEventListener("load", function () {
+        console.log("=== 屏幕信息分析 ===");
+        console.log("物理屏幕:", screen.width + "x" + screen.height);
+        console.log("可用区域:", screen.availWidth + "x" + screen.availHeight);
+        console.log("颜色深度:", screen.colorDepth + "位");
+        console.log("像素深度:", screen.pixelDepth + "位");
+        console.log("设备像素比:", window.devicePixelRatio);
+        if (screen.orientation) {
+          console.log("屏幕方向:", screen.orientation.type, screen.orientation.angle + "°");
+        }
+      });
+    </script>
+  </body>
+</html>

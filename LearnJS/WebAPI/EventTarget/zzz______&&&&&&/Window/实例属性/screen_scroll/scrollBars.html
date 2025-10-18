@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>scrollbars 滚动条控制详解</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 2.5rem;
+      }
+
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 1.2rem;
+      }
+
+      .content-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .explanation {
+        flex: 1;
+        min-width: 350px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .demo-area {
+        flex: 1;
+        min-width: 350px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      h2 {
+        color: #667eea;
+        margin: 20px 0 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+
+      h3 {
+        color: #2c3e50;
+        margin: 15px 0 10px;
+      }
+
+      p {
+        margin-bottom: 15px;
+      }
+
+      .code-example {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        overflow-x: auto;
+        font-family: "Courier New", monospace;
+        line-height: 1.5;
+        border-left: 4px solid #667eea;
+      }
+
+      .scroll-demo-container {
+        display: flex;
+        gap: 20px;
+        margin: 20px 0;
+        flex-wrap: wrap;
+      }
+
+      .scrollable-box {
+        flex: 1;
+        min-width: 250px;
+        height: 200px;
+        border: 2px solid #667eea;
+        border-radius: 8px;
+        padding: 15px;
+        background: #f8f9fa;
+        overflow: auto;
+        position: relative;
+      }
+
+      .scroll-content {
+        height: 400px;
+        padding: 20px;
+        background: linear-gradient(45deg, #4ecdc4, #44a08d);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #667eea #f1f1f1;
+      }
+
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 12px;
+      }
+
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 6px;
+      }
+
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #667eea;
+        border-radius: 6px;
+      }
+
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #5a6fd8;
+      }
+
+      .hidden-scrollbar {
+        overflow: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      .hidden-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+
+      .info-panel {
+        background: #2c3e50;
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 20px;
+        font-family: "Courier New", monospace;
+        line-height: 1.8;
+      }
+
+      .property-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+      }
+
+      .property-card {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #667eea;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .property-name {
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 5px;
+      }
+
+      .property-value {
+        color: #667eea;
+        font-family: "Courier New", monospace;
+      }
+
+      .property-desc {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+        margin-top: 5px;
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 10px 15px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        flex: 1;
+        min-width: 120px;
+      }
+
+      button:hover {
+        background: #5a6fd8;
+        transform: translateY(-2px);
+      }
+
+      .note {
+        background: #fff8e1;
+        padding: 15px;
+        border-radius: 6px;
+        border-left: 4px solid #ffc107;
+        margin: 20px 0;
+      }
+
+      .warning {
+        background: #ffebee;
+        padding: 15px;
+        border-radius: 6px;
+        border-left: 4px solid #f44336;
+        margin: 20px 0;
+      }
+
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .comparison-table th,
+      .comparison-table td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+      }
+
+      .comparison-table th {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        font-weight: 600;
+      }
+
+      .comparison-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      .scrollbar-visual {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 8px;
+        height: 80%;
+        background: rgba(102, 126, 234, 0.3);
+        border-radius: 4px;
+      }
+
+      .scrollbar-thumb {
+        position: absolute;
+        width: 100%;
+        background: #667eea;
+        border-radius: 4px;
+        transition: height 0.3s ease;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        padding: 20px;
+        color: white;
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 768px) {
+        .content-wrapper {
+          flex-direction: column;
+        }
+
+        .property-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .scroll-demo-container {
+          flex-direction: column;
+        }
+      }
+
+      .scrollbar-demo {
+        position: relative;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin: 10px 0;
+        padding: 10px;
+      }
+
+      .scrollbar-track {
+        height: 20px;
+        background: #f0f0f0;
+        border-radius: 10px;
+        position: relative;
+        margin: 10px 0;
+      }
+
+      .scrollbar-thumb-demo {
+        position: absolute;
+        height: 100%;
+        background: #667eea;
+        border-radius: 10px;
+        min-width: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>scrollbars 滚动条控制详解</h1>
+        <p class="subtitle">深入理解滚动条的检测、样式定制和行为控制</p>
+      </header>
+
+      <div class="content-wrapper">
+        <div class="explanation">
+          <h2>滚动条基础概念</h2>
+
+          <p>在Web开发中，滚动条控制主要涉及以下几个方面：</p>
+
+          <div class="property-grid">
+            <div class="property-card">
+              <div class="property-name">CSS overflow 属性</div>
+              <div class="property-desc">控制内容溢出时的滚动行为</div>
+            </div>
+
+            <div class="property-card">
+              <div class="property-name">JavaScript 检测</div>
+              <div class="property-desc">检测滚动条是否存在和位置</div>
+            </div>
+
+            <div class="property-card">
+              <div class="property-name">自定义样式</div>
+              <div class="property-desc">使用CSS定制滚动条外观</div>
+            </div>
+
+            <div class="property-card">
+              <div class="property-name">行为控制</div>
+              <div class="property-desc">编程方式控制滚动行为</div>
+            </div>
+          </div>
+
+          <h3>重要说明</h3>
+          <div class="warning">
+            <strong>注意：</strong> 在标准Web API中，并没有直接的 <code>window.scrollbars</code> 对象。<br />
+            滚动条的控制主要通过CSS和DOM属性实现。
+          </div>
+
+          <h3>CSS overflow 属性</h3>
+          <div class="code-example">
+            /* 基本滚动控制 */<br />
+            .container {<br />
+            &nbsp;&nbsp;overflow: auto; /* 需要时显示滚动条 */<br />
+            &nbsp;&nbsp;overflow: scroll; /* 总是显示滚动条 */<br />
+            &nbsp;&nbsp;overflow: hidden; /* 隐藏滚动条 */<br />
+            &nbsp;&nbsp;overflow-x: auto; /* 水平滚动控制 */<br />
+            &nbsp;&nbsp;overflow-y: scroll; /* 垂直滚动控制 */<br />
+            }
+          </div>
+
+          <h3>检测滚动条是否存在</h3>
+          <div class="code-example">
+            // 检测元素是否有垂直滚动条<br />
+            function hasVerticalScrollbar(element) {<br />
+            &nbsp;&nbsp;return element.scrollHeight > element.clientHeight;<br />
+            }<br /><br />
+
+            // 检测元素是否有水平滚动条<br />
+            function hasHorizontalScrollbar(element) {<br />
+            &nbsp;&nbsp;return element.scrollWidth > element.clientWidth;<br />
+            }<br /><br />
+
+            // 检测页面是否有滚动条<br />
+            function hasPageScrollbar() {<br />
+            &nbsp;&nbsp;return document.documentElement.scrollHeight > window.innerHeight;<br />
+            }
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h2>滚动条演示</h2>
+
+          <div class="scroll-demo-container">
+            <div class="scrollable-box" id="defaultScroll">
+              <h4>默认滚动条</h4>
+              <div class="scroll-content">
+                这是默认滚动条样式<br />
+                滚动以查看效果
+              </div>
+            </div>
+
+            <div class="scrollable-box custom-scrollbar" id="customScroll">
+              <h4>自定义滚动条</h4>
+              <div class="scroll-content">
+                自定义样式的滚动条<br />
+                使用CSS定制外观
+              </div>
+            </div>
+
+            <div class="scrollable-box hidden-scrollbar" id="hiddenScroll">
+              <h4>隐藏滚动条</h4>
+              <div class="scroll-content">
+                滚动条被隐藏<br />
+                但仍然可以滚动
+              </div>
+            </div>
+          </div>
+
+          <div class="info-panel">
+            // 滚动条检测信息<br />
+            默认区域 - 垂直滚动: <span id="defaultVertical">--</span><br />
+            默认区域 - 水平滚动: <span id="defaultHorizontal">--</span><br />
+            自定义区域 - 垂直滚动: <span id="customVertical">--</span><br />
+            隐藏区域 - 垂直滚动: <span id="hiddenVertical">--</span><br />
+            页面 - 垂直滚动: <span id="pageVertical">--</span>
+          </div>
+
+          <div class="controls">
+            <button id="toggleScrollbars">切换页面滚动条</button>
+            <button id="addContent">添加内容</button>
+            <button id="scrollToBottom">滚动到底部</button>
+            <button id="showScrollInfo">显示滚动信息</button>
+          </div>
+        </div>
+      </div>
+
+      <table class="comparison-table">
+        <tr>
+          <th>方法/属性</th>
+          <th>描述</th>
+          <th>浏览器支持</th>
+          <th>应用场景</th>
+        </tr>
+        <tr>
+          <td>element.scrollTop</td>
+          <td>获取/设置垂直滚动位置</td>
+          <td>所有浏览器</td>
+          <td>滚动控制、回到顶部</td>
+        </tr>
+        <tr>
+          <td>element.scrollLeft</td>
+          <td>获取/设置水平滚动位置</td>
+          <td>所有浏览器</td>
+          <td>横向滚动、轮播图</td>
+        </tr>
+        <tr>
+          <td>element.scrollHeight</td>
+          <td>元素内容总高度</td>
+          <td>所有浏览器</td>
+          <td>检测是否可滚动</td>
+        </tr>
+        <tr>
+          <td>element.clientHeight</td>
+          <td>元素可视区域高度</td>
+          <td>所有浏览器</td>
+          <td>检测滚动条</td>
+        </tr>
+        <tr>
+          <td>::-webkit-scrollbar</td>
+          <td>Webkit浏览器滚动条样式</td>
+          <td>Chrome, Safari</td>
+          <td>自定义滚动条外观</td>
+        </tr>
+        <tr>
+          <td>scrollbar-width</td>
+          <td>Firefox滚动条宽度控制</td>
+          <td>Firefox</td>
+          <td>滚动条样式控制</td>
+        </tr>
+      </table>
+
+      <div class="content-wrapper">
+        <div class="explanation">
+          <h2>自定义滚动条样式</h2>
+
+          <h3>Webkit浏览器（Chrome, Safari）</h3>
+          <div class="code-example">
+            /* 自定义Webkit滚动条 */<br />
+            ::-webkit-scrollbar {<br />
+            &nbsp;&nbsp;width: 12px; /* 滚动条宽度 */<br />
+            }<br />
+            <br />
+            ::-webkit-scrollbar-track {<br />
+            &nbsp;&nbsp;background: #f1f1f1; /* 轨道背景 */<br />
+            &nbsp;&nbsp;border-radius: 6px;<br />
+            }<br />
+            <br />
+            ::-webkit-scrollbar-thumb {<br />
+            &nbsp;&nbsp;background: #667eea; /* 滑块颜色 */<br />
+            &nbsp;&nbsp;border-radius: 6px;<br />
+            }<br />
+            <br />
+            ::-webkit-scrollbar-thumb:hover {<br />
+            &nbsp;&nbsp;background: #5a6fd8; /* 悬停颜色 */<br />
+            }
+          </div>
+
+          <h3>Firefox浏览器</h3>
+          <div class="code-example">
+            /* Firefox滚动条样式 */<br />
+            .custom-scrollbar {<br />
+            &nbsp;&nbsp;scrollbar-width: thin; /* 细滚动条 */<br />
+            &nbsp;&nbsp;scrollbar-color: #667eea #f1f1f1; /* 滑块颜色 轨道颜色 */<br />
+            }
+          </div>
+
+          <h3>隐藏滚动条</h3>
+          <div class="code-example">
+            /* 隐藏滚动条但保持滚动功能 */<br />
+            .hidden-scrollbar {<br />
+            &nbsp;&nbsp;/* Firefox */<br />
+            &nbsp;&nbsp;scrollbar-width: none;<br />
+            &nbsp;&nbsp;/* IE/Edge */<br />
+            &nbsp;&nbsp;-ms-overflow-style: none;<br />
+            }<br />
+            <br />
+            /* Chrome, Safari */<br />
+            .hidden-scrollbar::-webkit-scrollbar {<br />
+            &nbsp;&nbsp;display: none;<br />
+            }
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h2>高级滚动控制</h2>
+
+          <h3>平滑滚动</h3>
+          <div class="code-example">
+            // 元素平滑滚动<br />
+            element.scrollTo({<br />
+            &nbsp;&nbsp;top: 100,<br />
+            &nbsp;&nbsp;behavior: 'smooth'<br />
+            });<br /><br />
+
+            // 页面平滑滚动<br />
+            window.scrollTo({<br />
+            &nbsp;&nbsp;top: 0,<br />
+            &nbsp;&nbsp;behavior: 'smooth'<br />
+            });<br /><br />
+
+            // 滚动到元素<br />
+            document.getElementById('target').scrollIntoView({<br />
+            &nbsp;&nbsp;behavior: 'smooth',<br />
+            &nbsp;&nbsp;block: 'start'<br />
+            });
+          </div>
+
+          <h3>滚动事件监听</h3>
+          <div class="code-example">
+            // 监听元素滚动<br />
+            element.addEventListener('scroll', function(e) {<br />
+            &nbsp;&nbsp;console.log('滚动位置:', this.scrollTop);<br />
+            &nbsp;&nbsp;<br />
+            &nbsp;&nbsp;// 检测是否滚动到底部<br />
+            &nbsp;&nbsp;const isBottom = this.scrollHeight - this.scrollTop === this.clientHeight;<br />
+            &nbsp;&nbsp;if (isBottom) {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;console.log('已滚动到底部');<br />
+            &nbsp;&nbsp;}<br />
+            });<br /><br />
+
+            // 防抖优化<br />
+            function debounceScroll(callback, delay) {<br />
+            &nbsp;&nbsp;let timeout;<br />
+            &nbsp;&nbsp;return function() {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;clearTimeout(timeout);<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;timeout = setTimeout(callback, delay);<br />
+            &nbsp;&nbsp;};<br />
+            }<br />
+            <br />
+            window.addEventListener('scroll', debounceScroll(() => {<br />
+            &nbsp;&nbsp;console.log('滚动结束');<br />
+            }, 100));
+          </div>
+
+          <h3>滚动条宽度计算</h3>
+          <div class="code-example">
+            // 获取滚动条宽度<br />
+            function getScrollbarWidth() {<br />
+            &nbsp;&nbsp;// 创建测量元素<br />
+            &nbsp;&nbsp;const outer = document.createElement('div');<br />
+            &nbsp;&nbsp;outer.style.visibility = 'hidden';<br />
+            &nbsp;&nbsp;outer.style.overflow = 'scroll';<br />
+            &nbsp;&nbsp;document.body.appendChild(outer);<br />
+            <br />
+            &nbsp;&nbsp;// 创建内部元素<br />
+            &nbsp;&nbsp;const inner = document.createElement('div');<br />
+            &nbsp;&nbsp;outer.appendChild(inner);<br />
+            <br />
+            &nbsp;&nbsp;// 计算宽度差<br />
+            &nbsp;&nbsp;const scrollbarWidth = outer.offsetWidth - inner.offsetWidth;<br />
+            <br />
+            &nbsp;&nbsp;// 清理<br />
+            &nbsp;&nbsp;document.body.removeChild(outer);<br />
+            <br />
+            &nbsp;&nbsp;return scrollbarWidth;<br />
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="content-wrapper">
+        <div class="explanation">
+          <h2>实际应用示例</h2>
+
+          <h3>无限滚动加载</h3>
+          <div class="code-example">
+            // 无限滚动实现<br />
+            const container = document.getElementById('content');<br />
+            let isLoading = false;<br />
+            <br />
+            container.addEventListener('scroll', function() {<br />
+            &nbsp;&nbsp;// 距离底部100px时加载更多<br />
+            &nbsp;&nbsp;const threshold = 100;<br />
+            &nbsp;&nbsp;const position = container.scrollTop + container.clientHeight;<br />
+            &nbsp;&nbsp;const height = container.scrollHeight;<br />
+            &nbsp;&nbsp;<br />
+            &nbsp;&nbsp;if (position >= height - threshold && !isLoading) {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;isLoading = true;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;loadMoreContent().then(() => {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;isLoading = false;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;});<br />
+            &nbsp;&nbsp;}<br />
+            });
+          </div>
+
+          <h3>自定义滚动条组件</h3>
+          <div class="code-example">
+            // 创建自定义滚动条<br />
+            class CustomScrollbar {<br />
+            &nbsp;&nbsp;constructor(container) {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;this.container = container;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;this.createScrollbar();<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;this.bindEvents();<br />
+            &nbsp;&nbsp;}<br />
+            <br />
+            &nbsp;&nbsp;createScrollbar() {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;this.scrollbar = document.createElement('div');<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;this.scrollbar.className = 'custom-scrollbar';<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;// 添加到DOM<br />
+            &nbsp;&nbsp;}<br />
+            <br />
+            &nbsp;&nbsp;bindEvents() {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;this.container.addEventListener('scroll', () => {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.updateScrollbar();<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;});<br />
+            &nbsp;&nbsp;}<br />
+            <br />
+            &nbsp;&nbsp;updateScrollbar() {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;const scrollTop = this.container.scrollTop;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;const scrollHeight = this.container.scrollHeight;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;const clientHeight = this.container.clientHeight;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;// 更新滚动条位置<br />
+            &nbsp;&nbsp;}<br />
+            }
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h2>滚动条工具函数</h2>
+
+          <h3>禁用页面滚动</h3>
+          <div class="code-example">
+            // 禁用页面滚动<br />
+            function disablePageScroll() {<br />
+            &nbsp;&nbsp;document.body.style.overflow = 'hidden';<br />
+            }<br /><br />
+
+            // 启用页面滚动<br />
+            function enablePageScroll() {<br />
+            &nbsp;&nbsp;document.body.style.overflow = '';<br />
+            }<br /><br />
+
+            // 切换页面滚动<br />
+            function togglePageScroll() {<br />
+            &nbsp;&nbsp;if (document.body.style.overflow === 'hidden') {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;enablePageScroll();<br />
+            &nbsp;&nbsp;} else {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;disablePageScroll();<br />
+            &nbsp;&nbsp;}<br />
+            }
+          </div>
+
+          <h3>获取滚动信息</h3>
+          <div class="code-example">
+            // 获取元素滚动信息<br />
+            function getScrollInfo(element) {<br />
+            &nbsp;&nbsp;return {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;scrollTop: element.scrollTop,<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;scrollLeft: element.scrollLeft,<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;scrollHeight: element.scrollHeight,<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;scrollWidth: element.scrollWidth,<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;clientHeight: element.clientHeight,<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;clientWidth: element.clientWidth,<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;hasVerticalScroll: element.scrollHeight > element.clientHeight,<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;hasHorizontalScroll: element.scrollWidth > element.clientWidth<br />
+            &nbsp;&nbsp;};<br />
+            }<br /><br />
+
+            // 获取页面滚动信息<br />
+            function getPageScrollInfo() {<br />
+            &nbsp;&nbsp;return getScrollInfo(document.documentElement);<br />
+            }
+          </div>
+
+          <div class="note">
+            <strong>最佳实践：</strong><br />
+            1. 使用CSS自定义滚动条时提供回退方案<br />
+            2. 在移动设备上考虑触摸滚动体验<br />
+            3. 使用防抖优化滚动事件性能<br />
+            4. 确保自定义滚动条符合可访问性标准
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>scrollbars 滚动条控制详解 &copy; 2023 - 全面掌握滚动条检测与定制</p>
+      </footer>
+    </div>
+
+    <script>
+      // 更新滚动条检测信息
+      function updateScrollbarInfo() {
+        const defaultBox = document.getElementById("defaultScroll");
+        const customBox = document.getElementById("customScroll");
+        const hiddenBox = document.getElementById("hiddenScroll");
+
+        // 检测垂直滚动条
+        document.getElementById("defaultVertical").textContent = hasVerticalScrollbar(defaultBox) ? "是" : "否";
+        document.getElementById("customVertical").textContent = hasVerticalScrollbar(customBox) ? "是" : "否";
+        document.getElementById("hiddenVertical").textContent = hasVerticalScrollbar(hiddenBox) ? "是" : "否";
+        document.getElementById("pageVertical").textContent = hasPageScrollbar() ? "是" : "否";
+
+        // 检测水平滚动条
+        document.getElementById("defaultHorizontal").textContent = hasHorizontalScrollbar(defaultBox) ? "是" : "否";
+      }
+
+      // 检测垂直滚动条
+      function hasVerticalScrollbar(element) {
+        return element.scrollHeight > element.clientHeight;
+      }
+
+      // 检测水平滚动条
+      function hasHorizontalScrollbar(element) {
+        return element.scrollWidth > element.clientWidth;
+      }
+
+      // 检测页面滚动条
+      function hasPageScrollbar() {
+        return document.documentElement.scrollHeight > window.innerHeight;
+      }
+
+      // 切换页面滚动条
+      function togglePageScrollbars() {
+        if (document.body.style.overflow === "hidden") {
+          document.body.style.overflow = "";
+          alert("页面滚动已启用");
+        } else {
+          document.body.style.overflow = "hidden";
+          alert("页面滚动已禁用");
+        }
+        updateScrollbarInfo();
+      }
+
+      // 添加内容
+      function addMoreContent() {
+        const boxes = [document.getElementById("defaultScroll"), document.getElementById("customScroll"), document.getElementById("hiddenScroll")];
+
+        boxes.forEach(box => {
+          const content = box.querySelector(".scroll-content");
+          const newParagraph = document.createElement("p");
+          newParagraph.textContent = "这是新添加的内容，用于演示滚动条的出现。继续添加更多内容可以看到滚动条的变化。";
+          newParagraph.style.margin = "10px 0";
+          newParagraph.style.padding = "10px";
+          newParagraph.style.background = "rgba(255, 255, 255, 0.2)";
+          newParagraph.style.borderRadius = "4px";
+          content.appendChild(newParagraph);
+        });
+
+        updateScrollbarInfo();
+      }
+
+      // 滚动到底部
+      function scrollToBottom() {
+        const boxes = [document.getElementById("defaultScroll"), document.getElementById("customScroll"), document.getElementById("hiddenScroll")];
+
+        boxes.forEach(box => {
+          box.scrollTo({
+            top: box.scrollHeight,
+            behavior: "smooth",
+          });
+        });
+      }
+
+      // 显示滚动信息
+      function showScrollInfo() {
+        const info = getPageScrollInfo();
+        alert(`页面滚动信息：
+滚动位置: ${info.scrollTop}px
+内容总高度: ${info.scrollHeight}px
+可视高度: ${info.clientHeight}px
+是否有垂直滚动条: ${info.hasVerticalScroll ? "是" : "否"}`);
+      }
+
+      // 获取滚动信息
+      function getScrollInfo(element) {
+        return {
+          scrollTop: element.scrollTop,
+          scrollLeft: element.scrollLeft,
+          scrollHeight: element.scrollHeight,
+          scrollWidth: element.scrollWidth,
+          clientHeight: element.clientHeight,
+          clientWidth: element.clientWidth,
+          hasVerticalScroll: element.scrollHeight > element.clientHeight,
+          hasHorizontalScroll: element.scrollWidth > element.clientWidth,
+        };
+      }
+
+      // 获取页面滚动信息
+      function getPageScrollInfo() {
+        return getScrollInfo(document.documentElement);
+      }
+
+      // 获取滚动条宽度
+      function getScrollbarWidth() {
+        const outer = document.createElement("div");
+        outer.style.visibility = "hidden";
+        outer.style.overflow = "scroll";
+        outer.style.width = "100px";
+        outer.style.height = "100px";
+        outer.style.position = "absolute";
+        outer.style.top = "-9999px";
+        document.body.appendChild(outer);
+
+        const inner = document.createElement("div");
+        inner.style.width = "100%";
+        inner.style.height = "200px";
+        outer.appendChild(inner);
+
+        const scrollbarWidth = outer.offsetWidth - inner.offsetWidth;
+
+        document.body.removeChild(outer);
+
+        return scrollbarWidth;
+      }
+
+      // 初始更新
+      updateScrollbarInfo();
+
+      // 绑定按钮事件
+      document.getElementById("toggleScrollbars").addEventListener("click", togglePageScrollbars);
+      document.getElementById("addContent").addEventListener("click", addMoreContent);
+      document.getElementById("scrollToBottom").addEventListener("click", scrollToBottom);
+      document.getElementById("showScrollInfo").addEventListener("click", showScrollInfo);
+
+      // 监听窗口大小变化
+      window.addEventListener("resize", updateScrollbarInfo);
+
+      // 页面加载完成后输出详细信息
+      window.addEventListener("load", function () {
+        console.log("=== 滚动条信息分析 ===");
+        console.log("页面滚动条宽度:", getScrollbarWidth() + "px");
+        console.log("页面滚动信息:", getPageScrollInfo());
+      });
+
+      // 监听演示区域的滚动
+      const demoBoxes = document.querySelectorAll(".scrollable-box");
+      demoBoxes.forEach(box => {
+        box.addEventListener("scroll", function () {
+          console.log(`${this.id} 滚动位置:`, this.scrollTop);
+        });
+      });
+    </script>
+  </body>
+</html>

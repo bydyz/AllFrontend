@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>clientHeight 属性详解</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 2.5rem;
+      }
+
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 1.3rem;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .content {
+        display: grid;
+        grid-template-columns: 1fr;
+        margin-bottom: 40px;
+      }
+
+      .demo-section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+
+      .explanation-section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #e67e22;
+      }
+
+      h3 {
+        color: #2c3e50;
+        margin: 25px 0 15px 0;
+      }
+
+      .demo-container {
+        position: relative;
+        width: 100%;
+        height: 500px;
+        border: 2px solid #34495e;
+        margin: 25px 0;
+        background: #ecf0f1;
+        padding: 30px;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .target-element {
+        width: 350px;
+        height: 280px;
+        padding: 25px;
+        margin: 20px auto;
+        border: 12px solid #e67e22;
+        background: #3498db33;
+        border-radius: 8px;
+        position: relative;
+        overflow: auto;
+        transition: all 0.3s ease;
+      }
+
+      .content-area {
+        width: 100%;
+        min-height: 600px;
+        background: linear-gradient(45deg, #9b59b633, #e67e2233);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        text-align: center;
+        padding: 20px;
+        border: 2px dashed #9b59b6;
+        border-radius: 6px;
+      }
+
+      .content-block {
+        width: 90%;
+        padding: 15px;
+        margin: 10px 0;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 6px;
+        border-left: 4px solid #3498db;
+      }
+
+      .dimension-visualization {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+      }
+
+      .clientHeight-highlight {
+        position: absolute;
+        left: 0;
+        right: 0;
+        background: rgba(230, 126, 34, 0.3);
+        border: 2px solid #e67e22;
+        transition: height 0.3s ease, top 0.3s ease;
+      }
+
+      .dimension-label {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        white-space: nowrap;
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin: 20px 0;
+      }
+
+      button {
+        padding: 12px 15px;
+        background: #e67e22;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      button:hover {
+        background: #d35400;
+        transform: translateY(-2px);
+      }
+
+      button.secondary {
+        background: #3498db;
+      }
+
+      button.secondary:hover {
+        background: #2980b9;
+      }
+
+      .property-display {
+        background: #2c3e50;
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+
+      .property-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 10px 0;
+        padding: 8px 12px;
+        background: #34495e;
+        border-radius: 6px;
+      }
+
+      .property-name {
+        font-weight: bold;
+        font-size: 1.1rem;
+      }
+
+      .property-value {
+        font-family: "Courier New", monospace;
+        font-size: 1.2rem;
+        color: #f1c40f;
+        font-weight: bold;
+      }
+
+      .style-controls {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+
+      .control-group {
+        margin: 15px 0;
+      }
+
+      .control-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #2c3e50;
+      }
+
+      .range-slider {
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: #ddd;
+        outline: none;
+        -webkit-appearance: none;
+      }
+
+      .range-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #e67e22;
+        cursor: pointer;
+      }
+
+      .range-value {
+        text-align: center;
+        font-weight: bold;
+        color: #e67e22;
+        margin-top: 5px;
+      }
+
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .comparison-table th {
+        background: #e67e22;
+        color: white;
+        padding: 12px 15px;
+        text-align: left;
+      }
+
+      .comparison-table td {
+        padding: 10px 15px;
+        border-bottom: 1px solid #ecf0f1;
+      }
+
+      .comparison-table tr:nth-child(even) {
+        background: #f8f9fa;
+      }
+
+      .code-block {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 20px;
+        border-radius: 10px;
+        font-family: "Courier New", monospace;
+        margin: 20px 0;
+        overflow-x: auto;
+        font-size: 0.9rem;
+        line-height: 1.5;
+
+        white-space: pre;
+      }
+
+      .special-cases {
+        background: #fff9e6;
+        padding: 20px;
+        border-radius: 10px;
+        border-left: 4px solid #f1c40f;
+        margin: 20px 0;
+      }
+
+      .case-example {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 10px 0;
+        border: 1px solid #e9ecef;
+      }
+
+      .scrollbar-demo {
+        background: #fef9e7;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 15px 0;
+        border: 2px solid #f1c40f;
+      }
+
+      .element-breakdown {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 20px 0;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+      }
+
+      .breakdown-layer {
+        width: 250px;
+        padding: 10px;
+        text-align: center;
+        margin: 2px 0;
+        border: 2px solid;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 0.9rem;
+      }
+
+      .margin-layer {
+        border-color: #e74c3c;
+        background: #e74c3c22;
+        color: #e74c3c;
+      }
+      .border-layer {
+        border-color: #e67e22;
+        background: #e67e2222;
+        color: #e67e22;
+      }
+      .padding-layer {
+        border-color: #3498db;
+        background: #3498db22;
+        color: #3498db;
+      }
+      .content-layer {
+        border-color: #9b59b6;
+        background: #9b59b622;
+        color: #9b59b6;
+      }
+
+      .height-comparison {
+        display: flex;
+        justify-content: space-around;
+        margin: 20px 0;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+      }
+
+      .height-item {
+        text-align: center;
+        padding: 10px;
+      }
+
+      .height-value {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #2c3e50;
+      }
+
+      .height-label {
+        font-size: 0.8rem;
+        color: #7f8c8d;
+        margin-top: 5px;
+      }
+
+      @media (max-width: 968px) {
+        .content {
+          grid-template-columns: 1fr;
+        }
+
+        .controls {
+          grid-template-columns: 1fr;
+        }
+
+        .height-comparison {
+          flex-direction: column;
+          gap: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>clientHeight 属性详解</h1>
+        <p class="subtitle">深入理解 clientHeight 的计算方式、应用场景和特殊行为</p>
+      </header>
+
+      <div class="content">
+        <div class="demo-section">
+          <h2>交互演示</h2>
+          <p>调整元素样式，观察 clientHeight 值的变化</p>
+
+          <div class="demo-container">
+            <div class="target-element" id="targetElement">
+              <div class="dimension-visualization" id="dimensionVisualization">
+                <div class="clientHeight-highlight" id="clientHeightHighlight"></div>
+              </div>
+              <div class="content-area" id="contentArea">
+                <div class="content-block">
+                  <h3>目标元素</h3>
+                  <p>clientHeight = 内容高度 + 上下内边距</p>
+                  <p><strong>不包含边框和滚动条</strong></p>
+                </div>
+                <div class="scrollbar-demo">
+                  <p>这个区域比容器高，用于演示滚动条</p>
+                  <p>尝试上下滚动观察 clientHeight 行为</p>
+                </div>
+                <div class="content-block">
+                  <p>更多内容...</p>
+                  <p>clientHeight 表示可视区域的高度</p>
+                </div>
+                <div class="content-block">
+                  <p>额外内容块</p>
+                  <p>scrollHeight 表示总内容高度</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="element-breakdown">
+            <h4>元素盒模型高度分解</h4>
+            <div class="breakdown-layer margin-layer">上边距</div>
+            <div class="breakdown-layer border-layer">上边框</div>
+            <div class="breakdown-layer padding-layer">上内边距 ← clientHeight 包含</div>
+            <div class="breakdown-layer content-layer">内容高度 ← clientHeight 包含</div>
+            <div class="breakdown-layer padding-layer">下内边距 ← clientHeight 包含</div>
+            <div class="breakdown-layer border-layer">下边框</div>
+            <div class="breakdown-layer margin-layer">下边距</div>
+          </div>
+
+          <div class="height-comparison">
+            <div class="height-item">
+              <div class="height-value" id="clientHeightDisplay">0px</div>
+              <div class="height-label">clientHeight</div>
+            </div>
+            <div class="height-item">
+              <div class="height-value" id="offsetHeightDisplay">0px</div>
+              <div class="height-label">offsetHeight</div>
+            </div>
+            <div class="height-item">
+              <div class="height-value" id="scrollHeightDisplay">0px</div>
+              <div class="height-label">scrollHeight</div>
+            </div>
+          </div>
+
+          <div class="style-controls">
+            <div class="control-group">
+              <label class="control-label">上下内边距 (Padding):</label>
+              <input type="range" min="0" max="50" value="25" class="range-slider" id="paddingSlider" />
+              <div class="range-value" id="paddingValue">25px</div>
+            </div>
+
+            <div class="control-group">
+              <label class="control-label">上下边框 (Border):</label>
+              <input type="range" min="0" max="30" value="12" class="range-slider" id="borderSlider" />
+              <div class="range-value" id="borderValue">12px</div>
+            </div>
+
+            <div class="control-group">
+              <label class="control-label">元素高度:</label>
+              <input type="range" min="200" max="500" value="280" class="range-slider" id="elementHeightSlider" />
+              <div class="range-value" id="elementHeightValue">280px</div>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button onclick="toggleScrollbar()">切换滚动条</button>
+            <button onclick="changeContentHeight()">改变内容高度</button>
+            <button class="secondary" onclick="addContentBlock()">添加内容块</button>
+            <button class="secondary" onclick="resetAll()">重置所有</button>
+          </div>
+
+          <div class="property-display">
+            <h3 style="color: white; margin-top: 0">高度属性对比</h3>
+            <div class="property-item">
+              <span class="property-name">clientHeight:</span>
+              <span class="property-value" id="clientHeightVal">0px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">offsetHeight:</span>
+              <span class="property-value" id="offsetHeightVal">0px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">scrollHeight:</span>
+              <span class="property-value" id="scrollHeightVal">0px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">CSS height:</span>
+              <span class="property-value" id="cssHeightVal">0px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">滚动条高度影响:</span>
+              <span class="property-value" id="scrollbarEffectVal">0px</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="explanation-section">
+          <h2>clientHeight 详解</h2>
+
+          <div class="special-cases">
+            <h3>📌 clientHeight 核心定义</h3>
+            <p><strong>clientHeight = 内容高度 + 上下内边距 - 水平滚动条高度</strong></p>
+            <p>表示元素内部可视内容的高度，不包括边框和滚动条。</p>
+          </div>
+
+          <h3>计算公式</h3>
+          <div class="code-block">
+// clientHeight 计算公式
+element.clientHeight = element.height + padding-top + padding-bottom - horizontal-scrollbar-height
+
+// 实际计算示例
+const element = document.getElementById('example');
+const style = window.getComputedStyle(element);
+
+const contentHeight = parseInt(style.height) || element.offsetHeight;
+const paddingTop = parseInt(style.paddingTop);
+const paddingBottom = parseInt(style.paddingBottom);
+const scrollbarHeight = element.offsetHeight - element.clientHeight - 
+                       parseInt(style.borderTopWidth) - parseInt(style.borderBottomWidth);
+
+console.log('clientHeight:', element.clientHeight);
+console.log('手动计算:', contentHeight + paddingTop + paddingBottom - scrollbarHeight);
+          </div>
+
+          <h3>与其他高度属性的对比</h3>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>属性</th>
+                <th>包含内容</th>
+                <th>不包含内容</th>
+                <th>典型用途</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>clientHeight</strong></td>
+                <td>内容 + 上下内边距</td>
+                <td>边框、滚动条</td>
+                <td>获取可视内容区域高度</td>
+              </tr>
+              <tr>
+                <td>offsetHeight</td>
+                <td>内容 + 内边距 + 边框 + 滚动条</td>
+                <td>外边距</td>
+                <td>获取元素整体高度</td>
+              </tr>
+              <tr>
+                <td>scrollHeight</td>
+                <td>全部内容 + 上下内边距</td>
+                <td>边框、滚动条</td>
+                <td>获取内容总高度</td>
+              </tr>
+              <tr>
+                <td>getComputedStyle().height</td>
+                <td>CSS设置的高度</td>
+                <td>内边距、边框</td>
+                <td>获取CSS高度值</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>特殊情况和注意事项</h3>
+
+          <div class="case-example">
+            <h4>情况 1: 滚动条的影响</h4>
+            <p>当存在水平滚动条时，clientHeight 会自动减去滚动条高度：</p>
+            <div class="code-block">
+// 有水平滚动条的情况
+element.style.overflowX = 'auto';
+console.log('有水平滚动条 - clientHeight:', element.clientHeight);
+console.log('有水平滚动条 - offsetHeight:', element.offsetHeight);
+
+// 无滚动条的情况  
+element.style.overflow = 'hidden';
+console.log('无滚动条 - clientHeight:', element.clientHeight);
+console.log('无滚动条 - offsetHeight:', element.offsetHeight);
+
+// 滚动条高度影响计算
+const scrollbarEffect = element.offsetHeight - element.clientHeight - 
+                       element.clientTop - element.clientBottom;
+            </div>
+          </div>
+
+          <div class="case-example">
+            <h4>情况 2: 内联元素和隐藏元素</h4>
+            <p>内联元素和 display: none 的元素 clientHeight 为 0：</p>
+            <div class="code-block">
+// 内联元素
+const span = document.createElement('span');
+span.textContent = '内联元素';
+console.log('内联元素 clientHeight:', span.clientHeight); // 0
+
+// 隐藏元素
+element.style.display = 'none';
+console.log('隐藏元素 clientHeight:', element.clientHeight); // 0
+
+element.style.display = 'block';
+console.log('显示元素 clientHeight:', element.clientHeight); // 正常值
+            </div>
+          </div>
+
+          <div class="case-example">
+            <h4>情况 3: 百分比高度和自动高度</h4>
+            <p>clientHeight 可以正确反映计算后的实际高度：</p>
+            <div class="code-block">
+// 百分比高度
+element.style.height = '50%';
+console.log('百分比高度 clientHeight:', element.clientHeight); // 实际计算值
+
+// 自动高度（由内容决定）
+element.style.height = 'auto';
+console.log('自动高度 clientHeight:', element.clientHeight); // 内容实际高度 + 内边距
+
+// min-height 和 max-height 的影响
+element.style.minHeight = '200px';
+element.style.maxHeight = '400px';
+console.log('受限制的 clientHeight:', element.clientHeight); // 在 min/max 范围内
+            </div>
+          </div>
+
+          <h3>实际应用场景</h3>
+          <div class="code-block">
+// 应用 1: 无限滚动加载
+function checkInfiniteScroll(container) {
+    const scrollBottom = container.scrollTop + container.clientHeight;
+    const threshold = 100; // 距离底部100px时加载
+    
+    if (scrollBottom >= container.scrollHeight - threshold) {
+        loadMoreContent();
+    }
+}
+
+// 应用 2: 虚拟滚动优化
+function calculateVisibleItems(container, itemHeight) {
+    const visibleHeight = container.clientHeight;
+    const scrollTop = container.scrollTop;
+    
+    const startIndex = Math.floor(scrollTop / itemHeight);
+    const endIndex = Math.ceil((scrollTop + visibleHeight) / itemHeight);
+    
+    return { startIndex, endIndex, visibleCount: endIndex - startIndex };
+}
+
+// 应用 3: 响应式高度调整
+function adjustElementHeight(element) {
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+    const maxHeight = viewportHeight * 0.8; // 最大为视口的80%
+    
+    element.style.maxHeight = maxHeight + 'px';
+}
+
+// 应用 4: 滚动进度指示器
+function updateScrollProgress(container, progressBar) {
+    const scrollableHeight = container.scrollHeight - container.clientHeight;
+    const progress = (container.scrollTop / scrollableHeight) * 100;
+    
+    progressBar.style.width = progress + '%';
+}
+
+// 应用 5: 模态框垂直居中
+function centerModalVertically(modal) {
+    const viewportHeight = document.documentElement.clientHeight;
+    const modalHeight = modal.offsetHeight;
+    
+    modal.style.top = (viewportHeight - modalHeight) / 2 + 'px';
+}
+
+// 应用 6: 自适应文本区域
+function autoResizeTextarea(textarea) {
+    // 重置高度以便正确计算 scrollHeight
+    textarea.style.height = 'auto';
+    
+    // 设置新高度，但不超过最大高度
+    const maxHeight = 300;
+    const newHeight = Math.min(textarea.scrollHeight, maxHeight);
+    
+    textarea.style.height = newHeight + 'px';
+    textarea.style.overflowY = newHeight >= maxHeight ? 'auto' : 'hidden';
+}
+
+// 应用 7: 分页器计算
+function calculatePagination(container, itemHeight) {
+    const visibleItems = Math.floor(container.clientHeight / itemHeight);
+    const totalItems = Math.ceil(container.scrollHeight / itemHeight);
+    const totalPages = Math.ceil(totalItems / visibleItems);
+    
+    return { visibleItems, totalItems, totalPages };
+}
+          </div>
+
+          <h3>视口相关的 clientHeight</h3>
+          <div class="code-block">
+// 获取视口高度（跨浏览器兼容）
+function getViewportHeight() {
+    return window.innerHeight || 
+           document.documentElement.clientHeight || 
+           document.body.clientHeight;
+}
+
+// 检测元素是否在视口内
+function isElementInViewport(element) {
+    const rect = element.getBoundingClientRect();
+    const viewportHeight = getViewportHeight();
+    
+    return (
+        rect.top >= 0 &&
+        rect.bottom <= viewportHeight
+    );
+}
+
+// 检测元素是否部分在视口内
+function isElementPartiallyInViewport(element) {
+    const rect = element.getBoundingClientRect();
+    const viewportHeight = getViewportHeight();
+    
+    return (
+        rect.top < viewportHeight &&
+        rect.bottom > 0
+    );
+}
+
+// 计算元素进入视口的百分比
+function getElementVisibilityPercentage(element) {
+    const rect = element.getBoundingClientRect();
+    const viewportHeight = getViewportHeight();
+    
+    const visibleTop = Math.max(0, rect.top);
+    const visibleBottom = Math.min(viewportHeight, rect.bottom);
+    const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+    
+    return (visibleHeight / rect.height) * 100;
+}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 获取DOM元素
+      const targetElement = document.getElementById("targetElement");
+      const contentArea = document.getElementById("contentArea");
+      const clientHeightHighlight = document.getElementById("clientHeightHighlight");
+
+      // 获取控制元素
+      const paddingSlider = document.getElementById("paddingSlider");
+      const borderSlider = document.getElementById("borderSlider");
+      const elementHeightSlider = document.getElementById("elementHeightSlider");
+
+      // 获取显示元素
+      const clientHeightVal = document.getElementById("clientHeightVal");
+      const offsetHeightVal = document.getElementById("offsetHeightVal");
+      const scrollHeightVal = document.getElementById("scrollHeightVal");
+      const cssHeightVal = document.getElementById("cssHeightVal");
+      const scrollbarEffectVal = document.getElementById("scrollbarEffectVal");
+      const paddingValue = document.getElementById("paddingValue");
+      const borderValue = document.getElementById("borderValue");
+      const elementHeightValue = document.getElementById("elementHeightValue");
+
+      // 高度比较显示
+      const clientHeightDisplay = document.getElementById("clientHeightDisplay");
+      const offsetHeightDisplay = document.getElementById("offsetHeightDisplay");
+      const scrollHeightDisplay = document.getElementById("scrollHeightDisplay");
+
+      // 更新属性显示
+      function updateProperties() {
+        const clientHeight = targetElement.clientHeight;
+        const offsetHeight = targetElement.offsetHeight;
+        const scrollHeight = targetElement.scrollHeight;
+        const computedStyle = window.getComputedStyle(targetElement);
+
+        clientHeightVal.textContent = clientHeight + "px";
+        offsetHeightVal.textContent = offsetHeight + "px";
+        scrollHeightVal.textContent = scrollHeight + "px";
+        cssHeightVal.textContent = computedStyle.height;
+
+        // 计算滚动条影响
+        const scrollbarEffect = offsetHeight - clientHeight - parseInt(computedStyle.borderTopWidth) - parseInt(computedStyle.borderBottomWidth);
+        scrollbarEffectVal.textContent = Math.max(0, scrollbarEffect) + "px";
+
+        // 更新高度比较显示
+        clientHeightDisplay.textContent = clientHeight + "px";
+        offsetHeightDisplay.textContent = offsetHeight + "px";
+        scrollHeightDisplay.textContent = scrollHeight + "px";
+
+        // 更新可视化
+        updateVisualization();
+      }
+
+      // 更新可视化
+      function updateVisualization() {
+        const clientHeight = targetElement.clientHeight;
+        const clientTop = targetElement.clientTop;
+
+        clientHeightHighlight.style.height = clientHeight + "px";
+        clientHeightHighlight.style.top = clientTop + "px";
+
+        // 更新标签
+        updateDimensionLabels();
+      }
+
+      // 更新尺寸标签
+      function updateDimensionLabels() {
+        // 清除旧标签
+        document.querySelectorAll(".dimension-label").forEach(label => label.remove());
+
+        const rect = targetElement.getBoundingClientRect();
+        const containerRect = targetElement.parentElement.getBoundingClientRect();
+
+        const relativeTop = rect.top - containerRect.top;
+        const relativeLeft = rect.left - containerRect.left;
+        const clientHeight = targetElement.clientHeight;
+        const clientTop = targetElement.clientTop;
+
+        // clientHeight 标签
+        const heightLabel = document.createElement("div");
+        heightLabel.className = "dimension-label";
+        heightLabel.style.top = relativeTop + clientTop + clientHeight / 2 - 10 + "px";
+        heightLabel.style.left = relativeLeft - 100 + "px";
+        heightLabel.textContent = `clientHeight: ${clientHeight}px`;
+        targetElement.parentElement.appendChild(heightLabel);
+
+        // clientTop 标签
+        const topLabel = document.createElement("div");
+        topLabel.className = "dimension-label";
+        topLabel.style.top = relativeTop + clientTop / 2 - 10 + "px";
+        topLabel.style.left = relativeLeft + 20 + "px";
+        topLabel.textContent = `clientTop: ${clientTop}px`;
+        targetElement.parentElement.appendChild(topLabel);
+      }
+
+      // 控制函数
+      function toggleScrollbar() {
+        if (targetElement.style.overflow === "hidden") {
+          targetElement.style.overflow = "auto";
+        } else {
+          targetElement.style.overflow = "hidden";
+        }
+        updateProperties();
+      }
+
+      function changeContentHeight() {
+        const currentHeight = parseInt(targetElement.style.height) || 280;
+        const newHeight = currentHeight === 280 ? 350 : 280;
+        targetElement.style.height = newHeight + "px";
+        elementHeightSlider.value = newHeight;
+        elementHeightValue.textContent = newHeight + "px";
+        updateProperties();
+      }
+
+      function addContentBlock() {
+        const newBlock = document.createElement("div");
+        newBlock.className = "content-block";
+        newBlock.innerHTML = `
+                <p>新增内容块 #${Date.now().toString().slice(-4)}</p>
+                <p>这增加了内容的总体高度</p>
+            `;
+        contentArea.appendChild(newBlock);
+        updateProperties();
+      }
+
+      function resetAll() {
+        targetElement.style.padding = "25px";
+        targetElement.style.borderWidth = "12px";
+        targetElement.style.height = "";
+        targetElement.style.overflow = "auto";
+        contentArea.innerHTML = `
+                <div class="content-block">
+                    <h3>目标元素</h3>
+                    <p>clientHeight = 内容高度 + 上下内边距</p>
+                    <p><strong>不包含边框和滚动条</strong></p>
+                </div>
+                <div class="scrollbar-demo">
+                    <p>这个区域比容器高，用于演示滚动条</p>
+                    <p>尝试上下滚动观察 clientHeight 行为</p>
+                </div>
+                <div class="content-block">
+                    <p>更多内容...</p>
+                    <p>clientHeight 表示可视区域的高度</p>
+                </div>
+                <div class="content-block">
+                    <p>额外内容块</p>
+                    <p>scrollHeight 表示总内容高度</p>
+                </div>
+            `;
+
+        paddingSlider.value = 25;
+        borderSlider.value = 12;
+        elementHeightSlider.value = 280;
+        paddingValue.textContent = "25px";
+        borderValue.textContent = "12px";
+        elementHeightValue.textContent = "280px";
+
+        updateProperties();
+      }
+
+      // 事件监听
+      paddingSlider.addEventListener("input", function () {
+        const padding = parseInt(this.value);
+        targetElement.style.padding = padding + "px";
+        paddingValue.textContent = padding + "px";
+        updateProperties();
+      });
+
+      borderSlider.addEventListener("input", function () {
+        const border = parseInt(this.value);
+        targetElement.style.borderWidth = border + "px";
+        borderValue.textContent = border + "px";
+        updateProperties();
+      });
+
+      elementHeightSlider.addEventListener("input", function () {
+        const height = parseInt(this.value);
+        targetElement.style.height = height + "px";
+        elementHeightValue.textContent = height + "px";
+        updateProperties();
+      });
+
+      // 监听滚动事件来演示 clientHeight 不变性
+      targetElement.addEventListener("scroll", function () {
+        console.log("滚动中 - clientHeight:", this.clientHeight, "scrollTop:", this.scrollTop);
+      });
+
+      // 初始化
+      updateProperties();
+
+      // 控制台演示
+      setTimeout(() => {
+        console.log("=== clientHeight 属性演示 ===");
+        console.log("clientHeight:", targetElement.clientHeight, "px");
+        console.log("offsetHeight:", targetElement.offsetHeight, "px");
+        console.log("scrollHeight:", targetElement.scrollHeight, "px");
+
+        const computedStyle = window.getComputedStyle(targetElement);
+        console.log("CSS height:", computedStyle.height);
+        console.log("Padding:", computedStyle.padding);
+        console.log("Border:", computedStyle.borderWidth);
+
+        console.log("\n🔍 clientHeight 计算验证:");
+        const contentHeight = parseInt(computedStyle.height) || targetElement.offsetHeight;
+        const paddingTop = parseInt(computedStyle.paddingTop);
+        const paddingBottom = parseInt(computedStyle.paddingBottom);
+        const scrollbarEffect = targetElement.offsetHeight - targetElement.clientHeight - parseInt(computedStyle.borderTopWidth) - parseInt(computedStyle.borderBottomWidth);
+
+        console.log("计算值:", contentHeight + paddingTop + paddingBottom - scrollbarEffect, "px");
+        console.log("实际 clientHeight:", targetElement.clientHeight, "px");
+        console.log("是否相等:", contentHeight + paddingTop + paddingBottom - scrollbarEffect === targetElement.clientHeight);
+
+        console.log("\n🌐 视口相关高度:");
+        console.log("window.innerHeight:", window.innerHeight);
+        console.log("document.documentElement.clientHeight:", document.documentElement.clientHeight);
+        console.log("document.body.clientHeight:", document.body.clientHeight);
+      }, 1000);
+    </script>
+  </body>
+</html>

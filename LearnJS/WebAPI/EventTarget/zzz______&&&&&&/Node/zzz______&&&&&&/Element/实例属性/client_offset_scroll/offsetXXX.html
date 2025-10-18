@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>offset* 属性详解</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 2.5rem;
+      }
+
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 1.3rem;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .demo-section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .explanation-section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #3498db;
+      }
+
+      h3 {
+        color: #2c3e50;
+        margin: 25px 0 15px 0;
+      }
+
+      .demo-container {
+        position: relative;
+        width: 100%;
+        height: 500px;
+        border: 3px dashed #bdc3c7;
+        margin: 25px 0;
+        background: #ecf0f1;
+        padding: 20px;
+        overflow: auto;
+        border-radius: 10px;
+      }
+
+      .offset-parent {
+        position: relative;
+        width: 400px;
+        height: 300px;
+        margin: 40px auto;
+        padding: 25px;
+        border: 8px solid #e74c3c;
+        background: #e74c3c22;
+        border-radius: 12px;
+      }
+
+      .target-element {
+        width: 250px;
+        height: 150px;
+        padding: 20px;
+        margin: 30px;
+        border: 12px solid #3498db;
+        background: #3498db33;
+        border-radius: 8px;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      .nested-element {
+        width: 180px;
+        height: 80px;
+        padding: 15px;
+        border: 6px solid #2ecc71;
+        background: #2ecc7133;
+        border-radius: 6px;
+        margin: 10px auto;
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin: 20px 0;
+      }
+
+      button {
+        padding: 12px 20px;
+        background: #3498db;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      button:hover {
+        background: #2980b9;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .property-display {
+        background: #2c3e50;
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+
+      .property-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 12px 0;
+        padding: 10px;
+        background: #34495e;
+        border-radius: 6px;
+      }
+
+      .property-name {
+        font-weight: bold;
+        font-size: 1.1rem;
+      }
+
+      .property-value {
+        font-family: "Courier New", monospace;
+        font-size: 1.2rem;
+        color: #f1c40f;
+        font-weight: bold;
+      }
+
+      .visual-guide {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: bold;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        z-index: 10;
+      }
+
+      .offsetWidth-guide {
+        top: -35px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #e74c3c;
+      }
+
+      .offsetHeight-guide {
+        right: -80px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #e74c3c;
+      }
+
+      .offsetTop-guide {
+        left: -100px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #2ecc71;
+      }
+
+      .offsetLeft-guide {
+        top: -35px;
+        left: 20%;
+        transform: translateX(-50%);
+        color: #2ecc71;
+      }
+
+      .explanation-box {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+        border-left: 5px solid #3498db;
+      }
+
+      .code-block {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 20px;
+        border-radius: 10px;
+        font-family: "Courier New", monospace;
+        margin: 20px 0;
+        overflow-x: auto;
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 25px 0;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .comparison-table th {
+        background: #3498db;
+        color: white;
+        padding: 15px;
+        text-align: left;
+      }
+
+      .comparison-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #ecf0f1;
+      }
+
+      .comparison-table tr:nth-child(even) {
+        background: #f8f9fa;
+      }
+
+      .comparison-table tr:hover {
+        background: #e3f2fd;
+      }
+
+      .note {
+        background: #fff9e6;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #f1c40f;
+        margin: 20px 0;
+      }
+
+      @media (max-width: 968px) {
+        .content {
+          grid-template-columns: 1fr;
+        }
+
+        .controls {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>offset* 属性详解</h1>
+        <p class="subtitle">深入理解 offsetTop, offsetLeft, offsetWidth, offsetHeight 的工作原理和应用场景</p>
+      </header>
+
+      <div class="content">
+        <div class="demo-section">
+          <h2>交互演示</h2>
+
+          <div class="demo-container" id="demoContainer">
+            <div class="offset-parent" id="offsetParent">
+              <div class="target-element" id="targetElement">
+                <div class="nested-element" id="nestedElement">嵌套元素</div>
+                目标元素
+              </div>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button id="moveElement">移动元素位置</button>
+            <button id="resizeElement">调整元素大小</button>
+            <button id="changePadding">改变内边距</button>
+            <button id="changeBorder">改变边框</button>
+            <button id="resetAll">重置所有</button>
+            <button id="toggleParent">切换offsetParent</button>
+          </div>
+
+          <div class="property-display">
+            <h3 style="color: white; margin-top: 0">offset* 属性值</h3>
+            <div class="property-item">
+              <span class="property-name">offsetWidth:</span>
+              <span class="property-value" id="offsetWidthVal">0px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">offsetHeight:</span>
+              <span class="property-value" id="offsetHeightVal">0px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">offsetTop:</span>
+              <span class="property-value" id="offsetTopVal">0px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">offsetLeft:</span>
+              <span class="property-value" id="offsetLeftVal">0px</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="explanation-section">
+          <h2>属性详解</h2>
+
+          <div class="explanation-box">
+            <h3>offsetWidth & offsetHeight</h3>
+            <p><strong>定义：</strong>元素的整体宽度和高度，包括：</p>
+            <ul style="margin: 10px 0 10px 20px">
+              <li>内容宽度/高度</li>
+              <li>内边距 (padding)</li>
+              <li>边框 (border)</li>
+              <li>垂直滚动条宽度（如果存在）</li>
+            </ul>
+            <p><strong>计算公式：</strong></p>
+            <p>offsetWidth = width + padding-left + padding-right + border-left + border-right + 垂直滚动条宽度</p>
+            <p>offsetHeight = height + padding-top + padding-bottom + border-top + border-bottom + 水平滚动条高度</p>
+          </div>
+
+          <div class="explanation-box">
+            <h3>offsetTop & offsetLeft</h3>
+            <p><strong>定义：</strong>元素相对于其<strong>offsetParent</strong>的顶部和左侧距离。</p>
+            <p><strong>offsetParent：</strong>距离当前元素最近的定位祖先元素（position不为static），如果没有则指向body元素。</p>
+            <p><strong>注意：</strong>这些属性值包括元素的margin，但不包括offsetParent的padding或border。</p>
+          </div>
+
+          <div class="code-block" style="white-space: pre;">
+// 获取元素引用
+const element = document.getElementById('targetElement');
+
+// 获取offset*属性
+console.log('元素整体宽度:', element.offsetWidth);
+console.log('元素整体高度:', element.offsetHeight);
+console.log('距离offsetParent顶部:', element.offsetTop);
+console.log('距离offsetParent左侧:', element.offsetLeft);
+
+// 获取offsetParent
+console.log('offsetParent:', element.offsetParent);
+
+// 实际应用：检测元素是否在视口内
+function isElementInViewport(el) {
+    const rect = el.getBoundingClientRect();
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+}
+          </div>
+
+          <h3>与其他尺寸属性对比</h3>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>属性</th>
+                <th>包含内容</th>
+                <th>不包含内容</th>
+                <th>只读</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>offsetWidth/Height</strong></td>
+                <td>内容 + padding + border + 滚动条</td>
+                <td>margin</td>
+                <td>是</td>
+              </tr>
+              <tr>
+                <td>clientWidth/Height</td>
+                <td>内容 + padding</td>
+                <td>border + margin + 滚动条</td>
+                <td>是</td>
+              </tr>
+              <tr>
+                <td>scrollWidth/Height</td>
+                <td>全部内容（包括不可见部分） + padding</td>
+                <td>border + margin</td>
+                <td>是</td>
+              </tr>
+              <tr>
+                <td>getBoundingClientRect()</td>
+                <td>内容 + padding + border</td>
+                <td>margin</td>
+                <td>是</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="note"><strong>重要提示：</strong>offsetTop和offsetLeft返回的是整数值（像素），并且会四舍五入。如果需要更精确的测量，请使用element.getBoundingClientRect()。</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 获取DOM元素
+      const targetElement = document.getElementById("targetElement");
+      const nestedElement = document.getElementById("nestedElement");
+      const offsetParent = document.getElementById("offsetParent");
+      const demoContainer = document.getElementById("demoContainer");
+
+      // 获取属性显示元素
+      const offsetWidthVal = document.getElementById("offsetWidthVal");
+      const offsetHeightVal = document.getElementById("offsetHeightVal");
+      const offsetTopVal = document.getElementById("offsetTopVal");
+      const offsetLeftVal = document.getElementById("offsetLeftVal");
+
+      // 初始状态
+      let isOriginalState = true;
+      let originalStyles = {};
+
+      // 保存原始样式
+      function saveOriginalStyles() {
+        originalStyles = {
+          width: targetElement.style.width,
+          height: targetElement.style.height,
+          margin: targetElement.style.margin,
+          padding: targetElement.style.padding,
+          border: targetElement.style.border,
+        };
+      }
+
+      // 更新属性显示的函数
+      function updateProperties() {
+        offsetWidthVal.textContent = targetElement.offsetWidth + "px";
+        offsetHeightVal.textContent = targetElement.offsetHeight + "px";
+        offsetTopVal.textContent = targetElement.offsetTop + "px";
+        offsetLeftVal.textContent = targetElement.offsetLeft + "px";
+
+        // 更新可视化指引
+        updateVisualGuides();
+      }
+
+      // 更新可视化指引
+      function updateVisualGuides() {
+        // 移除旧的指引
+        document.querySelectorAll(".visual-guide").forEach(guide => guide.remove());
+
+        // 创建offsetWidth指引
+        const widthGuide = document.createElement("div");
+        widthGuide.className = "visual-guide offsetWidth-guide";
+        widthGuide.textContent = `offsetWidth: ${targetElement.offsetWidth}px`;
+        targetElement.appendChild(widthGuide);
+
+        // 创建offsetHeight指引
+        const heightGuide = document.createElement("div");
+        heightGuide.className = "visual-guide offsetHeight-guide";
+        heightGuide.textContent = `offsetHeight: ${targetElement.offsetHeight}px`;
+        targetElement.appendChild(heightGuide);
+
+        // 创建offsetTop指引
+        const topGuide = document.createElement("div");
+        topGuide.className = "visual-guide offsetTop-guide";
+        topGuide.textContent = `offsetTop: ${targetElement.offsetTop}px`;
+        targetElement.appendChild(topGuide);
+
+        // 创建offsetLeft指引
+        const leftGuide = document.createElement("div");
+        leftGuide.className = "visual-guide offsetLeft-guide";
+        leftGuide.textContent = `offsetLeft: ${targetElement.offsetLeft}px`;
+        targetElement.appendChild(leftGuide);
+      }
+
+      // 按钮事件处理
+      document.getElementById("moveElement").addEventListener("click", function () {
+        const currentMargin = parseInt(targetElement.style.margin) || 30;
+        targetElement.style.margin = currentMargin + 20 + "px";
+        updateProperties();
+      });
+
+      document.getElementById("resizeElement").addEventListener("click", function () {
+        const currentWidth = parseInt(targetElement.style.width) || 250;
+        const currentHeight = parseInt(targetElement.style.height) || 150;
+
+        targetElement.style.width = currentWidth + 40 + "px";
+        targetElement.style.height = currentHeight + 30 + "px";
+
+        updateProperties();
+      });
+
+      document.getElementById("changePadding").addEventListener("click", function () {
+        const currentPadding = parseInt(targetElement.style.padding) || 20;
+        targetElement.style.padding = currentPadding + 10 + "px";
+        updateProperties();
+      });
+
+      document.getElementById("changeBorder").addEventListener("click", function () {
+        const currentBorder = parseInt(targetElement.style.borderWidth) || 12;
+        targetElement.style.borderWidth = currentBorder + 4 + "px";
+        updateProperties();
+      });
+
+      document.getElementById("resetAll").addEventListener("click", function () {
+        targetElement.style.width = "250px";
+        targetElement.style.height = "150px";
+        targetElement.style.margin = "30px";
+        targetElement.style.padding = "20px";
+        targetElement.style.borderWidth = "12px";
+        offsetParent.style.position = "relative";
+        updateProperties();
+      });
+
+      document.getElementById("toggleParent").addEventListener("click", function () {
+        if (offsetParent.style.position === "relative") {
+          offsetParent.style.position = "static";
+        } else {
+          offsetParent.style.position = "relative";
+        }
+        updateProperties();
+      });
+
+      // 初始化
+      saveOriginalStyles();
+      updateProperties();
+
+      // 添加窗口调整大小监听
+      window.addEventListener("resize", updateProperties);
+
+      // 添加详细说明
+      setTimeout(() => {
+        console.log("=== offset* 属性详解 ===");
+        console.log("offsetWidth:", targetElement.offsetWidth, "px (包含: 内容宽度 + 内边距 + 边框 + 滚动条)");
+        console.log("offsetHeight:", targetElement.offsetHeight, "px (包含: 内容高度 + 内边距 + 边框 + 滚动条)");
+        console.log("offsetTop:", targetElement.offsetTop, "px (相对于offsetParent的顶部距离)");
+        console.log("offsetLeft:", targetElement.offsetLeft, "px (相对于offsetParent的左侧距离)");
+        console.log("offsetParent:", targetElement.offsetParent);
+      }, 1000);
+    </script>
+  </body>
+</html>

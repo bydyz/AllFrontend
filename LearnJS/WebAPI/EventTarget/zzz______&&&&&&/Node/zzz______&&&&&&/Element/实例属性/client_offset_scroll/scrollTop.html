@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>scrollTop 属性详解</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 2.5rem;
+      }
+
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 1.3rem;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .content {
+        display: grid;
+        grid-template-columns: 1fr;
+        margin-bottom: 40px;
+      }
+
+      .demo-section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 40px;
+      }
+
+      .explanation-section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #9b59b6;
+      }
+
+      h3 {
+        color: #2c3e50;
+        margin: 25px 0 15px 0;
+      }
+
+      .demo-container {
+        position: relative;
+        width: 100%;
+        height: 400px;
+        border: 2px solid #34495e;
+        margin: 25px 0;
+        background: #ecf0f1;
+        padding: 20px;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .scroll-element {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        border: 2px solid #9b59b6;
+        border-radius: 8px;
+        background: white;
+        position: relative;
+      }
+
+      .scroll-content {
+        min-height: 1200px;
+        padding: 20px;
+        background: linear-gradient(180deg, #3498db11 0%, #2ecc7111 20%, #e74c3c11 40%, #f39c1211 60%, #9b59b611 80%, #1abc9c11 100%);
+      }
+
+      .content-section {
+        height: 200px;
+        margin: 20px 0;
+        padding: 20px;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        border: 2px solid;
+      }
+
+      .section-1 {
+        background: #3498db33;
+        border-color: #3498db;
+      }
+      .section-2 {
+        background: #2ecc7133;
+        border-color: #2ecc71;
+      }
+      .section-3 {
+        background: #e74c3c33;
+        border-color: #e74c3c;
+      }
+      .section-4 {
+        background: #f39c1233;
+        border-color: #f39c12;
+      }
+      .section-5 {
+        background: #9b59b633;
+        border-color: #9b59b6;
+      }
+
+      .scroll-indicator {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(155, 89, 182, 0.9);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: bold;
+        z-index: 10;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      }
+
+      .scroll-position-line {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: #e74c3c;
+        z-index: 5;
+        pointer-events: none;
+      }
+
+      .scroll-marker {
+        position: absolute;
+        left: 10px;
+        width: calc(100% - 20px);
+        padding: 5px 10px;
+        background: rgba(231, 76, 60, 0.1);
+        border-left: 3px solid #e74c3c;
+        font-size: 0.8rem;
+        color: #e74c3c;
+        pointer-events: none;
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin: 20px 0;
+      }
+
+      button {
+        padding: 12px 15px;
+        background: #9b59b6;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      button:hover {
+        background: #8e44ad;
+        transform: translateY(-2px);
+      }
+
+      button.secondary {
+        background: #3498db;
+      }
+
+      button.secondary:hover {
+        background: #2980b9;
+      }
+
+      .property-display {
+        background: #2c3e50;
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+
+      .property-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 10px 0;
+        padding: 8px 12px;
+        background: #34495e;
+        border-radius: 6px;
+      }
+
+      .property-name {
+        font-weight: bold;
+        font-size: 1.1rem;
+      }
+
+      .property-value {
+        font-family: "Courier New", monospace;
+        font-size: 1.2rem;
+        color: #f1c40f;
+        font-weight: bold;
+      }
+
+      .scroll-controls {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+
+      .control-group {
+        margin: 15px 0;
+      }
+
+      .control-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #2c3e50;
+      }
+
+      .range-slider {
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: #ddd;
+        outline: none;
+        -webkit-appearance: none;
+      }
+
+      .range-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #9b59b6;
+        cursor: pointer;
+      }
+
+      .range-value {
+        text-align: center;
+        font-weight: bold;
+        color: #9b59b6;
+        margin-top: 5px;
+      }
+
+      .progress-container {
+        width: 100%;
+        height: 8px;
+        background: #ecf0f1;
+        border-radius: 4px;
+        margin: 20px 0;
+        overflow: hidden;
+      }
+
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #3498db, #9b59b6);
+        width: 0%;
+        transition: width 0.1s ease;
+      }
+
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .comparison-table th {
+        background: #9b59b6;
+        color: white;
+        padding: 12px 15px;
+        text-align: left;
+      }
+
+      .comparison-table td {
+        padding: 10px 15px;
+        border-bottom: 1px solid #ecf0f1;
+      }
+
+      .comparison-table tr:nth-child(even) {
+        background: #f8f9fa;
+      }
+
+      .code-block {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 20px;
+        border-radius: 10px;
+        font-family: "Courier New", monospace;
+        margin: 20px 0;
+        overflow-x: auto;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        white-space: pre;
+      }
+
+      .special-cases {
+        background: #fff9e6;
+        padding: 20px;
+        border-radius: 10px;
+        border-left: 4px solid #f1c40f;
+        margin: 20px 0;
+      }
+
+      .case-example {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 10px 0;
+        border: 1px solid #e9ecef;
+      }
+
+      .scroll-events {
+        background: #e8f6f3;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 15px 0;
+        border: 2px solid #1abc9c;
+      }
+
+      @media (max-width: 968px) {
+        .content {
+          grid-template-columns: 1fr;
+        }
+
+        .controls {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>scrollTop 属性详解</h1>
+        <p class="subtitle">深入理解 scrollTop 的工作原理、读写特性和实际应用</p>
+      </header>
+
+      <div class="content">
+        <div class="demo-section">
+          <h2>交互演示</h2>
+          <p>滚动下方内容或使用控制按钮，观察 scrollTop 值的变化</p>
+
+          <div class="demo-container">
+            <div class="scroll-element" id="scrollElement">
+              <div class="scroll-indicator" id="scrollIndicator">scrollTop: <span id="scrollTopValue">0</span>px</div>
+              <div class="scroll-content" id="scrollContent">
+                <div class="content-section section-1">
+                  <h3>第一部分</h3>
+                  <p>scrollTop = 0px</p>
+                  <p>滚动位置在顶部</p>
+                </div>
+                <div class="content-section section-2">
+                  <h3>第二部分</h3>
+                  <p>目标位置: 200px</p>
+                  <p>点击按钮滚动到这里</p>
+                </div>
+                <div class="content-section section-3">
+                  <h3>第三部分</h3>
+                  <p>目标位置: 400px</p>
+                  <p>注意观察 scrollTop 变化</p>
+                </div>
+                <div class="content-section section-4">
+                  <h3>第四部分</h3>
+                  <p>目标位置: 600px</p>
+                  <p>scrollTop 是可读写属性</p>
+                </div>
+                <div class="content-section section-5">
+                  <h3>第五部分</h3>
+                  <p>目标位置: 800px</p>
+                  <p>接近底部了</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+          <div style="text-align: center; margin-bottom: 20px">
+            <span id="progressText">滚动进度: 0%</span>
+          </div>
+
+          <div class="scroll-controls">
+            <div class="control-group">
+              <label class="control-label">直接设置 scrollTop 值:</label>
+              <input type="range" min="0" max="1000" value="0" class="range-slider" id="scrollTopSlider" />
+              <div class="range-value" id="scrollTopValueDisplay">0px</div>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button onclick="scrollToSection(200)">滚动到第二部分</button>
+            <button onclick="scrollToSection(400)">滚动到第三部分</button>
+            <button onclick="scrollToSection(600)">滚动到第四部分</button>
+            <button class="secondary" onclick="scrollToTop()">回到顶部</button>
+            <button class="secondary" onclick="scrollToBottom()">滚动到底部</button>
+            <button onclick="addMoreContent()">添加更多内容</button>
+          </div>
+
+          <div class="property-display">
+            <h3 style="color: white; margin-top: 0">滚动属性值</h3>
+            <div class="property-item">
+              <span class="property-name">scrollTop:</span>
+              <span class="property-value" id="scrollTopVal">0px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">scrollHeight:</span>
+              <span class="property-value" id="scrollHeightVal">0px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">clientHeight:</span>
+              <span class="property-value" id="clientHeightVal">0px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">最大 scrollTop:</span>
+              <span class="property-value" id="maxScrollTopVal">0px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">滚动百分比:</span>
+              <span class="property-value" id="scrollPercentVal">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="explanation-section">
+          <h2>scrollTop 详解</h2>
+
+          <div class="special-cases">
+            <h3>📌 scrollTop 核心定义</h3>
+            <p><strong>scrollTop = 元素内容垂直滚动的像素数</strong></p>
+            <p>表示元素内容顶部到可视区域顶部的距离，这是一个<strong>可读写</strong>属性。</p>
+          </div>
+
+          <h3>基本概念</h3>
+          <div class="code-block">
+// scrollTop 表示内容滚动的距离
+element.scrollTop = 元素内容顶部 到 可视区域顶部 的距离
+
+// 取值范围
+0 ≤ element.scrollTop ≤ (element.scrollHeight - element.clientHeight)
+
+// 读写示例
+const element = document.getElementById('scrollElement');
+
+// 读取当前滚动位置
+console.log('当前滚动位置:', element.scrollTop);
+
+// 设置滚动位置（可写属性）
+element.scrollTop = 300; // 滚动到300px位置
+          </div>
+
+          <h3>与其他滚动属性的关系</h3>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>属性</th>
+                <th>描述</th>
+                <th>是否可写</th>
+                <th>取值范围</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>scrollTop</strong></td>
+                <td>垂直滚动位置</td>
+                <td>是</td>
+                <td>0 到 (scrollHeight - clientHeight)</td>
+              </tr>
+              <tr>
+                <td>scrollLeft</td>
+                <td>水平滚动位置</td>
+                <td>是</td>
+                <td>0 到 (scrollWidth - clientWidth)</td>
+              </tr>
+              <tr>
+                <td>scrollHeight</td>
+                <td>内容总高度</td>
+                <td>否</td>
+                <td>≥ clientHeight</td>
+              </tr>
+              <tr>
+                <td>clientHeight</td>
+                <td>可视区域高度</td>
+                <td>否</td>
+                <td>固定值</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>滚动事件和监听</h3>
+          <div class="scroll-events">
+            <h4>scroll 事件演示</h4>
+            <p>尝试滚动上方内容，观察事件触发情况</p>
+            <div id="eventLog" style="height: 100px; overflow-y: auto; background: white; padding: 10px; border-radius: 4px; font-size: 0.8rem"></div>
+          </div>
+
+          <div class="code-block">
+// 监听滚动事件
+element.addEventListener('scroll', function(event) {
+    console.log('滚动事件触发');
+    console.log('当前 scrollTop:', this.scrollTop);
+    console.log('滚动百分比:', (this.scrollTop / (this.scrollHeight - this.clientHeight)) * 100 + '%');
+    
+    // 检测是否滚动到底部
+    const isAtBottom = this.scrollTop + this.clientHeight >= this.scrollHeight;
+    if (isAtBottom) {
+        console.log('已滚动到底部！');
+    }
+    
+    // 检测是否滚动到顶部
+    const isAtTop = this.scrollTop === 0;
+    if (isAtTop) {
+        console.log('已滚动到顶部！');
+    }
+});
+
+// 性能优化：使用防抖
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+const throttledScrollHandler = debounce(function() {
+    // 这里执行需要节流的操作
+}, 100);
+
+element.addEventListener('scroll', throttledScrollHandler);
+          </div>
+
+          <h3>特殊情况和注意事项</h3>
+
+          <div class="case-example">
+            <h4>情况 1: 不可滚动元素</h4>
+            <p>对于不可滚动的元素，scrollTop 始终为 0：</p>
+            <div class="code-block">
+// 元素没有溢出内容
+element.style.overflow = 'hidden';
+console.log('不可滚动元素 scrollTop:', element.scrollTop); // 0
+
+// 即使强制设置也会被忽略
+element.scrollTop = 100;
+console.log('设置后的 scrollTop:', element.scrollTop); // 仍然为 0
+            </div>
+          </div>
+
+          <div class="case-example">
+            <h4>情况 2: 超出范围的值</h4>
+            <p>设置超出范围的值会被自动修正：</p>
+            <div class="code-block">
+const maxScroll = element.scrollHeight - element.clientHeight;
+
+// 设置负值
+element.scrollTop = -100;
+console.log('负值被修正为:', element.scrollTop); // 0
+
+// 设置超出最大值
+element.scrollTop = maxScroll + 1000;
+console.log('超出最大值被修正为:', element.scrollTop); // maxScroll
+            </div>
+          </div>
+
+          <div class="case-example">
+            <h4>情况 3: 小数和整数</h4>
+            <p>scrollTop 始终返回整数，但可以设置小数：</p>
+            <div class="code-block">
+// 设置小数
+element.scrollTop = 123.456;
+console.log('读取到的值:', element.scrollTop); // 123（整数）
+
+// 在某些浏览器中可能会有亚像素滚动
+// 但读取时仍会返回整数
+            </div>
+          </div>
+
+          <h3>实际应用场景</h3>
+          <div class="code-block">
+// 应用 1: 回到顶部功能
+function scrollToTop() {
+    element.scrollTop = 0;
+}
+
+// 应用 2: 滚动到底部
+function scrollToBottom() {
+    element.scrollTop = element.scrollHeight - element.clientHeight;
+}
+
+// 应用 3: 滚动到指定元素
+function scrollToElement(targetElement) {
+    const container = targetElement.parentElement;
+    const elementTop = targetElement.offsetTop;
+    const elementHeight = targetElement.offsetHeight;
+    const containerHeight = container.clientHeight;
+    
+    container.scrollTop = elementTop - (containerHeight - elementHeight) / 2;
+}
+
+// 应用 4: 平滑滚动动画
+function smoothScrollTo(element, targetPosition, duration = 500) {
+    const startPosition = element.scrollTop;
+    const distance = targetPosition - startPosition;
+    let startTime = null;
+    
+    function animation(currentTime) {
+        if (startTime === null) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const progress = Math.min(timeElapsed / duration, 1);
+        
+        // 缓动函数
+        const ease = progress => progress < 0.5 
+            ? 4 * progress * progress * progress 
+            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+        
+        element.scrollTop = startPosition + distance * ease(progress);
+        
+        if (timeElapsed < duration) {
+            requestAnimationFrame(animation);
+        }
+    }
+    
+    requestAnimationFrame(animation);
+}
+
+// 应用 5: 无限滚动加载
+function setupInfiniteScroll(container, loadCallback) {
+    container.addEventListener('scroll', function() {
+        const scrollBottom = this.scrollTop + this.clientHeight;
+        const threshold = 100; // 距离底部100px时触发
+        
+        if (scrollBottom >= this.scrollHeight - threshold) {
+            loadCallback();
+        }
+    });
+}
+
+// 应用 6: 阅读进度指示器
+function updateScrollProgress(container, progressElement) {
+    const scrollableHeight = container.scrollHeight - container.clientHeight;
+    const progress = (container.scrollTop / scrollableHeight) * 100;
+    
+    progressElement.style.width = progress + '%';
+    progressElement.textContent = Math.round(progress) + '%';
+}
+
+// 应用 7: 视差滚动效果
+function setupParallax(container, parallaxElements) {
+    container.addEventListener('scroll', function() {
+        const scrollTop = this.scrollTop;
+        const scrollHeight = this.scrollHeight - this.clientHeight;
+        const scrollPercent = scrollTop / scrollHeight;
+        
+        parallaxElements.forEach((element, index) => {
+            const speed = 0.5 + (index * 0.1);
+            const yPos = -(scrollTop * speed);
+            element.style.transform = `translateY(${yPos}px)`;
+        });
+    });
+}
+
+// 应用 8: 粘性导航
+function setupStickyNavigation(navElement, container) {
+    const navOffset = navElement.offsetTop;
+    
+    container.addEventListener('scroll', function() {
+        if (this.scrollTop >= navOffset) {
+            navElement.classList.add('sticky');
+        } else {
+            navElement.classList.remove('sticky');
+        }
+    });
+}
+          </div>
+
+          <h3>性能优化技巧</h3>
+          <div class="special-cases">
+            <p><strong>scroll 事件可能频繁触发，需要注意性能：</strong></p>
+            <ul>
+              <li>使用防抖(debounce)或节流(throttle)限制执行频率</li>
+              <li>避免在 scroll 事件中进行复杂的DOM操作</li>
+              <li>使用 requestAnimationFrame 进行动画</li>
+              <li>考虑使用 Intersection Observer 替代滚动检测</li>
+            </ul>
+            <div class="code-block">
+// 使用 Intersection Observer 的现代方法
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            // 元素进入视口
+            entry.target.classList.add('visible');
+        }
+    });
+}, {
+    threshold: 0.1 // 当10%的元素可见时触发
+});
+
+// 观察需要检测的元素
+document.querySelectorAll('.observe-me').forEach(el => {
+    observer.observe(el);
+});
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 获取DOM元素
+      const scrollElement = document.getElementById("scrollElement");
+      const scrollContent = document.getElementById("scrollContent");
+      const scrollIndicator = document.getElementById("scrollIndicator");
+      const scrollTopValue = document.getElementById("scrollTopValue");
+      const progressBar = document.getElementById("progressBar");
+      const progressText = document.getElementById("progressText");
+      const eventLog = document.getElementById("eventLog");
+
+      // 获取属性显示元素
+      const scrollTopVal = document.getElementById("scrollTopVal");
+      const scrollHeightVal = document.getElementById("scrollHeightVal");
+      const clientHeightVal = document.getElementById("clientHeightVal");
+      const maxScrollTopVal = document.getElementById("maxScrollTopVal");
+      const scrollPercentVal = document.getElementById("scrollPercentVal");
+
+      // 获取控制元素
+      const scrollTopSlider = document.getElementById("scrollTopSlider");
+      const scrollTopValueDisplay = document.getElementById("scrollTopValueDisplay");
+
+      // 更新属性显示
+      function updateProperties() {
+        const scrollTop = scrollElement.scrollTop;
+        const scrollHeight = scrollElement.scrollHeight;
+        const clientHeight = scrollElement.clientHeight;
+        const maxScrollTop = Math.max(0, scrollHeight - clientHeight);
+        const scrollPercent = maxScrollTop > 0 ? (scrollTop / maxScrollTop) * 100 : 0;
+
+        scrollTopVal.textContent = scrollTop + "px";
+        scrollHeightVal.textContent = scrollHeight + "px";
+        clientHeightVal.textContent = clientHeight + "px";
+        maxScrollTopVal.textContent = maxScrollTop + "px";
+        scrollPercentVal.textContent = scrollPercent.toFixed(1) + "%";
+
+        // 更新指示器
+        scrollTopValue.textContent = scrollTop;
+
+        // 更新进度条
+        progressBar.style.width = scrollPercent + "%";
+        progressText.textContent = `滚动进度: ${scrollPercent.toFixed(1)}%`;
+
+        // 更新滑块
+        scrollTopSlider.max = maxScrollTop;
+        scrollTopSlider.value = scrollTop;
+        scrollTopValueDisplay.textContent = scrollTop + "px";
+
+        // 更新可视化标记
+        updateScrollMarkers();
+      }
+
+      // 更新滚动标记
+      function updateScrollMarkers() {
+        // 清除旧标记
+        document.querySelectorAll(".scroll-position-line, .scroll-marker").forEach(el => el.remove());
+
+        const scrollTop = scrollElement.scrollTop;
+        const clientHeight = scrollElement.clientHeight;
+
+        // 当前位置线
+        const positionLine = document.createElement("div");
+        positionLine.className = "scroll-position-line";
+        positionLine.style.top = scrollTop + 10 + "px";
+        scrollElement.appendChild(positionLine);
+
+        // 当前位置标记
+        const positionMarker = document.createElement("div");
+        positionMarker.className = "scroll-marker";
+        positionMarker.style.top = scrollTop + 15 + "px";
+        positionMarker.textContent = `当前位置: ${scrollTop}px`;
+        scrollElement.appendChild(positionMarker);
+      }
+
+      // 添加事件日志
+      function addEventLog(message) {
+        const now = new Date();
+        const time = now.toTimeString().split(" ")[0];
+        const logEntry = document.createElement("div");
+        logEntry.textContent = `[${time}] ${message}`;
+        eventLog.appendChild(logEntry);
+        eventLog.scrollTop = eventLog.scrollHeight;
+
+        // 限制日志数量
+        if (eventLog.children.length > 10) {
+          eventLog.removeChild(eventLog.firstChild);
+        }
+      }
+
+      // 控制函数
+      function scrollToSection(offset) {
+        scrollElement.scrollTop = offset;
+        addEventLog(`编程滚动到: ${offset}px`);
+      }
+
+      function scrollToTop() {
+        scrollElement.scrollTop = 0;
+        addEventLog("滚动到顶部");
+      }
+
+      function scrollToBottom() {
+        const maxScroll = scrollElement.scrollHeight - scrollElement.clientHeight;
+        scrollElement.scrollTop = maxScroll;
+        addEventLog("滚动到底部");
+      }
+
+      function addMoreContent() {
+        const newSection = document.createElement("div");
+        newSection.className = "content-section";
+        newSection.style.background = "#1abc9c33";
+        newSection.style.borderColor = "#1abc9c";
+        newSection.innerHTML = `
+                <h3>新增部分</h3>
+                <p>动态添加的内容</p>
+                <p>scrollHeight 增加了</p>
+            `;
+        scrollContent.appendChild(newSection);
+        addEventLog("添加了新内容块");
+        updateProperties();
+      }
+
+      // 平滑滚动函数
+      function smoothScrollTo(targetPosition, duration = 600) {
+        const startPosition = scrollElement.scrollTop;
+        const distance = targetPosition - startPosition;
+        let startTime = null;
+
+        function animation(currentTime) {
+          if (startTime === null) startTime = currentTime;
+          const timeElapsed = currentTime - startTime;
+          const progress = Math.min(timeElapsed / duration, 1);
+
+          // 缓动函数
+          const easeOutCubic = progress => 1 - Math.pow(1 - progress, 3);
+
+          scrollElement.scrollTop = startPosition + distance * easeOutCubic(progress);
+
+          if (timeElapsed < duration) {
+            requestAnimationFrame(animation);
+          }
+        }
+
+        requestAnimationFrame(animation);
+      }
+
+      // 事件监听
+      scrollElement.addEventListener("scroll", function () {
+        updateProperties();
+        addEventLog(`scrollTop: ${this.scrollTop}px`);
+      });
+
+      scrollTopSlider.addEventListener("input", function () {
+        const value = parseInt(this.value);
+        scrollElement.scrollTop = value;
+        scrollTopValueDisplay.textContent = value + "px";
+      });
+
+      // 初始化
+      updateProperties();
+
+      // 控制台演示
+      setTimeout(() => {
+        console.log("=== scrollTop 属性演示 ===");
+        console.log("初始 scrollTop:", scrollElement.scrollTop);
+        console.log("scrollHeight:", scrollElement.scrollHeight);
+        console.log("clientHeight:", scrollElement.clientHeight);
+        console.log("最大 scrollTop:", scrollElement.scrollHeight - scrollElement.clientHeight);
+
+        // 演示可读写特性
+        console.log("\n🔧 演示可读写特性:");
+        const originalScrollTop = scrollElement.scrollTop;
+        scrollElement.scrollTop = 100;
+        console.log("设置 scrollTop = 100, 当前值:", scrollElement.scrollTop);
+        scrollElement.scrollTop = originalScrollTop;
+        console.log("恢复原位置:", scrollElement.scrollTop);
+      }, 1000);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>client* 属性详解</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 2.5rem;
+      }
+
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 1.3rem;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .content {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 40px;
+      }
+
+      .demo-section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+
+      .explanation-section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #3498db;
+      }
+
+      h3 {
+        color: #2c3e50;
+        margin: 25px 0 15px 0;
+      }
+
+      .demo-container {
+        position: relative;
+        width: 100%;
+        height: 500px;
+        border: 3px solid #34495e;
+        margin: 25px 0;
+        background: #ecf0f1;
+        padding: 30px;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .target-element {
+        width: 350px;
+        height: 250px;
+        padding: 30px;
+        margin: 50px auto;
+        border: 15px solid #e74c3c;
+        background: #3498db33;
+        border-radius: 12px;
+        position: relative;
+        overflow: auto;
+        transition: all 0.3s ease;
+      }
+
+      .inner-content {
+        width: 600px;
+        height: 400px;
+        background: linear-gradient(45deg, #2ecc7133, #f39c1233);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        text-align: center;
+      }
+
+      .dimension-visualization {
+        position: absolute;
+        pointer-events: none;
+        z-index: 10;
+      }
+
+      .client-area {
+        position: absolute;
+        background: rgba(52, 152, 219, 0.2);
+        border: 2px dashed #3498db;
+      }
+
+      .border-area {
+        position: absolute;
+        background: rgba(231, 76, 60, 0.2);
+        border: 2px dashed #e74c3c;
+      }
+
+      .content-area {
+        position: absolute;
+        background: rgba(46, 204, 113, 0.2);
+        border: 2px dashed #2ecc71;
+      }
+
+      .dimension-label {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 6px 10px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin: 20px 0;
+      }
+
+      button {
+        padding: 12px 20px;
+        background: #3498db;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      button:hover {
+        background: #2980b9;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      button.secondary {
+        background: #2ecc71;
+      }
+
+      button.secondary:hover {
+        background: #27ae60;
+      }
+
+      .property-display {
+        background: #2c3e50;
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+
+      .property-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 12px 0;
+        padding: 10px;
+        background: #34495e;
+        border-radius: 6px;
+      }
+
+      .property-name {
+        font-weight: bold;
+        font-size: 1.1rem;
+      }
+
+      .property-value {
+        font-family: "Courier New", monospace;
+        font-size: 1.2rem;
+        color: #f1c40f;
+        font-weight: bold;
+      }
+
+      .visual-toggle {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 15px 0;
+      }
+
+      .toggle-label {
+        font-weight: 600;
+        color: #2c3e50;
+      }
+
+      .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 24px;
+      }
+
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 24px;
+      }
+
+      .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+
+      input:checked + .toggle-slider {
+        background-color: #3498db;
+      }
+
+      input:checked + .toggle-slider:before {
+        transform: translateX(26px);
+      }
+
+      .explanation-box {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+        border-left: 5px solid #3498db;
+      }
+
+      .code-block {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 20px;
+        border-radius: 10px;
+        font-family: "Courier New", monospace;
+        margin: 20px 0;
+        overflow-x: auto;
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 25px 0;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .comparison-table th {
+        background: #3498db;
+        color: white;
+        padding: 15px;
+        text-align: left;
+      }
+
+      .comparison-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #ecf0f1;
+      }
+
+      .comparison-table tr:nth-child(even) {
+        background: #f8f9fa;
+      }
+
+      .comparison-table tr:hover {
+        background: #e3f2fd;
+      }
+
+      .practical-examples {
+        display: grid;
+        grid-template-columns: 1fr;
+        margin: 25px 0;
+      }
+
+      .example-card {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+      }
+
+      .example-card h4 {
+        color: #2c3e50;
+        margin-bottom: 10px;
+      }
+
+      .element-structure {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 20px 0;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+      }
+
+      .structure-layer {
+        width: 300px;
+        padding: 15px;
+        text-align: center;
+        margin: 5px 0;
+        border: 2px solid;
+        border-radius: 8px;
+      }
+
+      .margin-layer {
+        border-color: #9b59b6;
+        background: #9b59b633;
+      }
+      .border-layer {
+        border-color: #e74c3c;
+        background: #e74c3c33;
+      }
+      .padding-layer {
+        border-color: #3498db;
+        background: #3498db33;
+      }
+      .content-layer {
+        border-color: #2ecc71;
+        background: #2ecc7133;
+      }
+
+      .note {
+        background: #fff9e6;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #f1c40f;
+        margin: 20px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>client* 属性详解</h1>
+        <p class="subtitle">深入理解 clientTop, clientLeft, clientWidth, clientHeight 的工作原理和应用场景</p>
+      </header>
+
+      <div class="content">
+        <div class="demo-section">
+          <h2>交互演示</h2>
+          <p>调整元素样式并观察 client* 属性的变化</p>
+
+          <div class="demo-container">
+            <div class="target-element" id="targetElement">
+              <div class="inner-content" id="innerContent">
+                <h3>目标元素</h3>
+                <p>clientWidth: 内容 + 内边距 (不含边框和滚动条)</p>
+                <p>clientHeight: 内容 + 内边距 (不含边框和滚动条)</p>
+                <p>clientTop: 上边框宽度</p>
+                <p>clientLeft: 左边框宽度</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="visual-toggle">
+            <span class="toggle-label">显示尺寸可视化:</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="visualizationToggle" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="controls">
+            <button onclick="changePadding()">增加内边距</button>
+            <button onclick="changeBorder()">增加边框</button>
+            <button class="secondary" onclick="changeContent()">扩展内容</button>
+            <button class="secondary" onclick="toggleScrollbar()">切换滚动条</button>
+            <button onclick="resetStyles()">重置样式</button>
+          </div>
+
+          <div class="property-display">
+            <h3 style="color: white; margin-top: 0">client* 属性值</h3>
+            <div class="property-item">
+              <span class="property-name">clientWidth:</span>
+              <span class="property-value" id="clientWidthVal">0px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">clientHeight:</span>
+              <span class="property-value" id="clientHeightVal">0px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">clientTop:</span>
+              <span class="property-value" id="clientTopVal">0px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">clientLeft:</span>
+              <span class="property-value" id="clientLeftVal">0px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">offsetWidth:</span>
+              <span class="property-value" id="offsetWidthVal">0px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">offsetHeight:</span>
+              <span class="property-value" id="offsetHeightVal">0px</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="explanation-section">
+          <h2>属性详解</h2>
+
+          <div class="element-structure">
+            <h4>元素盒模型结构</h4>
+            <div class="structure-layer margin-layer">外边距 (Margin)</div>
+            <div class="structure-layer border-layer">边框 (Border) ← clientTop/clientLeft</div>
+            <div class="structure-layer padding-layer">内边距 (Padding)</div>
+            <div class="structure-layer content-layer">内容 (Content) ← clientWidth/clientHeight</div>
+          </div>
+
+          <div class="explanation-box">
+            <h3>clientWidth & clientHeight</h3>
+            <p><strong>定义：</strong>元素内容区域和内边距的宽度和高度</p>
+            <ul style="margin: 10px 0 10px 20px">
+              <li><strong>包含：</strong>内容宽度/高度 + 内边距(padding)</li>
+              <li><strong>不包含：</strong>边框(border)、外边距(margin)、滚动条</li>
+              <li>如果存在滚动条，会减去滚动条的宽度</li>
+            </ul>
+            <p><strong>计算公式：</strong></p>
+            <p>clientWidth = width + padding-left + padding-right - 垂直滚动条宽度</p>
+            <p>clientHeight = height + padding-top + padding-bottom - 水平滚动条高度</p>
+          </div>
+
+          <div class="explanation-box">
+            <h3>clientTop & clientLeft</h3>
+            <p><strong>定义：</strong>元素边框的宽度</p>
+            <ul style="margin: 10px 0 10px 20px">
+              <li><strong>clientTop：</strong>上边框宽度 (border-top-width)</li>
+              <li><strong>clientLeft：</strong>左边框宽度 (border-left-width)</li>
+              <li>对于大多数元素，这等于对应的 border-width</li>
+              <li>对于文本方向从右到左的元素，clientLeft 可能包括垂直滚动条宽度</li>
+            </ul>
+          </div>
+
+          <div class="code-block" style="white-space: pre;">
+// 获取元素引用
+const element = document.getElementById('targetElement');
+
+// 读取 client* 属性
+console.log('可视内容宽度:', element.clientWidth);
+console.log('可视内容高度:', element.clientHeight);
+console.log('上边框宽度:', element.clientTop);
+console.log('左边框宽度:', element.clientLeft);
+
+// 实际应用：检测元素是否包含滚动条
+function hasVerticalScrollbar(el) {
+    return el.scrollHeight > el.clientHeight;
+}
+
+function hasHorizontalScrollbar(el) {
+    return el.scrollWidth > el.clientWidth;
+}
+
+// 获取元素的内部可用空间
+function getAvailableSpace(el) {
+    return {
+        width: el.clientWidth,
+        height: el.clientHeight
+    };
+}
+
+// 监听窗口大小变化
+window.addEventListener('resize', function() {
+    console.log('新的可视尺寸:', {
+        width: element.clientWidth,
+        height: element.clientHeight
+    });
+});
+          </div>
+
+          <h3>与其他尺寸属性对比</h3>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>属性</th>
+                <th>包含内容</th>
+                <th>不包含内容</th>
+                <th>典型用途</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>clientWidth/Height</strong></td>
+                <td>内容 + 内边距</td>
+                <td>边框、外边距、滚动条</td>
+                <td>获取可视内容区域尺寸</td>
+              </tr>
+              <tr>
+                <td><strong>clientTop/Left</strong></td>
+                <td>边框宽度</td>
+                <td>其他所有内容</td>
+                <td>获取边框尺寸</td>
+              </tr>
+              <tr>
+                <td>offsetWidth/Height</td>
+                <td>内容 + 内边距 + 边框 + 滚动条</td>
+                <td>外边距</td>
+                <td>获取元素整体尺寸</td>
+              </tr>
+              <tr>
+                <td>scrollWidth/Height</td>
+                <td>全部内容 + 内边距</td>
+                <td>边框、外边距</td>
+                <td>获取内容总尺寸</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>实际应用示例</h3>
+          <div class="practical-examples">
+            <div class="example-card">
+              <h4>1. 响应式布局计算</h4>
+              <p>根据可用空间动态调整布局</p>
+              <div class="code-block" style="font-size: 0.8rem; padding: 15px; white-space: pre;">
+function adjustLayout() {
+    const container = document.getElementById('container');
+    const availableWidth = container.clientWidth;
+    
+    if (availableWidth < 600) {
+        // 移动端布局
+        container.classList.add('mobile-layout');
+    } else {
+        // 桌面端布局
+        container.classList.remove('mobile-layout');
+    }
+}
+              </div>
+            </div>
+
+            <div class="example-card">
+              <h4>2. 自定义滚动检测</h4>
+              <p>检测元素是否需要显示滚动条</p>
+              <div class="code-block" style="font-size: 0.8rem; padding: 15px; white-space: pre;">
+function checkScrollbars(element) {
+    const hasVertical = element.scrollHeight > element.clientHeight;
+    const hasHorizontal = element.scrollWidth > element.clientWidth;
+    
+    return { hasVertical, hasHorizontal };
+}
+
+// 使用示例
+const scrollInfo = checkScrollbars(myElement);
+console.log('垂直滚动条:', scrollInfo.hasVertical);
+console.log('水平滚动条:', scrollInfo.hasHorizontal);
+              </div>
+            </div>
+
+            <div class="example-card">
+              <h4>3. 精确位置计算</h4>
+              <p>考虑边框宽度的精确定位</p>
+              <div class="code-block" style="font-size: 0.8rem; padding: 15px; white-space: pre;">
+function positionElement(child, parent) {
+    // 考虑父元素的边框
+    const left = parent.clientLeft + 10; // 10px 偏移
+    const top = parent.clientTop + 10;
+    
+    child.style.left = left + 'px';
+    child.style.top = top + 'px';
+}
+              </div>
+            </div>
+
+            <div class="example-card">
+              <h4>4. 视口检测</h4>
+              <p>检测元素是否在可视区域内</p>
+              <div class="code-block" style="font-size: 0.8rem; padding: 15px; white-space: pre;">
+function isElementInViewport(el) {
+    const rect = el.getBoundingClientRect();
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+}
+
+// 使用 clientHeight 作为视口高度备用
+const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+              </div>
+            </div>
+          </div>
+
+          <div class="note"><strong>重要提示：</strong>clientWidth 和 clientHeight 是只读属性，但会实时反映元素的当前尺寸。对于根元素(document.documentElement)，这些属性表示视口尺寸。</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 获取DOM元素
+      const targetElement = document.getElementById("targetElement");
+      const innerContent = document.getElementById("innerContent");
+      const visualizationToggle = document.getElementById("visualizationToggle");
+
+      // 获取属性显示元素
+      const clientWidthVal = document.getElementById("clientWidthVal");
+      const clientHeightVal = document.getElementById("clientHeightVal");
+      const clientTopVal = document.getElementById("clientTopVal");
+      const clientLeftVal = document.getElementById("clientLeftVal");
+      const offsetWidthVal = document.getElementById("offsetWidthVal");
+      const offsetHeightVal = document.getElementById("offsetHeightVal");
+
+      // 初始状态
+      let originalStyles = {};
+
+      // 保存原始样式
+      function saveOriginalStyles() {
+        const computedStyle = window.getComputedStyle(targetElement);
+        originalStyles = {
+          padding: targetElement.style.padding,
+          borderWidth: targetElement.style.borderWidth,
+          width: targetElement.style.width,
+          height: targetElement.style.height,
+          overflow: targetElement.style.overflow,
+        };
+      }
+
+      // 更新属性显示的函数
+      function updateProperties() {
+        clientWidthVal.textContent = targetElement.clientWidth + "px";
+        clientHeightVal.textContent = targetElement.clientHeight + "px";
+        clientTopVal.textContent = targetElement.clientTop + "px";
+        clientLeftVal.textContent = targetElement.clientLeft + "px";
+        offsetWidthVal.textContent = targetElement.offsetWidth + "px";
+        offsetHeightVal.textContent = targetElement.offsetHeight + "px";
+
+        if (visualizationToggle.checked) {
+          updateVisualization();
+        }
+      }
+
+      // 更新可视化
+      function updateVisualization() {
+        // 清除之前的可视化
+        document.querySelectorAll(".dimension-visualization").forEach(el => el.remove());
+
+        const rect = targetElement.getBoundingClientRect();
+        const containerRect = targetElement.parentElement.getBoundingClientRect();
+
+        // 计算相对位置
+        const relativeLeft = rect.left - containerRect.left;
+        const relativeTop = rect.top - containerRect.top;
+
+        // 创建client区域可视化
+        const clientArea = document.createElement("div");
+        clientArea.className = "dimension-visualization client-area";
+        clientArea.style.left = relativeLeft + targetElement.clientLeft + "px";
+        clientArea.style.top = relativeTop + targetElement.clientTop + "px";
+        clientArea.style.width = targetElement.clientWidth + "px";
+        clientArea.style.height = targetElement.clientHeight + "px";
+        targetElement.parentElement.appendChild(clientArea);
+
+        // 添加clientWidth标签
+        const widthLabel = document.createElement("div");
+        widthLabel.className = "dimension-label";
+        widthLabel.style.left = relativeLeft + targetElement.clientLeft + targetElement.clientWidth / 2 - 40 + "px";
+        widthLabel.style.top = relativeTop + targetElement.clientTop + targetElement.clientHeight + 10 + "px";
+        widthLabel.textContent = `clientWidth: ${targetElement.clientWidth}px`;
+        targetElement.parentElement.appendChild(widthLabel);
+
+        // 添加clientHeight标签
+        const heightLabel = document.createElement("div");
+        heightLabel.className = "dimension-label";
+        heightLabel.style.left = relativeLeft + targetElement.clientLeft + targetElement.clientWidth + 10 + "px";
+        heightLabel.style.top = relativeTop + targetElement.clientTop + targetElement.clientHeight / 2 - 10 + "px";
+        heightLabel.textContent = `clientHeight: ${targetElement.clientHeight}px`;
+        targetElement.parentElement.appendChild(heightLabel);
+
+        // 添加clientTop标签
+        const topLabel = document.createElement("div");
+        topLabel.className = "dimension-label";
+        topLabel.style.left = relativeLeft - 60 + "px";
+        topLabel.style.top = relativeTop + targetElement.clientTop / 2 - 10 + "px";
+        topLabel.textContent = `clientTop: ${targetElement.clientTop}px`;
+        targetElement.parentElement.appendChild(topLabel);
+
+        // 添加clientLeft标签
+        const leftLabel = document.createElement("div");
+        leftLabel.className = "dimension-label";
+        leftLabel.style.left = relativeLeft + targetElement.clientLeft / 2 - 30 + "px";
+        leftLabel.style.top = relativeTop - 30 + "px";
+        leftLabel.textContent = `clientLeft: ${targetElement.clientLeft}px`;
+        targetElement.parentElement.appendChild(leftLabel);
+      }
+
+      // 控制函数
+      function changePadding() {
+        const currentPadding = parseInt(targetElement.style.padding) || 30;
+        targetElement.style.padding = currentPadding + 10 + "px";
+        updateProperties();
+      }
+
+      function changeBorder() {
+        const currentBorder = parseInt(targetElement.style.borderWidth) || 15;
+        targetElement.style.borderWidth = currentBorder + 5 + "px";
+        updateProperties();
+      }
+
+      function changeContent() {
+        const currentWidth = parseInt(innerContent.style.width) || 600;
+        const currentHeight = parseInt(innerContent.style.height) || 400;
+
+        innerContent.style.width = currentWidth + 100 + "px";
+        innerContent.style.height = currentHeight + 80 + "px";
+        updateProperties();
+      }
+
+      function toggleScrollbar() {
+        if (targetElement.style.overflow === "hidden") {
+          targetElement.style.overflow = "auto";
+        } else {
+          targetElement.style.overflow = "hidden";
+        }
+        updateProperties();
+      }
+
+      function resetStyles() {
+        targetElement.style.padding = originalStyles.padding || "30px";
+        targetElement.style.borderWidth = originalStyles.borderWidth || "15px";
+        targetElement.style.width = originalStyles.width || "";
+        targetElement.style.height = originalStyles.height || "";
+        targetElement.style.overflow = originalStyles.overflow || "auto";
+
+        innerContent.style.width = "600px";
+        innerContent.style.height = "400px";
+        updateProperties();
+      }
+
+      // 初始化
+      saveOriginalStyles();
+      updateProperties();
+
+      // 监听可视化切换
+      visualizationToggle.addEventListener("change", function () {
+        if (this.checked) {
+          updateVisualization();
+        } else {
+          document.querySelectorAll(".dimension-visualization").forEach(el => el.remove());
+        }
+      });
+
+      // 添加窗口调整大小监听
+      window.addEventListener("resize", updateProperties);
+
+      // 添加详细说明
+      setTimeout(() => {
+        console.log("=== client* 属性详解 ===");
+        console.log("clientWidth:", targetElement.clientWidth, "px (内容 + 内边距 - 滚动条)");
+        console.log("clientHeight:", targetElement.clientHeight, "px (内容 + 内边距 - 滚动条)");
+        console.log("clientTop:", targetElement.clientTop, "px (上边框宽度)");
+        console.log("clientLeft:", targetElement.clientLeft, "px (左边框宽度)");
+        console.log("offsetWidth:", targetElement.offsetWidth, "px (整体宽度)");
+        console.log("offsetHeight:", targetElement.offsetHeight, "px (整体高度)");
+
+        // 演示滚动条检测
+        const hasVerticalScroll = targetElement.scrollHeight > targetElement.clientHeight;
+        const hasHorizontalScroll = targetElement.scrollWidth > targetElement.clientWidth;
+        console.log("垂直滚动条:", hasVerticalScroll ? "需要" : "不需要");
+        console.log("水平滚动条:", hasHorizontalScroll ? "需要" : "不需要");
+      }, 1000);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>scrollX 和 scrollY 属性详解</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+        min-height: 200vh; /* 确保页面可以滚动 */
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        position: sticky;
+        top: 20px;
+        z-index: 100;
+      }
+
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 2.5rem;
+      }
+
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 1.2rem;
+      }
+
+      .content-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .explanation {
+        flex: 1;
+        min-width: 350px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .demo-area {
+        flex: 1;
+        min-width: 350px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      h2 {
+        color: #667eea;
+        margin: 20px 0 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+
+      h3 {
+        color: #2c3e50;
+        margin: 15px 0 10px;
+      }
+
+      p {
+        margin-bottom: 15px;
+      }
+
+      .code-example {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        overflow-x: auto;
+        font-family: "Courier New", monospace;
+        line-height: 1.5;
+        border-left: 4px solid #667eea;
+      }
+
+      .scroll-indicator {
+        width: 400px;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(44, 62, 80, 0.9);
+        color: white;
+        padding: 15px;
+        border-radius: 8px;
+        font-family: "Courier New", monospace;
+        z-index: 1000;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        min-width: 200px;
+      }
+
+      .scroll-visualization {
+        width: 400px;
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(44, 62, 80, 0.9);
+        color: white;
+        padding: 15px;
+        border-radius: 8px;
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+
+      .axis {
+        flex: 1;
+        text-align: center;
+      }
+
+      .axis-bar {
+        width: 150px;
+        height: 8px;
+        background: #34495e;
+        border-radius: 4px;
+        margin: 5px 0;
+        position: relative;
+      }
+
+      .axis-thumb {
+        position: absolute;
+        top: -4px;
+        width: 16px;
+        height: 16px;
+        background: #ff6b6b;
+        border-radius: 50%;
+        transform: translateX(-50%);
+        transition: left 0.1s ease;
+      }
+
+      .info-panel {
+        background: #2c3e50;
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 20px;
+        font-family: "Courier New", monospace;
+        line-height: 1.8;
+      }
+
+      .property-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+      }
+
+      .property-card {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #667eea;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .property-name {
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 5px;
+      }
+
+      .property-value {
+        color: #667eea;
+        font-family: "Courier New", monospace;
+      }
+
+      .property-desc {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+        margin-top: 5px;
+      }
+
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .comparison-table th,
+      .comparison-table td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+      }
+
+      .comparison-table th {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        font-weight: 600;
+      }
+
+      .comparison-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 10px 15px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        flex: 1;
+        min-width: 120px;
+      }
+
+      button:hover {
+        background: #5a6fd8;
+        transform: translateY(-2px);
+      }
+
+      .note {
+        background: #fff8e1;
+        padding: 15px;
+        border-radius: 6px;
+        border-left: 4px solid #ffc107;
+        margin: 20px 0;
+      }
+
+      .warning {
+        background: #ffebee;
+        padding: 15px;
+        border-radius: 6px;
+        border-left: 4px solid #f44336;
+        margin: 20px 0;
+      }
+
+      .demo-content {
+        height: 800px;
+        background: linear-gradient(45deg, #4ecdc4, #44a08d, #667eea, #764ba2);
+        background-size: 400% 400%;
+        animation: gradientShift 10s ease infinite;
+        margin: 20px 0;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .coordinate-system {
+        width: 100%;
+        height: 300px;
+        border: 2px solid #2c3e50;
+        border-radius: 8px;
+        margin: 20px 0;
+        position: relative;
+        background: #f8f9fa;
+        overflow: hidden;
+      }
+
+      .viewport {
+        position: absolute;
+        border: 3px solid #ff6b6b;
+        background: rgba(255, 107, 107, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .content-area {
+        position: absolute;
+        border: 2px dashed #667eea;
+        background: rgba(102, 126, 234, 0.05);
+      }
+
+      .coordinate-label {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        padding: 20px;
+        color: white;
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 768px) {
+        .content-wrapper {
+          flex-direction: column;
+        }
+
+        .property-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .scroll-visualization {
+          flex-direction: column;
+          gap: 10px;
+        }
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 6px;
+        background: #e0e0e0;
+        border-radius: 3px;
+        margin: 10px 0;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        border-radius: 3px;
+        width: 0%;
+        transition: width 0.1s ease;
+      }
+
+      .scroll-history {
+        max-height: 150px;
+        overflow-y: auto;
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 4px;
+        margin: 10px 0;
+        font-family: "Courier New", monospace;
+        font-size: 0.8rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>scrollX 和 scrollY 属性详解</h1>
+        <p class="subtitle">深入理解页面滚动位置检测与现代滚动API</p>
+      </header>
+
+      <div class="scroll-indicator" id="scrollIndicator">
+        <strong>实时滚动位置</strong><br />
+        scrollX: <span id="scrollXValue">0</span>px<br />
+        scrollY: <span id="scrollYValue">0</span>px<br />
+        pageXOffset: <span id="pageXOffsetValue">0</span>px<br />
+        pageYOffset: <span id="pageYOffsetValue">0</span>px
+      </div>
+
+      <div class="scroll-visualization" id="scrollVisualization">
+        <div class="axis">
+          <div>水平滚动 (scrollX)</div>
+          <div class="axis-bar">
+            <div class="axis-thumb" id="xAxisThumb"></div>
+          </div>
+          <div id="xPosition">0px</div>
+        </div>
+        <div class="axis">
+          <div>垂直滚动 (scrollY)</div>
+          <div class="axis-bar">
+            <div class="axis-thumb" id="yAxisThumb"></div>
+          </div>
+          <div id="yPosition">0px</div>
+        </div>
+      </div>
+
+      <div class="content-wrapper">
+        <div class="explanation">
+          <h2>什么是 scrollX 和 scrollY？</h2>
+          <p><code>window.scrollX</code> 和 <code>window.scrollY</code> 是只读属性，返回文档在水平方向和垂直方向滚动的像素数。</p>
+
+          <div class="code-example">
+            // 获取当前滚动位置<br />
+            const horizontalScroll = window.scrollX; // 水平滚动距离<br />
+            const verticalScroll = window.scrollY; // 垂直滚动距离<br /><br />
+
+            console.log(`滚动位置: X=${horizontalScroll}px, Y=${verticalScroll}px`);
+          </div>
+
+          <h3>核心特性</h3>
+          <ul>
+            <li><strong>只读属性</strong> - 无法直接设置这些值</li>
+            <li><strong>页面坐标</strong> - 相对于整个文档的滚动位置</li>
+            <li><strong>实时更新</strong> - 随页面滚动自动更新</li>
+            <li><strong>别名关系</strong> - scrollX/pageXOffset, scrollY/pageYOffset 是相同的</li>
+          </ul>
+
+          <div class="note"><strong>注意：</strong> <code>scrollX</code> 和 <code>pageXOffset</code> 是同一个属性的不同名称，<code>scrollY</code> 和 <code>pageYOffset</code> 也是如此。</div>
+
+          <h3>相关属性概览</h3>
+
+          <div class="property-grid">
+            <div class="property-card">
+              <div class="property-name">window.scrollX</div>
+              <div class="property-value" id="propScrollX">--</div>
+              <div class="property-desc">文档水平滚动距离</div>
+            </div>
+
+            <div class="property-card">
+              <div class="property-name">window.scrollY</div>
+              <div class="property-value" id="propScrollY">--</div>
+              <div class="property-desc">文档垂直滚动距离</div>
+            </div>
+
+            <div class="property-card">
+              <div class="property-name">window.pageXOffset</div>
+              <div class="property-value" id="propPageXOffset">--</div>
+              <div class="property-desc">scrollX 的别名</div>
+            </div>
+
+            <div class="property-card">
+              <div class="property-name">window.pageYOffset</div>
+              <div class="property-value" id="propPageYOffset">--</div>
+              <div class="property-desc">scrollY 的别名</div>
+            </div>
+          </div>
+
+          <h3>兼容性处理</h3>
+          <div class="code-example">
+            // 兼容所有浏览器的获取方式<br />
+            function getScrollPosition() {<br />
+            &nbsp;&nbsp;const x = window.scrollX !== undefined <br />
+            &nbsp;&nbsp;&nbsp;&nbsp;? window.scrollX <br />
+            &nbsp;&nbsp;&nbsp;&nbsp;: window.pageXOffset;<br />
+            &nbsp;&nbsp;<br />
+            &nbsp;&nbsp;const y = window.scrollY !== undefined <br />
+            &nbsp;&nbsp;&nbsp;&nbsp;? window.scrollY <br />
+            &nbsp;&nbsp;&nbsp;&nbsp;: window.pageYOffset;<br />
+            &nbsp;&nbsp;<br />
+            &nbsp;&nbsp;return { x, y };<br />
+            }<br /><br />
+
+            // 或者更简单的写法<br />
+            const scrollX = window.scrollX || window.pageXOffset;<br />
+            const scrollY = window.scrollY || window.pageYOffset;
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h2>滚动位置可视化</h2>
+
+          <div class="coordinate-system" id="coordinateSystem">
+            <!-- 通过JavaScript动态生成坐标系统 -->
+          </div>
+
+          <div class="info-panel">
+            // 当前文档尺寸信息<br />
+            文档宽度: <span id="docWidth">--</span>px<br />
+            文档高度: <span id="docHeight">--</span>px<br />
+            视口宽度: <span id="viewportWidth">--</span>px<br />
+            视口高度: <span id="viewportHeight">--</span>px<br />
+            最大滚动X: <span id="maxScrollX">--</span>px<br />
+            最大滚动Y: <span id="maxScrollY">--</span>px
+          </div>
+
+          <div class="progress-bar">
+            <div class="progress-fill" id="scrollProgress"></div>
+          </div>
+          <div style="text-align: center; font-size: 0.9rem; color: #666">页面滚动进度: <span id="progressText">0%</span></div>
+
+          <div class="controls">
+            <button id="scrollToTop">滚动到顶部</button>
+            <button id="scrollToMiddle">滚动到中间</button>
+            <button id="scrollToBottom">滚动到底部</button>
+            <button id="showScrollInfo">显示详细信息</button>
+          </div>
+        </div>
+      </div>
+
+      <table class="comparison-table">
+        <tr>
+          <th>属性</th>
+          <th>描述</th>
+          <th>浏览器支持</th>
+          <th>标准状态</th>
+        </tr>
+        <tr>
+          <td>window.scrollX</td>
+          <td>文档水平滚动距离</td>
+          <td>Chrome, Firefox, Safari, Edge</td>
+          <td>W3C 标准</td>
+        </tr>
+        <tr>
+          <td>window.scrollY</td>
+          <td>文档垂直滚动距离</td>
+          <td>Chrome, Firefox, Safari, Edge</td>
+          <td>W3C 标准</td>
+        </tr>
+        <tr>
+          <td>window.pageXOffset</td>
+          <td>scrollX 的别名</td>
+          <td>所有现代浏览器</td>
+          <td>历史名称</td>
+        </tr>
+        <tr>
+          <td>window.pageYOffset</td>
+          <td>scrollY 的别名</td>
+          <td>所有现代浏览器</td>
+          <td>历史名称</td>
+        </tr>
+        <tr>
+          <td>document.documentElement.scrollTop</td>
+          <td>文档垂直滚动（标准模式）</td>
+          <td>所有浏览器</td>
+          <td>传统方式</td>
+        </tr>
+        <tr>
+          <td>document.body.scrollTop</td>
+          <td>文档垂直滚动（怪异模式）</td>
+          <td>所有浏览器</td>
+          <td>传统方式</td>
+        </tr>
+      </table>
+
+      <div class="demo-content">
+        滚动这个区域来测试 scrollX 和 scrollY 属性<br />
+        ↓ 继续向下滚动 ↓
+      </div>
+
+      <div class="content-wrapper">
+        <div class="explanation">
+          <h2>实际应用场景</h2>
+
+          <h3>1. 阅读进度指示器</h3>
+          <div class="code-example">
+            // 创建阅读进度指示器<br />
+            function updateReadingProgress() {<br />
+            &nbsp;&nbsp;const scrollY = window.scrollY || window.pageYOffset;<br />
+            &nbsp;&nbsp;const docHeight = document.documentElement.scrollHeight - window.innerHeight;<br />
+            &nbsp;&nbsp;const progress = (scrollY / docHeight) * 100;<br />
+            &nbsp;&nbsp;<br />
+            &nbsp;&nbsp;// 更新进度条<br />
+            &nbsp;&nbsp;document.getElementById('progressBar').style.width = progress + '%';<br />
+            &nbsp;&nbsp;document.getElementById('progressText').textContent = Math.round(progress) + '%';<br />
+            }<br /><br />
+
+            // 监听滚动事件<br />
+            window.addEventListener('scroll', updateReadingProgress);
+          </div>
+
+          <h3>2. 视差滚动效果</h3>
+          <div class="code-example">
+            // 简单的视差效果<br />
+            function parallaxEffect() {<br />
+            &nbsp;&nbsp;const scrollY = window.scrollY || window.pageYOffset;<br />
+            &nbsp;&nbsp;const parallaxElements = document.querySelectorAll('.parallax');<br />
+            &nbsp;&nbsp;<br />
+            &nbsp;&nbsp;parallaxElements.forEach(element => {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;const speed = element.dataset.speed || 0.5;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;const yPos = -(scrollY * speed);<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;element.style.transform = `translateY(${yPos}px)`;<br />
+            &nbsp;&nbsp;});<br />
+            }<br /><br />
+
+            window.addEventListener('scroll', parallaxEffect);
+          </div>
+
+          <h3>3. 滚动触发动画</h3>
+          <div class="code-example">
+            // 元素进入视口时触发动画<br />
+            function checkElementInViewport() {<br />
+            &nbsp;&nbsp;const elements = document.querySelectorAll('.animate-on-scroll');<br />
+            &nbsp;&nbsp;const scrollY = window.scrollY || window.pageYOffset;<br />
+            &nbsp;&nbsp;const viewportHeight = window.innerHeight;<br />
+            &nbsp;&nbsp;<br />
+            &nbsp;&nbsp;elements.forEach(element => {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;const elementTop = element.getBoundingClientRect().top + scrollY;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;const elementBottom = elementTop + element.offsetHeight;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;// 如果元素在视口中<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;if (elementTop < scrollY + viewportHeight && elementBottom > scrollY) {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;element.classList.add('animated');<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+            &nbsp;&nbsp;});<br />
+            }<br /><br />
+
+            window.addEventListener('scroll', checkElementInViewport);
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h2>高级功能演示</h2>
+
+          <h3>滚动方向检测</h3>
+          <div class="code-example">
+            let lastScrollY = window.scrollY || window.pageYOffset;<br />
+            let scrollDirection = '';<br /><br />
+
+            window.addEventListener('scroll', function() {<br />
+            &nbsp;&nbsp;const currentScrollY = window.scrollY || window.pageYOffset;<br />
+            &nbsp;&nbsp;<br />
+            &nbsp;&nbsp;if (currentScrollY > lastScrollY) {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;scrollDirection = 'down';<br />
+            &nbsp;&nbsp;} else if (currentScrollY < lastScrollY) {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;scrollDirection = 'up';<br />
+            &nbsp;&nbsp;}<br />
+            &nbsp;&nbsp;<br />
+            &nbsp;&nbsp;lastScrollY = currentScrollY;<br />
+            &nbsp;&nbsp;console.log('滚动方向:', scrollDirection);<br />
+            });
+          </div>
+
+          <h3>滚动节流优化</h3>
+          <div class="code-example">
+            // 节流函数<br />
+            function throttle(func, delay) {<br />
+            &nbsp;&nbsp;let timeoutId;<br />
+            &nbsp;&nbsp;let lastExecTime = 0;<br />
+            &nbsp;&nbsp;return function(...args) {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;const currentTime = Date.now();<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;const elapsed = currentTime - lastExecTime;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;if (elapsed > delay) {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func.apply(this, args);<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lastExecTime = currentTime;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp; } else {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;clearTimeout(timeoutId);<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;timeoutId = setTimeout(() => {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func.apply(this, args);<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lastExecTime = Date.now();<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}, delay - elapsed);<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+            &nbsp;&nbsp;};<br />
+            }<br /><br />
+
+            // 使用节流的滚动处理<br />
+            const throttledScrollHandler = throttle(function() {<br />
+            &nbsp;&nbsp;const scrollY = window.scrollY || window.pageYOffset;<br />
+            &nbsp;&nbsp;console.log('节流后的滚动位置:', scrollY);<br />
+            }, 100);<br /><br />
+
+            window.addEventListener('scroll', throttledScrollHandler);
+          </div>
+
+          <h3>滚动历史记录</h3>
+          <div class="code-example">
+            const scrollHistory = [];<br />
+            const maxHistoryLength = 10;<br /><br />
+
+            window.addEventListener('scroll', function() {<br />
+            &nbsp;&nbsp;const position = {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;x: window.scrollX || window.pageXOffset,<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;y: window.scrollY || window.pageYOffset,<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;timestamp: Date.now()<br />
+            &nbsp;&nbsp;};<br />
+            &nbsp;&nbsp;<br />
+            &nbsp;&nbsp;scrollHistory.push(position);<br />
+            &nbsp;&nbsp;if (scrollHistory.length > maxHistoryLength) {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;scrollHistory.shift();<br />
+            &nbsp;&nbsp;}<br />
+            &nbsp;&nbsp;<br />
+            &nbsp;&nbsp;console.log('滚动历史:', scrollHistory);<br />
+            });
+          </div>
+
+          <div class="scroll-history" id="scrollHistory">
+            <strong>滚动历史记录</strong><br />
+            <!-- 历史记录将通过JavaScript动态添加 -->
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>scrollX 和 scrollY 属性详解 &copy; 2023 - 现代页面滚动位置检测指南</p>
+      </footer>
+    </div>
+
+    <script>
+      // 更新滚动位置信息
+      function updateScrollPositionInfo() {
+        const scrollX = window.scrollX || window.pageXOffset;
+        const scrollY = window.scrollY || window.pageYOffset;
+
+        // 更新实时指示器
+        document.getElementById("scrollXValue").textContent = scrollX;
+        document.getElementById("scrollYValue").textContent = scrollY;
+        document.getElementById("pageXOffsetValue").textContent = window.pageXOffset;
+        document.getElementById("pageYOffsetValue").textContent = window.pageYOffset;
+
+        // 更新属性卡片
+        document.getElementById("propScrollX").textContent = scrollX + "px";
+        document.getElementById("propScrollY").textContent = scrollY + "px";
+        document.getElementById("propPageXOffset").textContent = window.pageXOffset + "px";
+        document.getElementById("propPageYOffset").textContent = window.pageYOffset + "px";
+
+        // 更新可视化
+        updateScrollVisualization(scrollX, scrollY);
+        updateCoordinateSystem(scrollX, scrollY);
+        updateScrollProgress(scrollY);
+        updateScrollHistory(scrollX, scrollY);
+      }
+
+      // 更新滚动可视化
+      function updateScrollVisualization(scrollX, scrollY) {
+        const docWidth = document.documentElement.scrollWidth;
+        const docHeight = document.documentElement.scrollHeight;
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        const maxScrollX = Math.max(0, docWidth - viewportWidth);
+        const maxScrollY = Math.max(0, docHeight - viewportHeight);
+
+        // 更新水平滚动指示器
+        const xThumb = document.getElementById("xAxisThumb");
+        const xPercent = maxScrollX > 0 ? (scrollX / maxScrollX) * 100 : 0;
+        xThumb.style.left = xPercent + "%";
+        document.getElementById("xPosition").textContent = scrollX + "px";
+
+        // 更新垂直滚动指示器
+        const yThumb = document.getElementById("yAxisThumb");
+        const yPercent = maxScrollY > 0 ? (scrollY / maxScrollY) * 100 : 0;
+        yThumb.style.left = yPercent + "%";
+        document.getElementById("yPosition").textContent = scrollY + "px";
+      }
+
+      // 更新坐标系统
+      function updateCoordinateSystem(scrollX, scrollY) {
+        const container = document.getElementById("coordinateSystem");
+        const docWidth = document.documentElement.scrollWidth;
+        const docHeight = document.documentElement.scrollHeight;
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        const scale = 0.3; // 缩放比例
+
+        // 清空容器
+        container.innerHTML = "";
+
+        // 创建文档区域
+        const docArea = document.createElement("div");
+        docArea.className = "content-area";
+        docArea.style.width = docWidth * scale + "px";
+        docArea.style.height = docHeight * scale + "px";
+
+        // 创建视口区域
+        const viewport = document.createElement("div");
+        viewport.className = "viewport";
+        viewport.style.width = viewportWidth * scale + "px";
+        viewport.style.height = viewportHeight * scale + "px";
+        viewport.style.left = scrollX * scale + "px";
+        viewport.style.top = scrollY * scale + "px";
+
+        // 创建标签
+        const docLabel = document.createElement("div");
+        docLabel.className = "coordinate-label";
+        docLabel.textContent = `文档: ${docWidth} × ${docHeight}`;
+        docLabel.style.top = "10px";
+        docLabel.style.left = "10px";
+
+        const viewportLabel = document.createElement("div");
+        viewportLabel.className = "coordinate-label";
+        viewportLabel.textContent = `视口: ${scrollX}, ${scrollY}`;
+        viewportLabel.style.bottom = "10px";
+        viewportLabel.style.right = "10px";
+        viewportLabel.style.background = "#ff6b6b";
+        viewportLabel.style.color = "#fff";
+
+        // 添加到容器
+        container.appendChild(docArea);
+        container.appendChild(viewport);
+        container.appendChild(docLabel);
+        container.appendChild(viewportLabel);
+
+        // 更新尺寸信息
+        document.getElementById("docWidth").textContent = docWidth;
+        document.getElementById("docHeight").textContent = docHeight;
+        document.getElementById("viewportWidth").textContent = viewportWidth;
+        document.getElementById("viewportHeight").textContent = viewportHeight;
+        document.getElementById("maxScrollX").textContent = Math.max(0, docWidth - viewportWidth);
+        document.getElementById("maxScrollY").textContent = Math.max(0, docHeight - viewportHeight);
+      }
+
+      // 更新滚动进度
+      function updateScrollProgress(scrollY) {
+        const docHeight = document.documentElement.scrollHeight;
+        const viewportHeight = window.innerHeight;
+        const maxScrollY = Math.max(0, docHeight - viewportHeight);
+
+        const progress = maxScrollY > 0 ? (scrollY / maxScrollY) * 100 : 0;
+
+        document.getElementById("scrollProgress").style.width = progress + "%";
+        document.getElementById("progressText").textContent = Math.round(progress) + "%";
+      }
+
+      // 更新滚动历史
+      const scrollHistory = [];
+      function updateScrollHistory(scrollX, scrollY) {
+        const now = new Date();
+        const timeString = now.toTimeString().split(" ")[0];
+
+        scrollHistory.push({
+          x: scrollX,
+          y: scrollY,
+          time: timeString,
+        });
+
+        // 只保留最近5条记录
+        if (scrollHistory.length > 5) {
+          scrollHistory.shift();
+        }
+
+        // 更新显示
+        const historyElement = document.getElementById("scrollHistory");
+        historyElement.innerHTML = "<strong>滚动历史记录</strong><br>";
+
+        scrollHistory
+          .slice()
+          .reverse()
+          .forEach(record => {
+            const recordElement = document.createElement("div");
+            recordElement.textContent = `${record.time} - X:${record.x} Y:${record.y}`;
+            recordElement.style.fontSize = "0.7rem";
+            recordElement.style.margin = "2px 0";
+            historyElement.appendChild(recordElement);
+          });
+      }
+
+      // 滚动到顶部
+      function scrollToTop() {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }
+
+      // 滚动到中间
+      function scrollToMiddle() {
+        const docHeight = document.documentElement.scrollHeight;
+        const viewportHeight = window.innerHeight;
+        const middle = Math.max(0, (docHeight - viewportHeight) / 2);
+
+        window.scrollTo({
+          top: middle,
+          behavior: "smooth",
+        });
+      }
+
+      // 滚动到底部
+      function scrollToBottom() {
+        const docHeight = document.documentElement.scrollHeight;
+        const viewportHeight = window.innerHeight;
+        const bottom = Math.max(0, docHeight - viewportHeight);
+
+        window.scrollTo({
+          top: bottom,
+          behavior: "smooth",
+        });
+      }
+
+      // 显示详细信息
+      function showScrollInfo() {
+        const scrollX = window.scrollX || window.pageXOffset;
+        const scrollY = window.scrollY || window.pageYOffset;
+        const docWidth = document.documentElement.scrollWidth;
+        const docHeight = document.documentElement.scrollHeight;
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        alert(`滚动位置详细信息:
+水平滚动 (scrollX): ${scrollX}px
+垂直滚动 (scrollY): ${scrollY}px
+文档尺寸: ${docWidth} × ${docHeight}px
+视口尺寸: ${viewportWidth} × ${viewportHeight}px
+最大可滚动: ${Math.max(0, docWidth - viewportWidth)}px × ${Math.max(0, docHeight - viewportHeight)}px`);
+      }
+
+      // 初始更新
+      updateScrollPositionInfo();
+
+      // 绑定按钮事件
+      document.getElementById("scrollToTop").addEventListener("click", scrollToTop);
+      document.getElementById("scrollToMiddle").addEventListener("click", scrollToMiddle);
+      document.getElementById("scrollToBottom").addEventListener("click", scrollToBottom);
+      document.getElementById("showScrollInfo").addEventListener("click", showScrollInfo);
+
+      // 监听滚动事件（使用节流优化性能）
+      let scrollTimeout;
+      window.addEventListener("scroll", function () {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(updateScrollPositionInfo, 10);
+      });
+
+      // 监听窗口大小变化
+      window.addEventListener("resize", updateScrollPositionInfo);
+
+      // 页面加载完成后输出详细信息
+      window.addEventListener("load", function () {
+        console.log("=== 滚动位置信息分析 ===");
+        console.log("scrollX:", window.scrollX);
+        console.log("scrollY:", window.scrollY);
+        console.log("pageXOffset:", window.pageXOffset);
+        console.log("pageYOffset:", window.pageYOffset);
+        console.log("文档尺寸:", document.documentElement.scrollWidth + "x" + document.documentElement.scrollHeight);
+        console.log("视口尺寸:", window.innerWidth + "x" + window.innerHeight);
+      });
+    </script>
+  </body>
+</html>

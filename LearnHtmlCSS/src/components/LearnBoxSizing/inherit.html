@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>box-sizing: inherit 示例</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        padding: 20px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 10px;
+      }
+
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 1.2rem;
+      }
+
+      .comparison {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 40px;
+        flex-wrap: wrap;
+      }
+
+      .box {
+        flex: 1;
+        min-width: 300px;
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .box h2 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #eee;
+      }
+
+      .example-container {
+        background: #ecf0f1;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 15px 0;
+      }
+
+      .parent {
+        width: 250px;
+        height: 100px;
+        padding: 20px;
+        border: 5px solid #3498db;
+        background-color: #3498db33;
+        margin-bottom: 10px;
+        border-radius: 5px;
+      }
+
+      .child {
+        width: 100%;
+        height: 50px;
+        padding: 10px;
+        border: 3px solid #e74c3c;
+        background-color: #e74c3c33;
+        border-radius: 5px;
+      }
+
+      .code-block {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 15px;
+        border-radius: 5px;
+        font-family: "Courier New", monospace;
+        margin: 15px 0;
+        overflow-x: auto;
+      }
+
+      .explanation {
+        background: #fff9e6;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #f1c40f;
+        margin: 15px 0;
+      }
+
+      .highlight {
+        background-color: #fff9e6;
+        padding: 2px 5px;
+        border-radius: 3px;
+        font-weight: bold;
+      }
+
+      .visualization {
+        display: flex;
+        justify-content: space-around;
+        margin: 20px 0;
+        flex-wrap: wrap;
+      }
+
+      .visual-box {
+        width: 120px;
+        text-align: center;
+        margin: 10px;
+      }
+
+      .visual-box .box-content {
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: white;
+      }
+
+      .content-box .box-content {
+        background: #e74c3c;
+        width: 120px;
+        padding: 10px;
+        border: 5px solid #c0392b;
+      }
+
+      .border-box .box-content {
+        background: #3498db;
+        width: 90px;
+        padding: 10px;
+        border: 5px solid #2980b9;
+      }
+
+      .box-label {
+        margin-top: 10px;
+        font-weight: bold;
+      }
+
+      .dimensions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+        font-size: 0.9rem;
+        color: #7f8c8d;
+      }
+
+      @media (max-width: 768px) {
+        .comparison {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>CSS box-sizing: inherit 详解</h1>
+        <p class="subtitle">理解继承盒模型的工作原理和实际应用</p>
+      </header>
+
+      <div class="comparison">
+        <div class="box">
+          <h2>不使用 inherit 的情况</h2>
+
+          <div class="example-container">
+            <div class="parent" style="box-sizing: border-box">
+              父元素 (border-box)
+              <div class="child" style="box-sizing: content-box">子元素 (content-box)</div>
+            </div>
+          </div>
+
+          <div class="code-block" style="white-space: pre;">
+/* 父元素使用 border-box */
+.parent {
+    box-sizing: border-box;
+    width: 250px;
+    padding: 20px;
+    border: 5px solid #3498db;
+}
+
+/* 子元素使用 content-box (默认) */
+.child {
+    box-sizing: content-box;
+    width: 100%;
+    padding: 10px;
+    border: 3px solid #e74c3c;
+}
+          </div>
+
+          <div class="explanation">
+            <p>在这个例子中：</p>
+            <ul>
+              <li>父元素使用 <span class="highlight">border-box</span>，所以它的宽度包括内容、内边距和边框</li>
+              <li>子元素使用 <span class="highlight">content-box</span>，所以它的宽度只包括内容区域</li>
+              <li>子元素的 <code>width: 100%</code> 计算为父元素内容区域的100%，而不是整个父元素的100%</li>
+              <li>这导致子元素超出了父元素的边界</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="box">
+          <h2>使用 inherit 的情况</h2>
+
+          <div class="example-container">
+            <div class="parent" style="box-sizing: border-box">
+              父元素 (border-box)
+              <div class="child" style="box-sizing: inherit">子元素 (inherit)</div>
+            </div>
+          </div>
+
+          <div class="code-block" style="white-space: pre;">
+/* 父元素使用 border-box */
+.parent {
+    box-sizing: border-box;
+    width: 250px;
+    padding: 20px;
+    border: 5px solid #3498db;
+}
+
+/* 子元素继承父元素的 box-sizing */
+.child {
+    box-sizing: inherit;
+    width: 100%;
+    padding: 10px;
+    border: 3px solid #e74c3c;
+}
+          </div>
+
+          <div class="explanation">
+            <p>在这个例子中：</p>
+            <ul>
+              <li>父元素使用 <span class="highlight">border-box</span></li>
+              <li>子元素使用 <span class="highlight">inherit</span>，所以它继承了父元素的 border-box 计算方式</li>
+              <li>子元素的 <code>width: 100%</code> 现在计算为父元素整个框的100%</li>
+              <li>子元素完美地适应了父元素的边界</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="box">
+        <h2>盒模型可视化</h2>
+
+        <div class="visualization">
+          <div class="visual-box content-box">
+            <div class="box-content">内容</div>
+            <div class="box-label">content-box</div>
+            <div class="dimensions">
+              <span>宽度: 120px</span>
+            </div>
+            <div class="dimensions">
+              <span>实际占用: 150px</span>
+            </div>
+          </div>
+
+          <div class="visual-box border-box">
+            <div class="box-content">内容</div>
+            <div class="box-label">border-box</div>
+            <div class="dimensions">
+              <span>宽度: 90px</span>
+            </div>
+            <div class="dimensions">
+              <span>实际占用: 90px</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="explanation">
+          <p><span class="highlight">content-box</span> (默认): 宽度和高度只包括内容区域。内边距和边框会增加元素的总尺寸。</p>
+          <p><span class="highlight">border-box</span>: 宽度和高度包括内容、内边距和边框。设置的元素尺寸就是实际占用的空间。</p>
+          <p><span class="highlight">inherit</span>: 继承父元素的 box-sizing 值，确保一致的布局行为。</p>
+        </div>
+      </div>
+
+      <div class="box">
+        <h2>实际应用场景</h2>
+
+        <div class="example-container">
+          <div style="box-sizing: border-box; width: 100%; padding: 20px; background: #3498db33; border-radius: 5px; margin-bottom: 15px">
+            <h3 style="margin-top: 0">全局 border-box 设置</h3>
+            <div style="box-sizing: inherit; width: 100%; padding: 15px; background: #2ecc71; border-radius: 5px; color: white">所有元素默认使用 border-box</div>
+          </div>
+
+          <div class="code-block" style="white-space: pre;">
+/* 最佳实践：全局设置 border-box */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* 特定组件需要不同行为时 */
+.special-component {
+    box-sizing: content-box; /* 明确设置 */
+}
+
+.special-component * {
+    box-sizing: inherit; /* 子元素继承 */
+}
+          </div>
+        </div>
+
+        <div class="explanation">
+          <p><span class="highlight">box-sizing: inherit</span> 在以下场景特别有用：</p>
+          <ul>
+            <li>当你在项目中全局设置了 <code>box-sizing: border-box</code>，但某些第三方组件需要不同的盒模型</li>
+            <li>创建可重用的UI组件，希望它们适应父容器的盒模型设置</li>
+            <li>维护大型项目中的一致性，避免盒模型计算混乱</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 添加一些交互效果
+      document.addEventListener("DOMContentLoaded", function () {
+        const examples = document.querySelectorAll(".example-container");
+
+        examples.forEach(example => {
+          example.addEventListener("mouseenter", function () {
+            this.style.transform = "translateY(-5px)";
+            this.style.transition = "transform 0.3s ease";
+          });
+
+          example.addEventListener("mouseleave", function () {
+            this.style.transform = "translateY(0)";
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

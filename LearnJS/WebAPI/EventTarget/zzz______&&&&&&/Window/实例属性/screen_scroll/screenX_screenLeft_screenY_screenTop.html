@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>screenLeft 和 screenTop 属性详解</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 2.5rem;
+      }
+
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 1.2rem;
+      }
+
+      .content-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .explanation {
+        flex: 1;
+        min-width: 350px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .demo-area {
+        flex: 1;
+        min-width: 350px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      h2 {
+        color: #667eea;
+        margin: 20px 0 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+
+      h3 {
+        color: #2c3e50;
+        margin: 15px 0 10px;
+      }
+
+      p {
+        margin-bottom: 15px;
+      }
+
+      .code-example {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        overflow-x: auto;
+        font-family: "Courier New", monospace;
+        line-height: 1.5;
+        border-left: 4px solid #667eea;
+      }
+
+      .visualization {
+        width: 100%;
+        height: 300px;
+        border: 3px solid #2c3e50;
+        border-radius: 10px;
+        margin: 20px 0;
+        position: relative;
+        background: linear-gradient(135deg, #e8f4f8, #d1e7f0);
+        overflow: hidden;
+      }
+
+      .screen-boundary {
+        position: absolute;
+        border: 2px dashed #667eea;
+        background: rgba(102, 126, 234, 0.1);
+      }
+
+      .window-representation {
+        position: absolute;
+        border: 3px solid #ff6b6b;
+        background: rgba(255, 107, 107, 0.3);
+        transition: all 0.5s ease;
+      }
+
+      .coordinate-label {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .info-panel {
+        background: #2c3e50;
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 20px;
+        font-family: "Courier New", monospace;
+        line-height: 1.8;
+      }
+
+      .property-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+      }
+
+      .property-card {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #667eea;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .property-name {
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 5px;
+      }
+
+      .property-value {
+        color: #667eea;
+        font-family: "Courier New", monospace;
+      }
+
+      .property-desc {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+        margin-top: 5px;
+      }
+
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .comparison-table th,
+      .comparison-table td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+      }
+
+      .comparison-table th {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        font-weight: 600;
+      }
+
+      .comparison-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 10px 15px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        flex: 1;
+        min-width: 120px;
+      }
+
+      button:hover {
+        background: #5a6fd8;
+        transform: translateY(-2px);
+      }
+
+      .note {
+        background: #fff8e1;
+        padding: 15px;
+        border-radius: 6px;
+        border-left: 4px solid #ffc107;
+        margin: 20px 0;
+      }
+
+      .warning {
+        background: #ffebee;
+        padding: 15px;
+        border-radius: 6px;
+        border-left: 4px solid #f44336;
+        margin: 20px 0;
+      }
+
+      .browser-support {
+        background: #e8f4f8;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border: 2px solid #667eea;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        padding: 20px;
+        color: white;
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 768px) {
+        .content-wrapper {
+          flex-direction: column;
+        }
+
+        .property-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .axis-line {
+        position: absolute;
+        background: #ff6b6b;
+      }
+
+      .axis-line.x {
+        height: 2px;
+        width: 100%;
+      }
+
+      .axis-line.y {
+        width: 2px;
+        height: 100%;
+      }
+
+      .coordinate-point {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        background: #ff6b6b;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>screenLeft 和 screenTop 属性详解</h1>
+        <p class="subtitle">深入理解浏览器窗口在屏幕中的位置检测</p>
+      </header>
+
+      <div class="content-wrapper">
+        <div class="explanation">
+          <h2>什么是 screenLeft 和 screenTop？</h2>
+          <p><code>window.screenLeft</code> 和 <code>window.screenTop</code> 是只读属性，返回浏览器窗口相对于屏幕左边和上边的距离（像素）。</p>
+
+          <div class="code-example">
+            // 获取窗口在屏幕中的位置<br />
+            const left = window.screenLeft; // 距离屏幕左边的距离<br />
+            const top = window.screenTop; // 距离屏幕上边的距离<br /><br />
+
+            console.log('窗口位置:', left + 'px, ' + top + 'px');
+          </div>
+
+          <h3>核心特性</h3>
+          <ul>
+            <li><strong>只读属性</strong> - 无法直接设置这些值</li>
+            <li><strong>屏幕坐标</strong> - 相对于整个屏幕的坐标系统</li>
+            <li><strong>实时更新</strong> - 随窗口移动自动更新</li>
+            <li><strong>浏览器兼容性差异</strong> - 不同浏览器使用不同属性名</li>
+          </ul>
+
+          <div class="note"><strong>注意：</strong> 这些属性返回的是浏览器窗口相对于整个屏幕的位置，而不是网页内容的位置。</div>
+
+          <h3>相关属性概览</h3>
+
+          <div class="property-grid">
+            <div class="property-card">
+              <div class="property-name">window.screenLeft</div>
+              <div class="property-value" id="propScreenLeft">--</div>
+              <div class="property-desc">窗口左边界到屏幕左边界的距离</div>
+            </div>
+
+            <div class="property-card">
+              <div class="property-name">window.screenTop</div>
+              <div class="property-value" id="propScreenTop">--</div>
+              <div class="property-desc">窗口上边界到屏幕上边界的距离</div>
+            </div>
+
+            <div class="property-card">
+              <div class="property-name">window.screenX</div>
+              <div class="property-value" id="propScreenX">--</div>
+              <div class="property-desc">screenLeft 的别名（标准名称）</div>
+            </div>
+
+            <div class="property-card">
+              <div class="property-name">window.screenY</div>
+              <div class="property-value" id="propScreenY">--</div>
+              <div class="property-desc">screenTop 的别名（标准名称）</div>
+            </div>
+          </div>
+
+          <h3>兼容性处理</h3>
+          <div class="code-example">
+            // 兼容所有浏览器的获取方式<br />
+            function getWindowPosition() {<br />
+            &nbsp;&nbsp;const left = window.screenLeft !== undefined <br />
+            &nbsp;&nbsp;&nbsp;&nbsp;? window.screenLeft <br />
+            &nbsp;&nbsp;&nbsp;&nbsp;: window.screenX;<br />
+            &nbsp;&nbsp;<br />
+            &nbsp;&nbsp;const top = window.screenTop !== undefined <br />
+            &nbsp;&nbsp;&nbsp;&nbsp;? window.screenTop <br />
+            &nbsp;&nbsp;&nbsp;&nbsp;: window.screenY;<br />
+            &nbsp;&nbsp;<br />
+            &nbsp;&nbsp;return { left, top };<br />
+            }
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h2>窗口位置可视化</h2>
+
+          <div class="visualization" id="visualization">
+            <!-- 通过JavaScript动态生成可视化 -->
+          </div>
+
+          <div class="info-panel">
+            // 当前窗口位置信息<br />
+            window.screenLeft: <span id="screenLeftValue">--</span><br />
+            window.screenTop: <span id="screenTopValue">--</span><br />
+            window.screenX: <span id="screenXValue">--</span><br />
+            window.screenY: <span id="screenYValue">--</span><br /><br />
+
+            // 屏幕信息<br />
+            screen.width: <span id="screenWidth">--</span><br />
+            screen.height: <span id="screenHeight">--</span><br />
+            screen.availWidth: <span id="screenAvailWidth">--</span><br />
+            screen.availHeight: <span id="screenAvailHeight">--</span>
+          </div>
+
+          <div class="controls">
+            <button id="moveWindow">移动窗口测试</button>
+            <button id="centerWindow">居中窗口</button>
+            <button id="openPopup">打开弹出窗口</button>
+            <button id="refreshInfo">刷新信息</button>
+          </div>
+        </div>
+      </div>
+
+      <table class="comparison-table">
+        <tr>
+          <th>属性</th>
+          <th>描述</th>
+          <th>浏览器支持</th>
+          <th>标准状态</th>
+        </tr>
+        <tr>
+          <td>window.screenLeft</td>
+          <td>窗口左边界到屏幕左边界的距离（screenX别名）</td>
+          <td>IE, Chrome, Firefox, Safari</td>
+          <td>广泛支持</td>
+        </tr>
+        <tr>
+          <td>window.screenTop</td>
+          <td>窗口上边界到屏幕上边界的距离（screenY别名）</td>
+          <td>IE, Chrome, Firefox, Safari</td>
+          <td>广泛支持</td>
+        </tr>
+        <tr>
+          <td>window.screenX</td>
+          <td>screenLeft 的标准名称</td>
+          <td>Chrome, Firefox, Safari, Edge</td>
+          <td>W3C 标准</td>
+        </tr>
+        <tr>
+          <td>window.screenY</td>
+          <td>screenTop 的标准名称</td>
+          <td>Chrome, Firefox, Safari, Edge</td>
+          <td>W3C 标准</td>
+        </tr>
+      </table>
+
+      <div class="browser-support">
+        <h3>浏览器兼容性说明</h3>
+        <p><strong>现代浏览器：</strong> 同时支持 screenLeft/screenTop 和 screenX/screenY</p>
+        <p><strong>旧版IE：</strong> 只支持 screenLeft/screenTop</p>
+        <p><strong>推荐使用：</strong> 检测 screenLeft 是否存在，不存在则使用 screenX</p>
+      </div>
+
+      <div class="content-wrapper">
+        <div class="explanation">
+          <h2>实际应用场景</h2>
+
+          <h3>1. 多窗口应用</h3>
+          <div class="code-example">
+            // 打开相对于当前窗口的新窗口<br />
+            function openRelativeWindow(url, width, height) {<br />
+            &nbsp;&nbsp;const currentLeft = window.screenLeft || window.screenX;<br />
+            &nbsp;&nbsp;const currentTop = window.screenTop || window.screenY;<br />
+            &nbsp;&nbsp;const currentWidth = window.outerWidth;<br />
+            &nbsp;&nbsp;<br />
+            &nbsp;&nbsp;// 新窗口放在当前窗口右侧<br />
+            &nbsp;&nbsp;const newLeft = currentLeft + currentWidth + 10;<br />
+            &nbsp;&nbsp;const newTop = currentTop;<br />
+            &nbsp;&nbsp;<br />
+            &nbsp;&nbsp;window.open(url, '', `<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;width=${width},height=${height},<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;left=${newLeft},top=${newTop}<br />
+            &nbsp;&nbsp;`);<br />
+            }
+          </div>
+
+          <h3>2. 窗口位置记忆</h3>
+          <div class="code-example">
+            // 保存窗口位置到 localStorage<br />
+            function saveWindowPosition() {<br />
+            &nbsp;&nbsp;const position = {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;left: window.screenLeft || window.screenX,<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;top: window.screenTop || window.screenY,<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;width: window.outerWidth,<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;height: window.outerHeight<br />
+            &nbsp;&nbsp;};<br />
+            &nbsp;&nbsp;localStorage.setItem('windowPosition', JSON.stringify(position));<br />
+            }<br /><br />
+
+            // 恢复窗口位置<br />
+            function restoreWindowPosition() {<br />
+            &nbsp;&nbsp;const saved = localStorage.getItem('windowPosition');<br />
+            &nbsp;&nbsp;if (saved) {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;const position = JSON.parse(saved);<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;window.moveTo(position.left, position.top);<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;window.resizeTo(position.width, position.height);<br />
+            &nbsp;&nbsp;}<br />
+            }<br /><br />
+
+            // 监听窗口移动<br />
+            window.addEventListener('move', saveWindowPosition);<br />
+            window.addEventListener('resize', saveWindowPosition);
+          </div>
+
+          <h3>3. 多显示器支持</h3>
+          <div class="code-example">
+            // 检测窗口在哪个显示器上<br />
+            function getCurrentMonitor() {<br />
+            &nbsp;&nbsp;const windowLeft = window.screenLeft || window.screenX;<br />
+            &nbsp;&nbsp;const windowTop = window.screenTop || window.screenY;<br />
+            &nbsp;&nbsp;const windowRight = windowLeft + window.outerWidth;<br />
+            &nbsp;&nbsp;const windowBottom = windowTop + window.outerHeight;<br />
+            &nbsp;&nbsp;<br />
+            &nbsp;&nbsp;// 简单的多显示器检测（需要浏览器支持）<br />
+            &nbsp;&nbsp;if (windowLeft < screen.width) {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;return '主显示器';<br />
+            &nbsp;&nbsp;} else {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;return '副显示器';<br />
+            &nbsp;&nbsp;}<br />
+            }
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h2>高级功能演示</h2>
+
+          <h3>窗口边界检测</h3>
+          <div class="code-example">
+            // 检测窗口是否在屏幕可见区域内<br />
+            function isWindowInViewport() {<br />
+            &nbsp;&nbsp;const left = window.screenLeft || window.screenX;<br />
+            &nbsp;&nbsp;const top = window.screenTop || window.screenY;<br />
+            &nbsp;&nbsp;const width = window.outerWidth;<br />
+            &nbsp;&nbsp;const height = window.outerHeight;<br />
+            &nbsp;&nbsp;<br />
+            &nbsp;&nbsp;return (<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;left >= 0 &&<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;top >= 0 &&<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;left + width <= screen.availWidth &&<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;top + height <= screen.availHeight<br />
+            &nbsp;&nbsp;);<br />
+            }<br /><br />
+
+            // 获取窗口到屏幕边界的距离<br />
+            function getWindowToEdgeDistances() {<br />
+            &nbsp;&nbsp;const left = window.screenLeft || window.screenX;<br />
+            &nbsp;&nbsp;const top = window.screenTop || window.screenY;<br />
+            &nbsp;&nbsp;const right = screen.availWidth - (left + window.outerWidth);<br />
+            &nbsp;&nbsp;const bottom = screen.availHeight - (top + window.outerHeight);<br />
+            &nbsp;&nbsp;<br />
+            &nbsp;&nbsp;return { left, top, right, bottom };<br />
+            }
+          </div>
+
+          <h3>窗口排列工具</h3>
+          <div class="code-example">
+            // 平铺窗口（简单的2x2布局）<br />
+            function tileWindows() {<br />
+            &nbsp;&nbsp;const screenWidth = screen.availWidth;<br />
+            &nbsp;&nbsp;const screenHeight = screen.availHeight;<br />
+            &nbsp;&nbsp;const halfWidth = Math.floor(screenWidth / 2);<br />
+            &nbsp;&nbsp;const halfHeight = Math.floor(screenHeight / 2);<br />
+            &nbsp;&nbsp;<br />
+            &nbsp;&nbsp;// 四个区域的位置<br />
+            &nbsp;&nbsp;const positions = [<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;{ left: 0, top: 0 },<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;{ left: halfWidth, top: 0 },<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;{ left: 0, top: halfHeight },<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;{ left: halfWidth, top: halfHeight }<br />
+            &nbsp;&nbsp;];<br />
+            &nbsp;&nbsp;<br />
+            &nbsp;&nbsp;// 移动当前窗口到第一个位置<br />
+            &nbsp;&nbsp;window.moveTo(positions[0].left, positions[0].top);<br />
+            &nbsp;&nbsp;window.resizeTo(halfWidth, halfHeight);<br />
+            }
+          </div>
+
+          <div class="warning"><strong>安全限制：</strong> 现代浏览器对 <code>window.moveTo()</code> 和 <code>window.resizeTo()</code> 有严格限制，通常只能在由脚本打开的窗口中使用。</div>
+
+          <div class="note"><strong>最佳实践：</strong> 在需要窗口位置信息的应用中，总是提供兼容性处理，并考虑用户的隐私和安全设置。</div>
+        </div>
+      </div>
+
+      <footer>
+        <p>screenLeft 和 screenTop 属性详解 &copy; 2023 - 浏览器窗口位置检测指南</p>
+      </footer>
+    </div>
+
+    <script>
+      // 更新窗口位置信息
+      function updateWindowPositionInfo() {
+        // 获取各种位置属性
+        const screenLeft = window.screenLeft;
+        const screenTop = window.screenTop;
+        const screenX = window.screenX;
+        const screenY = window.screenY;
+
+        // 更新属性卡片
+        document.getElementById("propScreenLeft").textContent = screenLeft !== undefined ? screenLeft + "px" : "不支持";
+        document.getElementById("propScreenTop").textContent = screenTop !== undefined ? screenTop + "px" : "不支持";
+        document.getElementById("propScreenX").textContent = screenX !== undefined ? screenX + "px" : "不支持";
+        document.getElementById("propScreenY").textContent = screenY !== undefined ? screenY + "px" : "不支持";
+
+        // 更新信息面板
+        document.getElementById("screenLeftValue").textContent = screenLeft !== undefined ? screenLeft + "px" : "不支持";
+        document.getElementById("screenTopValue").textContent = screenTop !== undefined ? screenTop + "px" : "不支持";
+        document.getElementById("screenXValue").textContent = screenX !== undefined ? screenX + "px" : "不支持";
+        document.getElementById("screenYValue").textContent = screenY !== undefined ? screenY + "px" : "不支持";
+
+        // 更新屏幕信息
+        document.getElementById("screenWidth").textContent = screen.width + "px";
+        document.getElementById("screenHeight").textContent = screen.height + "px";
+        document.getElementById("screenAvailWidth").textContent = screen.availWidth + "px";
+        document.getElementById("screenAvailHeight").textContent = screen.availHeight + "px";
+
+        // 更新可视化
+        updateVisualization();
+      }
+
+      // 更新可视化显示
+      function updateVisualization() {
+        const container = document.getElementById("visualization");
+        const scale = 0.15; // 缩放比例
+
+        // 清空容器
+        container.innerHTML = "";
+
+        const screenWidth = screen.width;
+        const screenHeight = screen.height;
+        const availWidth = screen.availWidth;
+        const availHeight = screen.availHeight;
+
+        const windowLeft = window.screenLeft || window.screenX || 0;
+        const windowTop = window.screenTop || window.screenY || 0;
+        const windowWidth = window.outerWidth;
+        const windowHeight = window.outerHeight;
+
+        // 创建屏幕边界
+        const screenBoundary = document.createElement("div");
+        screenBoundary.className = "screen-boundary";
+        screenBoundary.style.width = screenWidth * scale + "px";
+        screenBoundary.style.height = screenHeight * scale + "px";
+        screenBoundary.style.left = "50%";
+        screenBoundary.style.top = "50%";
+        screenBoundary.style.transform = "translate(-50%, -50%)";
+
+        // 创建可用区域
+        const availArea = document.createElement("div");
+        availArea.className = "screen-boundary";
+        availArea.style.width = availWidth * scale + "px";
+        availArea.style.height = availHeight * scale + "px";
+        availArea.style.left = "50%";
+        availArea.style.top = "50%";
+        availArea.style.transform = "translate(-50%, -50%)";
+        availArea.style.borderColor = "#4ecdc4";
+        availArea.style.background = "rgba(78, 205, 196, 0.1)";
+
+        // 创建窗口表示
+        const windowRep = document.createElement("div");
+        windowRep.className = "window-representation";
+        windowRep.style.width = windowWidth * scale + "px";
+        windowRep.style.height = windowHeight * scale + "px";
+        windowRep.style.left = windowLeft * scale + "px";
+        windowRep.style.top = windowTop * scale + "px";
+
+        // 创建坐标轴
+        const xAxis = document.createElement("div");
+        xAxis.className = "axis-line x";
+        xAxis.style.top = windowTop * scale + "px";
+        xAxis.style.background = "rgba(255, 107, 107, 0.5)";
+
+        const yAxis = document.createElement("div");
+        yAxis.className = "axis-line y";
+        yAxis.style.left = windowLeft * scale + "px";
+        yAxis.style.background = "rgba(255, 107, 107, 0.5)";
+
+        // 创建坐标点
+        const coordPoint = document.createElement("div");
+        coordPoint.className = "coordinate-point";
+        coordPoint.style.left = windowLeft * scale + "px";
+        coordPoint.style.top = windowTop * scale + "px";
+
+        // 创建标签
+        const screenLabel = document.createElement("div");
+        screenLabel.className = "coordinate-label";
+        screenLabel.textContent = `屏幕: ${screenWidth} × ${screenHeight}`;
+        screenLabel.style.top = "10px";
+        screenLabel.style.left = "10px";
+
+        const availLabel = document.createElement("div");
+        availLabel.className = "coordinate-label";
+        availLabel.textContent = `可用: ${availWidth} × ${availHeight}`;
+        availLabel.style.bottom = "10px";
+        availLabel.style.right = "10px";
+        availLabel.style.background = "#4ecdc4";
+        availLabel.style.color = "#fff";
+
+        const windowLabel = document.createElement("div");
+        windowLabel.className = "coordinate-label";
+        windowLabel.textContent = `窗口: ${windowLeft}, ${windowTop}`;
+        windowLabel.style.top = windowTop * scale - 25 + "px";
+        windowLabel.style.left = windowLeft * scale + "px";
+        windowLabel.style.background = "#ff6b6b";
+        windowLabel.style.color = "#fff";
+
+        // 添加到容器
+        container.appendChild(screenBoundary);
+        container.appendChild(availArea);
+        container.appendChild(xAxis);
+        container.appendChild(yAxis);
+        container.appendChild(coordPoint);
+        container.appendChild(windowRep);
+        container.appendChild(screenLabel);
+        container.appendChild(availLabel);
+        container.appendChild(windowLabel);
+      }
+
+      // 移动窗口测试
+      function moveWindowTest() {
+        // 注意：现代浏览器通常不允许随意移动主窗口
+        // 这里只是演示如何获取位置信息
+        alert("现代浏览器出于安全考虑，通常不允许脚本移动主窗口。\n这个功能在由脚本打开的弹出窗口中可能有效。");
+
+        // 模拟位置变化（仅用于演示）
+        updateVisualization();
+      }
+
+      // 居中窗口
+      function centerWindow() {
+        const screenWidth = screen.availWidth;
+        const screenHeight = screen.availHeight;
+        const windowWidth = window.outerWidth;
+        const windowHeight = window.outerHeight;
+
+        const left = (screenWidth - windowWidth) / 2;
+        const top = (screenHeight - windowHeight) / 2;
+
+        // 尝试移动窗口（可能被浏览器阻止）
+        try {
+          window.moveTo(left, top);
+        } catch (e) {
+          alert("浏览器阻止了窗口移动操作。\n这是正常的安全限制。");
+        }
+      }
+
+      // 打开弹出窗口
+      function openPopupWindow() {
+        const currentLeft = window.screenLeft || window.screenX || 0;
+        const currentTop = window.screenTop || window.screenY || 0;
+        const currentWidth = window.outerWidth;
+
+        // 新窗口放在当前窗口右侧
+        const newLeft = currentLeft + currentWidth + 10;
+        const newTop = currentTop;
+
+        window.open("", "popupWindow", `width=400,height=300,left=${newLeft},top=${newTop}`);
+      }
+
+      // 初始更新
+      updateWindowPositionInfo();
+
+      // 绑定按钮事件
+      document.getElementById("moveWindow").addEventListener("click", moveWindowTest);
+      document.getElementById("centerWindow").addEventListener("click", centerWindow);
+      document.getElementById("openPopup").addEventListener("click", openPopupWindow);
+      document.getElementById("refreshInfo").addEventListener("click", updateWindowPositionInfo);
+
+      // 监听窗口移动和调整大小
+      window.addEventListener("move", updateWindowPositionInfo);
+      window.addEventListener("resize", updateWindowPositionInfo);
+
+      // 定期更新信息（防止某些浏览器不触发move事件）
+      setInterval(updateWindowPositionInfo, 1000);
+
+      // 页面加载完成后输出详细信息
+      window.addEventListener("load", function () {
+        console.log("=== 窗口位置信息分析 ===");
+        console.log("screenLeft:", window.screenLeft);
+        console.log("screenTop:", window.screenTop);
+        console.log("screenX:", window.screenX);
+        console.log("screenY:", window.screenY);
+        console.log("outerWidth:", window.outerWidth);
+        console.log("outerHeight:", window.outerHeight);
+        console.log("屏幕尺寸:", screen.width + "x" + screen.height);
+        console.log("可用区域:", screen.availWidth + "x" + screen.availHeight);
+      });
+    </script>
+  </body>
+</html>

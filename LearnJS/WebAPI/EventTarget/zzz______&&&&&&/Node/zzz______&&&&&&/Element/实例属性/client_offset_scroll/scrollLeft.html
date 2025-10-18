@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>scrollLeft 属性详解</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 2.5rem;
+      }
+
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 1.3rem;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .content {
+        display: grid;
+        grid-template-columns: 100%;
+        margin-bottom: 40px;
+      }
+
+      .demo-section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 40px;
+      }
+
+      .explanation-section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #e67e22;
+      }
+
+      h3 {
+        color: #2c3e50;
+        margin: 25px 0 15px 0;
+      }
+
+      .demo-container {
+        position: relative;
+        width: 100%;
+        height: 400px;
+        border: 2px solid #34495e;
+        margin: 25px 0;
+        background: #ecf0f1;
+        padding: 20px;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .horizontal-scroll-element {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        border: 2px solid #e67e22;
+        border-radius: 8px;
+        background: white;
+        position: relative;
+        white-space: nowrap;
+      }
+
+      .scroll-content-horizontal {
+        display: inline-block;
+        min-width: 1500px;
+        padding: 20px;
+        background: linear-gradient(90deg, #3498db11 0%, #2ecc7111 20%, #e74c3c11 40%, #f39c1211 60%, #9b59b611 80%, #1abc9c11 100%);
+      }
+
+      .content-column {
+        display: inline-block;
+        width: 280px;
+        height: 340px;
+        margin: 0 15px;
+        padding: 20px;
+        border-radius: 8px;
+        vertical-align: top;
+        white-space: normal;
+        border: 2px solid;
+      }
+
+      .column-1 {
+        background: #3498db33;
+        border-color: #3498db;
+      }
+      .column-2 {
+        background: #2ecc7133;
+        border-color: #2ecc71;
+      }
+      .column-3 {
+        background: #e74c3c33;
+        border-color: #e74c3c;
+      }
+      .column-4 {
+        background: #f39c1233;
+        border-color: #f39c12;
+      }
+      .column-5 {
+        background: #9b59b633;
+        border-color: #9b59b6;
+      }
+
+      .scroll-indicator {
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(230, 126, 34, 0.9);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: bold;
+        z-index: 10;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      }
+
+      .scroll-position-line {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: #e74c3c;
+        z-index: 5;
+        pointer-events: none;
+      }
+
+      .scroll-marker {
+        position: absolute;
+        top: 10px;
+        padding: 5px 10px;
+        background: rgba(231, 76, 60, 0.1);
+        border-top: 3px solid #e74c3c;
+        font-size: 0.8rem;
+        color: #e74c3c;
+        pointer-events: none;
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin: 20px 0;
+      }
+
+      button {
+        padding: 12px 15px;
+        background: #e67e22;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      button:hover {
+        background: #d35400;
+        transform: translateY(-2px);
+      }
+
+      button.secondary {
+        background: #3498db;
+      }
+
+      button.secondary:hover {
+        background: #2980b9;
+      }
+
+      .property-display {
+        background: #2c3e50;
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+
+      .property-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 10px 0;
+        padding: 8px 12px;
+        background: #34495e;
+        border-radius: 6px;
+      }
+
+      .property-name {
+        font-weight: bold;
+        font-size: 1.1rem;
+      }
+
+      .property-value {
+        font-family: "Courier New", monospace;
+        font-size: 1.2rem;
+        color: #f1c40f;
+        font-weight: bold;
+      }
+
+      .scroll-controls {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+
+      .control-group {
+        margin: 15px 0;
+      }
+
+      .control-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #2c3e50;
+      }
+
+      .range-slider {
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: #ddd;
+        outline: none;
+        -webkit-appearance: none;
+      }
+
+      .range-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #e67e22;
+        cursor: pointer;
+      }
+
+      .range-value {
+        text-align: center;
+        font-weight: bold;
+        color: #e67e22;
+        margin-top: 5px;
+      }
+
+      .progress-container {
+        width: 100%;
+        height: 8px;
+        background: #ecf0f1;
+        border-radius: 4px;
+        margin: 20px 0;
+        overflow: hidden;
+      }
+
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #3498db, #e67e22);
+        width: 0%;
+        transition: width 0.1s ease;
+      }
+
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .comparison-table th {
+        background: #e67e22;
+        color: white;
+        padding: 12px 15px;
+        text-align: left;
+      }
+
+      .comparison-table td {
+        padding: 10px 15px;
+        border-bottom: 1px solid #ecf0f1;
+      }
+
+      .comparison-table tr:nth-child(even) {
+        background: #f8f9fa;
+      }
+
+      .code-block {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 20px;
+        border-radius: 10px;
+        font-family: "Courier New", monospace;
+        margin: 20px 0;
+        overflow-x: auto;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        white-space: pre;
+      }
+
+      .special-cases {
+        background: #fff9e6;
+        padding: 20px;
+        border-radius: 10px;
+        border-left: 4px solid #f1c40f;
+        margin: 20px 0;
+      }
+
+      .case-example {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 10px 0;
+        border: 1px solid #e9ecef;
+      }
+
+      .rtl-demo {
+        direction: rtl;
+        text-align: right;
+        padding: 15px;
+        background: #fef5e7;
+        border-radius: 8px;
+        margin: 15px 0;
+        border: 2px solid #e67e22;
+      }
+
+      .scroll-events {
+        background: #e8f6f3;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 15px 0;
+        border: 2px solid #1abc9c;
+      }
+
+      @media (max-width: 968px) {
+        .content {
+          grid-template-columns: 1fr;
+        }
+
+        .controls {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>scrollLeft 属性详解</h1>
+        <p class="subtitle">深入理解 scrollLeft 的工作原理、RTL模式特性和实际应用</p>
+      </header>
+
+      <div class="content">
+        <div class="demo-section">
+          <h2>交互演示</h2>
+          <p>水平滚动下方内容或使用控制按钮，观察 scrollLeft 值的变化</p>
+
+          <div class="demo-container">
+            <div class="horizontal-scroll-element" id="scrollElement">
+              <div class="scroll-indicator" id="scrollIndicator">scrollLeft: <span id="scrollLeftValue">0</span>px</div>
+              <div class="scroll-content-horizontal" id="scrollContent">
+                <div class="content-column column-1">
+                  <h3>第一列</h3>
+                  <p>scrollLeft = 0px</p>
+                  <p>滚动位置在最左侧</p>
+                  <div style="margin-top: 20px">
+                    <p>内容区域 1</p>
+                    <p>水平滚动演示</p>
+                  </div>
+                </div>
+                <div class="content-column column-2">
+                  <h3>第二列</h3>
+                  <p>目标位置: 300px</p>
+                  <p>点击按钮滚动到这里</p>
+                  <div style="margin-top: 20px">
+                    <p>内容区域 2</p>
+                    <p>注意 scrollLeft 变化</p>
+                  </div>
+                </div>
+                <div class="content-column column-3">
+                  <h3>第三列</h3>
+                  <p>目标位置: 600px</p>
+                  <p>scrollLeft 是可读写属性</p>
+                  <div style="margin-top: 20px">
+                    <p>内容区域 3</p>
+                    <p>水平滚动特性</p>
+                  </div>
+                </div>
+                <div class="content-column column-4">
+                  <h3>第四列</h3>
+                  <p>目标位置: 900px</p>
+                  <p>继续向右滚动</p>
+                  <div style="margin-top: 20px">
+                    <p>内容区域 4</p>
+                    <p>观察进度条</p>
+                  </div>
+                </div>
+                <div class="content-column column-5">
+                  <h3>第五列</h3>
+                  <p>目标位置: 1200px</p>
+                  <p>接近最右侧了</p>
+                  <div style="margin-top: 20px">
+                    <p>内容区域 5</p>
+                    <p>最大 scrollLeft 值</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="rtl-demo">
+            <h4>RTL（从右到左）模式演示</h4>
+            <p>下面的容器设置了 <code>direction: rtl</code></p>
+            <div class="horizontal-scroll-element" id="rtlScrollElement" style="direction: rtl">
+              <div style="display: inline-block; min-width: 800px; padding: 15px; background: #f39c1233">
+                <div style="display: inline-block; width: 200px; margin: 0 10px; padding: 15px; background: white; border-radius: 6px">
+                  <p>RTL 内容 1</p>
+                  <p>注意滚动方向</p>
+                </div>
+                <div style="display: inline-block; width: 200px; margin: 0 10px; padding: 15px; background: white; border-radius: 6px">
+                  <p>RTL 内容 2</p>
+                  <p>scrollLeft 行为不同</p>
+                </div>
+              </div>
+            </div>
+            <div style="margin-top: 10px; text-align: center">
+              <span id="rtlScrollLeft">RTL scrollLeft: 0px</span>
+            </div>
+          </div>
+
+          <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+          <div style="text-align: center; margin-bottom: 20px">
+            <span id="progressText">水平滚动进度: 0%</span>
+          </div>
+
+          <div class="scroll-controls">
+            <div class="control-group">
+              <label class="control-label">直接设置 scrollLeft 值:</label>
+              <input type="range" min="0" max="1500" value="0" class="range-slider" id="scrollLeftSlider" />
+              <div class="range-value" id="scrollLeftValueDisplay">0px</div>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button onclick="scrollToColumn(300)">滚动到第二列</button>
+            <button onclick="scrollToColumn(600)">滚动到第三列</button>
+            <button onclick="scrollToColumn(900)">滚动到第四列</button>
+            <button class="secondary" onclick="scrollToStart()">回到最左</button>
+            <button class="secondary" onclick="scrollToEnd()">滚动到最右</button>
+            <button onclick="toggleRTL()">切换RTL模式</button>
+          </div>
+
+          <div class="property-display">
+            <h3 style="color: white; margin-top: 0">水平滚动属性值</h3>
+            <div class="property-item">
+              <span class="property-name">scrollLeft:</span>
+              <span class="property-value" id="scrollLeftVal">0px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">scrollWidth:</span>
+              <span class="property-value" id="scrollWidthVal">0px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">clientWidth:</span>
+              <span class="property-value" id="clientWidthVal">0px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">最大 scrollLeft:</span>
+              <span class="property-value" id="maxScrollLeftVal">0px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">滚动百分比:</span>
+              <span class="property-value" id="scrollPercentVal">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="explanation-section">
+          <h2>scrollLeft 详解</h2>
+
+          <div class="special-cases">
+            <h3>📌 scrollLeft 核心定义</h3>
+            <p><strong>scrollLeft = 元素内容水平滚动的像素数</strong></p>
+            <p>表示元素内容左侧到可视区域左侧的距离，这是一个<strong>可读写</strong>属性。</p>
+          </div>
+
+          <h3>基本概念</h3>
+          <div class="code-block">
+// scrollLeft 表示内容水平滚动的距离
+element.scrollLeft = 元素内容左侧 到 可视区域左侧 的距离
+
+// 取值范围
+0 ≤ element.scrollLeft ≤ (element.scrollWidth - element.clientWidth)
+
+// 读写示例
+const element = document.getElementById('scrollElement');
+
+// 读取当前水平滚动位置
+console.log('当前水平滚动位置:', element.scrollLeft);
+
+// 设置水平滚动位置（可写属性）
+element.scrollLeft = 300; // 向右滚动到300px位置
+          </div>
+
+          <h3>RTL（从右到左）模式下的特殊行为</h3>
+          <div class="code-block">
+// 在LTR（从左到右）模式下
+element.style.direction = 'ltr';
+console.log('LTR scrollLeft:', element.scrollLeft); // 正常行为
+
+// 在RTL（从右到左）模式下
+element.style.direction = 'rtl';
+console.log('RTL scrollLeft:', element.scrollLeft); // 行为可能不同
+
+// RTL模式下的最大scrollLeft为0
+// 最小scrollLeft为负的(scrollWidth - clientWidth)
+const rtlElement = document.getElementById('rtlElement');
+console.log('RTL最大scrollLeft:', rtlElement.scrollLeft); // 0
+console.log('RTL最小scrollLeft:', rtlElement.scrollWidth - rtlElement.clientWidth); // 负值
+          </div>
+
+          <h3>与其他滚动属性的关系</h3>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>属性</th>
+                <th>描述</th>
+                <th>是否可写</th>
+                <th>取值范围</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>scrollLeft</strong></td>
+                <td>水平滚动位置</td>
+                <td>是</td>
+                <td>0 到 (scrollWidth - clientWidth)</td>
+              </tr>
+              <tr>
+                <td>scrollTop</td>
+                <td>垂直滚动位置</td>
+                <td>是</td>
+                <td>0 到 (scrollHeight - clientHeight)</td>
+              </tr>
+              <tr>
+                <td>scrollWidth</td>
+                <td>内容总宽度</td>
+                <td>否</td>
+                <td>≥ clientWidth</td>
+              </tr>
+              <tr>
+                <td>clientWidth</td>
+                <td>可视区域宽度</td>
+                <td>否</td>
+                <td>固定值</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>滚动事件和监听</h3>
+          <div class="scroll-events">
+            <h4>水平滚动事件演示</h4>
+            <p>尝试水平滚动上方内容，观察事件触发情况</p>
+            <div id="eventLog" style="height: 100px; overflow-y: auto; background: white; padding: 10px; border-radius: 4px; font-size: 0.8rem"></div>
+          </div>
+
+          <div class="code-block">
+// 监听水平滚动事件
+element.addEventListener('scroll', function(event) {
+    console.log('水平滚动事件触发');
+    console.log('当前 scrollLeft:', this.scrollLeft);
+    console.log('水平滚动百分比:', (this.scrollLeft / (this.scrollWidth - this.clientWidth)) * 100 + '%');
+    
+    // 检测是否滚动到最右侧
+    const isAtRight = this.scrollLeft + this.clientWidth >= this.scrollWidth;
+    if (isAtRight) {
+        console.log('已滚动到最右侧！');
+    }
+    
+    // 检测是否滚动到最左侧
+    const isAtLeft = this.scrollLeft === 0;
+    if (isAtLeft) {
+        console.log('已滚动到最左侧！');
+    }
+});
+
+// RTL模式下的检测
+function checkRTLScrollPosition(element) {
+    if (getComputedStyle(element).direction === 'rtl') {
+        // RTL模式下，scrollLeft为0表示最右侧
+        const isAtStart = element.scrollLeft === 0;
+        const isAtEnd = element.scrollLeft <= -(element.scrollWidth - element.clientWidth);
+        
+        console.log('RTL - 是否在最右:', isAtStart);
+        console.log('RTL - 是否在最左:', isAtEnd);
+    }
+}
+          </div>
+
+          <h3>特殊情况和注意事项</h3>
+
+          <div class="case-example">
+            <h4>情况 1: 不可水平滚动的元素</h4>
+            <p>对于不可水平滚动的元素，scrollLeft 始终为 0：</p>
+            <div class="code-block">
+// 元素没有水平溢出内容
+element.style.overflowX = 'hidden';
+console.log('不可水平滚动元素 scrollLeft:', element.scrollLeft); // 0
+
+// 即使强制设置也会被忽略
+element.scrollLeft = 100;
+console.log('设置后的 scrollLeft:', element.scrollLeft); // 仍然为 0
+            </div>
+          </div>
+
+          <div class="case-example">
+            <h4>情况 2: RTL模式下的负值</h4>
+            <p>在RTL模式下，scrollLeft 可能为负值：</p>
+            <div class="code-block">
+// RTL模式下的scrollLeft行为
+const rtlElement = document.querySelector('[dir="rtl"]');
+
+// 在RTL模式下，初始scrollLeft可能为0或负值
+console.log('RTL初始scrollLeft:', rtlElement.scrollLeft);
+
+// 设置scrollLeft时需要注意方向
+rtlElement.scrollLeft = -300; // 在RTL模式下向左滚动
+            </div>
+          </div>
+
+          <div class="case-example">
+            <h4>情况 3: 响应式布局中的行为</h4>
+            <p>在响应式布局中，scrollLeft 的最大值会随容器大小变化：</p>
+            <div class="code-block">
+function updateHorizontalScroll(element) {
+    const maxScrollLeft = element.scrollWidth - element.clientWidth;
+    
+    // 如果当前scrollLeft超过新的最大值，自动修正
+    if (element.scrollLeft > maxScrollLeft) {
+        element.scrollLeft = maxScrollLeft;
+    }
+    
+    console.log('新的最大scrollLeft:', maxScrollLeft);
+}
+
+// 监听窗口大小变化
+window.addEventListener('resize', () => {
+    updateHorizontalScroll(scrollElement);
+});
+            </div>
+          </div>
+
+          <h3>实际应用场景</h3>
+          <div class="code-block">
+// 应用 1: 水平轮播图
+class HorizontalCarousel {
+    constructor(container) {
+        this.container = container;
+        this.items = Array.from(container.children);
+        this.currentIndex = 0;
+        this.itemWidth = this.items[0].offsetWidth;
+    }
+    
+    scrollToIndex(index) {
+        this.currentIndex = index;
+        const targetScrollLeft = index * this.itemWidth;
+        this.smoothScrollTo(targetScrollLeft);
+    }
+    
+    next() {
+        if (this.currentIndex < this.items.length - 1) {
+            this.scrollToIndex(this.currentIndex + 1);
+        }
+    }
+    
+    prev() {
+        if (this.currentIndex > 0) {
+            this.scrollToIndex(this.currentIndex - 1);
+        }
+    }
+    
+    smoothScrollTo(targetScrollLeft, duration = 300) {
+        const startPosition = this.container.scrollLeft;
+        const distance = targetScrollLeft - startPosition;
+        let startTime = null;
+        
+        function animation(currentTime) {
+            if (startTime === null) startTime = currentTime;
+            const timeElapsed = currentTime - startTime;
+            const progress = Math.min(timeElapsed / duration, 1);
+            
+            const easeOutCubic = progress => 1 - Math.pow(1 - progress, 3);
+            this.container.scrollLeft = startPosition + distance * easeOutCubic(progress);
+            
+            if (timeElapsed < duration) {
+                requestAnimationFrame(animation.bind(this));
+            }
+        }
+        
+        requestAnimationFrame(animation.bind(this));
+    }
+}
+
+// 应用 2: 水平标签页
+function setupHorizontalTabs(container) {
+    const tabs = container.querySelectorAll('.tab');
+    const tabContents = container.querySelectorAll('.tab-content');
+    
+    tabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => {
+            // 滚动到对应的标签页
+            const tabLeft = tab.offsetLeft;
+            const tabWidth = tab.offsetWidth;
+            const containerWidth = container.clientWidth;
+            
+            // 确保标签在可视区域内
+            const targetScroll = tabLeft - (containerWidth - tabWidth) / 2;
+            container.scrollLeft = Math.max(0, targetScroll);
+            
+            // 激活对应的标签页内容
+            activateTab(index);
+        });
+    });
+}
+
+// 应用 3: 水平时间轴
+function setupHorizontalTimeline(timeline) {
+    const events = timeline.querySelectorAll('.timeline-event');
+    const navButtons = timeline.querySelectorAll('.timeline-nav');
+    
+    navButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const direction = button.dataset.direction;
+            const scrollAmount = timeline.clientWidth * 0.8;
+            
+            if (direction === 'next') {
+                timeline.scrollLeft += scrollAmount;
+            } else {
+                timeline.scrollLeft -= scrollAmount;
+            }
+        });
+    });
+    
+    // 自动滚动到当前时间点
+    const currentEvent = timeline.querySelector('.current');
+    if (currentEvent) {
+        const eventLeft = currentEvent.offsetLeft;
+        timeline.scrollLeft = eventLeft - (timeline.clientWidth / 2);
+    }
+}
+
+// 应用 4: 响应式表格水平滚动
+function setupResponsiveTable(tableContainer) {
+    let isDragging = false;
+    let startX;
+    let scrollLeft;
+    
+    tableContainer.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startX = e.pageX - tableContainer.offsetLeft;
+        scrollLeft = tableContainer.scrollLeft;
+        tableContainer.style.cursor = 'grabbing';
+    });
+    
+    tableContainer.addEventListener('mouseleave', () => {
+        isDragging = false;
+        tableContainer.style.cursor = 'grab';
+    });
+    
+    tableContainer.addEventListener('mouseup', () => {
+        isDragging = false;
+        tableContainer.style.cursor = 'grab';
+    });
+    
+    tableContainer.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+        const x = e.pageX - tableContainer.offsetLeft;
+        const walk = (x - startX) * 2;
+        tableContainer.scrollLeft = scrollLeft - walk;
+    });
+}
+
+// 应用 5: 水平无限滚动
+function setupHorizontalInfiniteScroll(container, loadCallback) {
+    container.addEventListener('scroll', () => {
+        const scrollRight = container.scrollLeft + container.clientWidth;
+        const threshold = 100;
+        
+        if (scrollRight >= container.scrollWidth - threshold) {
+            loadCallback().then(newContent => {
+                // 添加新内容后更新scrollWidth
+                container.appendChild(newContent);
+            });
+        }
+    });
+}
+          </div>
+
+          <h3>性能优化技巧</h3>
+          <div class="special-cases">
+            <p><strong>水平滚动事件的性能考虑：</strong></p>
+            <ul>
+              <li>使用防抖或节流限制水平滚动事件的执行频率</li>
+              <li>避免在滚动事件中进行重排操作</li>
+              <li>使用CSS <code>will-change: scroll-position</code> 优化滚动性能</li>
+              <li>对于复杂的水平滚动效果，考虑使用CSS Transform</li>
+            </ul>
+            <div class="code-block">
+// 使用防抖优化水平滚动
+const debouncedScrollHandler = debounce(function() {
+    // 这里执行需要防抖的操作
+    updateProgressIndicator(this.scrollLeft);
+    updateNavigationButtons(this.scrollLeft);
+}, 50);
+
+scrollElement.addEventListener('scroll', debouncedScrollHandler);
+
+// CSS优化
+.horizontal-scroller {
+    will-change: scroll-position;
+    transform: translateZ(0); /* 触发硬件加速 */
+}
+
+// 使用Intersection Observer检测可见性
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            // 水平滚动项进入视口
+            entry.target.classList.add('visible');
+        }
+    });
+}, {
+    root: scrollElement,
+    threshold: 0.5,
+    rootMargin: '0px 100px' // 水平方向的预加载区域
+});
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 获取DOM元素
+      const scrollElement = document.getElementById("scrollElement");
+      const scrollContent = document.getElementById("scrollContent");
+      const scrollIndicator = document.getElementById("scrollIndicator");
+      const scrollLeftValue = document.getElementById("scrollLeftValue");
+      const progressBar = document.getElementById("progressBar");
+      const progressText = document.getElementById("progressText");
+      const eventLog = document.getElementById("eventLog");
+      const rtlScrollElement = document.getElementById("rtlScrollElement");
+      const rtlScrollLeft = document.getElementById("rtlScrollLeft");
+
+      // 获取属性显示元素
+      const scrollLeftVal = document.getElementById("scrollLeftVal");
+      const scrollWidthVal = document.getElementById("scrollWidthVal");
+      const clientWidthVal = document.getElementById("clientWidthVal");
+      const maxScrollLeftVal = document.getElementById("maxScrollLeftVal");
+      const scrollPercentVal = document.getElementById("scrollPercentVal");
+
+      // 获取控制元素
+      const scrollLeftSlider = document.getElementById("scrollLeftSlider");
+      const scrollLeftValueDisplay = document.getElementById("scrollLeftValueDisplay");
+
+      // 更新属性显示
+      function updateProperties() {
+        const scrollLeft = scrollElement.scrollLeft;
+        const scrollWidth = scrollElement.scrollWidth;
+        const clientWidth = scrollElement.clientWidth;
+        const maxScrollLeft = Math.max(0, scrollWidth - clientWidth);
+        const scrollPercent = maxScrollLeft > 0 ? (scrollLeft / maxScrollLeft) * 100 : 0;
+
+        scrollLeftVal.textContent = scrollLeft + "px";
+        scrollWidthVal.textContent = scrollWidth + "px";
+        clientWidthVal.textContent = clientWidth + "px";
+        maxScrollLeftVal.textContent = maxScrollLeft + "px";
+        scrollPercentVal.textContent = scrollPercent.toFixed(1) + "%";
+
+        // 更新指示器
+        scrollLeftValue.textContent = scrollLeft;
+
+        // 更新进度条
+        progressBar.style.width = scrollPercent + "%";
+        progressText.textContent = `水平滚动进度: ${scrollPercent.toFixed(1)}%`;
+
+        // 更新滑块
+        scrollLeftSlider.max = maxScrollLeft;
+        scrollLeftSlider.value = scrollLeft;
+        scrollLeftValueDisplay.textContent = scrollLeft + "px";
+
+        // 更新RTL演示
+        updateRTLDemo();
+
+        // 更新可视化标记
+        updateScrollMarkers();
+      }
+
+      // 更新RTL演示
+      function updateRTLDemo() {
+        const rtlScrollLeftValue = rtlScrollElement.scrollLeft;
+        rtlScrollLeft.textContent = `RTL scrollLeft: ${rtlScrollLeftValue}px`;
+      }
+
+      // 更新滚动标记
+      function updateScrollMarkers() {
+        // 清除旧标记
+        document.querySelectorAll(".scroll-position-line, .scroll-marker").forEach(el => el.remove());
+
+        const scrollLeft = scrollElement.scrollLeft;
+        const clientWidth = scrollElement.clientWidth;
+
+        // 当前位置线
+        const positionLine = document.createElement("div");
+        positionLine.className = "scroll-position-line";
+        positionLine.style.left = scrollLeft + 10 + "px";
+        scrollElement.appendChild(positionLine);
+
+        // 当前位置标记
+        const positionMarker = document.createElement("div");
+        positionMarker.className = "scroll-marker";
+        positionMarker.style.left = scrollLeft + 15 + "px";
+        positionMarker.textContent = `当前位置: ${scrollLeft}px`;
+        scrollElement.appendChild(positionMarker);
+      }
+
+      // 添加事件日志
+      function addEventLog(message) {
+        const now = new Date();
+        const time = now.toTimeString().split(" ")[0];
+        const logEntry = document.createElement("div");
+        logEntry.textContent = `[${time}] ${message}`;
+        eventLog.appendChild(logEntry);
+        eventLog.scrollTop = eventLog.scrollHeight;
+
+        // 限制日志数量
+        if (eventLog.children.length > 10) {
+          eventLog.removeChild(eventLog.firstChild);
+        }
+      }
+
+      // 控制函数
+      function scrollToColumn(offset) {
+        scrollElement.scrollLeft = offset;
+        addEventLog(`编程水平滚动到: ${offset}px`);
+      }
+
+      function scrollToStart() {
+        scrollElement.scrollLeft = 0;
+        addEventLog("滚动到最左侧");
+      }
+
+      function scrollToEnd() {
+        const maxScroll = scrollElement.scrollWidth - scrollElement.clientWidth;
+        scrollElement.scrollLeft = maxScroll;
+        addEventLog("滚动到最右侧");
+      }
+
+      function toggleRTL() {
+        const currentDirection = getComputedStyle(scrollElement).direction;
+        if (currentDirection === "ltr") {
+          scrollElement.style.direction = "rtl";
+          addEventLog("切换到RTL模式");
+        } else {
+          scrollElement.style.direction = "ltr";
+          addEventLog("切换到LTR模式");
+        }
+        updateProperties();
+      }
+
+      // 平滑滚动函数
+      function smoothScrollTo(targetPosition, duration = 600) {
+        const startPosition = scrollElement.scrollLeft;
+        const distance = targetPosition - startPosition;
+        let startTime = null;
+
+        function animation(currentTime) {
+          if (startTime === null) startTime = currentTime;
+          const timeElapsed = currentTime - startTime;
+          const progress = Math.min(timeElapsed / duration, 1);
+
+          // 缓动函数
+          const easeOutCubic = progress => 1 - Math.pow(1 - progress, 3);
+
+          scrollElement.scrollLeft = startPosition + distance * easeOutCubic(progress);
+
+          if (timeElapsed < duration) {
+            requestAnimationFrame(animation);
+          }
+        }
+
+        requestAnimationFrame(animation);
+      }
+
+      // 事件监听
+      scrollElement.addEventListener("scroll", function () {
+        updateProperties();
+        addEventLog(`scrollLeft: ${this.scrollLeft}px`);
+      });
+
+      rtlScrollElement.addEventListener("scroll", function () {
+        updateRTLDemo();
+        addEventLog(`RTL scrollLeft: ${this.scrollLeft}px`);
+      });
+
+      scrollLeftSlider.addEventListener("input", function () {
+        const value = parseInt(this.value);
+        scrollElement.scrollLeft = value;
+        scrollLeftValueDisplay.textContent = value + "px";
+      });
+
+      // 初始化
+      updateProperties();
+
+      // 控制台演示
+      setTimeout(() => {
+        console.log("=== scrollLeft 属性演示 ===");
+        console.log("初始 scrollLeft:", scrollElement.scrollLeft);
+        console.log("scrollWidth:", scrollElement.scrollWidth);
+        console.log("clientWidth:", scrollElement.clientWidth);
+        console.log("最大 scrollLeft:", scrollElement.scrollWidth - scrollElement.clientWidth);
+
+        // 演示可读写特性
+        console.log("\n🔧 演示可读写特性:");
+        const originalScrollLeft = scrollElement.scrollLeft;
+        scrollElement.scrollLeft = 300;
+        console.log("设置 scrollLeft = 300, 当前值:", scrollElement.scrollLeft);
+        scrollElement.scrollLeft = originalScrollLeft;
+        console.log("恢复原位置:", scrollElement.scrollLeft);
+
+        // RTL模式演示
+        console.log("\n🌍 RTL模式演示:");
+        console.log("RTL元素 scrollLeft:", rtlScrollElement.scrollLeft);
+        console.log("RTL元素 direction:", getComputedStyle(rtlScrollElement).direction);
+      }, 1000);
+    </script>
+  </body>
+</html>

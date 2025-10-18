@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>offsetHeight 属性详解</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+      }
+
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 2.8rem;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 1.3rem;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .content-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .explanation {
+        flex: 1;
+        min-width: 350px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        backdrop-filter: blur(10px);
+      }
+
+      .demo-area {
+        flex: 1;
+        min-width: 350px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        backdrop-filter: blur(10px);
+      }
+
+      h2 {
+        color: #667eea;
+        margin: 25px 0 18px;
+        padding-bottom: 12px;
+        border-bottom: 3px solid #f0f0f0;
+        font-size: 1.8rem;
+      }
+
+      h3 {
+        color: #2c3e50;
+        margin: 20px 0 12px;
+        font-size: 1.3rem;
+      }
+
+      p {
+        margin-bottom: 18px;
+        font-size: 1.05rem;
+      }
+
+      ul,
+      ol {
+        margin: 0 0 18px 25px;
+      }
+
+      li {
+        margin-bottom: 10px;
+        position: relative;
+        padding-left: 10px;
+      }
+
+      li:before {
+        content: "•";
+        color: #667eea;
+        font-weight: bold;
+        position: absolute;
+        left: -15px;
+      }
+
+      .demo-container {
+        position: relative;
+        width: 100%;
+        height: 400px;
+        background: linear-gradient(135deg, #e8f4f8, #d1e7f0);
+        border: 3px dashed #667eea;
+        margin: 25px 0;
+        padding: 20px;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .target-element {
+        width: 180px;
+        height: 150px;
+        background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        font-weight: bold;
+        text-align: center;
+        padding: 20px;
+        border: 4px solid #2c3e50;
+        margin: 20px auto;
+      }
+
+      .target-element:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .dimension-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        margin-top: 8px;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 4px 8px;
+        border-radius: 4px;
+      }
+
+      .info-panel {
+        background: linear-gradient(135deg, #2c3e50, #34495e);
+        color: white;
+        padding: 25px;
+        border-radius: 10px;
+        margin-top: 25px;
+        font-family: "Courier New", monospace;
+        line-height: 1.8;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 25px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 12px 18px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        flex: 1;
+        min-width: 140px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        background: linear-gradient(135deg, #5a6fd8, #6a4190);
+      }
+
+      .code-example {
+        background: linear-gradient(135deg, #2c3e50, #34495e);
+        color: #ecf0f1;
+        padding: 25px;
+        border-radius: 10px;
+        margin: 25px 0;
+        overflow-x: auto;
+        font-family: "Courier New", monospace;
+        line-height: 1.6;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        border-left: 5px solid #667eea;
+      }
+
+      .comparison {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 25px;
+        margin-top: 35px;
+      }
+
+      .comparison-item {
+        flex: 1;
+        min-width: 280px;
+        padding: 25px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        backdrop-filter: blur(10px);
+      }
+
+      .comparison-item:hover {
+        transform: translateY(-5px);
+      }
+
+      .comparison-item h3 {
+        color: #667eea;
+        margin-top: 0;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f0f0f0;
+        font-size: 1.4rem;
+      }
+
+      .note {
+        background: linear-gradient(135deg, #fff8e1, #ffecb3);
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 5px solid #ffc107;
+        margin: 25px 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      }
+
+      .property-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 25px 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      }
+
+      .property-table th,
+      .property-table td {
+        border: 1px solid #ddd;
+        padding: 15px;
+        text-align: left;
+      }
+
+      .property-table th {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        font-weight: 600;
+      }
+
+      .property-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      .property-table tr:hover {
+        background-color: #f1f8ff;
+      }
+
+      .visual-guide {
+        display: flex;
+        justify-content: space-around;
+        margin: 25px 0;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .guide-item {
+        text-align: center;
+        flex: 1;
+        min-width: 180px;
+      }
+
+      .guide-box {
+        width: 100px;
+        height: 80px;
+        margin: 0 auto 15px;
+        border: 3px solid #667eea;
+        position: relative;
+        background: #e8f4f8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #2c3e50;
+      }
+
+      .guide-label {
+        font-size: 1rem;
+        color: #2c3e50;
+        font-weight: 600;
+      }
+
+      .height-breakdown {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border-left: 4px solid #667eea;
+      }
+
+      .breakdown-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #e9ecef;
+      }
+
+      .breakdown-item:last-child {
+        border-bottom: none;
+        font-weight: bold;
+        color: #2c3e50;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 50px;
+        padding: 25px;
+        color: white;
+        font-size: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+      }
+
+      @media (max-width: 768px) {
+        .content-wrapper {
+          flex-direction: column;
+        }
+
+        .comparison {
+          flex-direction: column;
+        }
+
+        h1 {
+          font-size: 2.2rem;
+        }
+
+        .controls {
+          flex-direction: column;
+        }
+
+        button {
+          min-width: 100%;
+        }
+      }
+
+      .calculation {
+        background: #e8f4f8;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border-left: 4px solid #667eea;
+      }
+
+      .formula {
+        font-family: "Courier New", monospace;
+        font-size: 1.2rem;
+        font-weight: bold;
+        text-align: center;
+        margin: 15px 0;
+        color: #2c3e50;
+        background: white;
+        padding: 15px;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .scrollable-content {
+        max-height: 120px;
+        overflow-y: auto;
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 6px;
+        margin: 15px 0;
+        border: 1px solid #e9ecef;
+      }
+
+      .scrollable-content p {
+        margin-bottom: 10px;
+        padding: 8px;
+        background: white;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>offsetHeight 属性详解</h1>
+        <p class="subtitle">深入理解元素高度计算与尺寸属性</p>
+      </header>
+
+      <div class="content-wrapper">
+        <div class="explanation">
+          <h2>什么是 offsetHeight？</h2>
+          <p><code>offsetHeight</code> 是 JavaScript 中 DOM 元素的一个只读属性，返回元素的整体布局高度，包括：内容高度、内边距(padding)、边框(border)和水平滚动条高度（如果存在）。</p>
+
+          <div class="code-example">
+            // 获取元素的 offsetHeight 值<br />
+            let element = document.getElementById("myElement");<br />
+            let totalHeight = element.offsetHeight;<br />
+            console.log(totalHeight); // 输出整体高度（像素）
+          </div>
+
+          <h3>核心特性：</h3>
+          <ul>
+            <li><strong>只读属性</strong> - 不能直接设置，只能读取</li>
+            <li><strong>包含所有垂直空间</strong> - 内容 + 内边距 + 边框 + 滚动条</li>
+            <li><strong>整数像素值</strong> - 返回值总是整数，四舍五入到最近的像素</li>
+            <li><strong>布局高度</strong> - 反映元素在页面中实际占据的垂直空间</li>
+          </ul>
+
+          <div class="note"><strong>重要提示：</strong> offsetHeight 包含元素的边框(border)和水平滚动条高度，但不包含外边距(margin)。</div>
+
+          <h3>offsetHeight 计算原理</h3>
+          <p>offsetHeight 的计算公式如下：</p>
+
+          <div class="formula">offsetHeight = content-height + padding-top + padding-bottom + border-top + border-bottom + horizontal-scrollbar-height</div>
+
+          <div class="height-breakdown">
+            <h4>高度组成分解：</h4>
+            <div class="breakdown-item">
+              <span>内容高度:</span>
+              <span id="contentHeight">150px</span>
+            </div>
+            <div class="breakdown-item">
+              <span>上内边距 + 下内边距:</span>
+              <span id="paddingHeight">40px</span>
+            </div>
+            <div class="breakdown-item">
+              <span>上边框 + 下边框:</span>
+              <span id="borderHeight">8px</span>
+            </div>
+            <div class="breakdown-item">
+              <span>水平滚动条:</span>
+              <span id="scrollbarHeight">0px</span>
+            </div>
+            <div class="breakdown-item">
+              <span>offsetHeight 总计:</span>
+              <span id="totalOffsetHeight">198px</span>
+            </div>
+          </div>
+
+          <div class="visual-guide">
+            <div class="guide-item">
+              <div class="guide-box" style="background: #ff6b6b; color: white; height: 60px">内容</div>
+              <div class="guide-label">内容高度</div>
+            </div>
+            <div class="guide-item">
+              <div class="guide-box" style="border: 15px solid #667eea; background: #e8f4f8; height: 60px">内边距</div>
+              <div class="guide-label">内边距</div>
+            </div>
+            <div class="guide-item">
+              <div class="guide-box" style="border: 8px solid #2c3e50; background: #e8f4f8; height: 60px">边框</div>
+              <div class="guide-label">边框高度</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h2>交互演示</h2>
+          <p>调整下方元素属性，观察 offsetHeight 的变化：</p>
+
+          <div class="demo-container">
+            <div class="target-element" id="targetElement">
+              目标元素
+              <div class="dimension-label" id="dimensionLabel">高度: 150px</div>
+              <div class="scrollable-content" id="scrollContent">
+                <p>这是可滚动的内容区域</p>
+                <p>添加更多内容来测试滚动条</p>
+                <p>滚动条会影响 offsetHeight</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-panel" id="infoPanel">
+            // 元素尺寸属性<br />
+            offsetHeight: <strong>--</strong><br />
+            clientHeight: <strong>--</strong><br />
+            scrollHeight: <strong>--</strong><br />
+            getComputedStyle().height: <strong>--</strong>
+          </div>
+
+          <div class="controls">
+            <button id="increaseHeight">增加高度</button>
+            <button id="decreaseHeight">减少高度</button>
+            <button id="addPadding">增加内边距</button>
+            <button id="addBorder">增加边框</button>
+            <button id="addContent">添加内容</button>
+            <button id="reset">重置</button>
+          </div>
+
+          <h3>高度属性对比</h3>
+          <table class="property-table">
+            <tr>
+              <th>属性</th>
+              <th>描述</th>
+              <th>包含内容</th>
+            </tr>
+            <tr>
+              <td>offsetHeight</td>
+              <td>元素整体布局高度</td>
+              <td>内容 + 内边距 + 边框 + 滚动条</td>
+            </tr>
+            <tr>
+              <td>clientHeight</td>
+              <td>元素可视区域高度</td>
+              <td>内容 + 内边距 (不含边框和滚动条)</td>
+            </tr>
+            <tr>
+              <td>scrollHeight</td>
+              <td>元素总内容高度</td>
+              <td>内容 + 内边距 (包括溢出内容)</td>
+            </tr>
+            <tr>
+              <td>style.height</td>
+              <td>CSS高度属性值</td>
+              <td>仅内容高度 (需显式设置)</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="comparison">
+        <div class="comparison-item">
+          <h3>offsetHeight 与相关属性</h3>
+          <p><strong>offsetHeight:</strong> 整体布局高度（包含边框）</p>
+          <p><strong>offsetWidth:</strong> 整体布局宽度（包含边框）</p>
+          <p><strong>clientHeight:</strong> 可视区域高度（不含边框）</p>
+          <p><strong>scrollHeight:</strong> 总内容高度（包括溢出）</p>
+          <p><strong>getBoundingClientRect().height:</strong> 元素实际高度（浮点数）</p>
+        </div>
+
+        <div class="comparison-item">
+          <h3>实际应用场景</h3>
+          <p>• 响应式布局计算</p>
+          <p>• 动态调整元素尺寸</p>
+          <p>• 实现无限滚动加载</p>
+          <p>• 计算元素可见性</p>
+          <p>• 创建自定义滚动条</p>
+        </div>
+
+        <div class="comparison-item">
+          <h3>注意事项</h3>
+          <p>• 元素 display:none 时返回 0</p>
+          <p>• 包含边框和滚动条高度</p>
+          <p>• 返回值总是整数像素</p>
+          <p>• 受 box-sizing 属性影响</p>
+          <p>• 性能优于 getBoundingClientRect()</p>
+        </div>
+      </div>
+
+      <div class="calculation">
+        <h3>offsetHeight 计算示例</h3>
+        <p>假设一个元素具有以下样式：</p>
+        <div class="code-example">
+          .example-element {<br />
+          &nbsp;&nbsp;height: 150px;<br />
+          &nbsp;&nbsp;padding: 20px;<br />
+          &nbsp;&nbsp;border: 4px solid #333;<br />
+          &nbsp;&nbsp;box-sizing: content-box;<br />
+          }
+        </div>
+        <p>offsetHeight 计算过程：</p>
+        <div class="formula">150px (内容) + 40px (内边距) + 8px (边框) = 198px</div>
+      </div>
+
+      <div class="code-example">
+        // 实际使用示例：检测元素是否在可视区域内<br />
+        function isElementInViewport(element) {<br />
+        &nbsp;&nbsp;const rect = element.getBoundingClientRect();<br />
+        &nbsp;&nbsp;return (<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;rect.top >= 0 &&<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;rect.left >= 0 &&<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;rect.right <= (window.innerWidth || document.documentElement.clientWidth)<br />
+        &nbsp;&nbsp;);<br />
+        }<br />
+        <br />
+        // 动态计算元素是否溢出容器<br />
+        function isOverflowing(container, element) {<br />
+        &nbsp;&nbsp;return element.offsetHeight > container.clientHeight;<br />
+        }<br />
+        <br />
+        // 实现懒加载功能<br />
+        function lazyLoad() {<br />
+        &nbsp;&nbsp;const elements = document.querySelectorAll('.lazy');<br />
+        &nbsp;&nbsp;elements.forEach(element => {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;if (isElementInViewport(element)) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;element.src = element.dataset.src;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;element.classList.remove('lazy');<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+        &nbsp;&nbsp;});<br />
+        }<br />
+        <br />
+        // 监听滚动事件实现懒加载<br />
+        window.addEventListener('scroll', lazyLoad);
+      </div>
+
+      <footer>
+        <p>offsetHeight 属性详解 &copy; 2023 - 交互式前端教程 | 深入理解DOM元素尺寸计算</p>
+      </footer>
+    </div>
+
+    <script>
+      // 获取DOM元素
+      const targetElement = document.getElementById("targetElement");
+      const infoPanel = document.getElementById("infoPanel");
+      const dimensionLabel = document.getElementById("dimensionLabel");
+      const scrollContent = document.getElementById("scrollContent");
+      const increaseHeightBtn = document.getElementById("increaseHeight");
+      const decreaseHeightBtn = document.getElementById("decreaseHeight");
+      const addPaddingBtn = document.getElementById("addPadding");
+      const addBorderBtn = document.getElementById("addBorder");
+      const addContentBtn = document.getElementById("addContent");
+      const resetBtn = document.getElementById("reset");
+
+      // 获取高度分解元素
+      const contentHeightElem = document.getElementById("contentHeight");
+      const paddingHeightElem = document.getElementById("paddingHeight");
+      const borderHeightElem = document.getElementById("borderHeight");
+      const scrollbarHeightElem = document.getElementById("scrollbarHeight");
+      const totalOffsetHeightElem = document.getElementById("totalOffsetHeight");
+
+      // 初始状态
+      let currentHeight = 150;
+      let currentPadding = 20;
+      let currentBorder = 4;
+      let contentCount = 3;
+
+      // 更新信息面板
+      function updateInfo() {
+        const offsetHeight = targetElement.offsetHeight;
+        const clientHeight = targetElement.clientHeight;
+        const scrollHeight = targetElement.scrollHeight;
+        const computedHeight = getComputedStyle(targetElement).height;
+
+        infoPanel.innerHTML = `
+                // 元素尺寸属性<br>
+                offsetHeight: <strong>${offsetHeight}px</strong><br>
+                clientHeight: <strong>${clientHeight}px</strong><br>
+                scrollHeight: <strong>${scrollHeight}px</strong><br>
+                getComputedStyle().height: <strong>${computedHeight}</strong>
+            `;
+
+        dimensionLabel.textContent = `高度: ${currentHeight}px`;
+
+        // 更新高度分解
+        const paddingTotal = currentPadding * 2;
+        const borderTotal = currentBorder * 2;
+        const scrollbarHeight = offsetHeight - clientHeight - borderTotal;
+        const totalHeight = currentHeight + paddingTotal + borderTotal + (scrollbarHeight > 0 ? scrollbarHeight : 0);
+
+        contentHeightElem.textContent = `${currentHeight}px`;
+        paddingHeightElem.textContent = `${paddingTotal}px`;
+        borderHeightElem.textContent = `${borderTotal}px`;
+        scrollbarHeightElem.textContent = `${scrollbarHeight > 0 ? scrollbarHeight + "px" : "0px"}`;
+        totalOffsetHeightElem.textContent = `${totalHeight}px`;
+      }
+
+      // 初始更新
+      updateInfo();
+
+      // 点击目标元素显示信息
+      targetElement.addEventListener("click", function () {
+        updateInfo();
+        // 添加点击反馈
+        this.style.transform = "scale(0.95)";
+        setTimeout(() => {
+          this.style.transform = "";
+        }, 200);
+      });
+
+      // 增加高度
+      increaseHeightBtn.addEventListener("click", function () {
+        currentHeight += 20;
+        targetElement.style.height = currentHeight + "px";
+        updateInfo();
+      });
+
+      // 减少高度
+      decreaseHeightBtn.addEventListener("click", function () {
+        currentHeight = Math.max(100, currentHeight - 20);
+        targetElement.style.height = currentHeight + "px";
+        updateInfo();
+      });
+
+      // 增加内边距
+      addPaddingBtn.addEventListener("click", function () {
+        currentPadding += 5;
+        targetElement.style.padding = currentPadding + "px";
+        updateInfo();
+      });
+
+      // 增加边框
+      addBorderBtn.addEventListener("click", function () {
+        currentBorder += 1;
+        targetElement.style.borderWidth = currentBorder + "px";
+        updateInfo();
+      });
+
+      // 添加内容
+      addContentBtn.addEventListener("click", function () {
+        contentCount++;
+        const newParagraph = document.createElement("p");
+        newParagraph.textContent = `新增内容段落 ${contentCount}`;
+        newParagraph.style.padding = "8px";
+        newParagraph.style.background = "white";
+        newParagraph.style.borderRadius = "4px";
+        newParagraph.style.boxShadow = "0 1px 3px rgba(0, 0, 0, 0.1)";
+        scrollContent.appendChild(newParagraph);
+        updateInfo();
+      });
+
+      // 重置
+      resetBtn.addEventListener("click", function () {
+        currentHeight = 150;
+        currentPadding = 20;
+        currentBorder = 4;
+        contentCount = 3;
+
+        targetElement.style.height = currentHeight + "px";
+        targetElement.style.padding = currentPadding + "px";
+        targetElement.style.borderWidth = currentBorder + "px";
+
+        // 重置内容
+        scrollContent.innerHTML = `
+                <p>这是可滚动的内容区域</p>
+                <p>添加更多内容来测试滚动条</p>
+                <p>滚动条会影响 offsetHeight</p>
+            `;
+
+        updateInfo();
+      });
+
+      // 初始信息显示
+      setTimeout(updateInfo, 100);
+
+      // 添加窗口调整大小时的更新
+      window.addEventListener("resize", updateInfo);
+
+      // 添加滚动事件监听
+      scrollContent.addEventListener("scroll", function () {
+        // 可以在这里添加滚动相关的逻辑
+      });
+    </script>
+  </body>
+</html>

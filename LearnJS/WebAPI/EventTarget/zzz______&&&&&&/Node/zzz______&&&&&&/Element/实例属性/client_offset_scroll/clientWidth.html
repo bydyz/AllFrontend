@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>clientWidth 属性详解</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 2.5rem;
+      }
+
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 1.3rem;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .content {
+        display: grid;
+        grid-template-columns: 1fr;
+        margin-bottom: 40px;
+      }
+
+      .demo-section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+
+      .explanation-section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #2ecc71;
+      }
+
+      h3 {
+        color: #2c3e50;
+        margin: 25px 0 15px 0;
+      }
+
+      .demo-container {
+        position: relative;
+        width: 100%;
+        height: 450px;
+        border: 2px solid #34495e;
+        margin: 25px 0;
+        background: #ecf0f1;
+        padding: 30px;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .target-element {
+        width: 350px;
+        height: 250px;
+        padding: 25px;
+        margin: 20px auto;
+        border: 15px solid #e74c3c;
+        background: #3498db33;
+        border-radius: 8px;
+        position: relative;
+        overflow: auto;
+        transition: all 0.3s ease;
+      }
+
+      .content-area {
+        width: 500px;
+        height: 400px;
+        background: linear-gradient(45deg, #2ecc7133, #f39c1233);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 20px;
+        border: 2px dashed #2ecc71;
+        border-radius: 6px;
+      }
+
+      .dimension-visualization {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+      }
+
+      .clientWidth-highlight {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        background: rgba(46, 204, 113, 0.3);
+        border: 2px solid #2ecc71;
+        transition: width 0.3s ease;
+      }
+
+      .dimension-label {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin: 20px 0;
+      }
+
+      button {
+        padding: 12px 15px;
+        background: #2ecc71;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      button:hover {
+        background: #27ae60;
+        transform: translateY(-2px);
+      }
+
+      button.secondary {
+        background: #3498db;
+      }
+
+      button.secondary:hover {
+        background: #2980b9;
+      }
+
+      .property-display {
+        background: #2c3e50;
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+
+      .property-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 10px 0;
+        padding: 8px 12px;
+        background: #34495e;
+        border-radius: 6px;
+      }
+
+      .property-name {
+        font-weight: bold;
+        font-size: 1.1rem;
+      }
+
+      .property-value {
+        font-family: "Courier New", monospace;
+        font-size: 1.2rem;
+        color: #f1c40f;
+        font-weight: bold;
+      }
+
+      .style-controls {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+
+      .control-group {
+        margin: 15px 0;
+      }
+
+      .control-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #2c3e50;
+      }
+
+      .range-slider {
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: #ddd;
+        outline: none;
+        -webkit-appearance: none;
+      }
+
+      .range-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #2ecc71;
+        cursor: pointer;
+      }
+
+      .range-value {
+        text-align: center;
+        font-weight: bold;
+        color: #2ecc71;
+        margin-top: 5px;
+      }
+
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .comparison-table th {
+        background: #2ecc71;
+        color: white;
+        padding: 12px 15px;
+        text-align: left;
+      }
+
+      .comparison-table td {
+        padding: 10px 15px;
+        border-bottom: 1px solid #ecf0f1;
+      }
+
+      .comparison-table tr:nth-child(even) {
+        background: #f8f9fa;
+      }
+
+      .code-block {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 20px;
+        border-radius: 10px;
+        font-family: "Courier New", monospace;
+        margin: 20px 0;
+        overflow-x: auto;
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      .special-cases {
+        background: #fff9e6;
+        padding: 20px;
+        border-radius: 10px;
+        border-left: 4px solid #f1c40f;
+        margin: 20px 0;
+      }
+
+      .case-example {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 10px 0;
+        border: 1px solid #e9ecef;
+      }
+
+      .scrollbar-demo {
+        background: #e8f8f0;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 15px 0;
+        border: 2px solid #2ecc71;
+      }
+
+      .element-breakdown {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 20px 0;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+      }
+
+      .breakdown-layer {
+        width: 300px;
+        padding: 12px;
+        text-align: center;
+        margin: 3px 0;
+        border: 2px solid;
+        border-radius: 6px;
+        font-weight: bold;
+      }
+
+      .margin-layer {
+        border-color: #9b59b6;
+        background: #9b59b633;
+        color: #9b59b6;
+      }
+      .border-layer {
+        border-color: #e74c3c;
+        background: #e74c3c33;
+        color: #e74c3c;
+      }
+      .padding-layer {
+        border-color: #3498db;
+        background: #3498db33;
+        color: #3498db;
+      }
+      .content-layer {
+        border-color: #2ecc71;
+        background: #2ecc7133;
+        color: #2ecc71;
+      }
+
+      @media (max-width: 968px) {
+        .content {
+          grid-template-columns: 1fr;
+        }
+
+        .controls {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>clientWidth 属性详解</h1>
+        <p class="subtitle">深入理解 clientWidth 的工作原理、计算方式和实际应用</p>
+      </header>
+
+      <div class="content">
+        <div class="demo-section">
+          <h2>交互演示</h2>
+          <p>调整元素样式，观察 clientWidth 值的变化</p>
+
+          <div class="demo-container">
+            <div class="target-element" id="targetElement">
+              <div class="dimension-visualization" id="dimensionVisualization">
+                <div class="clientWidth-highlight" id="clientWidthHighlight"></div>
+              </div>
+              <div class="content-area" id="contentArea">
+                <h3>目标元素</h3>
+                <p>clientWidth = 内容宽度 + 左右内边距</p>
+                <p><strong>不包含边框和滚动条</strong></p>
+                <div class="scrollbar-demo">
+                  <p>这个区域比容器宽，用于演示滚动条</p>
+                  <p>← 尝试向右滚动 →</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="element-breakdown">
+            <h4>元素盒模型分解</h4>
+            <div class="breakdown-layer margin-layer">外边距 Margin</div>
+            <div class="breakdown-layer border-layer">边框 Border</div>
+            <div class="breakdown-layer padding-layer">内边距 Padding ← clientWidth 包含</div>
+            <div class="breakdown-layer content-layer">内容 Content ← clientWidth 包含</div>
+          </div>
+
+          <div class="style-controls">
+            <div class="control-group">
+              <label class="control-label">内边距 (Padding):</label>
+              <input type="range" min="0" max="50" value="25" class="range-slider" id="paddingSlider" />
+              <div class="range-value" id="paddingValue">25px</div>
+            </div>
+
+            <div class="control-group">
+              <label class="control-label">边框宽度 (Border):</label>
+              <input type="range" min="0" max="30" value="15" class="range-slider" id="borderSlider" />
+              <div class="range-value" id="borderValue">15px</div>
+            </div>
+
+            <div class="control-group">
+              <label class="control-label">内容宽度:</label>
+              <input type="range" min="300" max="800" value="500" class="range-slider" id="contentWidthSlider" />
+              <div class="range-value" id="contentWidthValue">500px</div>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button onclick="toggleScrollbar()">切换滚动条</button>
+            <button onclick="changeElementWidth()">改变元素宽度</button>
+            <button class="secondary" onclick="addMoreContent()">添加更多内容</button>
+            <button class="secondary" onclick="resetAll()">重置所有</button>
+          </div>
+
+          <div class="property-display">
+            <h3 style="color: white; margin-top: 0">尺寸属性对比</h3>
+            <div class="property-item">
+              <span class="property-name">clientWidth:</span>
+              <span class="property-value" id="clientWidthVal">350px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">offsetWidth:</span>
+              <span class="property-value" id="offsetWidthVal">400px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">scrollWidth:</span>
+              <span class="property-value" id="scrollWidthVal">550px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">CSS width:</span>
+              <span class="property-value" id="cssWidthVal">350px</span>
+            </div>
+            <div class="property-item">
+              <span class="property-name">滚动条宽度:</span>
+              <span class="property-value" id="scrollbarWidthVal">0px</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="explanation-section">
+          <h2>clientWidth 详解</h2>
+
+          <div class="special-cases">
+            <h3>📌 clientWidth 核心定义</h3>
+            <p><strong>clientWidth = 内容宽度 + 左右内边距 - 垂直滚动条宽度</strong></p>
+            <p>表示元素内部可视内容的宽度，不包括边框和滚动条。</p>
+          </div>
+
+          <h3>计算公式</h3>
+          <div class="code-block" style="white-space: pre;">
+// clientWidth 计算公式
+element.clientWidth = element.width + padding-left + padding-right - vertical-scrollbar-width
+
+// 实际计算示例
+const element = document.getElementById('example');
+const style = window.getComputedStyle(element);
+
+const contentWidth = parseInt(style.width);
+const paddingLeft = parseInt(style.paddingLeft);
+const paddingRight = parseInt(style.paddingRight);
+const scrollbarWidth = element.offsetWidth - element.clientWidth - 
+                      parseInt(style.borderLeftWidth) - parseInt(style.borderRightWidth);
+
+console.log('clientWidth:', element.clientWidth);
+console.log('手动计算:', contentWidth + paddingLeft + paddingRight - scrollbarWidth);
+          </div>
+
+          <h3>与其他宽度属性的对比</h3>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>属性</th>
+                <th>包含内容</th>
+                <th>不包含内容</th>
+                <th>典型用途</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>clientWidth</strong></td>
+                <td>内容 + 内边距</td>
+                <td>边框、滚动条</td>
+                <td>获取可视内容区域宽度</td>
+              </tr>
+              <tr>
+                <td>offsetWidth</td>
+                <td>内容 + 内边距 + 边框 + 滚动条</td>
+                <td>外边距</td>
+                <td>获取元素整体宽度</td>
+              </tr>
+              <tr>
+                <td>scrollWidth</td>
+                <td>全部内容 + 内边距</td>
+                <td>边框、滚动条</td>
+                <td>获取内容总宽度</td>
+              </tr>
+              <tr>
+                <td>getComputedStyle().width</td>
+                <td>CSS设置的宽度</td>
+                <td>内边距、边框</td>
+                <td>获取CSS宽度值</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>特殊情况和注意事项</h3>
+
+          <div class="case-example">
+            <h4>情况 1: 滚动条的影响</h4>
+            <p>当存在垂直滚动条时，clientWidth 会自动减去滚动条宽度：</p>
+            <div class="code-block" style="white-space: pre;">
+// 有滚动条的情况
+element.style.overflow = 'auto';
+console.log('有滚动条 - clientWidth:', element.clientWidth);
+console.log('有滚动条 - offsetWidth:', element.offsetWidth);
+
+// 无滚动条的情况  
+element.style.overflow = 'hidden';
+console.log('无滚动条 - clientWidth:', element.clientWidth);
+console.log('无滚动条 - offsetWidth:', element.offsetWidth);
+
+// 滚动条宽度计算
+const scrollbarWidth = element.offsetWidth - element.clientWidth - 
+                      element.clientLeft - (element.offsetWidth - element.clientWidth - element.clientLeft);
+            </div>
+          </div>
+
+          <div class="case-example">
+            <h4>情况 2: 内联元素</h4>
+            <p>对于内联元素，clientWidth 通常为 0：</p>
+            <div class="code-block" style="white-space: pre;">
+const span = document.createElement('span');
+span.textContent = '这是一个内联元素';
+document.body.appendChild(span);
+
+console.log('内联元素 clientWidth:', span.clientWidth); // 通常为 0
+console.log('内联元素 offsetWidth:', span.offsetWidth); // 实际宽度
+
+// 要使内联元素有 clientWidth，需要设置为块级元素
+span.style.display = 'inline-block';
+console.log('inline-block clientWidth:', span.clientWidth); // 现在有值
+            </div>
+          </div>
+
+          <div class="case-example">
+            <h4>情况 3: 隐藏元素</h4>
+            <p>对于 display: none 的元素，clientWidth 为 0：</p>
+            <div class="code-block" style="white-space: pre;">
+element.style.display = 'none';
+console.log('隐藏元素 clientWidth:', element.clientWidth); // 0
+
+element.style.display = 'block';
+console.log('显示元素 clientWidth:', element.clientWidth); // 正常值
+            </div>
+          </div>
+
+          <h3>实际应用场景</h3>
+          <div class="code-block" style="white-space: pre;">
+// 应用 1: 响应式布局检测
+function isMobileLayout() {
+    return document.documentElement.clientWidth < 768;
+}
+
+// 应用 2: 检测元素是否需要滚动条
+function needsHorizontalScrollbar(element) {
+    return element.scrollWidth > element.clientWidth;
+}
+
+function needsVerticalScrollbar(element) {
+    return element.scrollHeight > element.clientHeight;
+}
+
+// 应用 3: 计算可用空间
+function calculateAvailableSpace(container, margin = 10) {
+    return {
+        width: container.clientWidth - margin * 2,
+        height: container.clientHeight - margin * 2
+    };
+}
+
+// 应用 4: 动态调整内容大小
+function fitContentToContainer(content, container) {
+    const availableWidth = container.clientWidth - 20; // 留出边距
+    const availableHeight = container.clientHeight - 20;
+    
+    content.style.maxWidth = availableWidth + 'px';
+    content.style.maxHeight = availableHeight + 'px';
+}
+
+// 应用 5: 自定义滚动条实现
+function createCustomScrollbar(container) {
+    const scrollbar = document.createElement('div');
+    const trackWidth = 16; // 滚动条轨道宽度
+    
+    // 计算滚动条位置和大小
+    const visibleRatio = container.clientWidth / container.scrollWidth;
+    const thumbWidth = container.clientWidth * visibleRatio - trackWidth;
+    
+    scrollbar.style.width = thumbWidth + 'px';
+    // ... 其他滚动条逻辑
+}
+
+// 应用 6: 视口检测
+function isElementInViewport(element) {
+    const rect = element.getBoundingClientRect();
+    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+    
+    return (
+        rect.left >= 0 &&
+        rect.right <= viewportWidth
+    );
+}
+          </div>
+
+          <h3>性能考虑</h3>
+          <div class="special-cases">
+            <p><strong>clientWidth 会触发重排 (reflow)</strong></p>
+            <p>频繁读取 clientWidth 可能导致性能问题，建议：</p>
+            <ul>
+              <li>缓存 clientWidth 值，避免重复读取</li>
+              <li>在批量操作中一次性读取所有需要的尺寸</li>
+              <li>使用 ResizeObserver 监听尺寸变化</li>
+            </ul>
+            <div class="code-block" style="white-space: pre;">
+// 不好的做法 - 每次循环都读取 clientWidth
+for (let i = 0; i < elements.length; i++) {
+    if (elements[i].clientWidth > 500) {
+        // ...
+    }
+}
+
+// 好的做法 - 缓存值
+const containerWidth = container.clientWidth;
+for (let i = 0; i < elements.length; i++) {
+    if (elements[i].offsetWidth > containerWidth) {
+        // ...
+    }
+}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 获取DOM元素
+      const targetElement = document.getElementById("targetElement");
+      const contentArea = document.getElementById("contentArea");
+      const clientWidthHighlight = document.getElementById("clientWidthHighlight");
+
+      // 获取控制元素
+      const paddingSlider = document.getElementById("paddingSlider");
+      const borderSlider = document.getElementById("borderSlider");
+      const contentWidthSlider = document.getElementById("contentWidthSlider");
+
+      // 获取显示元素
+      const clientWidthVal = document.getElementById("clientWidthVal");
+      const offsetWidthVal = document.getElementById("offsetWidthVal");
+      const scrollWidthVal = document.getElementById("scrollWidthVal");
+      const cssWidthVal = document.getElementById("cssWidthVal");
+      const scrollbarWidthVal = document.getElementById("scrollbarWidthVal");
+      const paddingValue = document.getElementById("paddingValue");
+      const borderValue = document.getElementById("borderValue");
+      const contentWidthValue = document.getElementById("contentWidthValue");
+
+      // 更新属性显示
+      function updateProperties() {
+        const clientWidth = targetElement.clientWidth;
+        const offsetWidth = targetElement.offsetWidth;
+        const scrollWidth = targetElement.scrollWidth;
+        const computedStyle = window.getComputedStyle(targetElement);
+
+        clientWidthVal.textContent = clientWidth + "px";
+        offsetWidthVal.textContent = offsetWidth + "px";
+        scrollWidthVal.textContent = scrollWidth + "px";
+        cssWidthVal.textContent = computedStyle.width;
+
+        // 计算滚动条宽度
+        const scrollbarWidth = offsetWidth - clientWidth - parseInt(computedStyle.borderLeftWidth) - parseInt(computedStyle.borderRightWidth);
+        scrollbarWidthVal.textContent = Math.max(0, scrollbarWidth) + "px";
+
+        // 更新可视化
+        updateVisualization();
+      }
+
+      // 更新可视化
+      function updateVisualization() {
+        const clientWidth = targetElement.clientWidth;
+        const clientLeft = targetElement.clientLeft;
+
+        clientWidthHighlight.style.width = clientWidth + "px";
+        clientWidthHighlight.style.left = clientLeft + "px";
+
+        // 更新标签
+        updateDimensionLabels();
+      }
+
+      // 更新尺寸标签
+      function updateDimensionLabels() {
+        // 清除旧标签
+        document.querySelectorAll(".dimension-label").forEach(label => label.remove());
+
+        const rect = targetElement.getBoundingClientRect();
+        const containerRect = targetElement.parentElement.getBoundingClientRect();
+
+        const relativeTop = rect.top - containerRect.top;
+        const relativeLeft = rect.left - containerRect.left;
+        const clientWidth = targetElement.clientWidth;
+        const clientLeft = targetElement.clientLeft;
+
+        // clientWidth 标签
+        const widthLabel = document.createElement("div");
+        widthLabel.className = "dimension-label";
+        widthLabel.style.top = relativeTop - 30 + "px";
+        widthLabel.style.left = relativeLeft + clientLeft + clientWidth / 2 - 50 + "px";
+        widthLabel.textContent = `clientWidth: ${clientWidth}px`;
+        targetElement.parentElement.appendChild(widthLabel);
+
+        // clientLeft 标签
+        const leftLabel = document.createElement("div");
+        leftLabel.className = "dimension-label";
+        leftLabel.style.top = relativeTop + 50 + "px";
+        leftLabel.style.left = relativeLeft - 80 + "px";
+        leftLabel.textContent = `clientLeft: ${clientLeft}px`;
+        targetElement.parentElement.appendChild(leftLabel);
+      }
+
+      // 控制函数
+      function toggleScrollbar() {
+        if (targetElement.style.overflow === "hidden") {
+          targetElement.style.overflow = "auto";
+        } else {
+          targetElement.style.overflow = "hidden";
+        }
+        updateProperties();
+      }
+
+      function changeElementWidth() {
+        const currentWidth = parseInt(targetElement.style.width) || 350;
+        const newWidth = currentWidth === 350 ? 250 : 350;
+        targetElement.style.width = newWidth + "px";
+        updateProperties();
+      }
+
+      function addMoreContent() {
+        const newContent = document.createElement("div");
+        newContent.style.background = "rgba(155, 89, 182, 0.3)";
+        newContent.style.padding = "15px";
+        newContent.style.margin = "10px 0";
+        newContent.style.border = "2px solid #9b59b6";
+        newContent.style.borderRadius = "4px";
+        newContent.innerHTML = "<h4>新增内容区块</h4><p>这增加了内容的总体宽度</p>";
+
+        contentArea.appendChild(newContent);
+        updateProperties();
+      }
+
+      function resetAll() {
+        targetElement.style.padding = "25px";
+        targetElement.style.borderWidth = "15px";
+        targetElement.style.width = "";
+        targetElement.style.overflow = "auto";
+        contentArea.style.width = "500px";
+        contentArea.innerHTML = `
+                <h3>目标元素</h3>
+                <p>clientWidth = 内容宽度 + 左右内边距</p>
+                <p><strong>不包含边框和滚动条</strong></p>
+                <div class="scrollbar-demo">
+                    <p>这个区域比容器宽，用于演示滚动条</p>
+                    <p>← 尝试向右滚动 →</p>
+                </div>
+            `;
+
+        paddingSlider.value = 25;
+        borderSlider.value = 15;
+        contentWidthSlider.value = 500;
+        paddingValue.textContent = "25px";
+        borderValue.textContent = "15px";
+        contentWidthValue.textContent = "500px";
+
+        updateProperties();
+      }
+
+      // 事件监听
+      paddingSlider.addEventListener("input", function () {
+        const padding = parseInt(this.value);
+        targetElement.style.padding = padding + "px";
+        paddingValue.textContent = padding + "px";
+        updateProperties();
+      });
+
+      borderSlider.addEventListener("input", function () {
+        const border = parseInt(this.value);
+        targetElement.style.borderWidth = border + "px";
+        borderValue.textContent = border + "px";
+        updateProperties();
+      });
+
+      contentWidthSlider.addEventListener("input", function () {
+        const width = parseInt(this.value);
+        contentArea.style.width = width + "px";
+        contentWidthValue.textContent = width + "px";
+        updateProperties();
+      });
+
+      // 初始化
+      updateProperties();
+
+      // 控制台演示
+      setTimeout(() => {
+        console.log("=== clientWidth 属性演示 ===");
+        console.log("clientWidth:", targetElement.clientWidth, "px");
+        console.log("offsetWidth:", targetElement.offsetWidth, "px");
+        console.log("scrollWidth:", targetElement.scrollWidth, "px");
+
+        const computedStyle = window.getComputedStyle(targetElement);
+        console.log("CSS width:", computedStyle.width);
+        console.log("Padding:", computedStyle.padding);
+        console.log("Border:", computedStyle.borderWidth);
+
+        console.log("\n🔍 clientWidth 计算验证:");
+        const contentWidth = parseInt(computedStyle.width) || 350;
+        const paddingLeft = parseInt(computedStyle.paddingLeft);
+        const paddingRight = parseInt(computedStyle.paddingRight);
+        const scrollbarWidth = targetElement.offsetWidth - targetElement.clientWidth - parseInt(computedStyle.borderLeftWidth) - parseInt(computedStyle.borderRightWidth);
+
+        console.log("计算值:", contentWidth + paddingLeft + paddingRight - scrollbarWidth, "px");
+        console.log("实际 clientWidth:", targetElement.clientWidth, "px");
+        console.log("是否相等:", contentWidth + paddingLeft + paddingRight - scrollbarWidth === targetElement.clientWidth);
+      }, 1000);
+    </script>
+  </body>
+</html>

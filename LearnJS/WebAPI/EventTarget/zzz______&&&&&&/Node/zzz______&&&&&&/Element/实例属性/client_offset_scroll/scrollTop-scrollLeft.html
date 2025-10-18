@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>scrollTop 和 scrollLeft 属性详解</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 2.5rem;
+      }
+
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 1.2rem;
+      }
+
+      .content-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .explanation {
+        flex: 1;
+        min-width: 350px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .demo-area {
+        flex: 1;
+        min-width: 350px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      h2 {
+        color: #667eea;
+        margin: 20px 0 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+
+      h3 {
+        color: #2c3e50;
+        margin: 15px 0 10px;
+      }
+
+      p {
+        margin-bottom: 15px;
+      }
+
+      .code-example {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        overflow-x: auto;
+        font-family: "Courier New", monospace;
+        line-height: 1.5;
+        border-left: 4px solid #667eea;
+      }
+
+      .scroll-container {
+        width: 100%;
+        height: 300px;
+        border: 2px solid #667eea;
+        border-radius: 8px;
+        overflow: auto;
+        margin: 20px 0;
+        background: #f8f9fa;
+        position: relative;
+      }
+
+      .scroll-content {
+        width: 150%;
+        height: 500px;
+        background: linear-gradient(45deg, #4ecdc4, #44a08d, #667eea, #764ba2);
+        background-size: 400% 400%;
+        animation: gradientShift 10s ease infinite;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 1.2rem;
+        text-align: center;
+        padding: 20px;
+      }
+
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .info-panel {
+        background: #2c3e50;
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 20px;
+        font-family: "Courier New", monospace;
+        line-height: 1.8;
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 10px 15px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        flex: 1;
+        min-width: 120px;
+      }
+
+      button:hover {
+        background: #5a6fd8;
+        transform: translateY(-2px);
+      }
+
+      .scroll-position {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+      }
+
+      .comparison {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-top: 30px;
+      }
+
+      .comparison-item {
+        flex: 1;
+        min-width: 250px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .comparison-item h3 {
+        color: #667eea;
+        margin-top: 0;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .note {
+        background: #fff8e1;
+        padding: 15px;
+        border-radius: 6px;
+        border-left: 4px solid #ffc107;
+        margin: 20px 0;
+      }
+
+      .visual-guide {
+        display: flex;
+        justify-content: space-around;
+        margin: 20px 0;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .guide-item {
+        text-align: center;
+        flex: 1;
+        min-width: 150px;
+      }
+
+      .guide-box {
+        width: 100px;
+        height: 80px;
+        margin: 0 auto 10px;
+        border: 2px solid #667eea;
+        position: relative;
+        background: #e8f4f8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
+
+      .guide-label {
+        font-size: 0.9rem;
+        color: #2c3e50;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        padding: 20px;
+        color: white;
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 768px) {
+        .content-wrapper {
+          flex-direction: column;
+        }
+
+        .comparison {
+          flex-direction: column;
+        }
+      }
+
+      .scroll-indicator {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 10px 15px;
+        border-radius: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        font-size: 0.9rem;
+        z-index: 1000;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>scrollTop 和 scrollLeft 属性详解</h1>
+        <p class="subtitle">深入理解滚动条位置检测与兼容性处理</p>
+      </header>
+
+      <div class="content-wrapper">
+        <div class="explanation">
+          <h2>什么是 scrollTop 和 scrollLeft？</h2>
+          <p><code>scrollTop</code> 和 <code>scrollLeft</code> 是 DOM 元素的属性，用于获取或设置元素内容垂直/水平滚动的像素数。</p>
+
+          <div class="code-example">
+            // 获取垂直滚动位置<br />
+            var scrollTop = element.scrollTop;<br /><br />
+
+            // 获取水平滚动位置<br />
+            var scrollLeft = element.scrollLeft;<br /><br />
+
+            // 设置滚动位置<br />
+            element.scrollTop = 100;<br />
+            element.scrollLeft = 50;
+          </div>
+
+          <h3>核心特性：</h3>
+          <ul>
+            <li><strong>可读可写</strong> - 可以获取和设置滚动位置</li>
+            <li><strong>像素值</strong> - 以像素为单位表示滚动距离</li>
+            <li><strong>元素属性</strong> - 属于具体DOM元素的属性</li>
+            <li><strong>兼容性差异</strong> - 不同浏览器和DOCTYPE下有差异</li>
+          </ul>
+
+          <div class="note"><strong>重要提示：</strong> 在标准模式下，使用 <code>document.documentElement.scrollTop</code>；在怪异模式下，使用 <code>document.body.scrollTop</code>。</div>
+
+          <h3>兼容性处理方案</h3>
+          <p>由于浏览器兼容性问题，获取页面滚动位置需要兼容处理：</p>
+
+          <div class="code-example">
+            // 获取页面垂直滚动位置（兼容写法）<br />
+            var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;<br /><br />
+
+            // 获取页面水平滚动位置（兼容写法）<br />
+            var scrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft;
+          </div>
+
+          <div class="visual-guide">
+            <div class="guide-item">
+              <div class="guide-box" style="background: #667eea; color: white">文档顶部</div>
+              <div class="guide-label">scrollTop = 0</div>
+            </div>
+            <div class="guide-item">
+              <div class="guide-box" style="border-bottom: 15px solid #ff6b6b; background: #e8f4f8">已滚动区域</div>
+              <div class="guide-label">scrollTop > 0</div>
+            </div>
+            <div class="guide-item">
+              <div class="guide-box" style="background: #4ecdc4; color: white">可视区域</div>
+              <div class="guide-label">当前视图</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h2>交互演示</h2>
+          <p>滚动下方区域，观察 scrollTop 和 scrollLeft 的变化：</p>
+
+          <div class="scroll-container" id="scrollContainer">
+            <div class="scroll-position" id="scrollPosition">scrollTop: 0<br />scrollLeft: 0</div>
+            <div class="scroll-content" id="scrollContent">
+              这是一个可滚动的内容区域<br />
+              尝试水平和垂直滚动<br />
+              观察右侧的滚动位置指示器
+            </div>
+          </div>
+
+          <div class="info-panel" id="infoPanel">
+            // 页面滚动位置<br />
+            document.documentElement.scrollTop: <span id="docScrollTop">0</span><br />
+            document.body.scrollTop: <span id="bodyScrollTop">0</span><br />
+            兼容结果 scrollTop: <span id="compatScrollTop">0</span><br /><br />
+
+            document.documentElement.scrollLeft: <span id="docScrollLeft">0</span><br />
+            document.body.scrollLeft: <span id="bodyScrollLeft">0</span><br />
+            兼容结果 scrollLeft: <span id="compatScrollLeft">0</span>
+          </div>
+
+          <div class="controls">
+            <button id="scrollToTop">滚动到顶部</button>
+            <button id="scrollToBottom">滚动到底部</button>
+            <button id="scrollToRight">滚动到右侧</button>
+            <button id="addMoreContent">添加更多内容</button>
+          </div>
+
+          <h3>相关属性对比</h3>
+          <table style="width: 100%; border-collapse: collapse; margin: 15px 0">
+            <tr style="background: #667eea; color: white">
+              <th style="padding: 10px; text-align: left">属性</th>
+              <th style="padding: 10px; text-align: left">描述</th>
+              <th style="padding: 10px; text-align: left">适用场景</th>
+            </tr>
+            <tr style="border-bottom: 1px solid #ddd">
+              <td style="padding: 10px">scrollTop</td>
+              <td style="padding: 10px">垂直滚动位置</td>
+              <td style="padding: 10px">检测垂直滚动、回到顶部</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #ddd">
+              <td style="padding: 10px">scrollLeft</td>
+              <td style="padding: 10px">水平滚动位置</td>
+              <td style="padding: 10px">检测水平滚动、横向导航</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #ddd">
+              <td style="padding: 10px">scrollHeight</td>
+              <td style="padding: 10px">元素总内容高度</td>
+              <td style="padding: 10px">检测是否滚动到底部</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px">scrollWidth</td>
+              <td style="padding: 10px">元素总内容宽度</td>
+              <td style="padding: 10px">检测是否滚动到右侧</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="comparison">
+        <div class="comparison-item">
+          <h3>实际应用场景</h3>
+          <p>• 无限滚动加载</p>
+          <p>• 回到顶部功能</p>
+          <p>• 阅读进度指示器</p>
+          <p>• 视差滚动效果</p>
+          <p>• 滚动触发动画</p>
+        </div>
+
+        <div class="comparison-item">
+          <h3>兼容性说明</h3>
+          <p>• 现代浏览器：使用 documentElement</p>
+          <p>• 旧版IE：使用 body</p>
+          <p>• 标准模式：使用 documentElement</p>
+          <p>• 怪异模式：使用 body</p>
+          <p>• 元素滚动：直接使用元素属性</p>
+        </div>
+
+        <div class="comparison-item">
+          <h3>注意事项</h3>
+          <p>• 值为0表示未滚动</p>
+          <p>• 最大值为 scrollHeight - clientHeight</p>
+          <p>• 设置值超出范围会自动调整</p>
+          <p>• 滚动条不存在时值为0</p>
+          <p>• 性能考虑使用防抖</p>
+        </div>
+      </div>
+
+      <div class="code-example">
+        // 实际应用：回到顶部功能<br />
+        function scrollToTop() {<br />
+        &nbsp;&nbsp;// 方法1：直接设置scrollTop<br />
+        &nbsp;&nbsp;document.documentElement.scrollTop = 0;<br />
+        &nbsp;&nbsp;document.body.scrollTop = 0; // 兼容旧版浏览器<br />
+        &nbsp;&nbsp;<br />
+        &nbsp;&nbsp;// 方法2：使用scrollTo API（推荐）<br />
+        &nbsp;&nbsp;window.scrollTo({<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;top: 0,<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;behavior: 'smooth' // 平滑滚动<br />
+        &nbsp;&nbsp;});<br />
+        }<br />
+        <br />
+        // 实际应用：检测是否滚动到底部<br />
+        function isScrollToBottom() {<br />
+        &nbsp;&nbsp;const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;<br />
+        &nbsp;&nbsp;const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;<br />
+        &nbsp;&nbsp;const clientHeight = document.documentElement.clientHeight || document.body.clientHeight;<br />
+        &nbsp;&nbsp;<br />
+        &nbsp;&nbsp;return scrollTop + clientHeight >= scrollHeight - 10; // 留10px容差<br />
+        }<br />
+        <br />
+        // 监听滚动事件（使用防抖优化性能）<br />
+        let scrollTimer;<br />
+        window.addEventListener('scroll', function() {<br />
+        &nbsp;&nbsp;clearTimeout(scrollTimer);<br />
+        &nbsp;&nbsp;scrollTimer = setTimeout(function() {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;if (isScrollToBottom()) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.log('已滚动到底部，加载更多内容');<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 加载更多内容的逻辑<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+        &nbsp;&nbsp;}, 100);<br />
+        });
+      </div>
+
+      <div class="scroll-indicator" id="pageScrollIndicator">页面滚动: <span id="pageScrollTop">0</span>px</div>
+
+      <footer>
+        <p>scrollTop 和 scrollLeft 属性详解 &copy; 2023 - 交互式前端教程</p>
+      </footer>
+    </div>
+
+    <script>
+      // 获取DOM元素
+      const scrollContainer = document.getElementById("scrollContainer");
+      const scrollPosition = document.getElementById("scrollPosition");
+      const scrollContent = document.getElementById("scrollContent");
+      const infoPanel = document.getElementById("infoPanel");
+
+      const docScrollTop = document.getElementById("docScrollTop");
+      const bodyScrollTop = document.getElementById("bodyScrollTop");
+      const compatScrollTop = document.getElementById("compatScrollTop");
+      const docScrollLeft = document.getElementById("docScrollLeft");
+      const bodyScrollLeft = document.getElementById("bodyScrollLeft");
+      const compatScrollLeft = document.getElementById("compatScrollLeft");
+
+      const scrollToTopBtn = document.getElementById("scrollToTop");
+      const scrollToBottomBtn = document.getElementById("scrollToBottom");
+      const scrollToRightBtn = document.getElementById("scrollToRight");
+      const addMoreContentBtn = document.getElementById("addMoreContent");
+
+      const pageScrollIndicator = document.getElementById("pageScrollIndicator");
+      const pageScrollTop = document.getElementById("pageScrollTop");
+
+      // 更新容器滚动信息
+      function updateContainerScrollInfo() {
+        const scrollTop = scrollContainer.scrollTop;
+        const scrollLeft = scrollContainer.scrollLeft;
+
+        scrollPosition.innerHTML = `scrollTop: ${scrollTop}<br>scrollLeft: ${scrollLeft}`;
+      }
+
+      // 更新页面滚动信息
+      function updatePageScrollInfo() {
+        const docTop = document.documentElement.scrollTop;
+        const bodyTop = document.body.scrollTop;
+        const compatTop = docTop || bodyTop;
+
+        const docLeft = document.documentElement.scrollLeft;
+        const bodyLeft = document.body.scrollLeft;
+        const compatLeft = docLeft || bodyLeft;
+
+        docScrollTop.textContent = docTop;
+        bodyScrollTop.textContent = bodyTop;
+        compatScrollTop.textContent = compatTop;
+
+        docScrollLeft.textContent = docLeft;
+        bodyScrollLeft.textContent = bodyLeft;
+        compatScrollLeft.textContent = compatLeft;
+
+        pageScrollTop.textContent = compatTop;
+      }
+
+      // 初始更新
+      updateContainerScrollInfo();
+      updatePageScrollInfo();
+
+      // 监听容器滚动
+      scrollContainer.addEventListener("scroll", updateContainerScrollInfo);
+
+      // 监听页面滚动（使用防抖优化性能）
+      let scrollTimeout;
+      window.addEventListener("scroll", function () {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(updatePageScrollInfo, 10);
+      });
+
+      // 滚动到顶部
+      scrollToTopBtn.addEventListener("click", function () {
+        scrollContainer.scrollTop = 0;
+        scrollContainer.scrollLeft = 0;
+      });
+
+      // 滚动到底部
+      scrollToBottomBtn.addEventListener("click", function () {
+        scrollContainer.scrollTop = scrollContainer.scrollHeight - scrollContainer.clientHeight;
+      });
+
+      // 滚动到右侧
+      scrollToRightBtn.addEventListener("click", function () {
+        scrollContainer.scrollLeft = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+      });
+
+      // 添加更多内容
+      addMoreContentBtn.addEventListener("click", function () {
+        const newContent = document.createElement("div");
+        newContent.style.padding = "20px";
+        newContent.style.margin = "10px 0";
+        newContent.style.background = "rgba(255, 255, 255, 0.2)";
+        newContent.style.borderRadius = "5px";
+        newContent.textContent = "这是新添加的内容，用于演示滚动区域的变化。继续添加更多内容可以看到滚动条的变化。";
+
+        scrollContent.appendChild(newContent);
+
+        // 更新容器信息
+        setTimeout(updateContainerScrollInfo, 100);
+      });
+
+      // 页面加载完成后执行
+      window.addEventListener("load", function () {
+        updatePageScrollInfo();
+
+        // 显示当前文档模式
+        const compatMode = document.compatMode;
+        console.log("文档模式:", compatMode);
+        console.log("CSS1Compat = 标准模式, BackCompat = 怪异模式");
+      });
+    </script>
+  </body>
+</html>
