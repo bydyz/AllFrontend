@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TypeScript unknown 类型详解</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 2.5rem;
+      }
+
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 1.2rem;
+      }
+
+      .content-wrapper {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        margin-bottom: 40px;
+      }
+
+      .explanation {
+        flex: 1;
+        min-width: 350px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        margin-bottom: 40px;
+      }
+
+      .demo-area {
+        flex: 1;
+        min-width: 350px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      h2 {
+        color: #667eea;
+        margin: 20px 0 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+
+      h3 {
+        color: #2c3e50;
+        margin: 15px 0 10px;
+      }
+
+      p {
+        margin-bottom: 15px;
+      }
+
+      .code-example {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        overflow-x: auto;
+        font-family: "Courier New", monospace;
+        line-height: 1.5;
+        border-left: 4px solid #667eea;
+      }
+
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .comparison-table th,
+      .comparison-table td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+      }
+
+      .comparison-table th {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        font-weight: 600;
+      }
+
+      .comparison-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      .type-safety-scale {
+        display: flex;
+        justify-content: space-between;
+        margin: 25px 0;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 2px solid #e9ecef;
+      }
+
+      .type-level {
+        text-align: center;
+        flex: 1;
+        padding: 15px;
+        border-radius: 6px;
+        margin: 0 5px;
+        transition: all 0.3s ease;
+      }
+
+      .type-level:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .any-type {
+        background: #ffebee;
+        border-left: 4px solid #f44336;
+      }
+
+      .unknown-type {
+        background: #fff8e1;
+        border-left: 4px solid #ffc107;
+      }
+
+      .specific-type {
+        background: #e8f5e9;
+        border-left: 4px solid #4caf50;
+      }
+
+      .demo-container {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border: 2px solid #e9ecef;
+      }
+
+      .demo-result {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 15px;
+        border-radius: 6px;
+        margin: 10px 0;
+        font-family: "Courier New", monospace;
+        min-height: 100px;
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 10px 15px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        flex: 1;
+        min-width: 120px;
+      }
+
+      button:hover {
+        background: #5a6fd8;
+        transform: translateY(-2px);
+      }
+
+      .note {
+        background: #fff8e1;
+        padding: 15px;
+        border-radius: 6px;
+        border-left: 4px solid #ffc107;
+        margin: 20px 0;
+      }
+
+      .warning {
+        background: #ffebee;
+        padding: 15px;
+        border-radius: 6px;
+        border-left: 4px solid #f44336;
+        margin: 20px 0;
+      }
+
+      .success {
+        background: #e8f5e9;
+        padding: 15px;
+        border-radius: 6px;
+        border-left: 4px solid #4caf50;
+        margin: 20px 0;
+      }
+
+      .usage-scenarios {
+        display: grid;
+        grid-template-columns: 100%;
+        gap: 10px;
+        margin: 20px 0;
+      }
+
+      .scenario-card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #667eea;
+      }
+
+      .type-narrowing {
+        background: #e3f2fd;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border: 2px solid #2196f3;
+      }
+
+      .narrowing-step {
+        margin: 10px 0;
+        padding: 10px;
+        background: white;
+        border-radius: 4px;
+        border-left: 3px solid #2196f3;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        padding: 20px;
+        color: white;
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 768px) {
+        .content-wrapper {
+          flex-direction: column;
+        }
+
+        .type-safety-scale {
+          flex-direction: column;
+          gap: 10px;
+        }
+      }
+
+      .code-comparison {
+        display: flex;
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .code-column {
+        flex: 1;
+        min-width: 300px;
+      }
+
+      .code-header {
+        background: #667eea;
+        color: white;
+        padding: 10px;
+        border-radius: 6px 6px 0 0;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      .code-content {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 15px;
+        border-radius: 0 0 6px 6px;
+        font-family: "Courier New", monospace;
+        overflow-x: auto;
+      }
+
+      .bad-practice {
+        border-left: 4px solid #f44336;
+      }
+
+      .good-practice {
+        border-left: 4px solid #4caf50;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>TypeScript unknown 类型详解</h1>
+        <p class="subtitle">安全处理未知类型的最佳实践</p>
+      </header>
+
+      <div class="content-wrapper">
+        <div class="explanation">
+          <h2>什么是 unknown 类型？</h2>
+
+          <p><code>unknown</code> 是 TypeScript 3.0 引入的类型，表示"未知类型" - 我们不知道变量具体是什么类型，需要进行类型检查后才能使用。</p>
+
+          <div class="code-example">
+            // unknown 类型的基本用法<br />
+            let userInput: unknown;<br /><br />
+
+            userInput = 'Hello'; // ✅ 允许<br />
+            userInput = 42; // ✅ 允许<br />
+            userInput = true; // ✅ 允许<br />
+            userInput = { name: 'John' }; // ✅ 允许<br /><br />
+
+            // 但不能直接使用<br />
+            // let message: string = userInput; // ❌ 错误
+          </div>
+
+          <div class="note">
+            <strong>核心特性：</strong><br />
+            • 可以接受任何类型的值<br />
+            • 不能直接赋值给其他类型（除了 unknown 和 any）<br />
+            • 不能直接访问属性或调用方法<br />
+            • 必须进行类型检查或类型断言后才能使用
+          </div>
+
+          <h3>类型安全等级</h3>
+
+          <div class="type-safety-scale">
+            <div class="type-level any-type">
+              <h4>any</h4>
+              <p>❌ 最不安全</p>
+              <p>完全放弃类型检查</p>
+            </div>
+            <div class="type-level unknown-type">
+              <h4>unknown</h4>
+              <p>⚠️ 安全但受限</p>
+              <p>需要类型检查</p>
+            </div>
+            <div class="type-level specific-type">
+              <h4>具体类型</h4>
+              <p>✅ 最安全</p>
+              <p>完全类型安全</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h2>unknown vs any 对比</h2>
+
+          <div class="code-comparison">
+            <div class="code-column">
+              <div class="code-header bad-practice">any - 不安全</div>
+              <div class="code-content">
+                let data: any = 'hello';<br /><br />
+
+                // 这些操作都不会报错，但可能运行时出错<br />
+                data.toUpperCase(); // ✅ 编译通过<br />
+                data(); // ✅ 编译通过<br />
+                data.nonExistingProp; // ✅ 编译通过<br />
+                data = 42;<br />
+                data.toUpperCase(); // ❌ 运行时错误！
+              </div>
+            </div>
+
+            <div class="code-column">
+              <div class="code-header good-practice">unknown - 安全</div>
+              <div class="code-content">
+                let data: unknown = 'hello';<br /><br />
+
+                // 这些操作都会编译错误<br />
+                // data.toUpperCase(); // ❌ 编译错误<br />
+                // data(); // ❌ 编译错误<br />
+                // data.nonExistingProp; // ❌ 编译错误<br /><br />
+
+                // 必须先进行类型检查<br />
+                if (typeof data === 'string') {<br />
+                &nbsp;&nbsp;data.toUpperCase(); // ✅ 安全<br />
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="demo-container">
+            <h3>实时类型检查演示</h3>
+            <div class="demo-result" id="typeCheckDemo">// 输入一些 JSON 数据进行类型检查演示</div>
+            <div class="controls">
+              <button onclick="testUnknownSafety()">测试 unknown 安全性</button>
+              <button onclick="testAnyDanger()">测试 any 的危险性</button>
+              <button onclick="clearDemo()">清空演示</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <table class="comparison-table">
+        <tr>
+          <th>特性</th>
+          <th>unknown</th>
+          <th>any</th>
+        </tr>
+        <tr>
+          <td><strong>类型安全</strong></td>
+          <td>✅ 安全（需要类型检查）</td>
+          <td>❌ 不安全（跳过类型检查）</td>
+        </tr>
+        <tr>
+          <td><strong>赋值给其他类型</strong></td>
+          <td>❌ 不允许（需要类型断言）</td>
+          <td>✅ 允许</td>
+        </tr>
+        <tr>
+          <td><strong>访问属性</strong></td>
+          <td>❌ 不允许（需要类型检查）</td>
+          <td>✅ 允许</td>
+        </tr>
+        <tr>
+          <td><strong>调用方法</strong></td>
+          <td>❌ 不允许（需要类型检查）</td>
+          <td>✅ 允许</td>
+        </tr>
+        <tr>
+          <td><strong>使用场景</strong></td>
+          <td>动态数据、API响应、用户输入</td>
+          <td>迁移旧代码、第三方库</td>
+        </tr>
+      </table>
+
+      <div class="content-wrapper">
+        <div class="explanation">
+          <h2>unknown 的使用场景</h2>
+
+          <div class="usage-scenarios">
+            <div class="scenario-card">
+              <h4>📡 API 响应处理</h4>
+              <p>处理来自外部 API 的未知数据结构</p>
+              <div class="code-example">
+                async function fetchData(): Promise&lt;unknown&gt; {<br />
+                &nbsp;&nbsp;const response = await fetch('/api/data');<br />
+                &nbsp;&nbsp;return response.json();<br />
+                }
+              </div>
+            </div>
+
+            <div class="scenario-card">
+              <h4>⌨️ 用户输入处理</h4>
+              <p>处理表单输入、URL 参数等用户提供的数据</p>
+              <div class="code-example">
+                function processInput(input: unknown): string {<br />
+                &nbsp;&nbsp;if (typeof input === 'string') {<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;return input.trim();<br />
+                &nbsp;&nbsp;}<br />
+                &nbsp;&nbsp;return '';<br />
+                }
+              </div>
+            </div>
+
+            <div class="scenario-card">
+              <h4>📦 反序列化数据</h4>
+              <p>处理 JSON 解析、本地存储等反序列化操作</p>
+              <div class="code-example">
+                function parseJSON(json: string): unknown {<br />
+                &nbsp;&nbsp;return JSON.parse(json);<br />
+                }
+              </div>
+            </div>
+          </div>
+
+          <h3>类型收窄（Type Narrowing）</h3>
+
+          <div class="type-narrowing">
+            <h4>unknown 到具体类型的转换过程</h4>
+
+            <div class="narrowing-step">
+              <strong>1. 类型检查</strong>
+              <div class="code-example">
+                function processValue(value: unknown) {<br />
+                &nbsp;&nbsp;if (typeof value === 'string') {<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;// 这里 value 是 string 类型<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;return value.toUpperCase();<br />
+                &nbsp;&nbsp;}<br />
+                &nbsp;&nbsp;if (typeof value === 'number') {<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;// 这里 value 是 number 类型<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;return value.toFixed(2);<br />
+                &nbsp;&nbsp;}<br />
+                &nbsp;&nbsp;// 这里 value 仍然是 unknown<br />
+                &nbsp;&nbsp;return 'Unknown type';<br />
+                }
+              </div>
+            </div>
+
+            <div class="narrowing-step">
+              <strong>2. 类型断言</strong>
+              <div class="code-example">
+                function handleApiResponse(response: unknown) {<br />
+                &nbsp;&nbsp;// 使用类型断言（需要确保类型正确）<br />
+                &nbsp;&nbsp;const data = response as { id: number; name: string };<br />
+                &nbsp;&nbsp;return data.name;<br />
+                }
+              </div>
+            </div>
+
+            <div class="narrowing-step">
+              <strong>3. 类型保护函数</strong>
+              <div class="code-example">
+                function isUser(obj: unknown): obj is User {<br />
+                &nbsp;&nbsp;return (<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;typeof obj === 'object' &&<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;obj !== null &&<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;'id' in obj &&<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;'name' in obj<br />
+                &nbsp;&nbsp;);<br />
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h2>实际应用示例</h2>
+
+          <div class="demo-container">
+            <h3>API 响应处理</h3>
+            <div class="code-example">
+              interface User {<br />
+              &nbsp;&nbsp;id: number;<br />
+              &nbsp;&nbsp;name: string;<br />
+              &nbsp;&nbsp;email: string;<br />
+              }<br /><br />
+
+              // 类型保护函数<br />
+              function isUser(obj: unknown): obj is User {<br />
+              &nbsp;&nbsp;return (<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;typeof obj === 'object' &&<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;obj !== null &&<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;'id' in obj &&<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;typeof (obj as any).id === 'number' &&<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;'name' in obj &&<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;typeof (obj as any).name === 'string' &&<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;'email' in obj &&<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;typeof (obj as any).email === 'string'<br />
+              &nbsp;&nbsp;);<br />
+              }<br /><br />
+
+              async function fetchUser(id: number): Promise&lt;User | null&gt; {<br />
+              &nbsp;&nbsp;try {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;const response: unknown = await fetch(`/api/users/${id}`).then(r => r.json());<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;if (isUser(response)) {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return response;<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;return null;<br />
+              &nbsp;&nbsp;} catch {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;return null;<br />
+              &nbsp;&nbsp;}<br />
+              }
+            </div>
+          </div>
+
+          <div class="demo-container">
+            <h3>配置处理</h3>
+            <div class="code-example">
+              function loadConfig(): unknown {<br />
+              &nbsp;&nbsp;try {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;const config = localStorage.getItem('app-config');<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;return config ? JSON.parse(config) : null;<br />
+              &nbsp;&nbsp;} catch {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;return null;<br />
+              &nbsp;&nbsp;}<br />
+              }<br /><br />
+
+              function getConfigValue&lt;T&gt;(config: unknown, key: string, defaultValue: T): T {<br />
+              &nbsp;&nbsp;if (typeof config === 'object' && config !== null && key in config) {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;const value = (config as any)[key];<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;if (typeof value === typeof defaultValue) {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return value as T;<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+              &nbsp;&nbsp;}<br />
+              &nbsp;&nbsp;return defaultValue;<br />
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-wrapper">
+        <div class="explanation">
+          <h2>最佳实践和模式</h2>
+
+          <h3>1. 优先使用 unknown 而不是 any</h3>
+          <div class="code-comparison">
+            <div class="code-column">
+              <div class="code-header bad-practice">不推荐</div>
+              <div class="code-content">
+                function parseData(data: any) {<br />
+                &nbsp;&nbsp;// 可能运行时出错<br />
+                &nbsp;&nbsp;return data.items.map((item: any) => item.name);<br />
+                }
+              </div>
+            </div>
+
+            <div class="code-column">
+              <div class="code-header good-practice">推荐</div>
+              <div class="code-content">
+                function parseData(data: unknown) {<br />
+                &nbsp;&nbsp;if (isValidData(data)) {<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;return data.items.map(item => item.name);<br />
+                &nbsp;&nbsp;}<br />
+                &nbsp;&nbsp;return [];<br />
+                }
+              </div>
+            </div>
+          </div>
+
+          <h3>2. 使用类型保护函数</h3>
+          <div class="code-example">
+            // 创建可重用的类型保护<br />
+            function isString(value: unknown): value is string {<br />
+            &nbsp;&nbsp;return typeof value === 'string';<br />
+            }<br /><br />
+
+            function isNumber(value: unknown): value is number {<br />
+            &nbsp;&nbsp;return typeof value === 'number';<br />
+            }<br /><br />
+
+            function isArray(value: unknown): value is unknown[] {<br />
+            &nbsp;&nbsp;return Array.isArray(value);<br />
+            }
+          </div>
+
+          <h3>3. 谨慎使用类型断言</h3>
+          <div class="code-comparison">
+            <div class="code-column">
+              <div class="code-header bad-practice">危险的方式</div>
+              <div class="code-content">
+                function getData() {<br />
+                &nbsp;&nbsp;const response: unknown = fetchData();<br />
+                &nbsp;&nbsp;// 直接断言，可能出错<br />
+                &nbsp;&nbsp;return (response as User[]).map(user => user.name);<br />
+                }
+              </div>
+            </div>
+
+            <div class="code-column">
+              <div class="code-header good-practice">安全的方式</div>
+              <div class="code-content">
+                function getData() {<br />
+                &nbsp;&nbsp;const response: unknown = fetchData();<br />
+                &nbsp;&nbsp;// 先检查再断言<br />
+                &nbsp;&nbsp;if (isUserArray(response)) {<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;return response.map(user => user.name);<br />
+                &nbsp;&nbsp;}<br />
+                &nbsp;&nbsp;return [];<br />
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h2>高级模式</h2>
+
+          <div class="demo-container">
+            <h3>泛型与 unknown</h3>
+            <div class="code-example">
+              // 安全的反序列化函数<br />
+              function safeParse&lt;T&gt;(<br />
+              &nbsp;&nbsp;json: string,<br />
+              &nbsp;&nbsp;validator: (data: unknown) => data is T<br />
+              ): T | null {<br />
+              &nbsp;&nbsp;try {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;const data: unknown = JSON.parse(json);<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;return validator(data) ? data : null;<br />
+              &nbsp;&nbsp;} catch {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;return null;<br />
+              &nbsp;&nbsp;}<br />
+              }<br /><br />
+
+              // 使用示例<br />
+              const userValidator = (data: unknown): data is User =><br />
+              &nbsp;&nbsp;typeof data === 'object' && data !== null && 'id' in data && 'name' in data;<br /><br />
+
+              const user = safeParse('{"id":1,"name":"John"}', userValidator);
+            </div>
+          </div>
+
+          <div class="demo-container">
+            <h3>错误处理模式</h3>
+            <div class="code-example">
+              // Result 模式处理 unknown 数据<br />
+              type Result&lt;T, E = Error&gt; =<br />
+              &nbsp;&nbsp;| { success: true; data: T }<br />
+              &nbsp;&nbsp;| { success: false; error: E };<br /><br />
+
+              function safeProcess&lt;T&gt;(<br />
+              &nbsp;&nbsp;input: unknown,<br />
+              &nbsp;&nbsp;processor: (data: T) => void<br />
+              ): Result&lt;void&gt; {<br />
+              &nbsp;&nbsp;try {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;// 假设我们有类型检查<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;if (isValidInput&lt;T&gt;(input)) {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;processor(input);<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return { success: true, data: undefined };<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;return { success: false, error: new Error('Invalid input') };<br />
+              &nbsp;&nbsp;} catch (error) {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;return { success: false, error: error as Error };<br />
+              &nbsp;&nbsp;}<br />
+              }
+            </div>
+          </div>
+
+          <div class="success">
+            <strong>总结：</strong><br />
+            • 使用 unknown 代替 any 来提高类型安全<br />
+            • 总是对 unknown 值进行类型检查后再使用<br />
+            • 创建可重用的类型保护函数<br />
+            • 在确实知道类型时才使用类型断言
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>TypeScript unknown 类型详解 &copy; 2023 - 安全处理未知类型的最佳实践</p>
+      </footer>
+    </div>
+
+    <script>
+      // 演示 unknown 类型的安全性
+      function testUnknownSafety() {
+        const demo = document.getElementById("typeCheckDemo");
+        demo.innerHTML = "";
+
+        // 模拟 unknown 数据
+        let unknownData = getRandomUnknownData();
+        demo.innerHTML += `📦 获取到 unknown 数据: ${JSON.stringify(unknownData)}<br/><br/>`;
+
+        // 尝试直接使用（会报错）
+        demo.innerHTML += "❌ 尝试直接使用 unknown 数据:<br/>";
+        demo.innerHTML += "// 以下操作在 TypeScript 中会编译错误<br/>";
+        demo.innerHTML += "// unknownData.toUpperCase();<br/>";
+        demo.innerHTML += "// unknownData();<br/>";
+        demo.innerHTML += "// unknownData.someProperty;<br/><br/>";
+
+        // 正确的类型检查
+        demo.innerHTML += "✅ 正确的类型检查方式:<br/>";
+
+        if (typeof unknownData === "string") {
+          demo.innerHTML += `🔍 检测到字符串: "${unknownData.toUpperCase()}"<br/>`;
+        } else if (typeof unknownData === "number") {
+          demo.innerHTML += `🔍 检测到数字: ${unknownData.toFixed(2)}<br/>`;
+        } else if (Array.isArray(unknownData)) {
+          demo.innerHTML += `🔍 检测到数组: [${unknownData.join(", ")}]<br/>`;
+        } else if (typeof unknownData === "object" && unknownData !== null) {
+          demo.innerHTML += `🔍 检测到对象: ${JSON.stringify(unknownData)}<br/>`;
+        } else {
+          demo.innerHTML += `🔍 其他类型: ${typeof unknownData}<br/>`;
+        }
+      }
+
+      function testAnyDanger() {
+        const demo = document.getElementById("typeCheckDemo");
+        demo.innerHTML = "";
+
+        // 模拟 any 数据的危险性
+        let anyData = getRandomUnknownData();
+        demo.innerHTML += `⚠️ 获取到 any 数据: ${JSON.stringify(anyData)}<br/><br/>`;
+
+        demo.innerHTML += "❌ any 允许危险操作（编译通过但可能运行时出错）:<br/>";
+
+        try {
+          // 这些操作在 TypeScript 中使用 any 时编译通过
+          // 但运行时可能出错
+          demo.innerHTML += `1. 调用方法: ${anyData.nonExistingMethod?.() || "方法不存在"}<br/>`;
+        } catch (e) {
+          demo.innerHTML += `1. 调用方法: ❌ 运行时错误: ${e.message}<br/>`;
+        }
+
+        try {
+          demo.innerHTML += `2. 访问属性: ${anyData.someProperty || "属性不存在"}<br/>`;
+        } catch (e) {
+          demo.innerHTML += `2. 访问属性: ❌ 运行时错误: ${e.message}<br/>`;
+        }
+
+        try {
+          demo.innerHTML += `3. 字符串操作: ${anyData.toUpperCase?.() || "不是字符串"}<br/>`;
+        } catch (e) {
+          demo.innerHTML += `3. 字符串操作: ❌ 运行时错误: ${e.message}<br/>`;
+        }
+
+        demo.innerHTML += "<br/>💡 这就是为什么应该使用 unknown 而不是 any！";
+      }
+
+      function clearDemo() {
+        document.getElementById("typeCheckDemo").innerHTML = "// 输入一些 JSON 数据进行类型检查演示";
+      }
+
+      // 生成随机 unknown 数据用于演示
+      function getRandomUnknownData() {
+        const types = [
+          "Hello World", // string
+          42, // number
+          true, // boolean
+          [1, 2, 3], // array
+          { name: "John", age: 30 }, // object
+          null, // null
+          undefined, // undefined
+        ];
+
+        return types[Math.floor(Math.random() * types.length)];
+      }
+
+      // 页面加载时初始化
+      window.addEventListener("load", function () {
+        console.log("=== TypeScript unknown 类型演示 ===");
+        console.log("unknown 提供了类型安全的方式来处理动态数据");
+      });
+
+      // 模拟 TypeScript 类型检查的概念
+      function demonstrateTypeSafety() {
+        console.log("🔒 unknown 强制类型检查，any 跳过类型检查");
+      }
+    </script>
+  </body>
+</html>

@@ -1,9 +1,0 @@
-{
-  "compilerOptions": {
-    "moduleResolution": "node", // 使用 Node.js 模块解析策略
-    "allowJs": true,           // 允许编译 JavaScript 文件
-    "checkJs": true,           // 在 JavaScript 文件中启用类型检查
-    "declaration": true,       // 生成相应的 .d.ts 文件（如果需要）
-    "typeRoots": ["./types", "./node_modules/@types"] // 声明类型根目录
-  }
-}

@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>const 变量详解：不可变性及其特殊情况</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 2.5rem;
+      }
+
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 1.2rem;
+      }
+
+      .content-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .explanation {
+        flex: 1;
+        min-width: 350px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .demo-area {
+        flex: 1;
+        min-width: 350px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      h2 {
+        color: #667eea;
+        margin: 20px 0 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+
+      h3 {
+        color: #2c3e50;
+        margin: 15px 0 10px;
+      }
+
+      p {
+        margin-bottom: 15px;
+      }
+
+      .code-example {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        overflow-x: auto;
+        font-family: "Courier New", monospace;
+        line-height: 1.5;
+        border-left: 4px solid #667eea;
+      }
+
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .comparison-table th,
+      .comparison-table td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+      }
+
+      .comparison-table th {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        font-weight: 600;
+      }
+
+      .comparison-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      .demo-container {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border: 2px solid #e9ecef;
+      }
+
+      .demo-result {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 15px;
+        border-radius: 6px;
+        margin: 10px 0;
+        font-family: "Courier New", monospace;
+        min-height: 100px;
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 10px 15px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        flex: 1;
+        min-width: 120px;
+      }
+
+      button:hover {
+        background: #5a6fd8;
+        transform: translateY(-2px);
+      }
+
+      .note {
+        background: #fff8e1;
+        padding: 15px;
+        border-radius: 6px;
+        border-left: 4px solid #ffc107;
+        margin: 20px 0;
+      }
+
+      .warning {
+        background: #ffebee;
+        padding: 15px;
+        border-radius: 6px;
+        border-left: 4px solid #f44336;
+        margin: 20px 0;
+      }
+
+      .success {
+        background: #e8f5e9;
+        padding: 15px;
+        border-radius: 6px;
+        border-left: 4px solid #4caf50;
+        margin: 20px 0;
+      }
+
+      .visual-guide {
+        display: flex;
+        justify-content: space-around;
+        margin: 20px 0;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .guide-item {
+        text-align: center;
+        flex: 1;
+        min-width: 150px;
+      }
+
+      .guide-box {
+        width: 100px;
+        height: 80px;
+        margin: 0 auto 10px;
+        border: 2px solid #667eea;
+        position: relative;
+        background: #e8f4f8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
+
+      .immutable {
+        border-color: #f44336;
+        background: #ffebee;
+      }
+
+      .mutable-content {
+        border-color: #4caf50;
+        background: #e8f5e9;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        padding: 20px;
+        color: white;
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 768px) {
+        .content-wrapper {
+          flex-direction: column;
+        }
+      }
+
+      .concept-diagram {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border: 2px solid #667eea;
+      }
+
+      .memory-visual {
+        display: flex;
+        align-items: center;
+        margin: 15px 0;
+        padding: 10px;
+        background: white;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .variable-name {
+        font-weight: bold;
+        color: #667eea;
+        min-width: 80px;
+      }
+
+      .arrow {
+        margin: 0 15px;
+        color: #666;
+      }
+
+      .memory-value {
+        flex: 1;
+        padding: 8px;
+        background: #e8f4f8;
+        border-radius: 4px;
+        font-family: "Courier New", monospace;
+      }
+
+      .object-properties {
+        margin-left: 30px;
+        border-left: 2px solid #667eea;
+        padding-left: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>const 变量详解</h1>
+        <p class="subtitle">不可变性特性及其特殊情况分析</p>
+      </header>
+
+      <div class="content-wrapper">
+        <div class="explanation">
+          <h2>const 的基本特性</h2>
+
+          <p><code>const</code> 用于声明一个只读的常量，一旦声明，常量的值就不能改变。</p>
+
+          <div class="code-example">
+            // 基本用法 - 不可重新赋值<br />
+            const PI = 3.14159;<br />
+            // TypeError: Assignment to constant variable<br />
+            PI = 3.14; <br /><br />
+
+            // 必须初始化<br />
+            const MAX_SIZE; // SyntaxError: Missing initializer in const declaration
+          </div>
+
+          <div class="note">
+            <strong>核心特性：</strong><br />
+            • 声明时必须初始化<br />
+            • 不能重新赋值<br />
+            • 块级作用域<br />
+            • 不存在变量提升
+          </div>
+
+          <h3>const 与 let、var 的比较</h3>
+
+          <table class="comparison-table">
+            <tr>
+              <th>特性</th>
+              <th>const</th>
+              <th>let</th>
+              <th>var</th>
+            </tr>
+            <tr>
+              <td>重新赋值</td>
+              <td>❌ 不允许</td>
+              <td>✅ 允许</td>
+              <td>✅ 允许</td>
+            </tr>
+            <tr>
+              <td>重复声明</td>
+              <td>❌ 不允许</td>
+              <td>❌ 不允许</td>
+              <td>✅ 允许</td>
+            </tr>
+            <tr>
+              <td>作用域</td>
+              <td>块级</td>
+              <td>块级</td>
+              <td>函数级</td>
+            </tr>
+            <tr>
+              <td>变量提升</td>
+              <td>❌ 不存在</td>
+              <td>❌ 不存在</td>
+              <td>✅ 存在</td>
+            </tr>
+            <tr>
+              <td>必须初始化</td>
+              <td>✅ 必须</td>
+              <td>❌ 可选</td>
+              <td>❌ 可选</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="demo-area">
+          <h2>基础演示</h2>
+
+          <div class="demo-container">
+            <h3>const 基本行为</h3>
+            <div class="demo-result" id="basicDemo">// 点击按钮测试 const 行为</div>
+            <div class="controls">
+              <button onclick="testBasicConst()">测试基本 const</button>
+              <button onclick="testConstReassignment()">测试重新赋值</button>
+              <button onclick="testConstRedeclaration()">测试重复声明</button>
+            </div>
+          </div>
+
+          <div class="note">
+            <strong>记忆技巧：</strong><br />
+            const = constant (常量) = 不可变<br />
+            但注意：不可变的是"绑定"，不一定是"值"
+          </div>
+        </div>
+      </div>
+
+      <div class="content-wrapper">
+        <div class="explanation">
+          <h2>特殊情况：对象和数组的 const</h2>
+
+          <div class="warning">
+            <strong>重要概念：</strong><br />
+            const 保证的是变量标识符不能重新赋值，但对于对象和数组，其内部内容是可以修改的。
+          </div>
+
+          <h3>对象的情况</h3>
+          <div class="code-example">
+            const person = {<br />
+            &nbsp;&nbsp;name: '张三',<br />
+            &nbsp;&nbsp;age: 25<br />
+            };<br /><br />
+
+            // 这行会报错 - 不能重新赋值<br />
+            // person = { name: '李四' }; // TypeError<br /><br />
+
+            // 但这些操作是允许的 - 修改对象属性<br />
+            person.age = 26; // ✅ 允许<br />
+            person.city = '北京'; // ✅ 允许<br />
+            delete person.name; // ✅ 允许
+          </div>
+
+          <h3>数组的情况</h3>
+          <div class="code-example">
+            const numbers = [1, 2, 3];<br /><br />
+
+            // 这行会报错 - 不能重新赋值<br />
+            // numbers = [4, 5, 6]; // TypeError<br /><br />
+
+            // 但这些操作是允许的 - 修改数组内容<br />
+            numbers.push(4); // ✅ 允许<br />
+            numbers[0] = 10; // ✅ 允许<br />
+            numbers.pop(); // ✅ 允许
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h2>对象和数组演示</h2>
+
+          <div class="demo-container">
+            <h3>const 对象操作</h3>
+            <div class="demo-result" id="objectDemo">// 对象操作演示</div>
+            <div class="controls">
+              <button onclick="testObjectProperties()">修改对象属性</button>
+              <button onclick="testObjectReassignment()">尝试重新赋值</button>
+              <button onclick="showObjectState()">显示对象状态</button>
+            </div>
+          </div>
+
+          <div class="demo-container">
+            <h3>const 数组操作</h3>
+            <div class="demo-result" id="arrayDemo">// 数组操作演示</div>
+            <div class="controls">
+              <button onclick="testArrayOperations()">修改数组内容</button>
+              <button onclick="testArrayReassignment()">尝试重新赋值</button>
+              <button onclick="showArrayState()">显示数组状态</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="concept-diagram">
+        <h2>const 的内存模型理解</h2>
+
+        <div class="memory-visual">
+          <div class="variable-name">const person</div>
+          <div class="arrow">→</div>
+          <div class="memory-value">{ name: '张三', age: 25 }</div>
+        </div>
+
+        <div class="note">
+          <strong>理解：</strong><br />
+          const 创建了一个不可变的"指针"，指向一个内存地址。<br />
+          但这个地址中的内容（对象属性、数组元素）是可以修改的。
+        </div>
+
+        <div class="visual-guide">
+          <div class="guide-item">
+            <div class="guide-box immutable">变量绑定</div>
+            <div class="guide-label">不可变<br />(const 保证)</div>
+          </div>
+          <div class="guide-item">
+            <div class="guide-box mutable-content">对象内容</div>
+            <div class="guide-label">可变<br />(可以修改)</div>
+          </div>
+          <div class="guide-item">
+            <div class="guide-box">内存地址</div>
+            <div class="guide-label">固定不变<br />(引用不变)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-wrapper">
+        <div class="explanation">
+          <h2>真正的不可变性方法</h2>
+
+          <h3>Object.freeze() - 浅冻结</h3>
+          <div class="code-example">
+            const person = Object.freeze({<br />
+            &nbsp;&nbsp;name: '张三',<br />
+            &nbsp;&nbsp;age: 25,<br />
+            &nbsp;&nbsp;address: { city: '北京' }<br />
+            });<br /><br />
+
+            // 这些操作会被静默忽略或报错（严格模式）<br />
+            person.age = 26; // ❌ 不允许<br />
+            person.city = '上海'; // ❌ 不允许<br /><br />
+
+            // 但嵌套对象仍然可以修改！<br />
+            person.address.city = '上海'; // ✅ 允许！<br />
+            console.log(person.address.city); // '上海'
+          </div>
+
+          <h3>深冻结函数</h3>
+          <div class="code-example">
+            function deepFreeze(obj) {<br />
+            &nbsp;&nbsp;Object.freeze(obj);<br />
+            &nbsp;&nbsp;Object.keys(obj).forEach(key => {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;if (typeof obj[key] === 'object' && obj[key] !== null) {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;deepFreeze(obj[key]);<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+            &nbsp;&nbsp;});<br />
+            &nbsp;&nbsp;return obj;<br />
+            }<br /><br />
+
+            const config = deepFreeze({<br />
+            &nbsp;&nbsp;api: { baseURL: 'https://api.example.com' }<br />
+            });<br />
+            // 现在 config.api.baseURL 也不能修改了
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h2>冻结对象演示</h2>
+
+          <div class="demo-container">
+            <h3>Object.freeze() 测试</h3>
+            <div class="demo-result" id="freezeDemo">// 冻结对象演示</div>
+            <div class="controls">
+              <button onclick="testShallowFreeze()">测试浅冻结</button>
+              <button onclick="testDeepFreeze()">测试深冻结</button>
+              <button onclick="testNestedModification()">测试嵌套修改</button>
+            </div>
+          </div>
+
+          <div class="success">
+            <strong>最佳实践：</strong><br />
+            对于配置对象、常量数据等，使用 Object.freeze() 确保真正的不可变性。
+          </div>
+        </div>
+      </div>
+
+      <div class="content-wrapper">
+        <div class="explanation">
+          <h2>其他特殊情况</h2>
+
+          <h3>函数表达式</h3>
+          <div class="code-example">
+            // 函数表达式<br />
+            const greet = function(name) {<br />
+            &nbsp;&nbsp;return `Hello, ${name}!`;<br />
+            };<br /><br />
+
+            // 不能重新赋值<br />
+            // greet = function() {}; // TypeError<br /><br />
+
+            // 但可以修改函数属性（如果有）<br />
+            greet.customProperty = 'some value'; // ✅ 允许
+          </div>
+
+          <h3>箭头函数</h3>
+          <div class="code-example">
+            const multiply = (a, b) => a * b;<br /><br />
+
+            // 同样不能重新赋值<br />
+            // multiply = (a, b) => a + b; // TypeError
+          </div>
+
+          <h3>类表达式</h3>
+          <div class="code-example">
+            const Person = class {<br />
+            &nbsp;&nbsp;constructor(name) {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;this.name = name;<br />
+            &nbsp;&nbsp;}<br />
+            };<br /><br />
+
+            // 不能重新赋值<br />
+            // Person = class {}; // TypeError
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h2>块级作用域演示</h2>
+
+          <div class="demo-container">
+            <h3>const 的块级作用域</h3>
+            <div class="demo-result" id="scopeDemo">// 作用域演示</div>
+            <div class="controls">
+              <button onclick="testBlockScope()">测试块级作用域</button>
+              <button onclick="testTemporalDeadZone()">测试暂时性死区</button>
+              <button onclick="testLoopWithConst()">测试循环中的 const</button>
+            </div>
+          </div>
+
+          <div class="code-example">
+            // 循环中的 const - 每次迭代创建新的绑定<br />
+            for (const i = 0; i < 3; i++) { // ❌ 这会报错！<br />
+            &nbsp;&nbsp;console.log(i);<br />
+            }<br /><br />
+
+            // 正确的用法<br />
+            for (const value of [1, 2, 3]) { // ✅ 正确<br />
+            &nbsp;&nbsp;console.log(value); // 每次迭代都是新的 const<br />
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="content-wrapper">
+        <div class="explanation">
+          <h2>最佳实践总结</h2>
+
+          <div class="success">
+            <strong>使用 const 的情况：</strong><br />
+            • 所有不需要重新赋值的变量<br />
+            • 配置对象、常量值<br />
+            • 导入的模块<br />
+            • 函数表达式和类表达式
+          </div>
+
+          <div class="note">
+            <strong>使用 let 的情况：</strong><br />
+            • 需要重新赋值的变量<br />
+            • 循环计数器<br />
+            • 需要条件赋值的变量
+          </div>
+
+          <div class="warning">
+            <strong>避免使用 var：</strong><br />
+            • 存在变量提升问题<br />
+            • 函数级作用域容易出错<br />
+            • 可以重复声明
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h2>综合测试</h2>
+
+          <div class="demo-container">
+            <h3>const 综合行为测试</h3>
+            <div class="demo-result" id="comprehensiveDemo">// 综合测试结果</div>
+            <div class="controls">
+              <button onclick="runComprehensiveTest()">运行综合测试</button>
+              <button onclick="clearAllDemos()">清空所有演示</button>
+            </div>
+          </div>
+
+          <div class="note">
+            <strong>现代 JavaScript 开发建议：</strong><br />
+            默认使用 const，只有在需要重新赋值时才使用 let，避免使用 var。
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>const 变量详解 &copy; 2023 - 深入理解 JavaScript 常量声明</p>
+      </footer>
+    </div>
+
+    <script>
+      // 演示变量
+      let demoOutput = "";
+
+      function logToDemo(elementId, message) {
+        const element = document.getElementById(elementId);
+        demoOutput += message + "\n";
+        element.textContent = demoOutput;
+      }
+
+      function clearDemo(elementId) {
+        const element = document.getElementById(elementId);
+        element.textContent = "";
+        demoOutput = "";
+      }
+
+      // 基本 const 演示
+      function testBasicConst() {
+        clearDemo("basicDemo");
+        try {
+          const PI = 3.14159;
+          logToDemo("basicDemo", `✅ const PI = ${PI} 声明成功`);
+          logToDemo("basicDemo", `✅ PI 的值为: ${PI}`);
+        } catch (error) {
+          logToDemo("basicDemo", `❌ 错误: ${error.message}`);
+        }
+      }
+
+      function testConstReassignment() {
+        clearDemo("basicDemo");
+        try {
+          const MAX_SIZE = 100;
+          logToDemo("basicDemo", `✅ const MAX_SIZE = ${MAX_SIZE} 声明成功`);
+
+          MAX_SIZE = 200; // 这行会报错
+          logToDemo("basicDemo", `❌ 这行不会执行`);
+        } catch (error) {
+          logToDemo("basicDemo", `✅ 正确捕获错误: ${error.message}`);
+        }
+      }
+
+      function testConstRedeclaration() {
+        clearDemo("basicDemo");
+        try {
+          const NAME = "Alice";
+          logToDemo("basicDemo", `✅ const NAME = '${NAME}' 声明成功`);
+
+          // const NAME = "Bob"; // 这行会报错
+          logToDemo("basicDemo", `❌ 这行不会执行`);
+        } catch (error) {
+          logToDemo("basicDemo", `✅ 正确捕获错误: ${error.message}`);
+        }
+      }
+
+      // 对象演示
+      const person = { name: "张三", age: 25 };
+
+      function testObjectProperties() {
+        clearDemo("objectDemo");
+        try {
+          logToDemo("objectDemo", `初始状态: ${JSON.stringify(person)}`);
+
+          person.age = 26;
+          logToDemo("objectDemo", `✅ 修改 age: ${JSON.stringify(person)}`);
+
+          person.city = "北京";
+          logToDemo("objectDemo", `✅ 添加 city: ${JSON.stringify(person)}`);
+
+          delete person.name;
+          logToDemo("objectDemo", `✅ 删除 name: ${JSON.stringify(person)}`);
+        } catch (error) {
+          logToDemo("objectDemo", `❌ 错误: ${error.message}`);
+        }
+      }
+
+      function testObjectReassignment() {
+        clearDemo("objectDemo");
+        try {
+          person = { name: "李四" }; // 这行会报错
+          logToDemo("objectDemo", `❌ 这行不会执行`);
+        } catch (error) {
+          logToDemo("objectDemo", `✅ 正确捕获错误: ${error.message}`);
+        }
+      }
+
+      function showObjectState() {
+        clearDemo("objectDemo");
+        logToDemo("objectDemo", `当前对象状态: ${JSON.stringify(person)}`);
+        logToDemo("objectDemo", `对象引用地址不变，但内容已修改`);
+      }
+
+      // 数组演示
+      const numbers = [1, 2, 3];
+
+      function testArrayOperations() {
+        clearDemo("arrayDemo");
+        try {
+          logToDemo("arrayDemo", `初始数组: [${numbers.join(", ")}]`);
+
+          numbers.push(4);
+          logToDemo("arrayDemo", `✅ push(4): [${numbers.join(", ")}]`);
+
+          numbers[0] = 10;
+          logToDemo("arrayDemo", `✅ numbers[0] = 10: [${numbers.join(", ")}]`);
+
+          numbers.pop();
+          logToDemo("arrayDemo", `✅ pop(): [${numbers.join(", ")}]`);
+        } catch (error) {
+          logToDemo("arrayDemo", `❌ 错误: ${error.message}`);
+        }
+      }
+
+      function testArrayReassignment() {
+        clearDemo("arrayDemo");
+        try {
+          numbers = [4, 5, 6]; // 这行会报错
+          logToDemo("arrayDemo", `❌ 这行不会执行`);
+        } catch (error) {
+          logToDemo("arrayDemo", `✅ 正确捕获错误: ${error.message}`);
+        }
+      }
+
+      function showArrayState() {
+        clearDemo("arrayDemo");
+        logToDemo("arrayDemo", `当前数组: [${numbers.join(", ")}]`);
+        logToDemo("arrayDemo", `数组引用地址不变，但内容已修改`);
+      }
+
+      // 冻结演示
+      function testShallowFreeze() {
+        clearDemo("freezeDemo");
+        try {
+          const config = Object.freeze({
+            apiUrl: "https://api.example.com",
+            timeout: 5000,
+          });
+
+          logToDemo("freezeDemo", `✅ 对象已冻结: ${JSON.stringify(config)}`);
+
+          config.timeout = 10000; // 这行在严格模式会报错，非严格模式静默失败
+          logToDemo("freezeDemo", `❌ 尝试修改 timeout (静默失败)`);
+          logToDemo("freezeDemo", `当前 timeout: ${config.timeout} (未改变)`);
+        } catch (error) {
+          logToDemo("freezeDemo", `✅ 严格模式下错误: ${error.message}`);
+        }
+      }
+
+      function testDeepFreeze() {
+        clearDemo("freezeDemo");
+
+        function deepFreeze(obj) {
+          Object.freeze(obj);
+          Object.keys(obj).forEach(key => {
+            if (typeof obj[key] === "object" && obj[key] !== null) {
+              deepFreeze(obj[key]);
+            }
+          });
+          return obj;
+        }
+
+        const appConfig = deepFreeze({
+          api: { baseURL: "https://api.example.com", version: "v1" },
+          settings: { theme: "dark" },
+        });
+
+        logToDemo("freezeDemo", `✅ 深度冻结对象: ${JSON.stringify(appConfig)}`);
+
+        try {
+          appConfig.api.baseURL = "https://new-api.example.com";
+          logToDemo("freezeDemo", `❌ 尝试修改嵌套属性 (静默失败)`);
+        } catch (error) {
+          logToDemo("freezeDemo", `✅ 严格模式下错误: ${error.message}`);
+        }
+      }
+
+      function testNestedModification() {
+        clearDemo("freezeDemo");
+
+        const data = Object.freeze({
+          user: { name: "John", profile: { age: 25 } },
+        });
+
+        logToDemo("freezeDemo", `浅冻结对象: ${JSON.stringify(data)}`);
+        logToDemo("freezeDemo", `注意: 浅冻结只冻结第一层！`);
+
+        // 嵌套对象仍然可以修改
+        data.user.profile.age = 30;
+        logToDemo("freezeDemo", `⚠️ 嵌套对象被修改: ${JSON.stringify(data)}`);
+        logToDemo("freezeDemo", `需要使用深冻结来完全保护对象`);
+      }
+
+      // 作用域演示
+      function testBlockScope() {
+        clearDemo("scopeDemo");
+
+        if (true) {
+          const blockScoped = "我在块内部";
+          logToDemo("scopeDemo", `✅ 块内部: ${blockScoped}`);
+        }
+
+        try {
+          logToDemo("scopeDemo", `块外部: ${blockScoped}`); // 这行会报错
+        } catch (error) {
+          logToDemo("scopeDemo", `✅ 正确捕获错误: ${error.message}`);
+        }
+      }
+
+      function testTemporalDeadZone() {
+        clearDemo("scopeDemo");
+
+        logToDemo("scopeDemo", "在声明前访问 const 变量:");
+
+        try {
+          logToDemo("scopeDemo", `值为: ${tdzVariable}`); // 这行会报错
+        } catch (error) {
+          logToDemo("scopeDemo", `✅ 暂时性死区错误: ${error.message}`);
+        }
+
+        const tdzVariable = "现在已声明";
+        logToDemo("scopeDemo", `✅ 声明后: ${tdzVariable}`);
+      }
+
+      function testLoopWithConst() {
+        clearDemo("scopeDemo");
+
+        logToDemo("scopeDemo", "for...of 循环中的 const:");
+
+        for (const value of [1, 2, 3]) {
+          logToDemo("scopeDemo", `✅ 迭代值: ${value}`);
+        }
+
+        logToDemo("scopeDemo", "每个迭代都有自己独立的 const 绑定");
+      }
+
+      // 综合测试
+      function runComprehensiveTest() {
+        clearDemo("comprehensiveDemo");
+
+        logToDemo("comprehensiveDemo", "=== const 综合测试 ===");
+
+        // 测试1: 基本不可变性
+        try {
+          const TEST = "初始值";
+          TEST = "新值";
+          logToDemo("comprehensiveDemo", "❌ 测试1失败: 应该报错");
+        } catch (error) {
+          logToDemo("comprehensiveDemo", "✅ 测试1通过: 基本不可变性");
+        }
+
+        // 测试2: 对象内容可变性
+        try {
+          const obj = { a: 1 };
+          obj.a = 2;
+          obj.b = 3;
+          logToDemo("comprehensiveDemo", "✅ 测试2通过: 对象内容可变");
+        } catch (error) {
+          logToDemo("comprehensiveDemo", "❌ 测试2失败: " + error.message);
+        }
+
+        // 测试3: 块级作用域
+        try {
+          {
+            const scoped = "内部";
+          }
+          // scoped 在这里应该未定义
+          logToDemo("comprehensiveDemo", "✅ 测试3通过: 块级作用域");
+        } catch (error) {
+          logToDemo("comprehensiveDemo", "❌ 测试3失败: " + error.message);
+        }
+
+        logToDemo("comprehensiveDemo", "=== 测试完成 ===");
+      }
+
+      function clearAllDemos() {
+        const demos = ["basicDemo", "objectDemo", "arrayDemo", "freezeDemo", "scopeDemo", "comprehensiveDemo"];
+        demos.forEach(demo => clearDemo(demo));
+      }
+
+      // 页面加载时初始化演示
+      window.addEventListener("load", function () {
+        console.log("=== const 变量特性演示 ===");
+        console.log("const 保证绑定不变，但不保证值不变（对于对象和数组）");
+      });
+    </script>
+  </body>
+</html>

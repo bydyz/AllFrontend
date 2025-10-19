@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TypeScript never 类型详解</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 2.5rem;
+      }
+
+      .subtitle {
+        color: #7f8c8d;
+        font-size: 1.2rem;
+      }
+
+      .content-wrapper {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .explanation {
+        flex: 1;
+        min-width: 350px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .demo-area {
+        flex: 1;
+        min-width: 350px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      h2 {
+        color: #667eea;
+        margin: 20px 0 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+
+      h3 {
+        color: #2c3e50;
+        margin: 15px 0 10px;
+      }
+
+      p {
+        margin-bottom: 15px;
+      }
+
+      .code-example {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        overflow-x: auto;
+        font-family: "Courier New", monospace;
+        line-height: 1.5;
+        border-left: 4px solid #667eea;
+      }
+
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .comparison-table th,
+      .comparison-table td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+      }
+
+      .comparison-table th {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        font-weight: 600;
+      }
+
+      .comparison-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      .type-hierarchy {
+        background: #f8f9fa;
+        padding: 25px;
+        border-radius: 10px;
+        margin: 20px 0;
+        border: 2px solid #667eea;
+      }
+
+      .hierarchy-level {
+        margin: 15px 0;
+        padding: 15px;
+        background: white;
+        border-radius: 6px;
+        border-left: 4px solid;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .top-type {
+        border-left-color: #4caf50;
+      }
+      .never-type {
+        border-left-color: #f44336;
+      }
+      .bottom-type {
+        border-left-color: #ff9800;
+      }
+
+      .demo-container {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border: 2px solid #e9ecef;
+      }
+
+      .demo-result {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 15px;
+        border-radius: 6px;
+        margin: 10px 0;
+        font-family: "Courier New", monospace;
+        min-height: 100px;
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 10px 15px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        flex: 1;
+        min-width: 120px;
+      }
+
+      button:hover {
+        background: #5a6fd8;
+        transform: translateY(-2px);
+      }
+
+      .note {
+        background: #fff8e1;
+        padding: 15px;
+        border-radius: 6px;
+        border-left: 4px solid #ffc107;
+        margin: 20px 0;
+      }
+
+      .warning {
+        background: #ffebee;
+        padding: 15px;
+        border-radius: 6px;
+        border-left: 4px solid #f44336;
+        margin: 20px 0;
+      }
+
+      .success {
+        background: #e8f5e9;
+        padding: 15px;
+        border-radius: 6px;
+        border-left: 4px solid #4caf50;
+        margin: 20px 0;
+      }
+
+      .usage-scenarios {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .scenario-card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #667eea;
+      }
+
+      .exhaustiveness-checking {
+        background: #e3f2fd;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border: 2px solid #2196f3;
+      }
+
+      .checking-step {
+        margin: 10px 0;
+        padding: 10px;
+        background: white;
+        border-radius: 4px;
+        border-left: 3px solid #2196f3;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        padding: 20px;
+        color: white;
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 768px) {
+        .content-wrapper {
+          flex-direction: column;
+        }
+      }
+
+      .type-comparison {
+        display: flex;
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .type-column {
+        flex: 1;
+        min-width: 300px;
+      }
+
+      .type-header {
+        background: #667eea;
+        color: white;
+        padding: 10px;
+        border-radius: 6px 6px 0 0;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      .type-content {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 15px;
+        border-radius: 0 0 6px 6px;
+        font-family: "Courier New", monospace;
+        overflow-x: auto;
+      }
+
+      .never-demo {
+        border-left: 4px solid #f44336;
+      }
+
+      .void-demo {
+        border-left: 4px solid #ff9800;
+      }
+
+      .visual-representation {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 25px 0;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .type-circle {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        margin: 0 20px;
+        text-align: center;
+      }
+
+      .any-circle {
+        background: #4caf50;
+      }
+
+      .never-circle {
+        background: #f44336;
+      }
+
+      .arrow {
+        font-size: 2rem;
+        color: #667eea;
+      }
+
+      .practical-examples {
+        background: #f3e5f5;
+        padding: 25px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border: 2px solid #9c27b0;
+      }
+
+      .example-item {
+        margin: 15px 0;
+        padding: 15px;
+        background: white;
+        border-radius: 6px;
+        border-left: 4px solid #9c27b0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>TypeScript never 类型详解</h1>
+        <p class="subtitle">深入理解"不可能"类型的意义与应用</p>
+      </header>
+
+      <div class="content-wrapper">
+        <div class="explanation">
+          <h2>什么是 never 类型？</h2>
+
+          <p><code>never</code> 类型表示<strong>永远不会发生</strong>的值，是 TypeScript 中的<strong>底部类型（Bottom Type）</strong>。</p>
+
+          <div class="code-example">
+            // never 类型的基本特性<br />
+            function throwError(message: string): never {<br />
+            &nbsp;&nbsp;throw new Error(message);<br />
+            }<br /><br />
+
+            function infiniteLoop(): never {<br />
+            &nbsp;&nbsp;while (true) {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;// 无限循环，永远不会返回<br />
+            &nbsp;&nbsp;}<br />
+            }<br /><br />
+
+            // never 类型的变量不能被赋值<br />
+            let impossible: never;<br />
+            // impossible = 123; // ❌ 错误<br />
+            // impossible = 'hello'; // ❌ 错误
+          </div>
+
+          <div class="note">
+            <strong>核心特性：</strong><br />
+            • 表示永远不会出现的值<br />
+            • 是所有类型的子类型<br />
+            • 不能有任何值<br />
+            • 用于不可能的情况和穷尽检查
+          </div>
+
+          <h3>类型层次结构</h3>
+
+          <div class="type-hierarchy">
+            <div class="hierarchy-level top-type">
+              <strong>顶部类型</strong> - any, unknown<br />
+              <em>可以包含任何值</em>
+            </div>
+            <div class="hierarchy-level">
+              <strong>具体类型</strong> - string, number, object 等<br />
+              <em>特定的值范围</em>
+            </div>
+            <div class="hierarchy-level never-type">
+              <strong>底部类型</strong> - never<br />
+              <em>不包含任何值</em>
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h2>never 的可视化理解</h2>
+
+          <div class="visual-representation">
+            <div class="type-circle any-circle">any<br />所有值</div>
+            <div class="arrow">→</div>
+            <div class="type-circle" style="background: #2196f3">具体类型<br />特定值</div>
+            <div class="arrow">→</div>
+            <div class="type-circle never-circle">never<br />没有值</div>
+          </div>
+
+          <div class="demo-container">
+            <h3>never 类型检测</h3>
+            <div class="demo-result" id="neverDetectionDemo">// 测试 never 类型的行为</div>
+            <div class="controls">
+              <button onclick="testNeverAssignment()">测试赋值</button>
+              <button onclick="testNeverFunctions()">测试函数</button>
+              <button onclick="testExhaustiveness()">测试穷尽检查</button>
+              <button onclick="clearDemo()">清空演示</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <table class="comparison-table">
+        <tr>
+          <th>类型</th>
+          <th>描述</th>
+          <th>包含的值</th>
+          <th>使用场景</th>
+        </tr>
+        <tr>
+          <td><strong>never</strong></td>
+          <td>永远不会发生的值</td>
+          <td>0 个值</td>
+          <td>错误处理、穷尽检查</td>
+        </tr>
+        <tr>
+          <td><strong>void</strong></td>
+          <td>没有返回值</td>
+          <td>undefined (或没有值)</td>
+          <td>没有返回值的函数</td>
+        </tr>
+        <tr>
+          <td><strong>unknown</strong></td>
+          <td>未知类型</td>
+          <td>所有值</td>
+          <td>安全处理动态数据</td>
+        </tr>
+        <tr>
+          <td><strong>any</strong></td>
+          <td>任何类型</td>
+          <td>所有值</td>
+          <td>迁移旧代码</td>
+        </tr>
+      </table>
+
+      <div class="content-wrapper">
+        <div class="explanation">
+          <h2>never 类型的主要使用场景</h2>
+
+          <div class="usage-scenarios">
+            <div class="scenario-card">
+              <h4>🚨 错误处理函数</h4>
+              <p>总是抛出错误的函数</p>
+              <div class="code-example">
+                function throwError(message: string): never {<br />
+                &nbsp;&nbsp;throw new Error(message);<br />
+                }<br /><br />
+
+                function fail(): never {<br />
+                &nbsp;&nbsp;return throwError("Something failed");<br />
+                }
+              </div>
+            </div>
+
+            <div class="scenario-card">
+              <h4>♾️ 无限循环</h4>
+              <p>永远不会返回的函数</p>
+              <div class="code-example">
+                function infiniteLoop(): never {<br />
+                &nbsp;&nbsp;while (true) {<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;console.log("Running forever...");<br />
+                &nbsp;&nbsp;}<br />
+                }<br /><br />
+
+                function server(): never {<br />
+                &nbsp;&nbsp;infiniteLoop(); // 服务器永不停止<br />
+                }
+              </div>
+            </div>
+
+            <div class="scenario-card">
+              <h4>🔒 穷尽检查</h4>
+              <p>确保处理所有可能的情况</p>
+              <div class="code-example">
+                function assertNever(x: never): never {<br />
+                &nbsp;&nbsp;throw new Error(`Unexpected value: ${x}`);<br />
+                }<br /><br />
+
+                // 在 switch 语句中确保处理所有情况
+              </div>
+            </div>
+          </div>
+
+          <h3>never 与 void 的区别</h3>
+
+          <div class="type-comparison">
+            <div class="type-column">
+              <div class="type-header never-demo">never</div>
+              <div class="type-content">
+                // 函数永远不会返回<br />
+                function throwError(): never {<br />
+                &nbsp;&nbsp;throw new Error();<br />
+                &nbsp;&nbsp;// 这里没有返回语句<br />
+                }<br /><br />
+
+                let result = throwError();<br />
+                // result 的类型是 never<br />
+                // 这行代码永远不会执行
+              </div>
+            </div>
+
+            <div class="type-column">
+              <div class="type-header void-demo">void</div>
+              <div class="type-content">
+                // 函数没有返回值<br />
+                function logMessage(): void {<br />
+                &nbsp;&nbsp;console.log("Hello");<br />
+                &nbsp;&nbsp;// 隐式返回 undefined<br />
+                }<br /><br />
+
+                let message = logMessage();<br />
+                // message 的类型是 void (undefined)<br />
+                // 这行代码会正常执行
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h2>穷尽检查（Exhaustiveness Checking）</h2>
+
+          <div class="exhaustiveness-checking">
+            <h4>确保处理所有可能的联合类型</h4>
+
+            <div class="checking-step">
+              <strong>1. 定义联合类型</strong>
+              <div class="code-example">
+                type Shape =<br />
+                &nbsp;&nbsp;| { kind: 'circle'; radius: number }<br />
+                &nbsp;&nbsp;| { kind: 'square'; side: number }<br />
+                &nbsp;&nbsp;| { kind: 'triangle'; base: number; height: number };
+              </div>
+            </div>
+
+            <div class="checking-step">
+              <strong>2. 实现处理函数</strong>
+              <div class="code-example">
+                function getArea(shape: Shape): number {<br />
+                &nbsp;&nbsp;switch (shape.kind) {<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;case 'circle':<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return Math.PI * shape.radius ** 2;<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;case 'square':<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return shape.side ** 2;<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;case 'triangle':<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return (shape.base * shape.height) / 2;<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;default:<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 这里 shape 的类型是 never<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return assertNever(shape);<br />
+                &nbsp;&nbsp;}<br />
+                }
+              </div>
+            </div>
+
+            <div class="checking-step">
+              <strong>3. 添加新的形状类型</strong>
+              <div class="code-example">
+                // 如果添加新的形状类型<br />
+                type Shape =<br />
+                &nbsp;&nbsp;| { kind: 'circle'; radius: number }<br />
+                &nbsp;&nbsp;| { kind: 'square'; side: number }<br />
+                &nbsp;&nbsp;| { kind: 'triangle'; base: number; height: number }<br />
+                &nbsp;&nbsp;| { kind: 'rectangle'; width: number; height: number }; // 新增<br /><br />
+
+                // TypeScript 会立即报错！<br />
+                // 在 default 分支中，shape 的类型是 { kind: 'rectangle', ... }<br />
+                // 不是 never，所以会编译错误
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-wrapper">
+        <div class="explanation">
+          <h2>never 在类型运算中的作用</h2>
+
+          <h3>1. 条件类型中的 never</h3>
+          <div class="code-example">
+            // 从类型中过滤掉 null 和 undefined<br />
+            type NonNullable&lt;T&gt; = T extends null | undefined ? never : T;<br /><br />
+
+            type A = NonNullable&lt;string | null&gt;; // string<br />
+            type B = NonNullable&lt;number | undefined&gt;; // number<br />
+            type C = NonNullable&lt;null | undefined&gt;; // never
+          </div>
+
+          <h3>2. 映射类型中的 never</h3>
+          <div class="code-example">
+            // 从对象类型中移除某些属性<br />
+            type Exclude&lt;T, U&gt; = T extends U ? never : T;<br /><br />
+
+            type User = {<br />
+            &nbsp;&nbsp;id: number;<br />
+            &nbsp;&nbsp;name: string;<br />
+            &nbsp;&nbsp;password: string;<br />
+            &nbsp;&nbsp;email: string;<br />
+            };<br /><br />
+
+            type PublicUser = Pick&lt;User, Exclude&lt;keyof User, 'password'&gt;&gt;;<br />
+            // { id: number; name: string; email: string }
+          </div>
+
+          <h3>3. 函数重载中的 never</h3>
+          <div class="code-example">
+            // 表示不可能的重载情况<br />
+            function parseInput(input: string): number;<br />
+            function parseInput(input: number): string;<br />
+            function parseInput(input: never): never; // 不可能的情况<br />
+            <br />
+            function parseInput(input: string | number): string | number {<br />
+            &nbsp;&nbsp;if (typeof input === 'string') {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;return parseInt(input);<br />
+            &nbsp;&nbsp;}<br />
+            &nbsp;&nbsp;return input.toString();<br />
+            }
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h2>实际应用示例</h2>
+
+          <div class="practical-examples">
+            <div class="example-item">
+              <h4>🚦 状态机实现</h4>
+              <div class="code-example">
+                type State = 'idle' | 'loading' | 'success' | 'error';<br /><br />
+
+                function handleState(state: State): never {<br />
+                &nbsp;&nbsp;switch (state) {<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;case 'idle':<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.log('开始加载...');<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return handleState('loading');<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;case 'loading':<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 模拟异步操作<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return handleState('success');<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;case 'success':<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.log('操作成功！');<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return; // 正常返回<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;case 'error':<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;throw new Error('操作失败');<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;default:<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return assertNever(state);<br />
+                &nbsp;&nbsp;}<br />
+                }
+              </div>
+            </div>
+
+            <div class="example-item">
+              <h4>🛡️ 输入验证</h4>
+              <div class="code-example">
+                function validateInput(input: unknown): string {<br />
+                &nbsp;&nbsp;if (typeof input === 'string') {<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;return input;<br />
+                &nbsp;&nbsp;}<br />
+                &nbsp;&nbsp;if (typeof input === 'number') {<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;return input.toString();<br />
+                &nbsp;&nbsp;}<br />
+                &nbsp;&nbsp;// 其他类型都是无效的<br />
+                &nbsp;&nbsp;return throwValidationError(input);<br />
+                }<br /><br />
+
+                function throwValidationError(value: never): never {<br />
+                &nbsp;&nbsp;throw new Error(`Invalid input type: ${typeof value}`);<br />
+                }
+              </div>
+            </div>
+
+            <div class="example-item">
+              <h4>🎯 路由守卫</h4>
+              <div class="code-example">
+                type UserRole = 'admin' | 'user' | 'guest';<br /><br />
+
+                function checkAccess(role: UserRole, route: string): boolean {<br />
+                &nbsp;&nbsp;switch (role) {<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;case 'admin':<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return true; // 管理员可以访问所有路由<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;case 'user':<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return !route.startsWith('/admin');<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;case 'guest':<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return route === '/login' || route === '/register';<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;default:<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return assertNever(role);<br />
+                &nbsp;&nbsp;}<br />
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-wrapper">
+        <div class="explanation">
+          <h2>高级模式和技巧</h2>
+
+          <h3>1. 自定义错误类型</h3>
+          <div class="code-example">
+            // 创建自定义的 never 返回函数<br />
+            function panic(message: string): never {<br />
+            &nbsp;&nbsp;throw new Error(`PANIC: ${message}`);<br />
+            }<br /><br />
+
+            function unreachable(): never {<br />
+            &nbsp;&nbsp;return panic('This code should be unreachable');<br />
+            }<br /><br />
+
+            // 使用示例<br />
+            function processValue(value: string | number) {<br />
+            &nbsp;&nbsp;if (typeof value === 'string') {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;return value.toUpperCase();<br />
+            &nbsp;&nbsp;}<br />
+            &nbsp;&nbsp;if (typeof value === 'number') {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;return value.toFixed(2);<br />
+            &nbsp;&nbsp;}<br />
+            &nbsp;&nbsp;return unreachable(); // 确保编译时检查<br />
+            }
+          </div>
+
+          <h3>2. 类型级别的断言</h3>
+          <div class="code-example">
+            // 确保某个类型是 never<br />
+            type IsNever&lt;T&gt; = [T] extends [never] ? true : false;<br /><br />
+
+            type A = IsNever&lt;never&gt;; // true<br />
+            type B = IsNever&lt;string&gt;; // false<br />
+            type C = IsNever&lt;any&gt;; // false<br /><br />
+
+            // 在复杂类型系统中使用<br />
+            type Cleanup&lt;T&gt; = T extends never ? never : T;<br />
+            type D = Cleanup&lt;string | never&gt;; // string
+          </div>
+
+          <h3>3. 递归类型的终止条件</h3>
+          <div class="code-example">
+            // 使用 never 作为递归的终止条件<br />
+            type DeepReadonly&lt;T&gt; =<br />
+            &nbsp;&nbsp;T extends never ? T :<br />
+            &nbsp;&nbsp;T extends object ? { readonly [K in keyof T]: DeepReadonly&lt;T[K]&gt; } : T;<br /><br />
+
+            type User = {<br />
+            &nbsp;&nbsp;profile: {<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;name: string;<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;settings: { theme: string };<br />
+            &nbsp;&nbsp;};<br />
+            };<br /><br />
+
+            type ReadonlyUser = DeepReadonly&lt;User&gt;;<br />
+            // 所有属性都是 readonly
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <h2>常见问题和解决方案</h2>
+
+          <div class="demo-container">
+            <h3>问题：误用 never 导致类型错误</h3>
+            <div class="code-example">
+              // ❌ 错误的使用方式<br />
+              function badExample(value: string): never {<br />
+              &nbsp;&nbsp;if (value === 'test') {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;return; // ❌ 这里返回了 undefined<br />
+              &nbsp;&nbsp;}<br />
+              &nbsp;&nbsp;// ❌ 函数可能正常返回<br />
+              }<br /><br />
+
+              // ✅ 正确的使用方式<br />
+              function goodExample(value: string): never {<br />
+              &nbsp;&nbsp;throw new Error(value); // ✅ 总是抛出错误<br />
+              }<br /><br />
+
+              function anotherGoodExample(): never {<br />
+              &nbsp;&nbsp;while (true) {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;// ✅ 无限循环，永不返回<br />
+              &nbsp;&nbsp;}<br />
+              }
+            </div>
+          </div>
+
+          <div class="demo-container">
+            <h3>解决方案：正确的穷尽检查模式</h3>
+            <div class="code-example">
+              // 标准的穷尽检查函数<br />
+              function assertNever(value: never, message?: string): never {<br />
+              &nbsp;&nbsp;throw new Error(message || `Unexpected value: ${value}`);<br />
+              }<br /><br />
+
+              // 带调试信息的版本<br />
+              function exhaustiveCheck(<br />
+              &nbsp;&nbsp;value: never,<br />
+              &nbsp;&nbsp;context?: string<br />
+              ): never {<br />
+              &nbsp;&nbsp;const contextInfo = context ? ` in ${context}` : '';<br />
+              &nbsp;&nbsp;throw new Error(<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;`Exhaustiveness check failed${contextInfo}. ` +<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;`Unexpected value: ${JSON.stringify(value)}`<br />
+              &nbsp;&nbsp;);<br />
+              }
+            </div>
+          </div>
+
+          <div class="success">
+            <strong>最佳实践总结：</strong><br />
+            • 使用 <code>never</code> 表示不可能的情况<br />
+            • 在 switch 语句中使用穷尽检查确保类型安全<br />
+            • 创建自定义的 never 返回函数提高代码可读性<br />
+            • 在条件类型中使用 never 进行类型过滤
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>TypeScript never 类型详解 &copy; 2023 - 深入理解"不可能"类型的意义与应用</p>
+      </footer>
+    </div>
+
+    <script>
+      // 演示 never 类型的行为
+      function testNeverAssignment() {
+        const demo = document.getElementById("neverDetectionDemo");
+        demo.innerHTML = "";
+
+        demo.innerHTML += "🧪 never 类型赋值测试:<br/><br/>";
+
+        // 模拟 TypeScript 的类型检查
+        demo.innerHTML += "1. 尝试给 never 类型变量赋值:<br/>";
+        demo.innerHTML += "   let x: never;<br/>";
+        demo.innerHTML += "   x = 123;        // ❌ TypeScript 编译错误<br/>";
+        demo.innerHTML += '   x = "hello";    // ❌ TypeScript 编译错误<br/>';
+        demo.innerHTML += "   x = {};         // ❌ TypeScript 编译错误<br/><br/>";
+
+        demo.innerHTML += "2. never 类型可以赋值给任何类型:<br/>";
+        demo.innerHTML += "   function fail(): never { throw new Error(); }<br/>";
+        demo.innerHTML += "   let a: string = fail();  // ✅ 允许<br/>";
+        demo.innerHTML += "   let b: number = fail();  // ✅ 允许<br/>";
+        demo.innerHTML += "   let c: object = fail();  // ✅ 允许<br/><br/>";
+
+        demo.innerHTML += "💡 never 是所有类型的子类型，可以赋值给任何类型！";
+      }
+
+      function testNeverFunctions() {
+        const demo = document.getElementById("neverDetectionDemo");
+        demo.innerHTML = "";
+
+        demo.innerHTML += "🚨 never 返回函数测试:<br/><br/>";
+
+        demo.innerHTML += "1. 抛出错误的函数:<br/>";
+        demo.innerHTML += "   function throwError(): never {<br/>";
+        demo.innerHTML += '       throw new Error("Something went wrong");<br/>';
+        demo.innerHTML += "   }<br/>";
+        demo.innerHTML += "   // 调用后代码不会继续执行<br/><br/>";
+
+        demo.innerHTML += "2. 无限循环函数:<br/>";
+        demo.innerHTML += "   function infiniteLoop(): never {<br/>";
+        demo.innerHTML += "       while (true) {<br/>";
+        demo.innerHTML += "           // 永不返回<br/>";
+        demo.innerHTML += "       }<br/>";
+        demo.innerHTML += "   }<br/>";
+        demo.innerHTML += "   // 调用后永远不会返回<br/><br/>";
+
+        demo.innerHTML += "3. 类型保护:<br/>";
+        demo.innerHTML += "   function assertNever(x: never): never {<br/>";
+        demo.innerHTML += "       throw new Error(`Unexpected value: ${x}`);<br/>";
+        demo.innerHTML += "   }<br/>";
+        demo.innerHTML += "   // 用于穷尽检查，确保处理所有情况";
+      }
+
+      function testExhaustiveness() {
+        const demo = document.getElementById("neverDetectionDemo");
+        demo.innerHTML = "";
+
+        demo.innerHTML += "🔒 穷尽检查演示:<br/><br/>";
+
+        demo.innerHTML += "1. 定义形状类型:<br/>";
+        demo.innerHTML += "   type Shape = <br/>";
+        demo.innerHTML += '     | { kind: "circle", radius: number }<br/>';
+        demo.innerHTML += '     | { kind: "square", side: number };<br/><br/>';
+
+        demo.innerHTML += "2. 实现面积计算:<br/>";
+        demo.innerHTML += "   function getArea(shape: Shape): number {<br/>";
+        demo.innerHTML += "       switch (shape.kind) {<br/>";
+        demo.innerHTML += '           case "circle":<br/>';
+        demo.innerHTML += "               return Math.PI * shape.radius ** 2;<br/>";
+        demo.innerHTML += '           case "square":<br/>';
+        demo.innerHTML += "               return shape.side ** 2;<br/>";
+        demo.innerHTML += "           default:<br/>";
+        demo.innerHTML += "               return assertNever(shape);<br/>";
+        demo.innerHTML += "       }<br/>";
+        demo.innerHTML += "   }<br/><br/>";
+
+        demo.innerHTML += "3. 添加新形状:<br/>";
+        demo.innerHTML += "   type Shape = <br/>";
+        demo.innerHTML += '     | { kind: "circle", radius: number }<br/>';
+        demo.innerHTML += '     | { kind: "square", side: number }<br/>';
+        demo.innerHTML += '     | { kind: "triangle", base: number, height: number };<br/><br/>';
+
+        demo.innerHTML += "   // TypeScript 立即报错！<br/>";
+        demo.innerHTML += "   // default 分支中的 shape 不是 never 类型<br/>";
+        demo.innerHTML += "   // 提示我们需要处理新的 triangle 情况";
+      }
+
+      function clearDemo() {
+        document.getElementById("neverDetectionDemo").innerHTML = "// 测试 never 类型的行为";
+      }
+
+      // 页面加载时初始化
+      window.addEventListener("load", function () {
+        console.log("=== TypeScript never 类型演示 ===");
+        console.log("never 类型表示永远不会发生的值");
+      });
+
+      // 模拟 assertNever 函数
+      function assertNever(value, message = `Unexpected value: ${value}`) {
+        throw new Error(message);
+      }
+
+      // 演示穷尽检查的实际效果
+      function demonstrateExhaustiveCheck() {
+        const shape = { kind: "circle", radius: 5 };
+
+        switch (shape.kind) {
+          case "circle":
+            console.log("Circle area:", Math.PI * shape.radius ** 2);
+            break;
+          case "square":
+            console.log("Square area:", shape.side ** 2);
+            break;
+          default:
+            // 如果添加了新形状而没有处理，这里会抛出错误
+            assertNever(shape);
+        }
+      }
+    </script>
+  </body>
+</html>
