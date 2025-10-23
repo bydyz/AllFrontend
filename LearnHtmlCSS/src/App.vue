@@ -19,6 +19,8 @@ import LearnScrollbar from "./components/LearnScrollbar/index.vue"
 
 import LearnSelector from "./components/LearnSelector/index.vue"
 
+import LearnEIFPicture from "./components/LearnEIFPicture/index.vue"
+
 import { ref, shallowRef, markRaw } from "vue";
 
 let componentsArray = ref([
@@ -85,6 +87,10 @@ let componentsArray = ref([
   {
     name: 'CSS选择器',
     component: markRaw(LearnSelector)
+  },
+  {
+    name: '精灵图',
+    component: markRaw(LearnEIFPicture)
   },
 ])
 let componentId = shallowRef(LearnDisplay);

@@ -12,7 +12,7 @@ let pathList = ref([])
 const allPathList = ref({
   'Vue': ['/data', '/provideInject', '/computed', '/lifeCircle', '/watch', '/props', '/emits', '/pinia', '/useSlot'],
   'JS': ['/bom'],
-  'Example': ['/example/1'],
+  'Example': ['/example/1', '/example/2'],
 })
 function onChangeApiType(type, param) {
   pathList.value = allPathList.value[type]
