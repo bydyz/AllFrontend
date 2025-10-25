@@ -26,7 +26,7 @@ import { useRoute } from 'vue-router';
 // 1.定义数据
 const message = ref("Hello World");
 // 2.侦听数据的变化  似乎默认 immediate和deep的值为false
-watch(message, (newValue, oldValue) => {
+watch(message.value, (newValue, oldValue) => {
   console.log("监听message的回调函数执行了")
   console.log(newValue, oldValue);
   console.log("");
