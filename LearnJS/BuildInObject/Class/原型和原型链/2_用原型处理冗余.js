@@ -1,42 +1,40 @@
 /*
   解决问题
     + 原型
-      => 概念: 每一个构造函数(函数)天生自带一个 prototype 属性, 是一个对象数据类型
-      => 概念: 每一个对象天生自带一个属性 __proto__, 指向所属构造函数的 prototype
-      => 概念: 当你访问对象的成员的时候, 首先在自己身上查找, 如果没有, 自动去到 __proto__ 上查找
+      => 概念:    函数：除去 箭头函数 外，其他函数天生自带 prototype 属性
+      => 概念:    对象：天生自带 __proto__ 属性（现代标准使用 Object.getPrototypeOf()）
+      => 概念:    当你访问对象的成员的时候, 首先在自己身上查找, 如果没有, 自动去到 __proto__ 上查找
     + 如何解决问题
       => 我们把需要添加给实例的方法, 放在构造函数的原型(prototype)上
-      => 就可以有实例进行访问使用
-    + 原型:
-      => 构造函数天生自带的一个 prototype
-      => 作用: 有构造函数添加方法, 专门给实例对象使用
+      => 就可以让所有实例进行访问使用
 */
 
-// 当函数被书写完毕以后
-// 就会有 prototype 出现
+//！ 当函数被书写完毕以后，就会有 prototype 出现
 // function Person() {}
 
-// // 直接向 prototype 内添加一些成员
+
+//！ 直接向 prototype 内添加一些成员
 // Person.prototype.a = 100
 // Person.prototype.b = 200
-
 // console.log(Person.prototype)
 
 
+//！  创建一个实例对象
+//！  p1 所属的构造函数就是 Person
+//！  p1.__proto__ === Person.prototype
 // var p1 = new Person()
-
-// // 创建一个实例对象
-// // p1 所属的构造函数就是 Person
-// // p1.__proto__ === Person.prototype
-
-// console.log(p1.__proto__ === Person.prototype)     // true
+// console.log(p1.__proto__ === Person.prototype)                  // true
+// console.log(Object.getPrototypeOf(p1) === Person.prototype)     // true  现代的使用方式
 // console.log(p1.__proto__)
 
-// // 当你访问 p1 的 a 成员
-// // 因为当你访问 p1.a 的时候, 自己没有, 会自动去自己的 __proto__ 上查找
-// // 又因为 自己的__proto__ 就是 Perosn.prototype
-// // 所以, 其实就是去到 Person.prototype 上查找
+
+//！  当你访问 p1 的 a 成员
+//！  因为当你访问 p1.a 的时候, 自己没有, 会自动去自己的 __proto__ 上查找
+//！  又因为 自己的__proto__ 就是 Perosn.prototype
+//！  所以, 其实就是去到 Person.prototype 上查找
 // console.log(p1.a)
+
+
 
 function Person(name, age) {
   // 向实例对象上添加属性
@@ -52,10 +50,10 @@ Person.prototype.sayHi = function () {
   console.log("hello world");
 };
 
-// 创建实例对象
-// p1 和 p2 所属的构造函数都是 Person
-// p1.__proto__ === Person.prototype
-// p2.__proto__ === Person.prototype
+//！   创建实例对象
+//！   p1 和 p2 所属的构造函数都是 Person
+//！   p1.__proto__ === Person.prototype
+//！   p2.__proto__ === Person.prototype
 var p1 = new Person("Jack", 18);
 var p2 = new Person("Rose", 20);
 
@@ -64,14 +62,14 @@ console.log(p2);
 console.log(p1.__proto__ === Person.prototype);     // true
 console.log(p2.__proto__ === Person.prototype);     // true
 
-// 当你访问 p1 的sayHi 的时候
-// 自己没有, 会去自己的 __proto__ 上找
+//！   当你访问 p1 的sayHi 的时候
+//！   自己没有, 会去自己的 __proto__ 上找
 console.log(p1.sayHi);
 
-// 当你访问 p2 的sayHi 的时候
-// 自己没有, 会去自己的 __proto__ 上找
+//！   当你访问 p2 的sayHi 的时候
+//！   自己没有, 会去自己的 __proto__ 上找
 console.log(p2.sayHi);
 
-// 因为 p1.__proto__ 和 p2.__proto__ 是一个对象空间
-// p1 和 p2 的 sayHi 是一个
+//！   因为 p1.__proto__ 和 p2.__proto__ 是一个对象空间
+//！   p1 和 p2 的 sayHi 是一个
 console.log(p1.sayHi === p2.sayHi);     // true

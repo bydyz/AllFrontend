@@ -1,0 +1,29 @@
+//！ 在设置配置选项(编译选项compilerOptions, noImplicitThis设置为true, 不允许模糊的this存在)
+
+//！ 在开启noImplicitThis的情况下，我们必须指定this的类型。
+//！ ◼ 如何指定呢？函数的第一个参数类型：
+//！   函数的第一个参数我们可以根据该函数之后被调用的情况，用于声明this的类型（名词必须叫this）；
+//！   在后续调用函数传入参数时，用于指定this的部分，不用传参，从第二个参数开始传递的，this参数会在编译后被抹除
+
+
+
+const obj1 = {
+  name: "why",
+  studying: function(this: { name: string }) {
+    // 默认情况下, this是any类型
+    console.log(this, "studying")
+  }
+}
+
+// obj1 是对象，其本身有this，因此即是其中的函数有限制this的类型，但是调用时不需要指定 
+obj1.studying()
+
+//！ 但是如果制定了this的类型，只要包含了即可
+// obj1.studying.call([])
+obj1.studying.call({name: '666'})
+obj1.studying.call({name: '666', age: 18, reading: () => { console.log('reading') }})
+
+
+
+//！ 似乎function的参数this是用来限制后面利用call、apply来修改this指向时指向的this
+export {}

@@ -11,7 +11,7 @@ class Person {
   //！ 如果类型没有声明，那么它们默认是any的
   //！ 可以给属性设置初始化值
   
-  //? 在默认的 strictPropertyInitialization 模式下面我们的属性是必须初始化的，如果没有初始化，那么编译时就会报错；
+  //? 在tsconfig.json中, 默认的 strictPropertyInitialization 模式下面我们的属性是必须初始化的，如果没有初始化，那么编译时就会报错；
   //! ✓ 如果我们在 strictPropertyInitialization 模式下确实不希望给属性初始化，可以使用 name!: string语法
 
   // name!: string
