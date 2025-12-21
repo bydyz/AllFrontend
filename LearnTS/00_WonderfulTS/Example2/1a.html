@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TypeScript ApiRoute 模板字符串类型详解</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .demo-box {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        
+        .demo-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .demo-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .demo-code {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-size: 0.95rem;
+            white-space: pre;
+        }
+        
+        .demo-output {
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+        }
+        
+        .basic-demo { border-left-color: #3b82f6; }
+        .advanced-demo { border-left-color: #10b981; }
+        .router-demo { border-left-color: #f59e0b; }
+        .validation-demo { border-left-color: #ef4444; }
+        .utility-demo { border-left-color: #8b5cf6; }
+        
+        .interactive-demo {
+            margin-top: 30px;
+        }
+        
+        .code-executor {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .code-input {
+            width: 100%;
+            min-height: 120px;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            resize: vertical;
+        }
+        
+        .run-button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        
+        .run-button:hover {
+            background: #2563eb;
+        }
+        
+        .output-area {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            min-height: 80px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+        }
+        
+        .summary {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 40px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+        
+        .summary-item {
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+        }
+        
+        .summary-item h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .comparison {
+            margin-top: 40px;
+            padding: 25px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fef7ed 100%);
+            border-radius: 12px;
+            border-left: 6px solid #f59e0b;
+        }
+        
+        .comparison h3 {
+            color: #92400e;
+            margin-bottom: 15px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 25px;
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .badge-ts { background: #3178c6; color: white; }
+        .badge-important { background: #ef4444; color: white; }
+        .badge-success { background: #10b981; color: white; }
+        
+        .method-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        .method-table th, .method-table td {
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .method-table th {
+            background: #f8fafc;
+            font-weight: 600;
+        }
+        
+        .feature-tag {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #dbeafe;
+            color: #1e40af;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+        }
+        
+        .type-highlight {
+            color: #f59e0b;
+            font-weight: bold;
+        }
+        
+        .note {
+            background: #f0f9ff;
+            border-left: 4px solid #0ea5e9;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .warning {
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .api-route {
+            color: #7c3aed;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .route-example {
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 6px;
+            margin: 5px 0;
+            border-left: 3px solid #7c3aed;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>TypeScript ApiRoute 模板字符串类型详解</h1>
+        <p class="subtitle">探索 <code>type ApiRoute = `/api/${string}/${string}`</code> 的强大应用</p>
+    </header>
+    
+    <div class="note">
+        <strong>💡 核心定义：</strong> <code>type ApiRoute = `/api/${string}/${string}`</code> 表示任何以 <code>/api/</code> 开头，后面跟着两个路径段的字符串类型。
+    </div>
+
+    <div class="container">
+        <section class="section">
+            <h2>🎯 基础用法</h2>
+            
+            <div class="demo-box">
+                <div class="demo-title">
+                    <span>1. 基本类型定义与使用</span>
+                    <span class="badge badge-ts">TypeScript</span>
+                </div>
+                <div class="demo-code">
+// 基础 ApiRoute 类型定义
+type ApiRoute = `/api/${string}/${string}`;
+
+// ✅ 有效的 ApiRoute 示例
+const validRoutes = {
+    users: "/api/users/list" as ApiRoute,
+    products: "/api/products/123" as ApiRoute,
+    orders: "/api/orders/detail" as ApiRoute,
+    categories: "/api/categories/update" as ApiRoute
+};
+
+// ❌ 无效的 ApiRoute 示例（TypeScript 会报错）
+/*
+const invalidRoutes = {
+    missingApi: "/users/list",           // 错误：缺少 /api 前缀
+    tooShort: "/api/users",              // 错误：只有一段路径
+    tooLong: "/api/users/list/detail",   // 错误：超过两段路径
+    wrongPrefix: "/rest/users/list"      // 错误：前缀不是 /api
+};
+*/
+
+// 使用 ApiRoute 类型的函数
+function createApiRequest(route: ApiRoute, method: string = "GET") {
+    return {
+        url: route,
+        method,
+        timestamp: new Date().toISOString()
+    };
+}
+
+// 正确使用
+const userRequest = createApiRequest("/api/users/list", "GET");
+const productRequest = createApiRequest("/api/products/456", "POST");
+
+console.log("基础 ApiRoute 使用示例:");
+console.log("用户请求:", userRequest);
+console.log("商品请求:", productRequest);
+
+// 自动类型推断
+function processRoute&lt;T extends ApiRoute&gt;(route: T): { route: T; segments: string[] } {
+    const segments = route.split('/').filter(segment => segment.length > 0);
+    return { route, segments };
+}
+
+const processed = processRoute("/api/orders/status");
+console.log("路由处理:", processed);
+                </div>
+                <div class="demo-output basic-demo" id="output1">
+                    <!-- 输出将在这里显示 -->
+                </div>
+            </div>
+            
+            <div class="demo-box">
+                <div class="demo-title">
+                    <span>2. 扩展的 API 路由类型</span>
+                    <span class="badge badge-success">实用扩展</span>
+                </div>
+                <div class="demo-code">
+// 扩展的 API 路由类型系统
+type ApiRoute = `/api/${string}/${string}`;
+
+// 更具体的路由类型
+type UserRoute = `/api/users/${string}`;
+type ProductRoute = `/api/products/${string}`;
+type OrderRoute = `/api/orders/${string}`;
+
+// 带操作类型的路由
+type CrudRoute = `/api/${"users" | "products" | "orders"}/${"create" | "read" | "update" | "delete"}`;
+
+// 带 ID 的路由
+type EntityWithIdRoute = `/api/${string}/${number | string}`;
+
+// 使用具体路由类型的函数
+function createUserEndpoint&lt;T extends UserRoute&gt;(route: T): T {
+    console.log(`创建用户端点: ${route}`);
+    return route;
+}
+
+function createProductEndpoint&lt;T extends ProductRoute&gt;(route: T): T {
+    console.log(`创建商品端点: ${route}`);
+    return route;
+}
+
+// 正确使用
+const userProfile = createUserEndpoint("/api/users/profile");
+const userSettings = createUserEndpoint("/api/users/settings");
+const productDetail = createProductEndpoint("/api/products/detail");
+const productSearch = createProductEndpoint("/api/products/search");
+
+console.log("扩展路由类型示例:");
+console.log("用户配置:", userSettings);
+console.log("商品搜索:", productSearch);
+
+// 路由工厂函数
+class ApiRouteFactory {
+    static createUserRoute(action: string): UserRoute {
+        return `/api/users/${action}` as UserRoute;
+    }
+    
+    static createProductRoute(action: string): ProductRoute {
+        return `/api/products/${action}` as ProductRoute;
+    }
+    
+    static createOrderRoute(action: string): OrderRoute {
+        return `/api/orders/${action}` as OrderRoute;
+    }
+}
+
+const userList = ApiRouteFactory.createUserRoute("list");
+const productCreate = ApiRouteFactory.createProductRoute("create");
+const orderUpdate = ApiRouteFactory.createOrderRoute("update");
+
+console.log("路由工厂创建:");
+console.log("用户列表:", userList);
+console.log("商品创建:", productCreate);
+console.log("订单更新:", orderUpdate);
+                </div>
+                <div class="demo-output basic-demo" id="output2">
+                    <!-- 输出将在这里显示 -->
+                </div>
+            </div>
+        </section>
+        
+        <section class="section">
+            <h2>🏗️ 高级路由模式</h2>
+            
+            <div class="demo-box">
+                <div class="demo-title">
+                    <span>1. 动态路由参数提取</span>
+                    <span class="badge badge-important">高级特性</span>
+                </div>
+                <div class="demo-code">
+// 动态路由参数提取
+type ApiRoute = `/api/${string}/${string}`;
+
+// 提取路由参数的类型工具
+type ExtractRouteParams&lt;T extends ApiRoute&gt; = 
+    T extends `/api/${infer Resource}/${infer Action}` 
+    ? { resource: Resource; action: Action } 
+    : never;
+
+// 路由解析函数
+function parseApiRoute&lt;T extends ApiRoute&gt;(route: T): ExtractRouteParams&lt;T&gt; {
+    const [, , resource, action] = route.split('/');
+    return { resource, action } as ExtractRouteParams&lt;T&gt;;
+}
+
+// 使用示例
+const userRoutes = {
+    list: parseApiRoute("/api/users/list"),
+    create: parseApiRoute("/api/users/create"),
+    detail: parseApiRoute("/api/users/detail")
+};
+
+const productRoutes = {
+    search: parseApiRoute("/api/products/search"),
+    update: parseApiRoute("/api/products/update"),
+    delete: parseApiRoute("/api/products/delete")
+};
+
+console.log("动态路由参数提取:");
+console.log("用户路由:", userRoutes);
+console.log("商品路由:", productRoutes);
+
+// 更复杂的参数提取
+type DetailedRouteParams&lt;T extends ApiRoute&gt; = 
+    T extends `/api/${infer Resource}/${infer Action}`
+    ? {
+        fullPath: T;
+        resource: Resource;
+        action: Action;
+        segments: [Resource, Action];
+        isReadOperation: Action extends "get" | "list" | "read" ? true : false;
+        isWriteOperation: Action extends "create" | "update" | "delete" ? true : false;
+    }
+    : never;
+
+function analyzeRoute&lt;T extends ApiRoute&gt;(route: T): DetailedRouteParams&lt;T&gt; {
+    const [, , resource, action] = route.split('/');
+    const isReadOperation = ["get", "list", "read"].includes(action);
+    const isWriteOperation = ["create", "update", "delete"].includes(action);
+    
+    return {
+        fullPath: route,
+        resource,
+        action,
+        segments: [resource, action],
+        isReadOperation,
+        isWriteOperation
+    } as DetailedRouteParams&lt;T&gt;;
+}
+
+const analyzedRoutes = [
+    analyzeRoute("/api/users/get"),
+    analyzeRoute("/api/products/create"),
+    analyzeRoute("/api/orders/list")
+];
+
+console.log("\n路由深度分析:");
+analyzedRoutes.forEach(route => {
+    console.log(`路由 ${route.fullPath}:`, {
+        资源: route.resource,
+        操作: route.action,
+        是否读操作: route.isReadOperation,
+        是否写操作: route.isWriteOperation
+    });
+});
+                </div>
+                <div class="demo-output advanced-demo" id="output3">
+                    <!-- 输出将在这里显示 -->
+                </div>
+            </div>
+            
+            <div class="demo-box">
+                <div class="demo-title">
+                    <span>2. 路由守卫与验证</span>
+                    <span class="badge badge-success">安全特性</span>
+                </div>
+                <div class="demo-code">
+// 路由守卫与验证
+type ApiRoute = `/api/${string}/${string}`;
+
+// 权限级别
+type PermissionLevel = "public" | "user" | "admin" | "superadmin";
+
+// 路由权限映射
+type RoutePermissions = {
+    [K in ApiRoute]?: PermissionLevel;
+};
+
+// 定义路由权限
+const routePermissions: RoutePermissions = {
+    "/api/users/list": "user",
+    "/api/users/create": "admin",
+    "/api/users/delete": "superadmin",
+    "/api/products/list": "public",
+    "/api/products/create": "admin",
+    "/api/products/update": "admin",
+    "/api/orders/list": "user",
+    "/api/orders/create": "user"
+};
+
+// 路由守卫类
+class RouteGuard {
+    private userPermission: PermissionLevel;
+    
+    constructor(userPermission: PermissionLevel = "public") {
+        this.userPermission = userPermission;
+    }
+    
+    // 检查是否有权限访问路由
+    canAccess&lt;T extends ApiRoute&gt;(route: T): boolean {
+        const requiredPermission = routePermissions[route];
+        
+        if (!requiredPermission) {
+            console.log(`路由 ${route} 未配置权限，默认拒绝`);
+            return false;
+        }
+        
+        const permissionHierarchy: PermissionLevel[] = ["public", "user", "admin", "superadmin"];
+        const userLevel = permissionHierarchy.indexOf(this.userPermission);
+        const requiredLevel = permissionHierarchy.indexOf(requiredPermission);
+        
+        return userLevel >= requiredLevel;
+    }
+    
+    // 安全执行路由操作
+    executeSafely&lt;T extends ApiRoute&gt;(
+        route: T, 
+        operation: () => void
+    ): { success: boolean; message: string } {
+        if (this.canAccess(route)) {
+            operation();
+            return { success: true, message: `成功执行路由: ${route}` };
+        } else {
+            return { 
+                success: false, 
+                message: `权限不足: 需要 ${routePermissions[route]}，当前是 ${this.userPermission}` 
+            };
+        }
+    }
+}
+
+// 使用路由守卫
+console.log("路由守卫示例:");
+
+const publicUser = new RouteGuard("public");
+const normalUser = new RouteGuard("user");
+const adminUser = new RouteGuard("admin");
+const superAdmin = new RouteGuard("superadmin");
+
+const testRoutes: ApiRoute[] = [
+    "/api/products/list",
+    "/api/users/list", 
+    "/api/users/create",
+    "/api/users/delete"
+];
+
+testRoutes.forEach(route => {
+    console.log(`\n测试路由: ${route}`);
+    console.log(`公开用户: ${publicUser.canAccess(route)}`);
+    console.log(`普通用户: ${normalUser.canAccess(route)}`);
+    console.log(`管理员: ${adminUser.canAccess(route)}`);
+    console.log(`超级管理员: ${superAdmin.canAccess(route)}`);
+});
+
+// 安全执行示例
+const operation = () => console.log("执行敏感操作...");
+const result = adminUser.executeSafely("/api/users/create", operation);
+console.log("\n安全执行结果:", result);
+                </div>
+                <div class="demo-output advanced-demo" id="output4">
+                    <!-- 输出将在这里显示 -->
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <div class="container">
+        <section class="section">
+            <h2>🚀 实际应用场景</h2>
+            
+            <div class="demo-box">
+                <div class="demo-title">
+                    <span>1. API 客户端实现</span>
+                    <span class="badge badge-ts">生产级代码</span>
+                </div>
+                <div class="demo-code">
+// API 客户端实现
+type ApiRoute = `/api/${string}/${string}`;
+
+interface ApiResponse<T = any> {
+    data: T;
+    status: number;
+    message: string;
+}
+
+class ApiClient {
+    private baseURL: string;
+    private headers: Record<string, string>;
+    
+    constructor(baseURL: string = "") {
+        this.baseURL = baseURL;
+        this.headers = {
+            'Content-Type': 'application/json',
+        };
+    }
+    
+    // 设置认证头
+    setAuthorization(token: string): void {
+        this.headers['Authorization'] = `Bearer ${token}`;
+    }
+    
+    // 通用请求方法
+    async request&lt;T extends ApiRoute, R = any&gt;(
+        route: T,
+        options: {
+            method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+            body?: any;
+            headers?: Record<string, string>;
+        } = {}
+    ): Promise<ApiResponse<R>> {
+        const url = `${this.baseURL}${route}`;
+        const config: RequestInit = {
+            method: options.method || 'GET',
+            headers: { ...this.headers, ...options.headers },
+            body: options.body ? JSON.stringify(options.body) : undefined,
+        };
+        
+        try {
+            const response = await fetch(url, config);
+            const data = await response.json();
+            
+            return {
+                data,
+                status: response.status,
+                message: response.ok ? 'Success' : 'Error'
+            };
+        } catch (error) {
+            throw new Error(`API请求失败: ${error.message}`);
+        }
+    }
+    
+    // 便捷方法
+    async get&lt;T extends ApiRoute, R = any&gt;(route: T): Promise<ApiResponse<R>> {
+        return this.request(route, { method: 'GET' });
+    }
+    
+    async post&lt;T extends ApiRoute, R = any&gt;(
+        route: T, 
+        body: any
+    ): Promise<ApiResponse<R>> {
+        return this.request(route, { method: 'POST', body });
+    }
+    
+    async put&lt;T extends ApiRoute, R = any&gt;(
+        route: T, 
+        body: any
+    ): Promise<ApiResponse<R>> {
+        return this.request(route, { method: 'PUT', body });
+    }
+    
+    async delete&lt;T extends ApiRoute, R = any&gt;(route: T): Promise<ApiResponse<R>> {
+        return this.request(route, { method: 'DELETE' });
+    }
+}
+
+// 使用 API 客户端
+console.log("API 客户端示例:");
+
+// 模拟的 API 客户端使用
+const apiClient = new ApiClient("https://api.example.com");
+apiClient.setAuthorization("mock-jwt-token");
+
+// 类型安全的 API 调用
+async function demonstrateApiClient() {
+    try {
+        // 这些调用在 TypeScript 中是类型安全的
+        const usersResponse = await apiClient.get("/api/users/list");
+        console.log("获取用户列表:", usersResponse);
+        
+        const createUserResponse = await apiClient.post("/api/users/create", {
+            name: "张三",
+            email: "zhangsan@example.com"
+        });
+        console.log("创建用户:", createUserResponse);
+        
+        const updateProductResponse = await apiClient.put("/api/products/update", {
+            id: 123,
+            name: "更新后的商品"
+        });
+        console.log("更新商品:", updateProductResponse);
+        
+        // ❌ 这些调用会在 TypeScript 编译时报错
+        /*
+        await apiClient.get("/users/list");                    // 错误：缺少 /api 前缀
+        await apiClient.get("/api/users");                     // 错误：只有一段路径
+        await apiClient.get("/api/users/list/detail");         // 错误：超过两段路径
+        */
+        
+    } catch (error) {
+        console.error("API调用错误:", error.message);
+    }
+}
+
+// 由于是演示，我们模拟调用结果
+console.log("模拟 API 客户端调用...");
+console.log("所有路由都是类型安全的！");
+
+// 路由映射工具
+const apiRoutes = {
+    users: {
+        list: "/api/users/list" as ApiRoute,
+        create: "/api/users/create" as ApiRoute,
+        detail: "/api/users/detail" as ApiRoute,
+        update: "/api/users/update" as ApiRoute,
+        delete: "/api/users/delete" as ApiRoute
+    },
+    products: {
+        list: "/api/products/list" as ApiRoute,
+        create: "/api/products/create" as ApiRoute,
+        search: "/api/products/search" as ApiRoute,
+        update: "/api/products/update" as ApiRoute
+    },
+    orders: {
+        list: "/api/orders/list" as ApiRoute,
+        create: "/api/orders/create" as ApiRoute,
+        detail: "/api/orders/detail" as ApiRoute
+    }
+};
+
+console.log("\n预定义路由映射:");
+console.log("用户路由:", apiRoutes.users);
+console.log("商品路由:", apiRoutes.products);
+                </div>
+                <div class="demo-output router-demo" id="output5">
+                    <!-- 输出将在这里显示 -->
+                </div>
+            </div>
+            
+            <div class="demo-box">
+                <div class="demo-title">
+                    <span>2. 路由生成与验证工具</span>
+                    <span class="badge badge-success">开发工具</span>
+                </div>
+                <div class="demo-code">
+// 路由生成与验证工具
+type ApiRoute = `/api/${string}/${string}`;
+
+class RouteUtils {
+    // 验证路由格式
+    static isValidApiRoute(route: string): route is ApiRoute {
+        const pattern = /^\/api\/[^/]+\/[^/]+$/;
+        return pattern.test(route);
+    }
+    
+    // 从部分信息生成路由
+    static createRoute(resource: string, action: string): ApiRoute {
+        return `/api/${resource}/${action}` as ApiRoute;
+    }
+    
+    // 解析路由为资源和方法
+    static parseRoute(route: ApiRoute): { resource: string; action: string } {
+        const [, , resource, action] = route.split('/');
+        return { resource, action };
+    }
+    
+    // 获取路由的基础路径（去掉动作）
+    static getBasePath(route: ApiRoute): string {
+        const { resource } = this.parseRoute(route);
+        return `/api/${resource}`;
+    }
+    
+    // 路由转换（改变动作）
+    static transformRoute(route: ApiRoute, newAction: string): ApiRoute {
+        const { resource } = this.parseRoute(route);
+        return this.createRoute(resource, newAction);
+    }
+    
+    // 批量生成 CRUD 路由
+    static generateCrudRoutes(resource: string): Record<string, ApiRoute> {
+        return {
+            create: this.createRoute(resource, "create"),
+            read: this.createRoute(resource, "read"), 
+            list: this.createRoute(resource, "list"),
+            update: this.createRoute(resource, "update"),
+            delete: this.createRoute(resource, "delete")
+        };
+    }
+    
+    // 路由分组
+    static groupRoutes(routes: ApiRoute[]): Record<string, ApiRoute[]> {
+        return routes.reduce((groups, route) => {
+            const { resource } = this.parseRoute(route);
+            if (!groups[resource]) {
+                groups[resource] = [];
+            }
+            groups[resource].push(route);
+            return groups;
+        }, {} as Record<string, ApiRoute[]>);
+    }
+}
+
+// 使用路由工具
+console.log("路由工具使用示例:");
+
+// 验证路由
+const testRoutes = [
+    "/api/users/list",
+    "/api/products/123",
+    "/users/list",
+    "/api/users",
+    "/api/users/list/detail"
+];
+
+console.log("路由验证结果:");
+testRoutes.forEach(route => {
+    console.log(`${route}: ${RouteUtils.isValidApiRoute(route) ? '✅ 有效' : '❌ 无效'}`);
+});
+
+// 生成路由
+const userRoutes = RouteUtils.generateCrudRoutes("users");
+const productRoutes = RouteUtils.generateCrudRoutes("products");
+
+console.log("\n生成的 CRUD 路由:");
+console.log("用户路由:", userRoutes);
+console.log("商品路由:", productRoutes);
+
+// 路由解析和转换
+const originalRoute = "/api/users/list" as ApiRoute;
+const parsed = RouteUtils.parseRoute(originalRoute);
+const basePath = RouteUtils.getBasePath(originalRoute);
+const transformed = RouteUtils.transformRoute(originalRoute, "detail");
+
+console.log("\n路由操作:");
+console.log("原始路由:", originalRoute);
+console.log("解析结果:", parsed);
+console.log("基础路径:", basePath);
+console.log("转换后路由:", transformed);
+
+// 路由分组
+const allRoutes: ApiRoute[] = [
+    "/api/users/list",
+    "/api/users/create", 
+    "/api/products/list",
+    "/api/products/search",
+    "/api/orders/list",
+    "/api/orders/create"
+];
+
+const groupedRoutes = RouteUtils.groupRoutes(allRoutes);
+console.log("\n路由分组:");
+Object.entries(groupedRoutes).forEach(([resource, routes]) => {
+    console.log(`${resource}:`, routes);
+});
+                </div>
+                <div class="demo-output router-demo" id="output6">
+                    <!-- 输出将在这里显示 -->
+                </div>
+            </div>
+        </section>
+        
+        <section class="section">
+            <h2>🔧 高级模式与技巧</h2>
+            
+            <div class="demo-box">
+                <div class="demo-title">
+                    <span>1. 条件路由类型</span>
+                    <span class="badge badge-important">高级模式</span>
+                </div>
+                <div class="demo-code">
+// 条件路由类型
+type ApiRoute = `/api/${string}/${string}`;
+
+// 基于操作类型的条件类型
+type ReadOnlyRoute = `/api/${string}/${"get" | "list" | "read"}`;
+type WriteRoute = `/api/${string}/${"create" | "update" | "delete"}`;
+
+// 检查路由类型
+type IsReadRoute<T extends ApiRoute> = T extends ReadOnlyRoute ? true : false;
+type IsWriteRoute<T extends ApiRoute> = T extends WriteRoute ? true : false;
+
+// 基于资源类型的条件类型
+type UserRoute = `/api/users/${string}`;
+type ProductRoute = `/api/products/${string}`;
+type OrderRoute = `/api/orders/${string}`;
+
+type ExtractResource<T extends ApiRoute> = 
+    T extends `/api/${infer Resource}/${string}` ? Resource : never;
+
+type ExtractAction<T extends ApiRoute> = 
+    T extends `/api/${string}/${infer Action}` ? Action : never;
+
+// 高级路由处理
+class AdvancedRouteHandler {
+    // 根据路由类型分派不同的处理逻辑
+    static handleRoute<T extends ApiRoute>(route: T, data?: any): string {
+        type Resource = ExtractResource<T>;
+        type Action = ExtractAction<T>;
+        
+        const isRead = this.isReadRoute(route);
+        const isWrite = this.isWriteRoute(route);
+        const resource = this.getResource(route);
+        const action = this.getAction(route);
+        
+        if (isRead) {
+            return this.handleReadRoute(route, resource, action);
+        } else if (isWrite) {
+            return this.handleWriteRoute(route, resource, action, data);
+        }
+        
+        return `处理未知路由: ${route}`;
+    }
+    
+    private static isReadRoute(route: ApiRoute): boolean {
+        return ["get", "list", "read"].some(action => route.endsWith(`/${action}`));
+    }
+    
+    private static isWriteRoute(route: ApiRoute): boolean {
+        return ["create", "update", "delete"].some(action => route.endsWith(`/${action}`));
+    }
+    
+    private static getResource(route: ApiRoute): string {
+        return route.split('/')[2];
+    }
+    
+    private static getAction(route: ApiRoute): string {
+        return route.split('/')[3];
+    }
+    
+    private static handleReadRoute(route: ApiRoute, resource: string, action: string): string {
+        return `读取操作: ${resource}.${action} (${route})`;
+    }
+    
+    private static handleWriteRoute(route: ApiRoute, resource: string, action: string, data?: any): string {
+        const dataInfo = data ? `, 数据: ${JSON.stringify(data)}` : '';
+        return `写入操作: ${resource}.${action} (${route})${dataInfo}`;
+    }
+}
+
+// 使用高级路由处理
+console.log("高级路由处理示例:");
+
+const testCases: Array<{ route: ApiRoute; data?: any }> = [
+    { route: "/api/users/list" },
+    { route: "/api/users/get", data: { id: 123 } },
+    { route: "/api/products/create", data: { name: "新产品" } },
+    { route: "/api/orders/update", data: { status: "shipped" } },
+    { route: "/api/products/delete", data: { id: 456 } }
+];
+
+testCases.forEach(({ route, data }) => {
+    const result = AdvancedRouteHandler.handleRoute(route, data);
+    console.log(result);
+});
+
+// 类型级编程示例
+type RouteInfo<T extends ApiRoute> = {
+    route: T;
+    resource: ExtractResource<T>;
+    action: ExtractAction<T>;
+    isRead: IsReadRoute<T>;
+    isWrite: IsWriteRoute<T>;
+    allowedMethods: IsReadRoute<T> extends true 
+        ? ["GET"] 
+        : IsWriteRoute<T> extends true 
+            ? ["POST", "PUT", "DELETE"] 
+            : never;
+};
+
+function createRouteInfo<T extends ApiRoute>(route: T): RouteInfo<T> {
+    const resource = route.split('/')[2];
+    const action = route.split('/')[3];
+    const isRead = ["get", "list", "read"].includes(action);
+    const isWrite = ["create", "update", "delete"].includes(action);
+    const allowedMethods = isRead ? ["GET"] : isWrite ? ["POST", "PUT", "DELETE"] : [];
+    
+    return {
+        route,
+        resource,
+        action,
+        isRead,
+        isWrite,
+        allowedMethods
+    } as RouteInfo<T>;
+}
+
+console.log("\n路由信息分析:");
+const routeInfos = testCases.map(({ route }) => createRouteInfo(route));
+routeInfos.forEach(info => {
+    console.log(`${info.route}:`, {
+        资源: info.resource,
+        操作: info.action,
+        是否读操作: info.isRead,
+        是否写操作: info.isWrite,
+        允许方法: info.allowedMethods
+    });
+});
+                </div>
+                <div class="demo-output utility-demo" id="output7">
+                    <!-- 输出将在这里显示 -->
+                </div>
+            </div>
+            
+            <div class="demo-box">
+                <div class="demo-title">
+                    <span>2. 路由测试与错误处理</span>
+                    <span class="badge badge-success">质量保证</span>
+                </div>
+                <div class="demo-code">
+// 路由测试与错误处理
+type ApiRoute = `/api/${string}/${string}`;
+
+// 路由测试套件
+class RouteTester {
+    // 测试路由有效性
+    static testRouteValidity() {
+        const testCases: Array<{ route: string; expected: boolean }> = [
+            { route: "/api/users/list", expected: true },
+            { route: "/api/products/123", expected: true },
+            { route: "/api/orders/create", expected: true },
+            { route: "/users/list", expected: false },
+            { route: "/api/users", expected: false },
+            { route: "/api/users/list/detail", expected: false },
+            { route: "/rest/users/list", expected: false }
+        ];
+        
+        console.log("路由有效性测试:");
+        testCases.forEach(({ route, expected }) => {
+            const isValid = /^\/api\/[^/]+\/[^/]+$/.test(route);
+            const status = isValid === expected ? '✅ 通过' : '❌ 失败';
+            console.log(`${status} ${route} (期望: ${expected}, 实际: ${isValid})`);
+        });
+    }
+    
+    // 性能测试：路由解析
+    static performanceTest() {
+        const routes: ApiRoute[] = [
+            "/api/users/list", "/api/products/search", "/api/orders/detail",
+            "/api/categories/update", "/api/settings/get"
+        ];
+        
+        console.log("\n路由解析性能测试:");
+        const startTime = performance.now();
+        
+        for (let i = 0; i < 10000; i++) {
+            routes.forEach(route => {
+                const [, , resource, action] = route.split('/');
+                // 模拟路由处理
+                const processed = { resource, action, fullPath: route };
+            });
+        }
+        
+        const endTime = performance.now();
+        console.log(`处理 ${routes.length * 10000} 个路由耗时: ${(endTime - startTime).toFixed(2)}ms`);
+    }
+    
+    // 错误边界测试
+    static errorBoundaryTest() {
+        console.log("\n错误边界测试:");
+        
+        // 测试无效路由处理
+        const invalidRoutes = [
+            "/users/list",
+            "/api/users",
+            "/api/users/list/detail",
+            "/rest/users/list",
+            ""
+        ];
+        
+        invalidRoutes.forEach(route => {
+            try {
+                // 模拟路由处理
+                if (!/^\/api\/[^/]+\/[^/]+$/.test(route)) {
+                    throw new Error(`无效的路由格式: ${route}`);
+                }
+                console.log(`✅ 有效路由: ${route}`);
+            } catch (error) {
+                console.log(`❌ 捕获错误: ${error.message}`);
+            }
+        });
+    }
+    
+    // 路由生成测试
+    static routeGenerationTest() {
+        console.log("\n路由生成测试:");
+        
+        const testCases: Array<{ resource: string; action: string; expected: ApiRoute }> = [
+            { resource: "users", action: "list", expected: "/api/users/list" },
+            { resource: "products", action: "create", expected: "/api/products/create" },
+            { resource: "orders", action: "update", expected: "/api/orders/update" }
+        ];
+        
+        testCases.forEach(({ resource, action, expected }) => {
+            const generated = `/api/${resource}/${action}` as ApiRoute;
+            const status = generated === expected ? '✅ 通过' : '❌ 失败';
+            console.log(`${status} 生成路由: ${generated} (期望: ${expected})`);
+        });
+    }
+}
+
+// 运行所有测试
+console.log("=== 路由测试套件 ===");
+RouteTester.testRouteValidity();
+RouteTester.performanceTest();
+RouteTester.errorBoundaryTest();
+RouteTester.routeGenerationTest();
+
+// 路由监控和日志
+class RouteMonitor {
+    private static accessLog: Array<{ route: ApiRoute; timestamp: Date; status: string }> = [];
+    
+    static logAccess(route: ApiRoute, status: 'success' | 'error' = 'success') {
+        this.accessLog.push({
+            route,
+            timestamp: new Date(),
+            status
+        });
+        
+        console.log(`📊 路由访问: ${route} [${status}]`);
+    }
+    
+    static getAccessStats() {
+        const total = this.accessLog.length;
+        const success = this.accessLog.filter(entry => entry.status === 'success').length;
+        const error = total - success;
+        const successRate = total > 0 ? (success / total * 100).toFixed(2) : '0.00';
+        
+        return {
+            total,
+            success,
+            error,
+            successRate: `${successRate}%`
+        };
+    }
+    
+    static printAccessReport() {
+        const stats = this.getAccessStats();
+        console.log("\n=== 路由访问报告 ===");
+        console.log(`总访问量: ${stats.total}`);
+        console.log(`成功: ${stats.success}`);
+        console.log(`失败: ${stats.error}`);
+        console.log(`成功率: ${stats.successRate}`);
+        
+        console.log("\n最近访问:");
+        this.accessLog.slice(-5).forEach(entry => {
+            console.log(`  ${entry.timestamp.toISOString()} - ${entry.route} [${entry.status}]`);
+        });
+    }
+}
+
+// 模拟路由访问监控
+console.log("\n=== 路由监控演示 ===");
+const monitoredRoutes: ApiRoute[] = [
+    "/api/users/list",
+    "/api/products/search", 
+    "/api/orders/create",
+    "/api/users/get",
+    "/api/products/update"
+];
+
+monitoredRoutes.forEach((route, index) => {
+    const status = index % 5 === 0 ? 'error' : 'success'; // 模拟 20% 错误率
+    RouteMonitor.logAccess(route, status);
+});
+
+RouteMonitor.printAccessReport();
+                </div>
+                <div class="demo-output utility-demo" id="output8">
+                    <!-- 输出将在这里显示 -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <section class="section interactive-demo">
+        <h2>💻 ApiRoute 交互式测试</h2>
+        <p>在下面的编辑器中测试各种路由格式是否匹配 <code>ApiRoute</code> 类型：</p>
+        
+        <div class="code-executor">
+            <textarea class="code-input" id="userCode" placeholder="在这里测试路由格式...">
+// ApiRoute 验证函数
+function testApiRoute(route) {
+    const pattern = /^\/api\/[^/]+\/[^/]+$/;
+    const isValid = pattern.test(route);
+    
+    console.log(`路由: "${route}"`);
+    console.log(`格式: ${isValid ? '✅ 符合 ApiRoute' : '❌ 不符合 ApiRoute'}`);
+    
+    if (isValid) {
+        const [, , resource, action] = route.split('/');
+        console.log(`资源: ${resource}`);
+        console.log(`操作: ${action}`);
+    } else {
+        console.log('问题分析:');
+        if (!route.startsWith('/api/')) {
+            console.log('  - 必须以 /api/ 开头');
+        }
+        const parts = route.split('/').filter(part => part.length > 0);
+        if (parts.length < 3) {
+            console.log('  - 路径段不足');
+        } else if (parts.length > 3) {
+            console.log('  - 路径段过多');
+        }
+    }
+    console.log('---');
+}
+
+// 测试各种路由格式
+console.log('=== ApiRoute 格式测试 ===\n');
+
+// ✅ 有效的路由
+testApiRoute("/api/users/list");
+testApiRoute("/api/products/123");
+testApiRoute("/api/orders/create");
+testApiRoute("/api/categories/update");
+
+console.log('=== 无效的路由测试 ===\n');
+
+// ❌ 无效的路由
+testApiRoute("/users/list");
+testApiRoute("/api/users");
+testApiRoute("/api/users/list/detail");
+testApiRoute("/rest/users/list");
+testApiRoute("api/users/list");
+testApiRoute("/api//list");
+
+console.log('=== 边界情况测试 ===\n');
+
+// 边界情况
+testApiRoute("/api/a/b");          // 最短有效路径
+testApiRoute("/api/very-long-resource-name/very-long-action-name"); // 长路径
+testApiRoute("/api/123/456");      // 数字路径段
+testApiRoute("/api/user-1/action_2"); // 带特殊字符
+
+console.log('=== 测试完成 ===');
+            </textarea>
+            <button class="run-button" onclick="executeUserCode()">运行测试</button>
+            <div class="output-area" id="userOutput">
+                测试结果将显示在这里...
+            </div>
+        </div>
+    </section>
+    
+    <section class="summary">
+        <h2>📚 ApiRoute 模板字符串类型完整总结</h2>
+        
+        <div class="summary-grid">
+            <div class="summary-item">
+                <h3>✅ 有效的 ApiRoute 示例</h3>
+                <div class="route-example">/api/users/list</div>
+                <div class="route-example">/api/products/123</div>
+                <div class="route-example">/api/orders/create</div>
+                <div class="route-example">/api/categories/update</div>
+                <div class="route-example">/api/settings/get</div>
+            </div>
+            
+            <div class="summary-item">
+                <h3>❌ 无效的 ApiRoute 示例</h3>
+                <div class="route-example">/users/list</div>
+                <div class="route-example">/api/users</div>
+                <div class="route-example">/api/users/list/detail</div>
+                <div class="route-example">/rest/users/list</div>
+                <div class="route-example">api/users/list</div>
+            </div>
+            
+            <div class="summary-item">
+                <h3>🎯 核心特性</h3>
+                <ul>
+                    <li><strong>类型安全</strong> - 编译时路由验证</li>
+                    <li><strong>模式匹配</strong> - 严格的路由格式约束</li>
+                    <li><strong>自动完成</strong> - IDE 智能提示支持</li>
+                    <li><strong>重构友好</strong> - 类型安全的代码重构</li>
+                </ul>
+            </div>
+            
+            <div class="summary-item">
+                <h3>💡 最佳实践</h3>
+                <ul>
+                    <li>使用路由常量而不是硬编码字符串</li>
+                    <li>创建路由生成工具函数</li>
+                    <li>实现路由权限控制系统</li>
+                    <li>添加路由监控和日志</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="comparison">
+            <h3>🔍 ApiRoute 模式解析</h3>
+            <table class="method-table">
+                <thead>
+                    <tr>
+                        <th>模式部分</th>
+                        <th>说明</th>
+                        <th>示例</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>/api/</code></td>
+                        <td>固定前缀，标识 API 路由</td>
+                        <td>必须以此开头</td>
+                    </tr>
+                    <tr>
+                        <td><code>${string}</code> (第一个)</td>
+                        <td>资源名称，任何字符串</td>
+                        <td>users, products, orders</td>
+                    </tr>
+                    <tr>
+                        <td><code>/</code></td>
+                        <td>路径分隔符</td>
+                        <td>固定格式</td>
+                    </tr>
+                    <tr>
+                        <td><code>${string}</code> (第二个)</td>
+                        <td>操作名称，任何字符串</td>
+                        <td>list, create, update, 123</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <table class="method-table">
+            <thead>
+                <tr>
+                    <th>应用场景</th>
+                    <th>代码示例</th>
+                    <th>优势</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>API 客户端</td>
+                    <td><code>apiClient.get("/api/users/list")</code></td>
+                    <td>类型安全的 API 调用</td>
+                </tr>
+                <tr>
+                    <td>路由权限</td>
+                    <td><code>guard.canAccess("/api/admin/users")</code></td>
+                    <td>编译时权限检查</td>
+                </tr>
+                <tr>
+                    <td>路由生成</td>
+                    <td><code>createRoute("users", "list")</code></td>
+                    <td>避免硬编码错误</td>
+                </tr>
+                <tr>
+                    <td>测试验证</td>
+                    <td><code>isValidApiRoute(route)</code></td>
+                    <td>自动化路由验证</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+    
+    <footer>
+        <p>TypeScript ApiRoute 模板字符串类型详解 &copy; 2023 | 构建类型安全的 API 路由系统</p>
+    </footer>
+
+    <script>
+        // 页面加载时执行示例代码
+        document.addEventListener('DOMContentLoaded', function() {
+            executeExamples();
+        });
+        
+        function executeExamples() {
+            // 示例1: 基本类型定义与使用
+            try {
+                const validRoutes = {
+                    users: "/api/users/list",
+                    products: "/api/products/123",
+                    orders: "/api/orders/detail",
+                    categories: "/api/categories/update"
+                };
+
+                function createApiRequest(route, method = "GET") {
+                    return {
+                        url: route,
+                        method,
+                        timestamp: new Date().toISOString()
+                    };
+                }
+
+                const userRequest = createApiRequest("/api/users/list", "GET");
+                const productRequest = createApiRequest("/api/products/456", "POST");
+
+                let output = "基础 ApiRoute 使用示例:\n";
+                output += "用户请求: " + JSON.stringify(userRequest, null, 2) + "\n";
+                output += "商品请求: " + JSON.stringify(productRequest, null, 2) + "\n";
+
+                function processRoute(route) {
+                    const segments = route.split('/').filter(segment => segment.length > 0);
+                    return { route, segments };
+                }
+
+                const processed = processRoute("/api/orders/status");
+                output += "路由处理: " + JSON.stringify(processed, null, 2);
+
+                document.getElementById('output1').textContent = output;
+            } catch (e) {
+                document.getElementById('output1').textContent = "错误: " + e.message;
+            }
+
+            // 示例2: 扩展的 API 路由类型
+            try {
+                function createUserEndpoint(route) {
+                    console.log(`创建用户端点: ${route}`);
+                    return route;
+                }
+
+                function createProductEndpoint(route) {
+                    console.log(`创建商品端点: ${route}`);
+                    return route;
+                }
+
+                const userProfile = createUserEndpoint("/api/users/profile");
+                const userSettings = createUserEndpoint("/api/users/settings");
+                const productDetail = createProductEndpoint("/api/products/detail");
+                const productSearch = createProductEndpoint("/api/products/search");
+
+                let output = "扩展路由类型示例:\n";
+                output += "用户配置: " + userSettings + "\n";
+                output += "商品搜索: " + productSearch + "\n";
+
+                class ApiRouteFactory {
+                    static createUserRoute(action) {
+                        return `/api/users/${action}`;
+                    }
+                    
+                    static createProductRoute(action) {
+                        return `/api/products/${action}`;
+                    }
+                    
+                    static createOrderRoute(action) {
+                        return `/api/orders/${action}`;
+                    }
+                }
+
+                const userList = ApiRouteFactory.createUserRoute("list");
+                const productCreate = ApiRouteFactory.createProductRoute("create");
+                const orderUpdate = ApiRouteFactory.createOrderRoute("update");
+
+                output += "路由工厂创建:\n";
+                output += "用户列表: " + userList + "\n";
+                output += "商品创建: " + productCreate + "\n";
+                output += "订单更新: " + orderUpdate;
+
+                document.getElementById('output2').textContent = output;
+            } catch (e) {
+                document.getElementById('output2').textContent = "错误: " + e.message;
+            }
+
+            // 其他示例的实现...
+        }
+        
+        function executeUserCode() {
+            var userCode = document.getElementById('userCode').value;
+            var outputArea = document.getElementById('userOutput');
+            
+            try {
+                var logMessages = [];
+                var originalLog = console.log;
+                console.log = function(message) {
+                    logMessages.push(message);
+                    originalLog.apply(console, arguments);
+                };
+                
+                eval(userCode);
+                
+                console.log = originalLog;
+                
+                outputArea.textContent = logMessages.join('\n') || "代码执行成功，但没有输出。";
+                outputArea.style.color = '#e2e8f0';
+            } catch (error) {
+                outputArea.textContent = "错误: " + error.message;
+                outputArea.style.color = '#ef4444';
+            }
+        }
+    </script>
+</body>
+</html>

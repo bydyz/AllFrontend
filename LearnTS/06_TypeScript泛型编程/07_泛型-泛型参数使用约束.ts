@@ -8,6 +8,11 @@ interface IKun {
 type IKunKeys = keyof IKun // "name"|"age"
 // ！   sonType extends IKunKeys  =>  sonType 为  "name"  或者  "age"
 
+
+
+
+
+
 //！  extends keyof 后面还接 O  
 function getObjectProperty<O, K extends keyof O>(obj: O, key: K){
   return obj[key]

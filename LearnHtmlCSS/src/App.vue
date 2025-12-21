@@ -12,14 +12,12 @@ import CustomList from "./components/CustomList.vue";
 import LearnTagA from "./components/LearnTagA/index.vue"
 import LearnTable from "./components/LearnTable/index.vue"
 import LearnTagForm from "./components/LearnTagForm/index.vue"
-
 import LearnFont from "./components/LearnFont/index.vue"
 import LearnDisplay from "./components/LearnDisplay/index.vue"
 import LearnScrollbar from "./components/LearnScrollbar/index.vue"
-
 import LearnSelector from "./components/LearnSelector/index.vue"
-
 import LearnEIFPicture from "./components/LearnEIFPicture/index.vue"
+import LearnSpacing from "./components/LearnSpacing/index.vue"
 
 import { ref, shallowRef, markRaw } from "vue";
 
@@ -92,8 +90,12 @@ let componentsArray = ref([
     name: '精灵图',
     component: markRaw(LearnEIFPicture)
   },
+  {
+    name: '间距',
+    component: markRaw(LearnSpacing)
+  },
 ])
-let componentId = shallowRef(LearnDisplay);
+let componentId = shallowRef(LearnSpacing);
 </script>
 
 <template>

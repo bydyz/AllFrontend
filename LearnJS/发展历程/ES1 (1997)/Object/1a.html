@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ES1 (1997) 对象API与原型使用详解</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: #f5f7fa;
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        font-size: 2.8rem;
+        margin-bottom: 15px;
+      }
+
+      .subtitle {
+        font-size: 1.3rem;
+        opacity: 0.9;
+      }
+
+      .container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .section {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      h2 {
+        color: #2c3e50;
+        margin-bottom: 25px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #f0f0f0;
+        display: flex;
+        align-items: center;
+      }
+
+      h2 i {
+        margin-right: 10px;
+        font-size: 1.5em;
+      }
+
+      .demo-box {
+        margin-bottom: 30px;
+        padding: 20px;
+        border-radius: 10px;
+        background: #f8f9fa;
+        transition: all 0.3s ease;
+      }
+
+      .demo-box:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .demo-title {
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #2c3e50;
+        font-size: 1.2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .demo-code {
+        background: #1e293b;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 8px;
+        font-family: "Courier New", monospace;
+        margin: 15px 0;
+        overflow-x: auto;
+        font-size: 0.95rem;
+        white-space: pre;
+      }
+
+      .demo-output {
+        padding: 15px;
+        background: white;
+        border-radius: 8px;
+        border-left: 4px solid;
+        margin-top: 15px;
+        font-family: "Courier New", monospace;
+      }
+
+      .object-demo {
+        border-left-color: #3b82f6;
+      }
+      .prototype-demo {
+        border-left-color: #10b981;
+      }
+      .constructor-demo {
+        border-left-color: #f59e0b;
+      }
+      .inheritance-demo {
+        border-left-color: #ef4444;
+      }
+
+      .interactive-demo {
+        margin-top: 30px;
+      }
+
+      .code-executor {
+        background: #1e293b;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+
+      .code-input {
+        width: 100%;
+        min-height: 120px;
+        background: #0f172a;
+        color: #e2e8f0;
+        border: 1px solid #334155;
+        border-radius: 6px;
+        padding: 15px;
+        font-family: "Courier New", monospace;
+        font-size: 1rem;
+        margin-bottom: 15px;
+        resize: vertical;
+      }
+
+      .run-button {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: background 0.3s;
+      }
+
+      .run-button:hover {
+        background: #2563eb;
+      }
+
+      .output-area {
+        background: #0f172a;
+        color: #e2e8f0;
+        padding: 15px;
+        border-radius: 6px;
+        margin-top: 15px;
+        min-height: 80px;
+        font-family: "Courier New", monospace;
+        white-space: pre-wrap;
+      }
+
+      .summary {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        margin-top: 40px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+        margin-top: 25px;
+      }
+
+      .summary-item {
+        padding: 20px;
+        border-radius: 10px;
+        background-color: #f8f9fa;
+      }
+
+      .summary-item h3 {
+        margin-bottom: 15px;
+        color: #2c3e50;
+      }
+
+      .comparison {
+        margin-top: 40px;
+        padding: 25px;
+        background: linear-gradient(135deg, #fef3c7 0%, #fef7ed 100%);
+        border-radius: 12px;
+        border-left: 6px solid #f59e0b;
+      }
+
+      .comparison h3 {
+        color: #92400e;
+        margin-bottom: 15px;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 50px;
+        padding: 25px;
+        color: #7f8c8d;
+        font-size: 0.95rem;
+        border-top: 1px solid #e0e0e0;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: 10px;
+      }
+
+      .badge-es1 {
+        background: #3b82f6;
+        color: white;
+      }
+      .badge-important {
+        background: #ef4444;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>ES1 (1997) 对象API与原型使用详解</h1>
+      <p class="subtitle">探索JavaScript最初版本中的对象系统和原型继承机制</p>
+    </header>
+
+    <div class="container">
+      <section class="section">
+        <h2>🏗️ 对象创建与属性操作</h2>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>1. 对象字面量创建</span>
+            <span class="badge badge-es1">ES1</span>
+          </div>
+          <div class="demo-code">
+// ES1 对象字面量语法
+var person = {
+    name: "张三",
+    age: 25,
+    job: "工程师",
+    
+    // 方法定义
+    introduce: function() {
+        return "我叫" + this.name + "，今年" + this.age + "岁，是一名" + this.job;
+    }
+};
+          </div>
+          <div class="demo-output object-demo" id="output1">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>2. 属性访问与操作</span>
+            <span class="badge badge-es1">ES1</span>
+          </div>
+          <div class="demo-code">
+// 点表示法访问属性
+var name = person.name;
+
+// 方括号表示法访问属性
+var age = person["age"];
+
+// 动态添加属性
+person.email = "zhangsan@example.com";
+
+// 删除属性
+delete person.job;
+
+// 检查属性是否存在
+var hasEmail = "email" in person;
+          </div>
+          <div class="demo-output object-demo" id="output2">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>3. 对象枚举与迭代</span>
+            <span class="badge badge-es1">ES1</span>
+          </div>
+          <div class="demo-code">
+// for...in 循环枚举属性
+var output = "person对象的属性：\\n";
+for (var prop in person) {
+    if (person.hasOwnProperty(prop)) {
+        output += prop + ": " + person[prop] + "\\n";
+    }
+}
+
+// 检查对象属性数量
+var count = 0;
+for (var key in person) {
+    if (person.hasOwnProperty(key)) {
+        count++;
+    }
+}
+output += "\\n属性总数: " + count;
+          </div>
+          <div class="demo-output object-demo" id="output3">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>🔗 原型系统与继承</h2>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>1. 构造函数与原型</span>
+            <span class="badge badge-important">核心概念</span>
+          </div>
+          <div class="demo-code">
+// 构造函数
+function Person(name, age) {
+    this.name = name;
+    this.age = age;
+}
+
+// 在原型上添加方法
+Person.prototype.introduce = function() {
+    return "我叫" + this.name + "，今年" + this.age + "岁";
+};
+
+// 创建实例
+var person1 = new Person("李四", 30);
+var person2 = new Person("王五", 28);
+          </div>
+          <div class="demo-output prototype-demo" id="output4">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>2. 原型链继承</span>
+            <span class="badge badge-important">核心概念</span>
+          </div>
+          <div class="demo-code">
+// 子类构造函数
+function Employee(name, age, job) {
+    // 调用父类构造函数
+    Person.call(this, name, age);
+    this.job = job;
+}
+
+// 设置原型链
+Employee.prototype = Object.create(Person.prototype);
+Employee.prototype.constructor = Employee;
+
+// 子类特有方法
+Employee.prototype.work = function() {
+    return this.name + "正在从事" + this.job + "工作";
+};
+
+var employee = new Employee("赵六", 35, "经理");
+          </div>
+          <div class="demo-output inheritance-demo" id="output5">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>3. 原型相关方法</span>
+            <span class="badge badge-es1">ES1</span>
+          </div>
+          <div class="demo-code">
+// instanceof 操作符
+var isPerson = employee instanceof Person;
+var isEmployee = employee instanceof Employee;
+
+// constructor 属性
+var constructorName = employee.constructor.name;
+
+// 原型检查
+var proto = Object.getPrototypeOf(employee);
+var hasIntroduce = "introduce" in employee;
+
+// 原型链遍历
+var protoChain = [];
+var current = employee;
+while (current) {
+    protoChain.push(current.constructor.name);
+    current = Object.getPrototypeOf(current);
+}
+          </div>
+          <div class="demo-output prototype-demo" id="output6">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="section interactive-demo">
+      <h2>💻 交互式代码执行器</h2>
+      <p>在下面的编辑器中尝试ES1对象和原型相关的代码：</p>
+
+      <div class="code-executor">
+        <textarea class="code-input" id="userCode" placeholder="在这里输入JavaScript代码...">
+// 示例：创建对象和操作原型
+function Animal(name) {
+    this.name = name;
+}
+
+Animal.prototype.speak = function() {
+    return this.name + " 发出声音";
+};
+
+function Dog(name, breed) {
+    Animal.call(this, name);
+    this.breed = breed;
+}
+
+Dog.prototype = Object.create(Animal.prototype);
+Dog.prototype.constructor = Dog;
+
+Dog.prototype.bark = function() {
+    return this.name + " 汪汪叫！";
+};
+
+var myDog = new Dog("小黑", "拉布拉多");
+console.log(myDog.speak());
+console.log(myDog.bark());
+console.log("原型链: " + (myDog instanceof Dog) + ", " + (myDog instanceof Animal));
+            </textarea
+        >
+        <button class="run-button" onclick="executeUserCode()">运行代码</button>
+        <div class="output-area" id="userOutput">输出结果将显示在这里...</div>
+      </div>
+    </section>
+
+    <section class="summary">
+      <h2>📚 ES1 对象与原型核心概念</h2>
+
+      <div class="summary-grid">
+        <div class="summary-item">
+          <h3>对象创建方式</h3>
+          <ul>
+            <li><strong>对象字面量</strong>: <code>{ key: value }</code></li>
+            <li><strong>构造函数</strong>: <code>new Object()</code> 或自定义构造函数</li>
+            <li><strong>Object.create()</strong>: 基于原型创建对象</li>
+          </ul>
+        </div>
+
+        <div class="summary-item">
+          <h3>属性操作</h3>
+          <ul>
+            <li><strong>访问</strong>: <code>obj.key</code> 或 <code>obj["key"]</code></li>
+            <li><strong>添加</strong>: <code>obj.newKey = value</code></li>
+            <li><strong>删除</strong>: <code>delete obj.key</code></li>
+            <li><strong>检查</strong>: <code>"key" in obj</code></li>
+          </ul>
+        </div>
+
+        <div class="summary-item">
+          <h3>原型系统</h3>
+          <ul>
+            <li><strong>原型链</strong>: 对象 → 构造函数.prototype → Object.prototype → null</li>
+            <li><strong>继承</strong>: 通过原型链实现方法和属性继承</li>
+            <li><strong>方法共享</strong>: 在原型上定义方法，所有实例共享</li>
+          </ul>
+        </div>
+
+        <div class="summary-item">
+          <h3>关键方法</h3>
+          <ul>
+            <li><strong>hasOwnProperty()</strong>: 检查自有属性</li>
+            <li><strong>isPrototypeOf()</strong>: 检查原型关系</li>
+            <li><strong>Object.getPrototypeOf()</strong>: 获取原型对象</li>
+            <li><strong>instanceof</strong>: 检查实例关系</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="comparison">
+        <h3>💡 ES1 原型继承的特点</h3>
+        <p><strong>优点：</strong></p>
+        <ul>
+          <li>方法在原型上定义，所有实例共享，节省内存</li>
+          <li>动态原型 - 可以运行时修改原型，影响所有实例</li>
+          <li>灵活的继承机制</li>
+        </ul>
+        <p><strong>局限性：</strong></p>
+        <ul>
+          <li>构造函数和原型分离，代码组织不够直观</li>
+          <li>原型链可能变得复杂难以理解</li>
+          <li>没有真正的类概念（直到ES6）</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+      <p>ES1 (1997) 对象API与原型使用详解 &copy; 2023 | JavaScript原型继承是理解现代框架的基础</p>
+    </footer>
+
+    <script>
+      // 页面加载时执行示例代码
+      document.addEventListener("DOMContentLoaded", function () {
+        executeExamples();
+      });
+
+      function executeExamples() {
+        // 示例1: 对象字面量创建
+        try {
+          var person = {
+            name: "张三",
+            age: 25,
+            job: "工程师",
+            introduce: function () {
+              return "我叫" + this.name + "，今年" + this.age + "岁，是一名" + this.job;
+            },
+          };
+          document.getElementById("output1").textContent = person.introduce();
+        } catch (e) {
+          document.getElementById("output1").textContent = "错误: " + e.message;
+        }
+
+        // 示例2: 属性访问与操作
+        try {
+          var person = { name: "张三", age: 25, job: "工程师" };
+          var output = "";
+
+          output += "姓名: " + person.name + "\n";
+          output += "年龄: " + person["age"] + "\n";
+
+          person.email = "zhangsan@example.com";
+          output += "邮箱: " + person.email + "\n";
+
+          delete person.job;
+          output += "删除job后: " + ("job" in person ? "存在" : "不存在") + "\n";
+
+          var hasEmail = "email" in person;
+          output += "email属性存在: " + hasEmail;
+
+          document.getElementById("output2").textContent = output;
+        } catch (e) {
+          document.getElementById("output2").textContent = "错误: " + e.message;
+        }
+
+        // 示例3: 对象枚举
+        try {
+          var person = {
+            name: "张三",
+            age: 25,
+            job: "工程师",
+            introduce: function () {
+              return "自我介绍";
+            },
+          };
+
+          var output = "person对象的属性：\n";
+          for (var prop in person) {
+            if (person.hasOwnProperty(prop)) {
+              output += prop + ": " + person[prop] + "\n";
+            }
+          }
+
+          var count = 0;
+          for (var key in person) {
+            if (person.hasOwnProperty(key)) {
+              count++;
+            }
+          }
+          output += "\n属性总数: " + count;
+
+          document.getElementById("output3").textContent = output;
+        } catch (e) {
+          document.getElementById("output3").textContent = "错误: " + e.message;
+        }
+
+        // 示例4: 构造函数与原型
+        try {
+          function Person(name, age) {
+            this.name = name;
+            this.age = age;
+          }
+
+          Person.prototype.introduce = function () {
+            return "我叫" + this.name + "，今年" + this.age + "岁";
+          };
+
+          var person1 = new Person("李四", 30);
+          var person2 = new Person("王五", 28);
+
+          var output = person1.introduce() + "\n" + person2.introduce();
+          document.getElementById("output4").textContent = output;
+        } catch (e) {
+          document.getElementById("output4").textContent = "错误: " + e.message;
+        }
+
+        // 示例5: 原型链继承
+        try {
+          function Person(name, age) {
+            this.name = name;
+            this.age = age;
+          }
+
+          Person.prototype.introduce = function () {
+            return "我叫" + this.name + "，今年" + this.age + "岁";
+          };
+
+          function Employee(name, age, job) {
+            Person.call(this, name, age);
+            this.job = job;
+          }
+
+          Employee.prototype = Object.create(Person.prototype);
+          Employee.prototype.constructor = Employee;
+
+          Employee.prototype.work = function () {
+            return this.name + "正在从事" + this.job + "工作";
+          };
+
+          var employee = new Employee("赵六", 35, "经理");
+
+          var output = employee.introduce() + "\n" + employee.work();
+          document.getElementById("output5").textContent = output;
+        } catch (e) {
+          document.getElementById("output5").textContent = "错误: " + e.message;
+        }
+
+        // 示例6: 原型相关方法
+        try {
+          function Person(name, age) {
+            this.name = name;
+            this.age = age;
+          }
+
+          Person.prototype.introduce = function () {
+            return "自我介绍";
+          };
+
+          function Employee(name, age, job) {
+            Person.call(this, name, age);
+            this.job = job;
+          }
+
+          Employee.prototype = Object.create(Person.prototype);
+          Employee.prototype.constructor = Employee;
+
+          var employee = new Employee("赵六", 35, "经理");
+
+          var output = "";
+          output += "employee instanceof Person: " + (employee instanceof Person) + "\n";
+          output += "employee instanceof Employee: " + (employee instanceof Employee) + "\n";
+          output += "构造函数: " + employee.constructor.name + "\n";
+          output += "是否有introduce方法: " + ("introduce" in employee) + "\n";
+
+          var protoChain = [];
+          var current = employee;
+          while (current) {
+            protoChain.push(current.constructor.name);
+            current = Object.getPrototypeOf(current);
+          }
+          output += "原型链: " + protoChain.join(" → ");
+
+          document.getElementById("output6").textContent = output;
+        } catch (e) {
+          document.getElementById("output6").textContent = "错误: " + e.message;
+        }
+      }
+
+      function executeUserCode() {
+        var userCode = document.getElementById("userCode").value;
+        var outputArea = document.getElementById("userOutput");
+
+        try {
+          // 重写console.log来捕获输出
+          var logMessages = [];
+          var originalLog = console.log;
+          console.log = function (message) {
+            logMessages.push(message);
+            originalLog.apply(console, arguments);
+          };
+
+          // 执行用户代码
+          eval(userCode);
+
+          // 恢复原始console.log
+          console.log = originalLog;
+
+          // 显示输出
+          outputArea.textContent = logMessages.join("\n") || "代码执行成功，但没有输出。";
+          outputArea.style.color = "#e2e8f0";
+        } catch (error) {
+          outputArea.textContent = "错误: " + error.message;
+          outputArea.style.color = "#ef4444";
+        }
+      }
+    </script>
+  </body>
+</html>

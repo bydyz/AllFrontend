@@ -11,6 +11,14 @@ type HYPick<T, K extends keyof T> = {
 
 //!   从原有接口中抽出第二个参数的属性，组成一个新的类型    原本有什么特殊字符，新的依旧有
 type IKuns = HYPick<IKun, "slogan"|"name">
+
+
+
+
+
+
+
+
 type IKuns2 = Pick<IKun, "slogan"|"name">
 
 

@@ -7,18 +7,6 @@ function getLength(arg: ILength) {
   return arg.length
 }
 
-
-function getLength1<Type = ILength>(arg: Type): Type {
-  // return arg
-  // !  这里的报错， 是因为最终的返回值类型需要时 Type
-  return { length: arg.length }
-}
-function getLength2<Type>(arg: Type): Type {
-  // !  这里的报错， 是因为最终的返回值类型需要时 Type
-  return arg.length
-}
-
-
 function getLength3(arg: ILength): number {
   return arg.length
 }
@@ -26,6 +14,27 @@ function getLength3(arg: ILength): number {
 const length1 = getLength("aaaa")
 const length2 = getLength(["aaa", "bbb", "ccc"])
 const length3 = getLength({ length: 100 })
+
+
+
+
+
+function getLength1<Type = ILength>(arg: Type): Type {
+  // return arg
+  // !  这里的报错， 是因为最终的返回值类型需要时 Type
+  return { length: arg.length }
+}
+
+
+
+
+
+function getLength2<Type>(arg: Type): Type {
+  // !  这里的报错， 是因为最终的返回值类型需要时 Type
+  return arg.length
+}
+
+
 
 
 

@@ -19,6 +19,13 @@ type IKuns1 = HYExclude<IKun, "sing"|"rap"|"dance">
 type IKuns2 = HYExclude<IKun, "rap"|"dance">
 type IKuns3 = HYExclude<IKun, "dance">
 
+
+
+
+
+
+
+
 type IKuns5 = Exclude<IKun, "rap">
 
 type IKuns6 = Exclude<IKun, "666">

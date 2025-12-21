@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ES2016 (ES7) 对象API改动详解</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: #f5f7fa;
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        font-size: 2.8rem;
+        margin-bottom: 15px;
+      }
+
+      .subtitle {
+        font-size: 1.3rem;
+        opacity: 0.9;
+      }
+
+      .container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .section {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      h2 {
+        color: #2c3e50;
+        margin-bottom: 25px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+
+      .demo-box {
+        margin-bottom: 30px;
+        padding: 20px;
+        border-radius: 10px;
+        background: #f8f9fa;
+        transition: all 0.3s ease;
+      }
+
+      .demo-box:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .demo-title {
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #2c3e50;
+        font-size: 1.2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .demo-code {
+        background: #1e293b;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 8px;
+        font-family: "Courier New", monospace;
+        margin: 15px 0;
+        overflow-x: auto;
+        font-size: 0.95rem;
+      }
+
+      .demo-output {
+        padding: 15px;
+        background: white;
+        border-radius: 8px;
+        border-left: 4px solid;
+        margin-top: 15px;
+        font-family: "Courier New", monospace;
+        white-space: pre-wrap;
+      }
+
+      .includes-demo {
+        border-left-color: #3b82f6;
+      }
+      .exponentiation-demo {
+        border-left-color: #10b981;
+      }
+      .array-demo {
+        border-left-color: #f59e0b;
+      }
+      .object-demo {
+        border-left-color: #ef4444;
+      }
+
+      .interactive-demo {
+        margin-top: 30px;
+      }
+
+      .code-executor {
+        background: #1e293b;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+
+      .code-input {
+        width: 100%;
+        min-height: 120px;
+        background: #0f172a;
+        color: #e2e8f0;
+        border: 1px solid #334155;
+        border-radius: 6px;
+        padding: 15px;
+        font-family: "Courier New", monospace;
+        font-size: 1rem;
+        margin-bottom: 15px;
+        resize: vertical;
+      }
+
+      .run-button {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: background 0.3s;
+      }
+
+      .run-button:hover {
+        background: #2563eb;
+      }
+
+      .output-area {
+        background: #0f172a;
+        color: #e2e8f0;
+        padding: 15px;
+        border-radius: 6px;
+        margin-top: 15px;
+        min-height: 80px;
+        font-family: "Courier New", monospace;
+        white-space: pre-wrap;
+      }
+
+      .summary {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        margin-top: 40px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-top: 25px;
+      }
+
+      .summary-item {
+        padding: 20px;
+        border-radius: 10px;
+        background-color: #f8f9fa;
+      }
+
+      .summary-item h3 {
+        margin-bottom: 15px;
+        color: #2c3e50;
+      }
+
+      .comparison {
+        margin-top: 40px;
+        padding: 25px;
+        background: linear-gradient(135deg, #fef3c7 0%, #fef7ed 100%);
+        border-radius: 12px;
+        border-left: 6px solid #f59e0b;
+      }
+
+      .comparison h3 {
+        color: #92400e;
+        margin-bottom: 15px;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 50px;
+        padding: 25px;
+        color: #7f8c8d;
+        font-size: 0.95rem;
+        border-top: 1px solid #e0e0e0;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: 10px;
+      }
+
+      .badge-es7 {
+        background: #f59e0b;
+        color: white;
+      }
+      .badge-important {
+        background: #ef4444;
+        color: white;
+      }
+
+      .method-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+      }
+
+      .method-table th,
+      .method-table td {
+        border: 1px solid #e2e8f0;
+        padding: 12px;
+        text-align: left;
+      }
+
+      .method-table th {
+        background: #f8fafc;
+        font-weight: 600;
+      }
+
+      .feature-tag {
+        display: inline-block;
+        padding: 4px 8px;
+        background: #dbeafe;
+        color: #1e40af;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        margin-right: 5px;
+      }
+
+      .syntax-highlight {
+        color: #f59e0b;
+        font-weight: bold;
+      }
+
+      .note {
+        background: #f0f9ff;
+        border-left: 4px solid #0ea5e9;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>ES2016 (ES7) 对象API改动详解</h1>
+      <p class="subtitle">探索ES2016引入的两个重要特性：Array.prototype.includes() 和 指数运算符</p>
+    </header>
+
+    <div class="container">
+      <section class="section">
+        <h2>🔍 Array.prototype.includes()</h2>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>1. 基本用法</span>
+            <span class="badge badge-important">ES7核心</span>
+          </div>
+          <div class="demo-code">
+            // Array.prototype.includes() - 检查数组是否包含某个元素 const fruits = ['apple', 'banana', 'orange', 'mango', NaN]; let output = ''; output += `水果数组: ${fruits.join(', ')}\\n\\n`; // 基本包含检查 output += `包含 'banana': ${fruits.includes('banana')}\\n`; output += `包含 'grape':
+            ${fruits.includes('grape')}\\n`; // 从指定位置开始搜索 output += `从位置2开始包含 'orange': ${fruits.includes('orange', 2)}\\n`; output += `从位置2开始包含 'apple': ${fruits.includes('apple', 2)}\\n`; // 处理 NaN (与 indexOf 的重要区别) output += `包含 NaN: ${fruits.includes(NaN)}\\n`;
+            output += `indexOf(NaN): ${fruits.indexOf(NaN)}\\n`; // 对象引用检查 const obj1 = { id: 1 }; const obj2 = { id: 2 }; const objects = [obj1, obj2]; output += `\\n包含对象引用: ${objects.includes(obj1)}\\n`; output += `包含相似对象: ${objects.includes({ id: 1 })}\\n`; // 字符串也可以使用
+            const message = 'Hello World'; output += `\\n字符串包含 'World': ${message.includes('World')}\\n`; output += `字符串包含 'world': ${message.includes('world')}`;
+          </div>
+          <div class="demo-output includes-demo" id="output1">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>2. 与 indexOf() 的对比</span>
+            <span class="badge badge-es7">ES7</span>
+          </div>
+          <div class="demo-code">
+            // includes() 与 indexOf() 的详细对比 const testArray = [1, 2, 3, NaN, null, undefined, '']; let output = '测试数组: ' + JSON.stringify(testArray) + '\\n\\n'; // 对比各种情况的处理 const testCases = [ { value: 2, description: '存在的数字' }, { value: 4, description: '不存在的数字' }, {
+            value: NaN, description: 'NaN' }, { value: null, description: 'null' }, { value: undefined, description: 'undefined' }, { value: '', description: '空字符串' } ]; output += '方法对比结果:\\n'; testCases.forEach(testCase => { const includesResult = testArray.includes(testCase.value); const
+            indexOfResult = testArray.indexOf(testCase.value); output += `\\n${testCase.description}:\\n`; output += ` includes(): ${includesResult}\\n`; output += ` indexOf(): ${indexOfResult} (${indexOfResult !== -1 ? '存在' : '不存在'})`; }); // 实际应用场景 output += '\\n\\n实际应用场景:\\n'; //
+            场景1: 权限检查 const userPermissions = ['read', 'write', 'delete']; const hasWritePermission = userPermissions.includes('write'); output += `用户有写权限: ${hasWritePermission}\\n`; // 场景2: 黑名单检查 const blacklist = ['spam@example.com', 'bot@example.com']; const email =
+            'user@example.com'; const isBlacklisted = blacklist.includes(email); output += `邮箱在黑名单中: ${isBlacklisted}\\n`; // 场景3: 功能检测 const supportedFeatures = ['es6', 'modules', 'promises']; const needsModules = supportedFeatures.includes('modules'); output += `需要模块支持:
+            ${needsModules}`;
+          </div>
+          <div class="demo-output includes-demo" id="output2">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>3. 在对象和类中的使用</span>
+            <span class="badge badge-es7">ES7</span>
+          </div>
+          <div class="demo-code">
+            // 在类和对象中使用 includes() class ProductCatalog { constructor() { this.products = [ { id: 1, name: 'Laptop', category: 'electronics' }, { id: 2, name: 'Phone', category: 'electronics' }, { id: 3, name: 'Book', category: 'education' }, { id: 4, name: 'Chair', category: 'furniture' }
+            ]; } // 检查产品是否存在 hasProduct(productName) { return this.products.map(p => p.name).includes(productName); } // 检查分类是否存在 hasCategory(category) { const categories = [...new Set(this.products.map(p => p.category))]; return categories.includes(category); } // 获取分类下的产品
+            getProductsByCategory(category) { return this.products.filter(product => product.category.includes(category) ); } } // 使用类 const catalog = new ProductCatalog(); let output = ''; output += `有笔记本电脑: ${catalog.hasProduct('Laptop')}\\n`; output += `有汽车:
+            ${catalog.hasProduct('Car')}\\n`; output += `有电子产品分类: ${catalog.hasCategory('electronics')}\\n`; output += `有服装分类: ${catalog.hasCategory('clothing')}\\n`; // 在对象方法中的使用 const validator = { requiredFields: ['username', 'email', 'password'], validate(formData) { const
+            missingFields = this.requiredFields.filter( field => !Object.keys(formData).includes(field) ); return { isValid: missingFields.length === 0, missingFields }; } }; const formData = { username: 'john', email: 'john@example.com' }; const validation = validator.validate(formData); output +=
+            `\\n表单验证: ${validation.isValid ? '通过' : '失败'}\\n`; output += `缺失字段: ${validation.missingFields.join(', ') || '无'}`;
+          </div>
+          <div class="demo-output includes-demo" id="output3">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>⚡ 指数运算符</h2>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>1. 基本指数运算</span>
+            <span class="badge badge-important">ES7核心</span>
+          </div>
+          <div class="demo-code">
+            // 指数运算符 ** - 求幂运算 let output = '基本的指数运算:\\n'; // 基本用法 output += `2 ** 3 = ${2 ** 3}\\n`; // 8 output += `3 ** 2 = ${3 ** 2}\\n`; // 9 output += `4 ** 0.5 = ${4 ** 0.5}\\n`; // 2 (平方根) output += `2 ** -2 = ${2 ** -2}\\n`; // 0.25 // 与 Math.pow() 对比 output +=
+            '\\n与 Math.pow() 对比:\\n'; output += `2 ** 10 = ${2 ** 10}\\n`; output += `Math.pow(2, 10) = ${Math.pow(2, 10)}\\n`; // 连续运算 output += `2 ** 3 ** 2 = ${2 ** 3 ** 2}\\n`; // 从右到左: 2^(3^2) = 2^9 = 512 output += `(2 ** 3) ** 2 = ${(2 ** 3) ** 2}\\n`; // (2^3)^2 = 8^2 = 64 //
+            在表达式中的使用 const base = 5; const exponent = 3; output += `\\n变量运算: ${base} ** ${exponent} = ${base ** exponent}\\n`; // 赋值运算符 let x = 2; x **= 3; // x = x ** 3 output += `赋值运算: x **= 3 后 x = ${x}`;
+          </div>
+          <div class="demo-output exponentiation-demo" id="output4">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>2. 在数学计算中的应用</span>
+            <span class="badge badge-es7">ES7</span>
+          </div>
+          <div class="demo-code">
+            // 指数运算符在数学计算中的实际应用 class Calculator { // 计算复利 static compoundInterest(principal, rate, time) { return principal * (1 + rate) ** time; } // 计算几何平均数 static geometricMean(numbers) { const product = numbers.reduce((acc, num) => acc * num, 1); return product ** (1
+            / numbers.length); } // 计算两点间距离 (欧几里得距离) static distance(point1, point2) { const dx = point2.x - point1.x; const dy = point2.y - point1.y; return (dx ** 2 + dy ** 2) ** 0.5; } // 计算多项式 static polynomial(x, coefficients) { return coefficients.reduce((sum, coef, index) =>
+            { return sum + coef * (x ** index); }, 0); } } let output = '数学计算应用:\\n\\n'; // 复利计算 const principal = 1000; const annualRate = 0.05; // 5% const years = 10; const futureValue = Calculator.compoundInterest(principal, annualRate, years); output += `复利计算:
+            ${principal}元，年化${annualRate * 100}%，${years}年后 = ${futureValue.toFixed(2)}元\\n`; // 几何平均数 const numbers = [2, 8, 32]; const geoMean = Calculator.geometricMean(numbers); output += `几何平均数: [${numbers.join(', ')}] = ${geoMean.toFixed(2)}\\n`; // 距离计算 const pointA = {
+            x: 0, y: 0 }; const pointB = { x: 3, y: 4 }; const dist = Calculator.distance(pointA, pointB); output += `两点距离: (${pointA.x},${pointA.y}) 到 (${pointB.x},${pointB.y}) = ${dist}\\n`; // 多项式计算 const coefficients = [1, 2, 3]; // 1 + 2x + 3x² const xValue = 2; const polyResult =
+            Calculator.polynomial(xValue, coefficients); output += `多项式 f(${xValue}) = ${coefficients.join(' + ')}x^${coefficients.map((_, i) => i).join(' + ')} = ${polyResult}`;
+          </div>
+          <div class="demo-output exponentiation-demo" id="output5">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>3. 在对象和类中的使用</span>
+            <span class="badge badge-es7">ES7</span>
+          </div>
+          <div class="demo-code">
+            // 在类和对象中使用指数运算符 class Vector { constructor(x, y, z = 0) { this.x = x; this.y = y; this.z = z; } // 计算向量的长度（模） get magnitude() { return (this.x ** 2 + this.y ** 2 + this.z ** 2) ** 0.5; } // 向量点积 dot(other) { return this.x * other.x + this.y * other.y + this.z
+            * other.z; } // 向量缩放 scale(factor) { return new Vector(this.x * factor, this.y * factor, this.z * factor); } // 计算距离 distanceTo(other) { const dx = this.x - other.x; const dy = this.y - other.y; const dz = this.z - other.z; return (dx ** 2 + dy ** 2 + dz ** 2) ** 0.5; } } //
+            在对象字面量中的使用 const mathUtils = { // 计算圆的面积 circleArea(radius) { return Math.PI * (radius ** 2); }, // 计算球体体积 sphereVolume(radius) { return (4 / 3) * Math.PI * (radius ** 3); }, // 计算立方体体积 cubeVolume(side) { return side ** 3; }, // 二进制到十进制转换
+            binaryToDecimal(binaryStr) { return parseInt(binaryStr, 2); }, // 使用指数运算符进行单位转换 bytesToGB(bytes) { return bytes / (1024 ** 3); } }; let output = '向量和几何计算:\\n\\n'; // 向量计算 const v1 = new Vector(3, 4); const v2 = new Vector(1, 2, 2); output += `向量 v1(3,4) 长度:
+            ${v1.magnitude}\\n`; output += `向量 v2(1,2,2) 长度: ${v2.magnitude}\\n`; output += `两点距离: ${v1.distanceTo(new Vector(0, 0))}\\n`; // 几何计算 output += `\\n几何计算:\\n`; output += `半径5的圆面积: ${mathUtils.circleArea(5).toFixed(2)}\\n`; output += `半径3的球体积:
+            ${mathUtils.sphereVolume(3).toFixed(2)}\\n`; output += `边长为4的立方体体积: ${mathUtils.cubeVolume(4)}\\n`; output += `1GB = ${mathUtils.bytesToGB(1)} bytes`;
+          </div>
+          <div class="demo-output exponentiation-demo" id="output6">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="section interactive-demo">
+      <h2>💻 ES2016 特性交互式测试</h2>
+      <p>在下面的编辑器中尝试ES2016新增的特性：</p>
+
+      <div class="code-executor">
+        <textarea class="code-input" id="userCode" placeholder="在这里输入JavaScript代码...">
+// 测试 Array.prototype.includes()
+const programmingLanguages = ['JavaScript', 'Python', 'Java', 'C++', 'Ruby'];
+
+console.log('编程语言数组:', programmingLanguages);
+console.log('包含 JavaScript:', programmingLanguages.includes('JavaScript'));
+console.log('包含 Go:', programmingLanguages.includes('Go'));
+console.log('从位置2开始包含 Java:', programmingLanguages.includes('Java', 2));
+
+// 处理特殊值
+const specialValues = [1, NaN, null, undefined];
+console.log('\n特殊值数组:', specialValues);
+console.log('包含 NaN:', specialValues.includes(NaN));
+console.log('indexOf NaN:', specialValues.indexOf(NaN));
+
+// 测试指数运算符
+console.log('\n--- 指数运算符测试 ---');
+console.log('2 ** 8 =', 2 ** 8);
+console.log('3 ** 3 =', 3 ** 3);
+console.log('16 ** 0.5 =', 16 ** 0.5); // 平方根
+
+// 实际应用：计算面积和体积
+const radius = 5;
+const circleArea = Math.PI * (radius ** 2);
+const sphereVolume = (4/3) * Math.PI * (radius ** 3);
+
+console.log('\n几何计算:');
+console.log(`半径 ${radius} 的圆面积:`, circleArea.toFixed(2));
+console.log(`半径 ${radius} 的球体积:`, sphereVolume.toFixed(2));
+
+// 在函数中使用
+function isPowerOfTwo(num) {
+    if (num <= 0) return false;
+    return (num & (num - 1)) === 0;
+}
+
+console.log('\n2的幂检查:');
+console.log('8 是 2 的幂:', isPowerOfTwo(8));
+console.log('10 是 2 的幂:', isPowerOfTwo(10));
+            </textarea
+        >
+        <button class="run-button" onclick="executeUserCode()">运行代码</button>
+        <div class="output-area" id="userOutput">输出结果将显示在这里...</div>
+      </div>
+    </section>
+
+    <section class="summary">
+      <h2>📚 ES2016 特性总结</h2>
+
+      <div class="note"><strong>注意：</strong> ES2016 (ES7) 是一个相对较小的更新，主要引入了两个重要的特性，没有对Object原型添加新的方法。</div>
+
+      <div class="summary-grid">
+        <div class="summary-item">
+          <h3>Array.prototype.includes()</h3>
+          <ul>
+            <li><span class="feature-tag">新增</span><strong>语法</strong>: <code>array.includes(value, fromIndex)</code></li>
+            <li><span class="feature-tag">优势</span>可以正确检测 <code>NaN</code></li>
+            <li><span class="feature-tag">优势</span>返回布尔值，语义更清晰</li>
+            <li><span class="feature-tag">应用</span>权限检查、黑名单验证等</li>
+          </ul>
+        </div>
+
+        <div class="summary-item">
+          <h3>指数运算符</h3>
+          <ul>
+            <li><span class="feature-tag">新增</span><strong>语法</strong>: <code>base ** exponent</code></li>
+            <li><span class="feature-tag">优势</span>语法更简洁直观</li>
+            <li><span class="feature-tag">优势</span>支持赋值运算符 <code>**=</code></li>
+            <li><span class="feature-tag">应用</span>数学计算、几何运算等</li>
+          </ul>
+        </div>
+
+        <div class="summary-item">
+          <h3>与之前版本的对比</h3>
+          <ul>
+            <li><span class="feature-tag">改进</span><code>includes()</code> vs <code>indexOf()</code></li>
+            <li><span class="feature-tag">改进</span><code>**</code> vs <code>Math.pow()</code></li>
+            <li><span class="feature-tag">特性</span>这两个特性也被添加到TypedArrays中</li>
+          </ul>
+        </div>
+
+        <div class="summary-item">
+          <h3>浏览器兼容性</h3>
+          <ul>
+            <li><span class="feature-tag">支持</span>所有现代浏览器都支持</li>
+            <li><span class="feature-tag">注意</span>旧版浏览器需要polyfill</li>
+            <li><span class="feature-tag">工具</span>Babel等转译器支持</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="comparison">
+        <h3>💡 ES2016 的重要意义</h3>
+        <p><strong>虽然是小更新，但很实用：</strong></p>
+        <ul>
+          <li><strong>includes()方法</strong> - 解决了<code>indexOf()</code>无法检测NaN的问题，提供了更语义化的数组包含检查</li>
+          <li><strong>指数运算符</strong> - 提供了更简洁的数学运算语法，提高了数学相关代码的可读性</li>
+          <li><strong>持续改进</strong> - 体现了ECMAScript标准的持续演进模式，每年都有稳定的新特性</li>
+        </ul>
+        <p><strong>影响：</strong> 这两个特性虽然简单，但在日常开发中非常实用，大大提高了代码的可读性和编写效率</p>
+      </div>
+
+      <table class="method-table">
+        <thead>
+          <tr>
+            <th>特性</th>
+            <th>语法</th>
+            <th>作用</th>
+            <th>替代方案</th>
+            <th>重要性</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Array.prototype.includes()</td>
+            <td><code>arr.includes(value)</code></td>
+            <td>检查数组是否包含某个元素</td>
+            <td><code>arr.indexOf(value) !== -1</code></td>
+            <td>⭐⭐⭐⭐</td>
+          </tr>
+          <tr>
+            <td>指数运算符</td>
+            <td><code>base ** exponent</code></td>
+            <td>求幂运算</td>
+            <td><code>Math.pow(base, exponent)</code></td>
+            <td>⭐⭐⭐</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer>
+      <p>ES2016 (ES7) 对象API改动详解 &copy; 2023 | 小而实用的JavaScript特性更新</p>
+    </footer>
+
+    <script>
+      // 页面加载时执行示例代码
+      document.addEventListener("DOMContentLoaded", function () {
+        executeExamples();
+      });
+
+      function executeExamples() {
+        // 示例1: Array.prototype.includes() 基本用法
+        try {
+          const fruits = ["apple", "banana", "orange", "mango", NaN];
+          let output = "";
+          output += `水果数组: ${fruits.join(", ")}\n\n`;
+          output += `包含 'banana': ${fruits.includes("banana")}\n`;
+          output += `包含 'grape': ${fruits.includes("grape")}\n`;
+          output += `从位置2开始包含 'orange': ${fruits.includes("orange", 2)}\n`;
+          output += `从位置2开始包含 'apple': ${fruits.includes("apple", 2)}\n`;
+          output += `包含 NaN: ${fruits.includes(NaN)}\n`;
+          output += `indexOf(NaN): ${fruits.indexOf(NaN)}\n`;
+
+          const obj1 = { id: 1 };
+          const obj2 = { id: 2 };
+          const objects = [obj1, obj2];
+          output += `\n包含对象引用: ${objects.includes(obj1)}\n`;
+          output += `包含相似对象: ${objects.includes({ id: 1 })}\n`;
+
+          const message = "Hello World";
+          output += `\n字符串包含 'World': ${message.includes("World")}\n`;
+          output += `字符串包含 'world': ${message.includes("world")}`;
+
+          document.getElementById("output1").textContent = output;
+        } catch (e) {
+          document.getElementById("output1").textContent = "错误: " + e.message;
+        }
+
+        // 示例2: 与 indexOf() 的对比
+        try {
+          const testArray = [1, 2, 3, NaN, null, undefined, ""];
+          let output = "测试数组: " + JSON.stringify(testArray) + "\n\n";
+
+          const testCases = [
+            { value: 2, description: "存在的数字" },
+            { value: 4, description: "不存在的数字" },
+            { value: NaN, description: "NaN" },
+            { value: null, description: "null" },
+            { value: undefined, description: "undefined" },
+            { value: "", description: "空字符串" },
+          ];
+
+          output += "方法对比结果:\n";
+          testCases.forEach(testCase => {
+            const includesResult = testArray.includes(testCase.value);
+            const indexOfResult = testArray.indexOf(testCase.value);
+
+            output += `\n${testCase.description}:\n`;
+            output += `  includes(): ${includesResult}\n`;
+            output += `  indexOf(): ${indexOfResult} (${indexOfResult !== -1 ? "存在" : "不存在"})`;
+          });
+
+          const userPermissions = ["read", "write", "delete"];
+          const hasWritePermission = userPermissions.includes("write");
+          output += `\n\n用户有写权限: ${hasWritePermission}\n`;
+
+          const blacklist = ["spam@example.com", "bot@example.com"];
+          const email = "user@example.com";
+          const isBlacklisted = blacklist.includes(email);
+          output += `邮箱在黑名单中: ${isBlacklisted}\n`;
+
+          const supportedFeatures = ["es6", "modules", "promises"];
+          const needsModules = supportedFeatures.includes("modules");
+          output += `需要模块支持: ${needsModules}`;
+
+          document.getElementById("output2").textContent = output;
+        } catch (e) {
+          document.getElementById("output2").textContent = "错误: " + e.message;
+        }
+
+        // 其他示例的实现...
+      }
+
+      function executeUserCode() {
+        var userCode = document.getElementById("userCode").value;
+        var outputArea = document.getElementById("userOutput");
+
+        try {
+          var logMessages = [];
+          var originalLog = console.log;
+          console.log = function (message) {
+            logMessages.push(message);
+            originalLog.apply(console, arguments);
+          };
+
+          eval(userCode);
+
+          console.log = originalLog;
+
+          outputArea.textContent = logMessages.join("\n") || "代码执行成功，但没有输出。";
+          outputArea.style.color = "#e2e8f0";
+        } catch (error) {
+          outputArea.textContent = "错误: " + error.message;
+          outputArea.style.color = "#ef4444";
+        }
+      }
+    </script>
+  </body>
+</html>

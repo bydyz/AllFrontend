@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Code Block like Yuque/Typora</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+    <style>
+      /* 自定义代码块容器样式 */
+      .code-container {
+        position: relative;
+        margin: 16px 0;
+        border-radius: 8px;
+        overflow: hidden;
+        font-size: 14px;
+      }
+
+      .code-header {
+        background: #2d333b;
+        color: #9da5b4;
+        padding: 6px 12px;
+        font-size: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .copy-btn {
+        background: none;
+        border: none;
+        color: #9da5b4;
+        cursor: pointer;
+        font-size: 12px;
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+
+      .copy-btn:hover {
+        background: #3e4451;
+        color: #fff;
+      }
+
+      pre code {
+        display: block;
+        padding: 16px !important;
+        line-height: 1.4;
+        background: #2d333b !important;
+        color: #abb2bf !important;
+      }
+
+      /* 行号样式（如果启用） */
+      .hljs-ln {
+        padding-left: 0 !important;
+      }
+      .hljs-ln-line {
+        padding-left: 16px !important;
+      }
+      .hljs-ln-numbers {
+        padding-right: 16px !important;
+        user-select: none;
+        color: #5c6370;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 示例：自动识别语言 -->
+    <pre><code class="language-javascript">function hello() {
+  console.log("Hello, world!");
+}</code></pre>
+
+    <!-- 示例：指定语言 -->
+    <pre><code class="language-python">def hello():
+    print("Hello, world!")</code></pre>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!-- 可选：行号插件 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+    <script>
+      // ===== 核心 JS 实现 =====
+      document.addEventListener("DOMContentLoaded", () => {
+        // 1. 遍历所有 <pre><code> 元素
+        document.querySelectorAll("pre code").forEach(codeEl => {
+          const preEl = codeEl.parentElement;
+
+          // 2. 创建外层容器
+          const container = document.createElement("div");
+          container.className = "code-container";
+
+          // 3. 提取语言（从 class 如 language-js）
+          let lang = "plaintext";
+          if (codeEl.className.startsWith("language-")) {
+            lang = codeEl.className.substring(9);
+          }
+
+          // 4. 创建头部（含语言名 + 复制按钮）
+          const header = document.createElement("div");
+          header.className = "code-header";
+          header.innerHTML = `
+      <span>${lang}</span>
+      <button class="copy-btn">Copy</button>
+    `;
+
+          // 5. 执行语法高亮
+          hljs.highlightElement(codeEl);
+
+          // 6. 可选：添加行号（需引入 highlightjs-line-numbers.js）
+          hljs.lineNumbersBlock(codeEl);
+
+          // 7. 替换原始 <pre> 为新结构
+          preEl.replaceWith(container);
+          container.appendChild(header);
+          container.appendChild(preEl); // pre 包含已高亮的 code
+
+          // 8. 绑定复制事件
+          const copyBtn = header.querySelector(".copy-btn");
+          copyBtn.addEventListener("click", () => {
+            const codeText = codeEl.innerText;
+            navigator.clipboard
+              .writeText(codeText)
+              .then(() => {
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = "Copied!";
+                setTimeout(() => {
+                  copyBtn.textContent = originalText;
+                }, 1500);
+              })
+              .catch(err => {
+                console.error("Failed to copy:", err);
+              });
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

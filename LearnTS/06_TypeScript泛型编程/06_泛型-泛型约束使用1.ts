@@ -1,7 +1,4 @@
-
-
-
-//! T Extends String
+//! T extends String
 //！ T 是 String 的子类型，则 T 可以 是 String 或者 任何字符串  或则  多个字符串的组合
 
 
@@ -10,7 +7,8 @@
 
 
 
-// PropNames extends string = never;
+
+//! PropNames extends string = never;
 // PropNames 被赋予了一个初始值 never，这在TypeScript中通常用来表示一个类型是不可能存在的。never 类型通常用于表示函数永远不会返回值（例如，抛出异常的函数），或者用于类型守卫，以排除某些类型的值。
 
 // 将 PropNames 赋值为 never 意味着 PropNames 将不会是任何实际的字符串值。这通常用于类型系统中的约束，以确保 PropNames 不会被用作字符串字面量之外的任何方式。
@@ -20,9 +18,13 @@
 
 
 
+
+
 // type PropNames = "name" | "age" | "address";
 
 // let propertyName: PropNames extends string ? PropNames : string;      // PropNames
+
+
 
 
 
@@ -43,6 +45,12 @@ testOne(argType)
 
 
 
+
+
+
+
+
+
 function testTwo<T extends string>(arg: T): void {
   console.log(arg);
 }
@@ -50,6 +58,12 @@ function testTwo<T extends string>(arg: T): void {
 testTwo('666')
 testTwo(666)
 testTwo(argType)
+
+
+
+
+
+
 
 
 

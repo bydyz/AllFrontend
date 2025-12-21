@@ -4,7 +4,7 @@
 //!     ? R : never：如果 T 是一个函数类型，返回 R，否则返回 never。这是通过条件运算符来实现的。
 //!     最终，MyReturnType<T> 的含义是：如果 T 是一个函数类型，那么返回这个函数的返回类型；否则，返回 never。
 type MyReturnType<T extends (...args: any[]) => any> = T extends (...args: any[]) => infer R ? R : never
-type MyReturnType1<T> = T extends (...args: any[]) => infer R ? R : never
+
 
 type CalcFnType = (num1: number, num2: string) => number
 
@@ -15,14 +15,25 @@ type CalcReturnType = MyReturnType<CalcFnType>        // number
 //！ CalcFnType6 是 number类型，不符合   T extends (...args: any[]) => any  这一个限制条件
 type CalcReturnType6 = MyReturnType<CalcFnType6>
 
-//！ never
-type CalcReturnType61 = MyReturnType1<CalcFnType6>
-
 //!   foo 将被推断为 string，因为 exampleFunction 的返回类型是 string。
 function foo() {
   return "abc"
 }
 type FooReturnType = MyReturnType<typeof foo>
+
+
+
+
+
+
+
+
+type MyReturnType1<T> = T extends (...args: any[]) => infer R ? R : never
+
+//！ never
+type CalcReturnType61 = MyReturnType1<CalcFnType6>
+
+
 
 
 

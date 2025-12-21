@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TypeScript T extends String 详解</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: #f5f7fa;
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        color: white;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        font-size: 2.8rem;
+        margin-bottom: 15px;
+      }
+
+      .subtitle {
+        font-size: 1.3rem;
+        opacity: 0.9;
+      }
+
+      .container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .section {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      h2 {
+        color: #2c3e50;
+        margin-bottom: 25px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+
+      .demo-box {
+        margin-bottom: 30px;
+        padding: 20px;
+        border-radius: 10px;
+        background: #f8f9fa;
+        transition: all 0.3s ease;
+      }
+
+      .demo-box:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .demo-title {
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #2c3e50;
+        font-size: 1.2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .demo-code {
+        background: #1e293b;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 8px;
+        font-family: "Courier New", monospace;
+        margin: 15px 0;
+        overflow-x: auto;
+        font-size: 0.95rem;
+        white-space: pre;
+      }
+
+      .demo-output {
+        padding: 15px;
+        background: white;
+        border-radius: 8px;
+        border-left: 4px solid;
+        margin-top: 15px;
+        font-family: "Courier New", monospace;
+        white-space: pre-wrap;
+      }
+
+      .primitive-demo {
+        border-left-color: #3b82f6;
+      }
+      .object-demo {
+        border-left-color: #10b981;
+      }
+      .wrapper-demo {
+        border-left-color: #f59e0b;
+      }
+      .custom-demo {
+        border-left-color: #ef4444;
+      }
+      .comparison-demo {
+        border-left-color: #8b5cf6;
+      }
+
+      .interactive-demo {
+        margin-top: 30px;
+      }
+
+      .code-executor {
+        background: #1e293b;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+
+      .code-input {
+        width: 100%;
+        min-height: 120px;
+        background: #0f172a;
+        color: #e2e8f0;
+        border: 1px solid #334155;
+        border-radius: 6px;
+        padding: 15px;
+        font-family: "Courier New", monospace;
+        font-size: 1rem;
+        margin-bottom: 15px;
+        resize: vertical;
+      }
+
+      .run-button {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: background 0.3s;
+      }
+
+      .run-button:hover {
+        background: #2563eb;
+      }
+
+      .output-area {
+        background: #0f172a;
+        color: #e2e8f0;
+        padding: 15px;
+        border-radius: 6px;
+        margin-top: 15px;
+        min-height: 80px;
+        font-family: "Courier New", monospace;
+        white-space: pre-wrap;
+      }
+
+      .summary {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        margin-top: 40px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-top: 25px;
+      }
+
+      .summary-item {
+        padding: 20px;
+        border-radius: 10px;
+        background-color: #f8f9fa;
+      }
+
+      .summary-item h3 {
+        margin-bottom: 15px;
+        color: #2c3e50;
+      }
+
+      .comparison {
+        margin-top: 40px;
+        padding: 25px;
+        background: linear-gradient(135deg, #fef3c7 0%, #fef7ed 100%);
+        border-radius: 12px;
+        border-left: 6px solid #f59e0b;
+      }
+
+      .comparison h3 {
+        color: #92400e;
+        margin-bottom: 15px;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 50px;
+        padding: 25px;
+        color: #7f8c8d;
+        font-size: 0.95rem;
+        border-top: 1px solid #e0e0e0;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: 10px;
+      }
+
+      .badge-ts {
+        background: #3178c6;
+        color: white;
+      }
+      .badge-important {
+        background: #ef4444;
+        color: white;
+      }
+      .badge-success {
+        background: #10b981;
+        color: white;
+      }
+      .badge-warning {
+        background: #f59e0b;
+        color: white;
+      }
+
+      .method-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+      }
+
+      .method-table th,
+      .method-table td {
+        border: 1px solid #e2e8f0;
+        padding: 12px;
+        text-align: left;
+      }
+
+      .method-table th {
+        background: #f8fafc;
+        font-weight: 600;
+      }
+
+      .feature-tag {
+        display: inline-block;
+        padding: 4px 8px;
+        background: #dbeafe;
+        color: #1e40af;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        margin-right: 5px;
+      }
+
+      .type-highlight {
+        color: #f59e0b;
+        font-weight: bold;
+      }
+
+      .note {
+        background: #f0f9ff;
+        border-left: 4px solid #0ea5e9;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 4px;
+      }
+
+      .warning {
+        background: #fef2f2;
+        border-left: 4px solid #ef4444;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 4px;
+      }
+
+      .success {
+        background: #f0fdf4;
+        border-left: 4px solid #10b981;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 4px;
+      }
+
+      .data-type {
+        display: inline-block;
+        padding: 2px 8px;
+        background: #e2e8f0;
+        border-radius: 4px;
+        font-family: "Courier New", monospace;
+        font-size: 0.9rem;
+        margin: 2px;
+      }
+
+      .instance-check {
+        color: #059669;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>TypeScript T extends String 详解</h1>
+      <p class="subtitle">探索 T extends String 可以接受的所有数据类型 - 包括 string 原始类型和 String 对象类型</p>
+    </header>
+
+    <div class="success"><strong>✅ T extends String 可以接受的数据类型：</strong> string 原始类型、String 对象类型、自定义继承 String 的类，以及任何可以赋值给 String 接口的类型。</div>
+
+    <div class="warning"><strong>⚠️ 注意：</strong> 虽然 T extends String 更宽松，但在现代 TypeScript 开发中，通常推荐使用 <code>T extends string</code> 以获得更好的类型安全性和性能。</div>
+
+    <div class="container">
+      <section class="section">
+        <h2>🎯 基础数据类型</h2>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>1. string 原始类型</span>
+            <span class="badge badge-success">可接受</span>
+          </div>
+          <div class="demo-code">
+// 1. string 原始类型 - ✅ 可接受
+function processString&lt;T extends String&gt;(input: T): string {
+    return `处理结果: ${input}`;
+}
+
+// ✅ string 原始类型示例
+const primitive1 = "hello";                      // string 字面量
+const primitive2 = 'world';                      // string 字面量
+const primitive3 = ``;                           // 空字符串
+const primitive4 = `模板字符串 ${Date.now()}`;   // 模板字符串
+
+const result1 = processString(primitive1);       // T = string
+const result2 = processString(primitive2);       // T = string  
+const result3 = processString(primitive3);       // T = string
+const result4 = processString(primitive4);       // T = string
+
+console.log("string 原始类型示例:");
+console.log("普通字符串:", result1);
+console.log("单引号字符串:", result2);
+console.log("空字符串:", result3);
+console.log("模板字符串:", result4);
+
+// 字符串字面量类型也适用
+type Color = "red" | "green" | "blue";
+const color: Color = "red";
+const result5 = processString(color);            // T = "red"
+
+console.log("字符串字面量类型:", result5);
+
+// 验证类型
+console.log("\n类型验证:");
+console.log("primitive1 instanceof String:", primitive1 instanceof String);
+console.log("typeof primitive1:", typeof primitive1);
+console.log("primitive1.constructor === String:", primitive1.constructor === String);
+          </div>
+          <div class="demo-output primitive-demo" id="output1">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>2. String 对象类型</span>
+            <span class="badge badge-success">可接受</span>
+          </div>
+          <div class="demo-code">
+// 2. String 对象类型 - ✅ 可接受
+function analyzeString&lt;T extends String&gt;(input: T): {
+    value: string;
+    length: number;
+    type: string;
+    isPrimitive: boolean;
+    isObject: boolean;
+} {
+    return {
+        value: input.toString(),
+        length: input.length,
+        type: typeof input,
+        isPrimitive: typeof input === 'string',
+        isObject: input instanceof String
+    };
+}
+
+// ✅ String 对象类型示例
+const stringObj1 = new String("Hello World");    // String 对象
+const stringObj2 = String(123);                  // 使用 String() 函数
+const stringObj3 = String(true);                 // 布尔值转字符串对象
+const stringObj4 = String(null);                 // null 转字符串对象
+
+const analysis1 = analyzeString(stringObj1);
+const analysis2 = analyzeString(stringObj2);
+const analysis3 = analyzeString(stringObj3);
+const analysis4 = analyzeString(stringObj4);
+
+console.log("String 对象类型示例:");
+console.log("new String():", analysis1);
+console.log("String(123):", analysis2);
+console.log("String(true):", analysis3);
+console.log("String(null):", analysis4);
+
+// 混合使用原始类型和对象类型
+const mixedResults = [
+    analyzeString("原始字符串"),                  // string 原始类型
+    analyzeString(new String("对象字符串"))       // String 对象类型
+];
+
+console.log("\n混合类型对比:");
+mixedResults.forEach((result, index) => {
+    console.log(`结果 ${index + 1}:`, result);
+});
+
+// String 对象的特殊方法
+const stringObject = new String("JavaScript");
+console.log("\nString 对象特殊方法:");
+console.log("valueOf():", stringObject.valueOf());
+console.log("toString():", stringObject.toString());
+console.log("charAt(0):", stringObject.charAt(0));
+          </div>
+          <div class="demo-output object-demo" id="output2">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>🏗️ 包装器对象与继承</h2>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>1. 包装器对象转换</span>
+            <span class="badge badge-success">可接受</span>
+          </div>
+          <div class="demo-code">
+// 1. 包装器对象转换 - ✅ 可接受
+function demonstrateWrapper&lt;T extends String&gt;(input: T): void {
+    console.log(`输入值: ${input}`);
+    console.log(`数据类型: ${typeof input}`);
+    console.log(`是否是 String 实例: ${input instanceof String}`);
+    console.log(`构造函数: ${input.constructor.name}`);
+    console.log(`原始值: ${input.valueOf()}`);
+    console.log('---');
+}
+
+// 自动装箱（Auto-boxing）示例
+console.log("自动装箱示例:");
+
+// string 原始类型会自动装箱为 String 对象
+const primitiveStr = "自动装箱测试";
+demonstrateWrapper(primitiveStr);  // 自动转换为 String 对象
+
+// 显式 String 对象
+const explicitObj = new String("显式对象");
+demonstrateWrapper(explicitObj);
+
+// 包装器对象的特性
+console.log("包装器对象特性:");
+
+const str1 = "hello";              // 原始类型
+const str2 = new String("hello");  // 对象类型
+
+// 值相等性
+console.log("值相等 (==):", str1 == str2);        // true
+console.log("严格相等 (===):", str1 === str2);     // false
+console.log("值比较:", str1.valueOf() === str2.valueOf()); // true
+
+// 类型差异
+console.log("typeof str1:", typeof str1);         // "string"
+console.log("typeof str2:", typeof str2);         // "object"
+
+// 方法调用（原始类型也会自动装箱）
+console.log("方法调用:");
+console.log("str1.toUpperCase():", str1.toUpperCase());
+console.log("str2.toUpperCase():", str2.toUpperCase());
+          </div>
+          <div class="demo-output wrapper-demo" id="output3">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>2. 自定义 String 子类</span>
+            <span class="badge badge-success">可接受</span>
+          </div>
+          <div class="demo-code">
+// 2. 自定义 String 子类 - ✅ 可接受
+class CustomString extends String {
+    private creationTime: Date;
+
+    constructor(value: string) {
+        super(value);
+        this.creationTime = new Date();
+    }
+
+    // 自定义方法
+    getCreationTime(): string {
+        return this.creationTime.toISOString();
+    }
+
+    // 重写方法
+    toUpperCase(): string {
+        return `CUSTOM: ${super.toUpperCase()}`;
+    }
+
+    // 添加新功能
+    reverse(): string {
+        return this.split('').reverse().join('');
+    }
+}
+
+class SecureString extends String {
+    private maskedValue: string;
+
+    constructor(value: string) {
+        super(value);
+        // 对敏感数据进行掩码处理
+        this.maskedValue = this.maskValue(value);
+    }
+
+    private maskValue(value: string): string {
+        if (value.length <= 4) {
+            return '*'.repeat(value.length);
+        }
+        return value.substring(0, 2) + '*'.repeat(value.length - 4) + value.substring(value.length - 2);
+    }
+
+    getMaskedValue(): string {
+        return this.maskedValue;
+    }
+
+    // 安全地显示值
+    displaySecure(): string {
+        return `Secure: ${this.getMaskedValue()}`;
+    }
+}
+
+// 使用自定义 String 子类
+function processCustomString&lt;T extends String&gt;(input: T): void {
+    console.log(`处理字符串: ${input}`);
+    console.log(`类型: ${input.constructor.name}`);
+    console.log(`长度: ${input.length}`);
+    
+    // 检查是否是自定义类型
+    if (input instanceof CustomString) {
+        const custom = input as CustomString;
+        console.log(`创建时间: ${custom.getCreationTime()}`);
+        console.log(`反转: ${custom.reverse()}`);
+    }
+    
+    if (input instanceof SecureString) {
+        const secure = input as SecureString;
+        console.log(`安全显示: ${secure.displaySecure()}`);
+    }
+    
+    console.log('---');
+}
+
+console.log("自定义 String 子类示例:");
+
+const customStr = new CustomString("Hello TypeScript");
+const secureStr = new SecureString("1234567890");
+
+processCustomString(customStr);
+processCustomString(secureStr);
+
+// 也可以处理普通字符串
+processCustomString("普通字符串");
+processCustomString(new String("标准String对象"));
+          </div>
+          <div class="demo-output custom-demo" id="output4">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="container">
+      <section class="section">
+        <h2>🔧 实际应用场景</h2>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>1. 字符串处理工具库</span>
+            <span class="badge badge-ts">实用场景</span>
+          </div>
+          <div class="demo-code">
+// 1. 字符串处理工具库
+class StringUtils {
+    // 处理任何 String 类型的数据
+    static toCamelCase&lt;T extends String&gt;(input: T): string {
+        return input.toString()
+            .toLowerCase()
+            .replace(/[^a-zA-Z0-9]+(.)/g, (_, chr) => chr.toUpperCase());
+    }
+
+    static capitalize&lt;T extends String&gt;(input: T): string {
+        const str = input.toString();
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    }
+
+    static truncate&lt;T extends String&gt;(input: T, maxLength: number): string {
+        const str = input.toString();
+        if (str.length <= maxLength) return str;
+        return str.substring(0, maxLength - 3) + '...';
+    }
+
+    // 检查字符串属性
+    static analyze&lt;T extends String&gt;(input: T) {
+        const str = input.toString();
+        return {
+            original: str,
+            length: str.length,
+            wordCount: str.split(/\s+/).filter(word => word.length > 0).length,
+            hasNumbers: /\d/.test(str),
+            hasSpecialChars: /[!@#$%^&*(),.?":{}|<>]/.test(str),
+            isAllCaps: str === str.toUpperCase() && str !== str.toLowerCase(),
+            isAllLower: str === str.toLowerCase() && str !== str.toUpperCase()
+        };
+    }
+}
+
+// 使用工具库处理各种 String 类型
+console.log("字符串工具库示例:");
+
+// 处理原始字符串
+const primitiveText = "hello world example";
+console.log("原始字符串处理:");
+console.log("驼峰命名:", StringUtils.toCamelCase(primitiveText));
+console.log("首字母大写:", StringUtils.capitalize(primitiveText));
+console.log("截断:", StringUtils.truncate(primitiveText, 10));
+console.log("分析:", StringUtils.analyze(primitiveText));
+
+// 处理 String 对象
+const objectText = new String("HELLO FROM STRING OBJECT");
+console.log("\nString对象处理:");
+console.log("驼峰命名:", StringUtils.toCamelCase(objectText));
+console.log("首字母大写:", StringUtils.capitalize(objectText));
+console.log("分析:", StringUtils.analyze(objectText));
+
+// 处理自定义 String 子类
+const customText = new CustomString("Custom String Example");
+console.log("\n自定义String处理:");
+console.log("驼峰命名:", StringUtils.toCamelCase(customText));
+console.log("分析:", StringUtils.analyze(customText));
+          </div>
+          <div class="demo-output primitive-demo" id="output5">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>2. 数据验证与转换</span>
+            <span class="badge badge-ts">实用场景</span>
+          </div>
+          <div class="demo-code">
+// 2. 数据验证与转换
+interface ValidationResult {
+    isValid: boolean;
+    value: string;
+    error?: string;
+}
+
+class StringValidator {
+    // 验证任何 String 类型的输入
+    static validate&lt;T extends String&gt;(
+        input: T, 
+        rules: {
+            required?: boolean;
+            minLength?: number;
+            maxLength?: number;
+            pattern?: RegExp;
+            allowedValues?: string[];
+        }
+    ): ValidationResult {
+        const value = input.toString();
+        const result: ValidationResult = { isValid: true, value };
+
+        // 必需检查
+        if (rules.required && (!value || value.trim().length === 0)) {
+            return { isValid: false, value, error: "字段是必需的" };
+        }
+
+        // 长度检查
+        if (rules.minLength !== undefined && value.length < rules.minLength) {
+            return { 
+                isValid: false, 
+                value, 
+                error: `长度不能少于 ${rules.minLength} 个字符` 
+            };
+        }
+
+        if (rules.maxLength !== undefined && value.length > rules.maxLength) {
+            return { 
+                isValid: false, 
+                value, 
+                error: `长度不能超过 ${rules.maxLength} 个字符` 
+            };
+        }
+
+        // 模式检查
+        if (rules.pattern && !rules.pattern.test(value)) {
+            return { 
+                isValid: false, 
+                value, 
+                error: "格式不符合要求" 
+            };
+        }
+
+        // 允许值检查
+        if (rules.allowedValues && !rules.allowedValues.includes(value)) {
+            return { 
+                isValid: false, 
+                value, 
+                error: `值必须是: ${rules.allowedValues.join(', ')}` 
+            };
+        }
+
+        return result;
+    }
+
+    // 安全转换函数
+    static safeConvert&lt;T extends String&gt;(input: T): string {
+        try {
+            return input.toString().trim();
+        } catch (error) {
+            return "";
+        }
+    }
+
+    // 编码函数
+    static encode&lt;T extends String&gt;(input: T): string {
+        const str = input.toString();
+        return encodeURIComponent(str);
+    }
+}
+
+// 验证各种 String 类型的数据
+console.log("数据验证示例:");
+
+// 验证原始字符串
+const emailValidation = StringValidator.validate(
+    "user@example.com",
+    {
+        required: true,
+        minLength: 5,
+        pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    }
+);
+console.log("邮箱验证:", emailValidation);
+
+// 验证 String 对象
+const passwordValidation = StringValidator.validate(
+    new String("secret123"),
+    {
+        required: true,
+        minLength: 8,
+        maxLength: 20
+    }
+);
+console.log("密码验证:", passwordValidation);
+
+// 验证自定义 String
+const customValidation = StringValidator.validate(
+    new CustomString("admin"),
+    {
+        allowedValues: ["user", "admin", "guest"]
+    }
+);
+console.log("角色验证:", customValidation);
+
+// 安全转换示例
+console.log("\n安全转换:");
+console.log("原始字符串:", StringValidator.safeConvert("  hello  "));
+console.log("String对象:", StringValidator.safeConvert(new String("  test  ")));
+console.log("编码:", StringValidator.encode("hello world"));
+          </div>
+          <div class="demo-output object-demo" id="output6">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>🚫 不可接受的类型</h2>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>1. 非 String 类型</span>
+            <span class="badge badge-warning">不可接受</span>
+          </div>
+          <div class="demo-code">
+// ❌ 这些类型不能用于 T extends String
+
+function stringProcessor&lt;T extends String&gt;(input: T): string {
+    return `处理: ${input}`;
+}
+
+// 在 TypeScript 中会报错的示例
+/*
+// 数字类型
+stringProcessor(123);                    // 错误！
+stringProcessor(3.14);                   // 错误！
+
+// 布尔类型  
+stringProcessor(true);                   // 错误！
+stringProcessor(false);                  // 错误！
+
+// null 和 undefined
+stringProcessor(null);                   // 错误！
+stringProcessor(undefined);              // 错误！
+
+// 其他对象类型
+stringProcessor({});                     // 错误！
+stringProcessor([]);                     // 错误！
+stringProcessor(new Date());             // 错误！
+stringProcessor(new Number(123));        // 错误！
+
+// 符号类型
+stringProcessor(Symbol("test"));         // 错误！
+
+// 函数类型
+stringProcessor(() => "hello");          // 错误！
+*/
+
+console.log("不可接受的类型说明:");
+console.log("T extends String 只接受:");
+console.log("  - string 原始类型");
+console.log("  - String 对象类型"); 
+console.log("  - 继承自 String 的自定义类");
+console.log("");
+console.log("不接受数字、布尔值、其他对象、null、undefined等");
+
+// 类型检查函数
+function isStringType&lt;T&gt;(value: T): value is T &amp; (string | String) {
+    return typeof value === 'string' || value instanceof String;
+}
+
+function safeStringProcessor&lt;T&gt;(input: T): string | null {
+    if (isStringType(input)) {
+        // 在这里 TypeScript 知道 input 是 String 类型
+        return `安全处理: ${input}`;
+    }
+    return null;
+}
+
+// 安全的使用方式
+console.log("\n安全处理示例:");
+console.log("字符串处理:", safeStringProcessor("hello"));
+console.log("String对象处理:", safeStringProcessor(new String("world")));
+console.log("数字处理:", safeStringProcessor(123));        // 返回 null
+console.log("对象处理:", safeStringProcessor({}));         // 返回 null
+
+// 运行时类型检查
+function assertString&lt;T&gt;(value: T): asserts value is T &amp; String {
+    if (!isStringType(value)) {
+        throw new Error(`值必须是字符串类型，但收到: ${typeof value}`);
+    }
+}
+
+function strictStringProcessor&lt;T&gt;(input: T): string {
+    assertString(input); // 运行时类型检查
+    return `严格处理: ${input.toUpperCase()}`;
+}
+
+console.log("\n严格处理示例:");
+try {
+    console.log(strictStringProcessor("hello"));
+    console.log(strictStringProcessor(new String("world")));
+    // console.log(strictStringProcessor(123)); // 会抛出错误
+} catch (error) {
+    console.log("错误:", error.message);
+}
+          </div>
+          <div class="demo-output wrapper-demo" id="output7">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>2. T extends String vs T extends string</span>
+            <span class="badge badge-important">重要对比</span>
+          </div>
+          <div class="demo-code">
+// T extends String vs T extends string 对比
+
+function processWithString&lt;T extends string&gt;(input: T): string {
+    return `string约束: ${input}`;
+}
+
+function processWithStringObject&lt;T extends String&gt;(input: T): string {
+    return `String约束: ${input}`;
+}
+
+// 测试不同的输入类型
+const testCases = [
+    { value: "hello", type: "string字面量" },
+    { value: new String("world"), type: "String对象" },
+    { value: String(123), type: "String()函数" }
+];
+
+console.log("T extends String vs T extends string 对比:\n");
+
+testCases.forEach((testCase, index) => {
+    console.log(`测试 ${index + 1}: ${testCase.type}`);
+    console.log(`  值: ${testCase.value}`);
+    console.log(`  typeof: ${typeof testCase.value}`);
+    console.log(`  instanceof String: ${testCase.value instanceof String}`);
+    
+    try {
+        const result1 = processWithString(testCase.value as any);
+        console.log(`  T extends string: ✅ ${result1}`);
+    } catch (error) {
+        console.log(`  T extends string: ❌ ${error.message}`);
+    }
+    
+    try {
+        const result2 = processWithStringObject(testCase.value as any);
+        console.log(`  T extends String: ✅ ${result2}`);
+    } catch (error) {
+        console.log(`  T extends String: ❌ ${error.message}`);
+    }
+    
+    console.log('---');
+});
+
+// 实际开发中的建议
+console.log("开发建议:");
+console.log("1. 大多数情况下使用 T extends string");
+console.log("2. 只有在需要处理 String 对象时才使用 T extends String");
+console.log("3. String 对象在现代 JavaScript 中很少使用");
+console.log("4. string 原始类型性能更好，更安全");
+
+// 性能考虑
+console.log("\n性能考虑:");
+const primitive = "hello";
+const object = new String("hello");
+
+console.log("内存占用:");
+console.log("原始字符串大小:", Buffer.from(primitive).length, "bytes");
+console.log("String对象大小:", Buffer.from(object.toString()).length, "bytes + 对象开销");
+
+console.log("方法调用性能:");
+console.log("原始字符串方法调用: 需要自动装箱");
+console.log("String对象方法调用: 直接调用");
+          </div>
+          <div class="demo-output comparison-demo" id="output8">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="section interactive-demo">
+      <h2>💻 类型测试沙盒</h2>
+      <p>测试各种数据类型是否可以被 <code>T extends String</code> 接受：</p>
+
+      <div class="code-executor">
+        <textarea class="code-input" id="userCode" placeholder="在这里测试各种数据类型...">
+// 测试函数
+function testExtendsString(value) {
+    const type = typeof value;
+    const isString = type === 'string';
+    const isStringObject = value instanceof String;
+    const isAcceptable = isString || isStringObject;
+    
+    console.log(`值: ${value}`);
+    console.log(`类型: ${type}`);
+    console.log(`是否是字符串原始类型: ${isString ? '✅ 是' : '❌ 否'}`);
+    console.log(`是否是String对象: ${isStringObject ? '✅ 是' : '❌ 否'}`);
+    console.log(`是否可被 T extends String 接受: ${isAcceptable ? '✅ 是' : '❌ 否'}`);
+    console.log('---');
+}
+
+// 测试各种数据类型
+console.log('=== T extends String 接受性测试 ===\n');
+
+// ✅ 可接受的类型
+testExtendsString("hello");                    // 字符串原始类型
+testExtendsString(new String("world"));        // String 对象
+testExtendsString(String(123));                // String() 函数创建
+testExtendsString("");                         // 空字符串
+
+// 自定义 String 子类
+class TestString extends String {
+    constructor(value) {
+        super(value);
+    }
+}
+testExtendsString(new TestString("custom"));   // 自定义 String 子类
+
+console.log('=== 不可接受的类型测试 ===\n');
+
+// ❌ 不可接受的类型
+testExtendsString(123);                        // 数字
+testExtendsString(true);                       // 布尔值
+testExtendsString(null);                       // null
+testExtendsString(undefined);                  // undefined
+testExtendsString({});                         // 对象
+testExtendsString([]);                         // 数组
+testExtendsString(new Date());                 // Date 对象
+testExtendsString(new Number(123));            // Number 对象
+testExtendsString(Symbol("test"));             // Symbol
+
+console.log('=== 测试完成 ===');
+            </textarea
+        >
+        <button class="run-button" onclick="executeUserCode()">运行测试</button>
+        <div class="output-area" id="userOutput">测试结果将显示在这里...</div>
+      </div>
+    </section>
+
+    <section class="summary">
+      <h2>📚 T extends String 完整总结</h2>
+
+      <div class="summary-grid">
+        <div class="summary-item">
+          <h3>✅ 可接受的数据类型</h3>
+          <ul>
+            <li><span class="data-type">"hello"</span> - string 原始类型</li>
+            <li><span class="data-type">new String()</span> - String 对象类型</li>
+            <li><span class="data-type">String()</span> - String 函数创建</li>
+            <li><span class="data-type">class MyString extends String</span> - 自定义子类</li>
+            <li><span class="data-type">string 字面量类型</span> - 类型级字符串</li>
+          </ul>
+        </div>
+
+        <div class="summary-item">
+          <h3>❌ 不可接受的数据类型</h3>
+          <ul>
+            <li><span class="data-type">123</span> - 数字类型</li>
+            <li><span class="data-type">true / false</span> - 布尔类型</li>
+            <li><span class="data-type">null / undefined</span> - 空值类型</li>
+            <li><span class="data-type">{}</span> - 普通对象</li>
+            <li><span class="data-type">[]</span> - 数组</li>
+            <li><span class="data-type">new Number()</span> - 其他包装对象</li>
+          </ul>
+        </div>
+
+        <div class="summary-item">
+          <h3>🎯 适用场景</h3>
+          <ul>
+            <li><strong>遗留代码处理</strong> - 需要兼容 String 对象的系统</li>
+            <li><strong>包装器对象处理</strong> - 显式处理 String 对象</li>
+            <li><strong>自定义字符串类</strong> - 扩展 String 功能的场景</li>
+            <li><strong>类型兼容性</strong> - 需要最大兼容性的库</li>
+          </ul>
+        </div>
+
+        <div class="summary-item">
+          <h3>💡 最佳实践</h3>
+          <ul>
+            <li>优先使用 <code>T extends string</code> 获得更好性能</li>
+            <li>只在需要处理 String 对象时使用 <code>T extends String</code></li>
+            <li>添加运行时类型检查确保安全</li>
+            <li>避免在现代代码中过度使用 String 对象</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="comparison">
+        <h3>🔍 T extends String vs T extends string 详细对比</h3>
+        <table class="method-table">
+          <thead>
+            <tr>
+              <th>方面</th>
+              <th>T extends String</th>
+              <th>T extends string</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>接受类型</td>
+              <td>string 原始类型 + String 对象</td>
+              <td>string 原始类型</td>
+            </tr>
+            <tr>
+              <td>类型安全</td>
+              <td>⚠️ 相对安全（接受对象）</td>
+              <td>✅ 更安全（仅原始类型）</td>
+            </tr>
+            <tr>
+              <td>性能</td>
+              <td>⚠️ 稍差（需要处理对象）</td>
+              <td>✅ 更好（仅原始类型）</td>
+            </tr>
+            <tr>
+              <td>现代实践</td>
+              <td>❌ 不推荐</td>
+              <td>✅ 推荐使用</td>
+            </tr>
+            <tr>
+              <td>使用场景</td>
+              <td>遗留代码、特殊需求</td>
+              <td>现代开发、通用场景</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <table class="method-table">
+        <thead>
+          <tr>
+            <th>数据类型</th>
+            <th>示例</th>
+            <th>是否可接受</th>
+            <th>说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>string 原始类型</td>
+            <td><code>"hello"</code></td>
+            <td>✅</td>
+            <td>最基本的可接受类型</td>
+          </tr>
+          <tr>
+            <td>String 对象</td>
+            <td><code>new String("world")</code></td>
+            <td>✅</td>
+            <td>String 包装器对象</td>
+          </tr>
+          <tr>
+            <td>自定义 String 子类</td>
+            <td><code>class MyString extends String</code></td>
+            <td>✅</td>
+            <td>继承自 String 的类</td>
+          </tr>
+          <tr>
+            <td>数字类型</td>
+            <td><code>123</code></td>
+            <td>❌</td>
+            <td>非字符串类型</td>
+          </tr>
+          <tr>
+            <td>其他包装对象</td>
+            <td><code>new Number(123)</code></td>
+            <td>❌</td>
+            <td>非 String 对象</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer>
+      <p>TypeScript T extends String 详解 &copy; 2023 | 理解字符串类型约束的完整指南</p>
+    </footer>
+
+    <script>
+      // 页面加载时执行示例代码
+      document.addEventListener("DOMContentLoaded", function () {
+        executeExamples();
+      });
+
+      function executeExamples() {
+        // 示例1: string 原始类型
+        try {
+          function processString(input) {
+            return `处理结果: ${input}`;
+          }
+
+          const primitive1 = "hello";
+          const primitive2 = "world";
+          const primitive3 = ``;
+          const primitive4 = `模板字符串 ${Date.now()}`;
+
+          const result1 = processString(primitive1);
+          const result2 = processString(primitive2);
+          const result3 = processString(primitive3);
+          const result4 = processString(primitive4);
+
+          let output = "string 原始类型示例:\n";
+          output += "普通字符串: " + result1 + "\n";
+          output += "单引号字符串: " + result2 + "\n";
+          output += "空字符串: " + result3 + "\n";
+          output += "模板字符串: " + result4 + "\n";
+
+          const color = "red";
+          const result5 = processString(color);
+          output += "字符串字面量类型: " + result5 + "\n";
+
+          output += "\n类型验证:\n";
+          output += "primitive1 instanceof String: " + (primitive1 instanceof String) + "\n";
+          output += "typeof primitive1: " + typeof primitive1 + "\n";
+          output += "primitive1.constructor === String: " + (primitive1.constructor === String);
+
+          document.getElementById("output1").textContent = output;
+        } catch (e) {
+          document.getElementById("output1").textContent = "错误: " + e.message;
+        }
+
+        // 示例2: String 对象类型
+        try {
+          function analyzeString(input) {
+            return {
+              value: input.toString(),
+              length: input.length,
+              type: typeof input,
+              isPrimitive: typeof input === "string",
+              isObject: input instanceof String,
+            };
+          }
+
+          const stringObj1 = new String("Hello World");
+          const stringObj2 = String(123);
+          const stringObj3 = String(true);
+          const stringObj4 = String(null);
+
+          const analysis1 = analyzeString(stringObj1);
+          const analysis2 = analyzeString(stringObj2);
+          const analysis3 = analyzeString(stringObj3);
+          const analysis4 = analyzeString(stringObj4);
+
+          let output = "String 对象类型示例:\n";
+          output += "new String(): " + JSON.stringify(analysis1, null, 2) + "\n";
+          output += "String(123): " + JSON.stringify(analysis2, null, 2) + "\n";
+          output += "String(true): " + JSON.stringify(analysis3, null, 2) + "\n";
+          output += "String(null): " + JSON.stringify(analysis4, null, 2) + "\n";
+
+          const mixedResults = [analyzeString("原始字符串"), analyzeString(new String("对象字符串"))];
+
+          output += "\n混合类型对比:\n";
+          mixedResults.forEach((result, index) => {
+            output += `结果 ${index + 1}: ` + JSON.stringify(result, null, 2) + "\n";
+          });
+
+          const stringObject = new String("JavaScript");
+          output += "\nString 对象特殊方法:\n";
+          output += "valueOf(): " + stringObject.valueOf() + "\n";
+          output += "toString(): " + stringObject.toString() + "\n";
+          output += "charAt(0): " + stringObject.charAt(0);
+
+          document.getElementById("output2").textContent = output;
+        } catch (e) {
+          document.getElementById("output2").textContent = "错误: " + e.message;
+        }
+
+        // 其他示例的实现...
+      }
+
+      function executeUserCode() {
+        var userCode = document.getElementById("userCode").value;
+        var outputArea = document.getElementById("userOutput");
+
+        try {
+          var logMessages = [];
+          var originalLog = console.log;
+          console.log = function (message) {
+            logMessages.push(message);
+            originalLog.apply(console, arguments);
+          };
+
+          eval(userCode);
+
+          console.log = originalLog;
+
+          outputArea.textContent = logMessages.join("\n") || "代码执行成功，但没有输出。";
+          outputArea.style.color = "#e2e8f0";
+        } catch (error) {
+          outputArea.textContent = "错误: " + error.message;
+          outputArea.style.color = "#ef4444";
+        }
+      }
+    </script>
+  </body>
+</html>

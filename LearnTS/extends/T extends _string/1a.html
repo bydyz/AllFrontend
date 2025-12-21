@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TypeScript T extends string 详解</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: #f5f7fa;
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        color: white;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        font-size: 2.8rem;
+        margin-bottom: 15px;
+      }
+
+      .subtitle {
+        font-size: 1.3rem;
+        opacity: 0.9;
+      }
+
+      .container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .section {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      h2 {
+        color: #2c3e50;
+        margin-bottom: 25px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+
+      .demo-box {
+        margin-bottom: 30px;
+        padding: 20px;
+        border-radius: 10px;
+        background: #f8f9fa;
+        transition: all 0.3s ease;
+      }
+
+      .demo-box:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .demo-title {
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #2c3e50;
+        font-size: 1.2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .demo-code {
+        background: #1e293b;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 8px;
+        font-family: "Courier New", monospace;
+        margin: 15px 0;
+        overflow-x: auto;
+        font-size: 0.95rem;
+        white-space: pre;
+      }
+
+      .demo-output {
+        padding: 15px;
+        background: white;
+        border-radius: 8px;
+        border-left: 4px solid;
+        margin-top: 15px;
+        font-family: "Courier New", monospace;
+        white-space: pre-wrap;
+      }
+
+      .basic-demo {
+        border-left-color: #3b82f6;
+      }
+      .literal-demo {
+        border-left-color: #10b981;
+      }
+      .template-demo {
+        border-left-color: #f59e0b;
+      }
+      .union-demo {
+        border-left-color: #ef4444;
+      }
+      .advanced-demo {
+        border-left-color: #8b5cf6;
+      }
+
+      .interactive-demo {
+        margin-top: 30px;
+      }
+
+      .code-executor {
+        background: #1e293b;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+
+      .code-input {
+        width: 100%;
+        min-height: 120px;
+        background: #0f172a;
+        color: #e2e8f0;
+        border: 1px solid #334155;
+        border-radius: 6px;
+        padding: 15px;
+        font-family: "Courier New", monospace;
+        font-size: 1rem;
+        margin-bottom: 15px;
+        resize: vertical;
+      }
+
+      .run-button {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: background 0.3s;
+      }
+
+      .run-button:hover {
+        background: #2563eb;
+      }
+
+      .output-area {
+        background: #0f172a;
+        color: #e2e8f0;
+        padding: 15px;
+        border-radius: 6px;
+        margin-top: 15px;
+        min-height: 80px;
+        font-family: "Courier New", monospace;
+        white-space: pre-wrap;
+      }
+
+      .summary {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        margin-top: 40px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-top: 25px;
+      }
+
+      .summary-item {
+        padding: 20px;
+        border-radius: 10px;
+        background-color: #f8f9fa;
+      }
+
+      .summary-item h3 {
+        margin-bottom: 15px;
+        color: #2c3e50;
+      }
+
+      .comparison {
+        margin-top: 40px;
+        padding: 25px;
+        background: linear-gradient(135deg, #fef3c7 0%, #fef7ed 100%);
+        border-radius: 12px;
+        border-left: 6px solid #f59e0b;
+      }
+
+      .comparison h3 {
+        color: #92400e;
+        margin-bottom: 15px;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 50px;
+        padding: 25px;
+        color: #7f8c8d;
+        font-size: 0.95rem;
+        border-top: 1px solid #e0e0e0;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: 10px;
+      }
+
+      .badge-ts {
+        background: #3178c6;
+        color: white;
+      }
+      .badge-important {
+        background: #ef4444;
+        color: white;
+      }
+      .badge-success {
+        background: #10b981;
+        color: white;
+      }
+      .badge-warning {
+        background: #f59e0b;
+        color: white;
+      }
+
+      .method-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+      }
+
+      .method-table th,
+      .method-table td {
+        border: 1px solid #e2e8f0;
+        padding: 12px;
+        text-align: left;
+      }
+
+      .method-table th {
+        background: #f8fafc;
+        font-weight: 600;
+      }
+
+      .feature-tag {
+        display: inline-block;
+        padding: 4px 8px;
+        background: #dbeafe;
+        color: #1e40af;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        margin-right: 5px;
+      }
+
+      .type-highlight {
+        color: #f59e0b;
+        font-weight: bold;
+      }
+
+      .note {
+        background: #f0f9ff;
+        border-left: 4px solid #0ea5e9;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 4px;
+      }
+
+      .warning {
+        background: #fef2f2;
+        border-left: 4px solid #ef4444;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 4px;
+      }
+
+      .success {
+        background: #f0fdf4;
+        border-left: 4px solid #10b981;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 4px;
+      }
+
+      .data-type {
+        display: inline-block;
+        padding: 2px 8px;
+        background: #e2e8f0;
+        border-radius: 4px;
+        font-family: "Courier New", monospace;
+        font-size: 0.9rem;
+        margin: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>TypeScript T extends string 详解</h1>
+      <p class="subtitle">探索 T extends string 可以接受的所有数据类型和实际应用</p>
+    </header>
+
+    <div class="success"><strong>✅ T extends string 可以接受的数据类型：</strong> 字符串字面量、模板字符串、字符串联合类型、泛型字符串类型，以及任何可以赋值给 string 的类型。</div>
+
+    <div class="warning"><strong>❌ T extends string 不能接受的数据类型：</strong> String 对象、number、boolean、null、undefined、object、array 等非字符串原始类型。</div>
+
+    <div class="container">
+      <section class="section">
+        <h2>🎯 基础字符串类型</h2>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>1. 普通字符串字面量</span>
+            <span class="badge badge-success">可接受</span>
+          </div>
+          <div class="demo-code">
+// 1. 普通字符串字面量
+function processString&lt;T extends string&gt;(input: T): T {
+    return input;
+}
+
+// ✅ 可接受的类型示例
+const result1 = processString("hello");           // T = "hello"
+const result2 = processString("world");           // T = "world"
+const result3 = processString("");                // T = "" (空字符串)
+const result4 = processString("123");             // T = "123" (数字字符串)
+
+// 实际类型推断
+type Result1 = typeof result1;  // "hello"
+type Result2 = typeof result2;  // "world"
+type Result3 = typeof result3;  // ""
+type Result4 = typeof result4;  // "123"
+
+console.log("普通字符串字面量示例:");
+console.log("result1:", result1, "类型:", typeof result1);
+console.log("result2:", result2, "类型:", typeof result2);
+console.log("result3:", result3, "类型:", typeof result3);
+console.log("result4:", result4, "类型:", typeof result4);
+
+// 使用变量（类型会扩展为 string）
+let dynamicString = "dynamic";
+const result5 = processString(dynamicString);     // T = string
+
+console.log("动态字符串:", result5, "类型:", typeof result5);
+          </div>
+          <div class="demo-output basic-demo" id="output1">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>2. 字符串联合类型</span>
+            <span class="badge badge-success">可接受</span>
+          </div>
+          <div class="demo-code">
+// 2. 字符串联合类型
+type Color = "red" | "green" | "blue";
+type Size = "small" | "medium" | "large";
+
+function createConfig&lt;T extends string&gt;(
+    type: T, 
+    value: string
+): { type: T; value: string } {
+    return { type, value };
+}
+
+// ✅ 字符串联合类型示例
+const colorConfig = createConfig("red" as Color, "#ff0000");
+const sizeConfig = createConfig("medium" as Size, "中号");
+
+// 直接使用字面量（TypeScript 会自动推断）
+const directColor = createConfig("blue", "#0000ff");    // T = "blue"
+const directSize = createConfig("large", "大号");       // T = "large"
+
+console.log("字符串联合类型示例:");
+console.log("颜色配置:", colorConfig);
+console.log("尺寸配置:", sizeConfig);
+console.log("直接颜色:", directColor);
+console.log("直接尺寸:", directSize);
+
+// 更复杂的联合类型
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+
+function createRequest&lt;T extends HttpMethod&gt;(
+    method: T,
+    url: string
+): { method: T; url: string } {
+    return { method, url };
+}
+
+const getRequest = createRequest("GET", "/api/users");
+const postRequest = createRequest("POST", "/api/users");
+
+console.log("HTTP方法示例:");
+console.log("GET请求:", getRequest);
+console.log("POST请求:", postRequest);
+
+// 错误示例 - 编译时报错
+// const invalidRequest = createRequest("HEAD", "/api/users"); // "HEAD" 不在 HttpMethod 中
+          </div>
+          <div class="demo-output basic-demo" id="output2">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>🎨 模板字符串类型</h2>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>1. 基础模板字符串</span>
+            <span class="badge badge-success">可接受</span>
+          </div>
+          <div class="demo-code">
+// 1. 基础模板字符串类型
+type Email = `${string}@${string}.${string}`;
+type Phone = `+${number}-${string}`;
+
+function validateContact&lt;T extends Email | Phone&gt;(
+    contact: T
+): { contact: T; isValid: boolean } {
+    let isValid = false;
+    
+    if (contact.includes('@')) {
+        // 邮箱验证
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        isValid = emailRegex.test(contact);
+    } else {
+        // 电话验证
+        const phoneRegex = /^\+\d+-\d+$/;
+        isValid = phoneRegex.test(contact);
+    }
+    
+    return { contact, isValid };
+}
+
+// ✅ 模板字符串示例
+const emailResult = validateContact("user@example.com");
+const phoneResult = validateContact("+86-13800138000");
+
+console.log("模板字符串类型示例:");
+console.log("邮箱验证:", emailResult);
+console.log("电话验证:", phoneResult);
+
+// 更复杂的模板模式
+type ApiRoute = `/api/${string}/${string}`;
+type AdminRoute = `/admin/${string}`;
+
+function createRoute&lt;T extends ApiRoute | AdminRoute&gt;(route: T): T {
+    return route;
+}
+
+const apiRoute = createRoute("/api/users/list");
+const adminRoute = createRoute("/admin/dashboard");
+
+console.log("路由创建示例:");
+console.log("API路由:", apiRoute);
+console.log("管理路由:", adminRoute);
+
+// 错误示例
+// const invalidRoute = createRoute("/invalid/route"); // 不符合模板模式
+          </div>
+          <div class="demo-output template-demo" id="output3">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>2. 高级模板模式</span>
+            <span class="badge badge-important">高级特性</span>
+          </div>
+          <div class="demo-code">
+// 2. 高级模板字符串模式
+type UUID = `${string}-${string}-${string}-${string}-${string}`;
+type Version = `v${number}.${number}.${number}`;
+type CSSColor = `#${string}` | `rgb(${number}, ${number}, ${number})`;
+
+function formatValue&lt;T extends UUID | Version | CSSColor&gt;(
+    value: T
+): { original: T; formatted: string } {
+    let formatted = value;
+    
+    if (value.startsWith('#')) {
+        formatted = `颜色: ${value}`;
+    } else if (value.startsWith('v')) {
+        formatted = `版本: ${value}`;
+    } else if (value.includes('-')) {
+        formatted = `UUID: ${value}`;
+    }
+    
+    return { original: value, formatted };
+}
+
+// ✅ 高级模板字符串示例
+const uuidValue: UUID = "123e4567-e89b-12d3-a456-426614174000";
+const versionValue: Version = "v1.2.3";
+const colorValue: CSSColor = "#ff0000";
+
+const uuidResult = formatValue(uuidValue);
+const versionResult = formatValue(versionValue);
+const colorResult = formatValue(colorValue);
+
+console.log("高级模板字符串示例:");
+console.log("UUID:", uuidResult);
+console.log("版本:", versionResult);
+console.log("颜色:", colorResult);
+
+// 动态生成模板类型
+type DynamicTemplate&lt;Prefix extends string&gt; = `${Prefix}-${string}`;
+
+function createDynamicId&lt;T extends DynamicTemplate<"id" | "user" | "item">&gt;(
+    id: T
+): T {
+    return id;
+}
+
+const userId = createDynamicId("user-12345");
+const itemId = createDynamicId("item-abcde");
+
+console.log("动态模板示例:");
+console.log("用户ID:", userId);
+console.log("物品ID:", itemId);
+          </div>
+          <div class="demo-output template-demo" id="output4">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="container">
+      <section class="section">
+        <h2>🔗 复杂联合类型</h2>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>1. 多层联合类型</span>
+            <span class="badge badge-success">可接受</span>
+          </div>
+          <div class="demo-code">
+// 1. 多层联合类型
+type Status = "pending" | "success" | "error";
+type Priority = "low" | "medium" | "high" | "critical";
+type Category = "tech" | "business" | "design" | "marketing";
+
+type TaskType = Status | Priority | Category;
+
+function createTask&lt;T extends TaskType&gt;(
+    type: T,
+    description: string
+): { type: T; description: string; id: string } {
+    return {
+        type,
+        description,
+        id: Math.random().toString(36).substr(2, 9)
+    };
+}
+
+// ✅ 多层联合类型示例
+const statusTask = createTask("pending", "等待处理的任务");
+const priorityTask = createTask("high", "高优先级任务");
+const categoryTask = createTask("tech", "技术相关任务");
+
+console.log("多层联合类型示例:");
+console.log("状态任务:", statusTask);
+console.log("优先级任务:", priorityTask);
+console.log("分类任务:", categoryTask);
+
+// 更复杂的交叉联合
+type UserRole = "admin" | "user" | "guest";
+type UserStatus = "active" | "inactive" | "banned";
+
+type UserType = `${UserRole}-${UserStatus}`;
+
+function createUser&lt;T extends UserType&gt;(
+    userType: T,
+    username: string
+): { userType: T; username: string } {
+    return { userType, username };
+}
+
+const adminUser = createUser("admin-active", "superadmin");
+const guestUser = createUser("guest-inactive", "visitor");
+
+console.log("交叉联合类型示例:");
+console.log("管理员用户:", adminUser);
+console.log("访客用户:", guestUser);
+          </div>
+          <div class="demo-output union-demo" id="output5">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>2. 条件类型与字符串</span>
+            <span class="badge badge-important">高级特性</span>
+          </div>
+          <div class="demo-code">
+// 2. 条件类型与字符串约束
+type ExtractString&lt;T&gt; = T extends string ? T : never;
+
+// 从对象类型中提取字符串属性
+type StringKeys&lt;T&gt; = {
+    [K in keyof T]: T[K] extends string ? K : never;
+}[keyof T];
+
+// 从联合类型中提取特定模式的字符串
+type FilterByPrefix&lt;T, Prefix extends string&gt; = 
+    T extends `${Prefix}${infer Rest}` ? T : never;
+
+// 示例接口
+interface User {
+    id: number;
+    name: string;
+    email: string;
+    age: number;
+    phone: string;
+    createdAt: Date;
+}
+
+// 提取字符串属性名
+type UserStringKeys = StringKeys&lt;User&gt;; // "name" | "email" | "phone"
+
+function getStringProperty&lt;
+    T, 
+    K extends StringKeys&lt;T&gt;
+&gt;(obj: T, key: K): string {
+    return obj[key];
+}
+
+const user: User = {
+    id: 1,
+    name: "张三",
+    email: "zhangsan@example.com",
+    age: 25,
+    phone: "+86-13800138000",
+    createdAt: new Date()
+};
+
+console.log("条件类型与字符串约束:");
+console.log("用户名:", getStringProperty(user, "name"));
+console.log("用户邮箱:", getStringProperty(user, "email"));
+console.log("用户电话:", getStringProperty(user, "phone"));
+
+// 错误示例
+// console.log(getStringProperty(user, "id"));      // 错误：id 不是字符串属性
+// console.log(getStringProperty(user, "age"));     // 错误：age 不是字符串属性
+// console.log(getStringProperty(user, "createdAt")); // 错误：createdAt 不是字符串属性
+
+// 过滤特定前缀的字符串
+type ApiEndpoints = "getUsers" | "createUser" | "deleteUser" | "updateSettings";
+type GetEndpoints = FilterByPrefix&lt;ApiEndpoints, "get"&gt;; // "getUsers"
+
+console.log("过滤后的端点:", "getUsers" as GetEndpoints);
+          </div>
+          <div class="demo-output union-demo" id="output6">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>🚫 不可接受的类型</h2>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>1. 非字符串原始类型</span>
+            <span class="badge badge-warning">不可接受</span>
+          </div>
+          <div class="demo-code">
+// ❌ 这些类型不能用于 T extends string
+
+function stringProcessor&lt;T extends string&gt;(input: T): string {
+    return input.toUpperCase();
+}
+
+// 编译时错误示例（在TypeScript中会报错）
+/*
+// 数字类型
+stringProcessor(123);                    // 错误！
+stringProcessor(3.14);                   // 错误！
+
+// 布尔类型
+stringProcessor(true);                   // 错误！
+stringProcessor(false);                  // 错误！
+
+// null 和 undefined
+stringProcessor(null);                   // 错误！
+stringProcessor(undefined);              // 错误！
+
+// 对象类型
+stringProcessor({});                     // 错误！
+stringProcessor([]);                     // 错误！
+stringProcessor(new Date());             // 错误！
+
+// String 对象（注意：不是 string 原始类型）
+stringProcessor(new String("hello"));    // 错误！
+
+// 符号类型
+stringProcessor(Symbol("test"));         // 错误！
+
+// 任意类型（需要具体约束）
+stringProcessor(("hello" as any));       // 不推荐，但不会报错
+*/
+
+console.log("不可接受的类型说明:");
+console.log("T extends string 只接受字符串原始类型及其子类型");
+console.log("不接受数字、布尔值、对象、数组、null、undefined等");
+
+// 类型守卫函数
+function isString&lt;T&gt;(value: T): value is T &amp; string {
+    return typeof value === 'string';
+}
+
+function safeStringProcessor&lt;T&gt;(input: T): string | null {
+    if (isString(input)) {
+        // 在这里 TypeScript 知道 input 是 string 类型
+        return input.toUpperCase();
+    }
+    return null;
+}
+
+// 安全的使用方式
+console.log("安全处理示例:");
+console.log("字符串处理:", safeStringProcessor("hello"));
+console.log("数字处理:", safeStringProcessor(123)); // 返回 null
+console.log("布尔处理:", safeStringProcessor(true)); // 返回 null
+          </div>
+          <div class="demo-output basic-demo" id="output7">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+
+        <div class="demo-box">
+          <div class="demo-title">
+            <span>2. 类型兼容性说明</span>
+            <span class="badge badge-important">重要概念</span>
+          </div>
+          <div class="demo-code">
+// 类型兼容性详细说明
+
+// 1. string 与 String 的区别
+const primitiveString: string = "hello";           // ✅ 字符串原始类型
+const stringObject: String = new String("world");  // ❌ String 对象类型
+
+// T extends string 只接受原始类型
+function acceptString&lt;T extends string&gt;(str: T): T {
+    return str;
+}
+
+// ✅ 可接受
+const result1 = acceptString(primitiveString);     // 正常工作
+// const result2 = acceptString(stringObject);     // 编译错误！
+
+// 2. 类型扩展问题
+let mutableString = "hello";                       // 类型是 string
+const immutableString = "world";                   // 类型是 "world"
+
+const result3 = acceptString(mutableString);       // T = string
+const result4 = acceptString(immutableString);     // T = "world"
+
+console.log("类型兼容性说明:");
+console.log("可变字符串类型:", typeof mutableString);
+console.log("不可变字符串类型:", typeof immutableString);
+console.log("result3 推断类型: string");
+console.log("result4 推断类型: 'world'");
+
+// 3. 类型断言的使用
+const someValue: unknown = "hello";
+
+// 需要类型断言
+const result5 = acceptString(someValue as string); // 使用类型断言
+
+// 或者使用类型守卫
+if (typeof someValue === "string") {
+    const result6 = acceptString(someValue);       // 类型守卫后安全使用
+    console.log("类型守卫后:", result6);
+}
+
+// 4. 泛型约束的灵活性
+function flexibleString&lt;T extends string | number&gt;(
+    input: T
+): T extends string ? string : number {
+    if (typeof input === "string") {
+        return input.toUpperCase() as any;
+    } else {
+        return (input * 2) as any;
+    }
+}
+
+const stringResult = flexibleString("hello");      // string
+const numberResult = flexibleString(10);           // number
+
+console.log("灵活泛型约束:");
+console.log("字符串结果:", stringResult);
+console.log("数字结果:", numberResult);
+          </div>
+          <div class="demo-output basic-demo" id="output8">
+            <!-- 输出将在这里显示 -->
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="section interactive-demo">
+      <h2>💻 类型测试沙盒</h2>
+      <p>测试各种数据类型是否可以被 <code>T extends string</code> 接受：</p>
+
+      <div class="code-executor">
+        <textarea class="code-input" id="userCode" placeholder="在这里测试各种数据类型...">
+// 测试函数
+function testExtendsString(value) {
+    const type = typeof value;
+    const isString = type === 'string';
+    
+    console.log(`值: ${value}`);
+    console.log(`类型: ${type}`);
+    console.log(`是否可被 T extends string 接受: ${isString ? '✅ 是' : '❌ 否'}`);
+    console.log('---');
+}
+
+// 测试各种数据类型
+console.log('=== T extends string 接受性测试 ===\n');
+
+// ✅ 可接受的类型
+testExtendsString("hello");                    // 普通字符串
+testExtendsString("");                         // 空字符串
+testExtendsString("123");                      // 数字字符串
+
+// ❌ 不可接受的类型
+testExtendsString(123);                        // 数字
+testExtendsString(3.14);                       // 浮点数
+testExtendsString(true);                       // 布尔值
+testExtendsString(false);                      // 布尔值
+testExtendsString(null);                       // null
+testExtendsString(undefined);                  // undefined
+testExtendsString({});                         // 对象
+testExtendsString([]);                         // 数组
+testExtendsString(new String("object"));       // String 对象
+testExtendsString(Symbol("test"));             // Symbol
+
+// 边界情况
+testExtendsString("true");                     // 布尔字符串 ✅
+testExtendsString("null");                     // null 字符串 ✅
+testExtendsString("undefined");                // undefined 字符串 ✅
+
+console.log('=== 测试完成 ===');
+            </textarea
+        >
+        <button class="run-button" onclick="executeUserCode()">运行测试</button>
+        <div class="output-area" id="userOutput">测试结果将显示在这里...</div>
+      </div>
+    </section>
+
+    <section class="summary">
+      <h2>📚 T extends string 完整总结</h2>
+
+      <div class="summary-grid">
+        <div class="summary-item">
+          <h3>✅ 可接受的数据类型</h3>
+          <ul>
+            <li><span class="data-type">"hello"</span> - 普通字符串字面量</li>
+            <li><span class="data-type">""</span> - 空字符串</li>
+            <li><span class="data-type">"123"</span> - 数字字符串</li>
+            <li><span class="data-type">"A" | "B" | "C"</span> - 字符串联合类型</li>
+            <li><span class="data-type">`${string}@${string}`</span> - 模板字符串</li>
+            <li><span class="data-type">string</span> - 通用字符串类型</li>
+          </ul>
+        </div>
+
+        <div class="summary-item">
+          <h3>❌ 不可接受的数据类型</h3>
+          <ul>
+            <li><span class="data-type">123</span> - 数字类型</li>
+            <li><span class="data-type">true / false</span> - 布尔类型</li>
+            <li><span class="data-type">null / undefined</span> - 空值</li>
+            <li><span class="data-type">{}</span> - 对象类型</li>
+            <li><span class="data-type">[]</span> - 数组类型</li>
+            <li><span class="data-type">new String()</span> - String 对象</li>
+            <li><span class="data-type">Symbol()</span> - 符号类型</li>
+          </ul>
+        </div>
+
+        <div class="summary-item">
+          <h3>🎯 实际应用场景</h3>
+          <ul>
+            <li><strong>API 路由定义</strong> - 约束路由路径格式</li>
+            <li><strong>数据验证</strong> - 确保输入为特定字符串模式</li>
+            <li><strong>配置管理</strong> - 限制配置选项为预定义字符串</li>
+            <li><strong>类型安全函数</strong> - 创建类型安全的字符串处理工具</li>
+          </ul>
+        </div>
+
+        <div class="summary-item">
+          <h3>💡 最佳实践</h3>
+          <ul>
+            <li>优先使用 <code>T extends string</code> 而非 <code>T extends String</code></li>
+            <li>结合字符串字面量类型获得更精确的类型推断</li>
+            <li>使用模板字符串类型约束复杂字符串模式</li>
+            <li>添加运行时验证确保类型安全</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="comparison">
+        <h3>🔍 T extends string vs T extends String</h3>
+        <p><strong>关键区别：</strong></p>
+        <table class="method-table">
+          <thead>
+            <tr>
+              <th>特性</th>
+              <th>T extends string</th>
+              <th>T extends String</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>接受的类型</td>
+              <td>string 原始类型</td>
+              <td>string 原始类型 + String 对象</td>
+            </tr>
+            <tr>
+              <td>类型安全</td>
+              <td>✅ 更安全</td>
+              <td>⚠️ 相对安全</td>
+            </tr>
+            <tr>
+              <td>现代实践</td>
+              <td>✅ 推荐使用</td>
+              <td>❌ 不推荐</td>
+            </tr>
+            <tr>
+              <td>性能</td>
+              <td>✅ 更好</td>
+              <td>⚠️ 稍差</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <table class="method-table">
+        <thead>
+          <tr>
+            <th>数据类型</th>
+            <th>示例</th>
+            <th>是否可接受</th>
+            <th>说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>字符串字面量</td>
+            <td><code>"hello"</code></td>
+            <td>✅</td>
+            <td>最基本的可接受类型</td>
+          </tr>
+          <tr>
+            <td>字符串联合</td>
+            <td><code>"A" | "B"</code></td>
+            <td>✅</td>
+            <td>多个字符串字面量的联合</td>
+          </tr>
+          <tr>
+            <td>模板字符串</td>
+            <td><code>`${string}`</code></td>
+            <td>✅</td>
+            <td>模式匹配的字符串类型</td>
+          </tr>
+          <tr>
+            <td>数字类型</td>
+            <td><code>123</code></td>
+            <td>❌</td>
+            <td>非字符串原始类型</td>
+          </tr>
+          <tr>
+            <td>String 对象</td>
+            <td><code>new String()</code></td>
+            <td>❌</td>
+            <td>对象类型，不是原始类型</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer>
+      <p>TypeScript T extends string 详解 &copy; 2023 | 类型安全的字符串约束最佳实践</p>
+    </footer>
+
+    <script>
+      // 页面加载时执行示例代码
+      document.addEventListener("DOMContentLoaded", function () {
+        executeExamples();
+      });
+
+      function executeExamples() {
+        // 示例1: 普通字符串字面量
+        try {
+          function processString(input) {
+            return input;
+          }
+
+          const result1 = processString("hello");
+          const result2 = processString("world");
+          const result3 = processString("");
+          const result4 = processString("123");
+
+          let output = "普通字符串字面量示例:\n";
+          output += "result1: " + result1 + " 类型: " + typeof result1 + "\n";
+          output += "result2: " + result2 + " 类型: " + typeof result2 + "\n";
+          output += "result3: " + result3 + " 类型: " + typeof result3 + "\n";
+          output += "result4: " + result4 + " 类型: " + typeof result4 + "\n";
+
+          let dynamicString = "dynamic";
+          const result5 = processString(dynamicString);
+          output += "动态字符串: " + result5 + " 类型: " + typeof result5;
+
+          document.getElementById("output1").textContent = output;
+        } catch (e) {
+          document.getElementById("output1").textContent = "错误: " + e.message;
+        }
+
+        // 示例2: 字符串联合类型
+        try {
+          function createConfig(type, value) {
+            return { type, value };
+          }
+
+          const colorConfig = createConfig("red", "#ff0000");
+          const sizeConfig = createConfig("medium", "中号");
+          const directColor = createConfig("blue", "#0000ff");
+          const directSize = createConfig("large", "大号");
+
+          let output = "字符串联合类型示例:\n";
+          output += "颜色配置: " + JSON.stringify(colorConfig) + "\n";
+          output += "尺寸配置: " + JSON.stringify(sizeConfig) + "\n";
+          output += "直接颜色: " + JSON.stringify(directColor) + "\n";
+          output += "直接尺寸: " + JSON.stringify(directSize) + "\n";
+
+          function createRequest(method, url) {
+            return { method, url };
+          }
+
+          const getRequest = createRequest("GET", "/api/users");
+          const postRequest = createRequest("POST", "/api/users");
+
+          output += "HTTP方法示例:\n";
+          output += "GET请求: " + JSON.stringify(getRequest) + "\n";
+          output += "POST请求: " + JSON.stringify(postRequest);
+
+          document.getElementById("output2").textContent = output;
+        } catch (e) {
+          document.getElementById("output2").textContent = "错误: " + e.message;
+        }
+
+        // 其他示例的实现...
+      }
+
+      function executeUserCode() {
+        var userCode = document.getElementById("userCode").value;
+        var outputArea = document.getElementById("userOutput");
+
+        try {
+          var logMessages = [];
+          var originalLog = console.log;
+          console.log = function (message) {
+            logMessages.push(message);
+            originalLog.apply(console, arguments);
+          };
+
+          eval(userCode);
+
+          console.log = originalLog;
+
+          outputArea.textContent = logMessages.join("\n") || "代码执行成功，但没有输出。";
+          outputArea.style.color = "#e2e8f0";
+        } catch (error) {
+          outputArea.textContent = "错误: " + error.message;
+          outputArea.style.color = "#ef4444";
+        }
+      }
+    </script>
+  </body>
+</html>

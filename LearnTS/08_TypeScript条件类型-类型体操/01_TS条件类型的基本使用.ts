@@ -4,7 +4,7 @@ type IDType = number | string
 //!   如果 boolean 是 IDType 的子类型，那么 ResType 就是 true，否则为 false。
 
 type ResType = boolean extends IDType ? true : false       // 字面量类型  false
-//!   let ResType = boolean extends IDType ? true : false       // 前面必须用type，不可用let
+
 
 
 

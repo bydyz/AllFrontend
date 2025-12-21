@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSS text-rendering 属性详解</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: #f8fafc;
+        color: #334155;
+        line-height: 1.6;
+        padding: 20px;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 50px;
+        padding: 40px;
+        background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
+        color: white;
+        border-radius: 16px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      }
+
+      h1 {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        font-weight: 700;
+      }
+
+      .subtitle {
+        font-size: 1.4rem;
+        opacity: 0.95;
+        max-width: 800px;
+        margin: 0 auto;
+        font-weight: 300;
+      }
+
+      .container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 35px;
+        margin-bottom: 50px;
+      }
+
+      .demo-section,
+      .technical-section {
+        background: white;
+        border-radius: 16px;
+        padding: 35px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      }
+
+      h2 {
+        color: #1e293b;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 3px solid #f1f5f9;
+        font-size: 1.8rem;
+        display: flex;
+        align-items: center;
+      }
+
+      h2 i {
+        margin-right: 12px;
+        font-size: 1.6em;
+      }
+
+      .rendering-demo {
+        margin-bottom: 35px;
+        padding: 25px;
+        border-radius: 12px;
+        background: #f8fafc;
+        transition: all 0.4s ease;
+        border: 2px solid transparent;
+      }
+
+      .rendering-demo:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+      }
+
+      .demo-label {
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: #1e293b;
+        font-size: 1.2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .demo-text {
+        padding: 25px;
+        background: white;
+        border-radius: 10px;
+        border-left: 6px solid;
+        font-size: 1.8rem;
+        min-height: 120px;
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+        line-height: 1.8;
+      }
+
+      .demo-description {
+        color: #475569;
+        font-size: 1rem;
+        line-height: 1.7;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 8px;
+      }
+
+      .auto {
+        border-color: #3b82f6;
+        background-color: #eff6ff;
+      }
+      .optimizeSpeed {
+        border-color: #ef4444;
+        background-color: #fef2f2;
+      }
+      .optimizeLegibility {
+        border-color: #10b981;
+        background-color: #f0fdf4;
+      }
+      .geometricPrecision {
+        border-color: #f59e0b;
+        background-color: #fffbeb;
+      }
+
+      .performance-section {
+        margin-top: 40px;
+        padding: 25px;
+        background: linear-gradient(135deg, #fef3c7 0%, #fef7ed 100%);
+        border-radius: 12px;
+        border-left: 6px solid #f59e0b;
+      }
+
+      .performance-section h3 {
+        color: #92400e;
+        margin-bottom: 15px;
+      }
+
+      .comparison-section {
+        margin-top: 50px;
+        background: white;
+        border-radius: 16px;
+        padding: 35px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      }
+
+      .comparison-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-top: 25px;
+      }
+
+      .comparison-item {
+        padding: 25px;
+        border-radius: 12px;
+        background: #f8fafc;
+        transition: transform 0.3s;
+      }
+
+      .comparison-item:hover {
+        transform: translateY(-3px);
+      }
+
+      .comparison-title {
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: #1e293b;
+        font-size: 1.3rem;
+        display: flex;
+        align-items: center;
+      }
+
+      .comparison-text {
+        font-size: 1.6rem;
+        padding: 30px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+        margin-bottom: 20px;
+        min-height: 140px;
+        display: flex;
+        align-items: center;
+        line-height: 1.7;
+      }
+
+      .interactive-demo {
+        margin-top: 35px;
+      }
+
+      .input-group {
+        margin-bottom: 30px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 12px;
+        font-weight: 600;
+        color: #1e293b;
+        font-size: 1.1rem;
+      }
+
+      textarea {
+        width: 100%;
+        padding: 20px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        transition: border-color 0.3s;
+        resize: vertical;
+        min-height: 120px;
+        font-family: inherit;
+      }
+
+      textarea:focus {
+        border-color: #3b82f6;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      .controls-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+        margin-bottom: 30px;
+      }
+
+      .control-item {
+        margin-bottom: 20px;
+      }
+
+      .radio-group {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 25px;
+      }
+
+      .radio-option {
+        display: flex;
+        align-items: center;
+        background: #f8fafc;
+        padding: 18px 25px;
+        border-radius: 10px;
+        transition: all 0.3s;
+        cursor: pointer;
+        border: 2px solid transparent;
+      }
+
+      .radio-option:hover {
+        background: #f1f5f9;
+        transform: translateX(5px);
+      }
+
+      .radio-option.selected {
+        border-color: #3b82f6;
+        background: #eff6ff;
+      }
+
+      .radio-option input {
+        margin-right: 15px;
+        transform: scale(1.2);
+      }
+
+      .radio-label {
+        font-weight: 600;
+        color: #1e293b;
+      }
+
+      .radio-description {
+        font-size: 0.9rem;
+        color: #64748b;
+        margin-top: 5px;
+      }
+
+      .result {
+        padding: 35px;
+        background-color: #f8fafc;
+        border-radius: 12px;
+        min-height: 200px;
+        margin-top: 25px;
+        border: 3px dashed #cbd5e1;
+        display: flex;
+        align-items: center;
+        font-size: 1.6rem;
+        transition: all 0.4s;
+        line-height: 1.8;
+      }
+
+      .result.active {
+        border-color: #3b82f6;
+        background-color: #eff6ff;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+      }
+
+      .summary {
+        background: white;
+        border-radius: 16px;
+        padding: 40px;
+        margin-top: 50px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 30px;
+        margin-top: 30px;
+      }
+
+      .summary-item {
+        padding: 25px;
+        border-radius: 12px;
+        background-color: #f8fafc;
+        transition: transform 0.3s;
+        border-top: 4px solid;
+      }
+
+      .summary-item:hover {
+        transform: translateY(-5px);
+      }
+
+      .summary-item.auto {
+        border-top-color: #3b82f6;
+      }
+      .summary-item.optimizeSpeed {
+        border-top-color: #ef4444;
+      }
+      .summary-item.optimizeLegibility {
+        border-top-color: #10b981;
+      }
+      .summary-item.geometricPrecision {
+        border-top-color: #f59e0b;
+      }
+
+      .summary-item h3 {
+        margin-bottom: 15px;
+        color: #1e293b;
+        display: flex;
+        align-items: center;
+        font-size: 1.3rem;
+      }
+
+      .use-cases {
+        margin-top: 50px;
+      }
+
+      .use-case-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 30px;
+        margin-top: 30px;
+      }
+
+      .use-case {
+        padding: 25px;
+        background-color: #f8fafc;
+        border-radius: 12px;
+        border-left: 5px solid #3b82f6;
+        transition: transform 0.3s;
+      }
+
+      .use-case:hover {
+        transform: translateY(-5px);
+      }
+
+      .use-case h3 {
+        margin-bottom: 15px;
+        color: #1e293b;
+        font-size: 1.2rem;
+      }
+
+      .warning {
+        background: linear-gradient(135deg, #fef2f2 0%, #fef7ed 100%);
+        padding: 30px;
+        border-radius: 12px;
+        margin: 40px 0;
+        border-left: 6px solid #f59e0b;
+      }
+
+      .warning h3 {
+        color: #92400e;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+      }
+
+      select {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 1rem;
+        background: white;
+        cursor: pointer;
+      }
+
+      select:focus {
+        border-color: #3b82f6;
+        outline: none;
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 60px;
+        padding: 30px;
+        color: #64748b;
+        font-size: 1rem;
+        border-top: 1px solid #e2e8f0;
+      }
+
+      @media (max-width: 968px) {
+        .container,
+        .comparison-container,
+        .controls-group {
+          grid-template-columns: 1fr;
+        }
+
+        h1 {
+          font-size: 2.3rem;
+        }
+
+        .demo-text,
+        .comparison-text,
+        .result {
+          font-size: 1.4rem;
+        }
+      }
+
+      /* 图标样式 */
+      .icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        margin-right: 12px;
+        border-radius: 8px;
+        color: white;
+        font-weight: bold;
+      }
+
+      .icon-auto {
+        background: #3b82f6;
+      }
+      .icon-speed {
+        background: #ef4444;
+      }
+      .icon-legibility {
+        background: #10b981;
+      }
+      .icon-precision {
+        background: #f59e0b;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: 10px;
+      }
+
+      .badge-recommended {
+        background: #10b981;
+        color: white;
+      }
+      .badge-performance {
+        background: #ef4444;
+        color: white;
+      }
+      .badge-precision {
+        background: #f59e0b;
+        color: white;
+      }
+
+      .fps-meter {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-family: monospace;
+        z-index: 1000;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="/run.js"></script>
+    <div>
+      <button onclick="window.MyUtils.onBackToParent()">返回上一级</button>
+    </div>
+
+    <div class="fps-meter" id="fpsMeter">FPS: 60</div>
+
+    <header>
+      <h1>CSS text-rendering 属性详解</h1>
+      <p class="subtitle">探索文本渲染优化策略，平衡性能与视觉质量</p>
+    </header>
+
+    <div class="container">
+      <section class="demo-section">
+        <h2><span class="icon icon-auto">A</span> text-rendering 属性演示</h2>
+
+        <div class="rendering-demo">
+          <div class="demo-label">
+            <span>text-rendering: auto</span>
+            <span class="badge badge-recommended">默认值</span>
+          </div>
+          <div class="demo-text auto" style="text-rendering: auto">The quick brown fox jumps over the lazy dog. 优雅的字体渲染示例。</div>
+          <div class="demo-description"><strong>浏览器自动选择渲染策略</strong> - 浏览器根据字体大小、字体类型和操作系统自动决定使用速度优化还是可读性优化。这是最常用的设置，在大多数情况下都能提供良好的平衡。</div>
+        </div>
+
+        <div class="rendering-demo">
+          <div class="demo-label">
+            <span>text-rendering: optimizeSpeed</span>
+            <span class="badge badge-performance">性能优先</span>
+          </div>
+          <div class="demo-text optimizeSpeed" style="text-rendering: optimizeSpeed">The quick brown fox jumps over the lazy dog. 优雅的字体渲染示例。</div>
+          <div class="demo-description"><strong>优先考虑渲染速度</strong> - 禁用字距调整和连字，以换取更快的文本渲染。适用于需要快速渲染大量动态文本的场景，如实时数据展示或游戏界面。</div>
+        </div>
+
+        <div class="rendering-demo">
+          <div class="demo-label">
+            <span>text-rendering: optimizeLegibility</span>
+            <span class="badge badge-recommended">质量优先</span>
+          </div>
+          <div class="demo-text optimizeLegibility" style="text-rendering: optimizeLegibility">The quick brown fox jumps over the lazy dog. 优雅的字体渲染示例。</div>
+          <div class="demo-description"><strong>优先考虑可读性</strong> - 启用字距调整和连字，提供最佳的文本可读性。特别适合小字体文本和高质量排版需求。注意：可能会轻微影响渲染性能。</div>
+        </div>
+
+        <div class="rendering-demo">
+          <div class="demo-label">
+            <span>text-rendering: geometricPrecision</span>
+            <span class="badge badge-precision">精确渲染</span>
+          </div>
+          <div class="demo-text geometricPrecision" style="text-rendering: geometricPrecision">The quick brown fox jumps over the lazy dog. 优雅的字体渲染示例。</div>
+          <div class="demo-description"><strong>几何精度渲染</strong> - 确保文本在缩放时保持几何精度，避免浏览器对文本进行次像素优化。主要用于SVG文本和需要精确缩放的情况。</div>
+        </div>
+      </section>
+
+      <section class="technical-section">
+        <h2><span class="icon icon-legibility">T</span> 技术细节解析</h2>
+
+        <div class="rendering-demo">
+          <h3>什么是文本渲染？</h3>
+          <p>文本渲染是指浏览器将文本字符转换为屏幕上像素的过程。这个过程涉及多个步骤：</p>
+          <ul style="margin: 15px 0 15px 25px">
+            <li><strong>字形选择</strong> - 选择适当的字符形状</li>
+            <li><strong>字距调整</strong> - 调整字符对之间的间距</li>
+            <li><strong>连字处理</strong> - 将特定字符组合替换为连字字形</li>
+            <li><strong>抗锯齿</strong> - 平滑字体边缘</li>
+            <li><strong>次像素渲染</strong> - 利用LCD像素结构增强清晰度</li>
+          </ul>
+
+          <h3>不同值的具体影响</h3>
+          <div style="overflow-x: auto; margin-top: 20px">
+            <table style="width: 100%; border-collapse: collapse">
+              <thead>
+                <tr style="background: #1e293b; color: white">
+                  <th style="padding: 12px; text-align: left">属性值</th>
+                  <th style="padding: 12px; text-align: left">字距调整</th>
+                  <th style="padding: 12px; text-align: left">连字</th>
+                  <th style="padding: 12px; text-align: left">性能</th>
+                  <th style="padding: 12px; text-align: left">质量</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom: 1px solid #e2e8f0">
+                  <td style="padding: 12px"><strong>auto</strong></td>
+                  <td style="padding: 12px">由浏览器决定</td>
+                  <td style="padding: 12px">由浏览器决定</td>
+                  <td style="padding: 12px">平衡</td>
+                  <td style="padding: 12px">良好</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #e2e8f0">
+                  <td style="padding: 12px"><strong>optimizeSpeed</strong></td>
+                  <td style="padding: 12px">禁用</td>
+                  <td style="padding: 12px">禁用</td>
+                  <td style="padding: 12px">最佳</td>
+                  <td style="padding: 12px">一般</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #e2e8f0">
+                  <td style="padding: 12px"><strong>optimizeLegibility</strong></td>
+                  <td style="padding: 12px">启用</td>
+                  <td style="padding: 12px">启用</td>
+                  <td style="padding: 12px">一般</td>
+                  <td style="padding: 12px">最佳</td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px"><strong>geometricPrecision</strong></td>
+                  <td style="padding: 12px">启用</td>
+                  <td style="padding: 12px">启用</td>
+                  <td style="padding: 12px">较低</td>
+                  <td style="padding: 12px">精确</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="performance-section">
+          <h3>⚡ 性能考虑</h3>
+          <p><strong>optimizeLegibility</strong> 可能会对性能产生轻微影响，特别是在以下情况：</p>
+          <ul style="margin: 15px 0 0 25px">
+            <li>大量文本内容（如长篇文章）</li>
+            <li>动画或频繁更新的文本</li>
+            <li>低性能设备（移动设备、旧电脑）</li>
+          </ul>
+          <p style="margin-top: 15px">在这些场景下，考虑使用 <strong>auto</strong> 或 <strong>optimizeSpeed</strong>。</p>
+        </div>
+      </section>
+    </div>
+
+    <section class="comparison-section">
+      <h2>渲染效果对比</h2>
+
+      <div class="comparison-container">
+        <div class="comparison-item">
+          <div class="comparison-title">optimizeSpeed (性能优先)</div>
+          <div class="comparison-text" style="text-rendering: optimizeSpeed; font-family: 'Times New Roman', serif">Affluent offload waffle foliage</div>
+          <p>渲染速度最快，但可能牺牲字距调整和连字效果。注意 "ff", "fl" 等字符对可能没有特殊处理。</p>
+        </div>
+
+        <div class="comparison-item">
+          <div class="comparison-title">optimizeLegibility (质量优先)</div>
+          <div class="comparison-text" style="text-rendering: optimizeLegibility; font-family: 'Times New Roman', serif">Affluent offload waffle foliage</div>
+          <p>提供最佳的可读性，启用字距调整和连字。注意 "ff", "fl" 等字符对的优化处理。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="demo-section interactive-demo">
+      <h2>🔧 交互式演示</h2>
+
+      <div class="input-group">
+        <label for="text-input">输入要测试的文本：</label>
+        <textarea id="text-input">The quick brown fox jumps over the lazy dog. Affluent offload waffle foliage. 优雅的字体渲染示例。</textarea>
+      </div>
+
+      <div class="controls-group">
+        <div class="control-item">
+          <label for="font-select">选择字体：</label>
+          <select id="font-select">
+            <option value="Arial, sans-serif">Arial (无衬线)</option>
+            <option value="'Times New Roman', serif">Times New Roman (衬线)</option>
+            <option value="Georgia, serif">Georgia (衬线)</option>
+            <option value="'Courier New', monospace">Courier New (等宽)</option>
+            <option value="Verdana, sans-serif">Verdana (无衬线)</option>
+          </select>
+        </div>
+
+        <div class="control-item">
+          <label for="font-size">字体大小：</label>
+          <select id="font-size">
+            <option value="1.2rem">小 (12px)</option>
+            <option value="1.6rem" selected>正常 (16px)</option>
+            <option value="2rem">大 (20px)</option>
+            <option value="2.5rem">标题 (25px)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="radio-group">
+        <div class="radio-option" id="option-auto">
+          <input type="radio" id="rendering-auto" name="rendering-type" value="auto" checked />
+          <div>
+            <div class="radio-label">auto - 浏览器自动选择</div>
+            <div class="radio-description">平衡性能和可读性，推荐用于大多数情况</div>
+          </div>
+        </div>
+
+        <div class="radio-option" id="option-speed">
+          <input type="radio" id="rendering-speed" name="rendering-type" value="optimizeSpeed" />
+          <div>
+            <div class="radio-label">optimizeSpeed - 性能优先</div>
+            <div class="radio-description">禁用字距调整和连字以获得最佳性能</div>
+          </div>
+        </div>
+
+        <div class="radio-option" id="option-legibility">
+          <input type="radio" id="rendering-legibility" name="rendering-type" value="optimizeLegibility" />
+          <div>
+            <div class="radio-label">optimizeLegibility - 可读性优先</div>
+            <div class="radio-description">启用字距调整和连字以获得最佳可读性</div>
+          </div>
+        </div>
+
+        <div class="radio-option" id="option-precision">
+          <input type="radio" id="rendering-precision" name="rendering-type" value="geometricPrecision" />
+          <div>
+            <div class="radio-label">geometricPrecision - 几何精度</div>
+            <div class="radio-description">确保文本缩放时的几何精度，用于SVG等场景</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result" id="result">文本渲染效果将显示在这里</div>
+    </section>
+
+    <div class="warning">
+      <h3>⚠️ 重要提示</h3>
+      <p><strong>text-rendering 是非标准属性</strong>，虽然得到大多数现代浏览器的支持，但并不是CSS规范的一部分。对于生产环境，建议：</p>
+      <ul style="margin: 15px 0 0 25px">
+        <li>优先使用标准的CSS属性（如 font-feature-settings）</li>
+        <li>仅在需要解决特定渲染问题时使用 text-rendering</li>
+        <li>在不同浏览器和设备上测试渲染效果</li>
+      </ul>
+    </div>
+
+    <section class="summary">
+      <h2>属性总结与使用建议</h2>
+
+      <div class="summary-grid">
+        <div class="summary-item auto">
+          <h3><span class="icon icon-auto">A</span> auto</h3>
+          <p><strong>使用场景：</strong> 绝大多数情况，特别是正文内容</p>
+          <p><strong>优点：</strong> 浏览器智能平衡，兼容性好</p>
+          <p><strong>建议：</strong> 默认选择，除非有特殊需求</p>
+        </div>
+
+        <div class="summary-item optimizeSpeed">
+          <h3><span class="icon icon-speed">S</span> optimizeSpeed</h3>
+          <p><strong>使用场景：</strong> 性能敏感场景，动态文本，游戏界面</p>
+          <p><strong>优点：</strong> 渲染速度最快</p>
+          <p><strong>注意：</strong> 可能降低文本质量</p>
+        </div>
+
+        <div class="summary-item optimizeLegibility">
+          <h3><span class="icon icon-legibility">L</span> optimizeLegibility</h3>
+          <p><strong>使用场景：</strong> 小字体文本，高质量排版，印刷风格</p>
+          <p><strong>优点：</strong> 最佳可读性，启用高级排版特性</p>
+          <p><strong>注意：</strong> 可能影响性能</p>
+        </div>
+
+        <div class="summary-item geometricPrecision">
+          <h3><span class="icon icon-precision">P</span> geometricPrecision</h3>
+          <p><strong>使用场景：</strong> SVG文本，动画文本，需要精确缩放的场景</p>
+          <p><strong>优点：</strong> 保持几何精度</p>
+          <p><strong>注意：</strong> 特定用途，一般文本不需要</p>
+        </div>
+      </div>
+
+      <div class="use-cases">
+        <h2>实际应用场景</h2>
+
+        <div class="use-case-list">
+          <div class="use-case">
+            <h3>博客和文章</h3>
+            <p>使用 <strong>auto</strong> 或 <strong>optimizeLegibility</strong> 确保长文本的可读性，特别是对于小字体内容。</p>
+          </div>
+
+          <div class="use-case">
+            <h3>数据仪表盘</h3>
+            <p>使用 <strong>optimizeSpeed</strong> 处理频繁更新的数值和图表标签，确保流畅的交互体验。</p>
+          </div>
+
+          <div class="use-case">
+            <h3>品牌和标志</h3>
+            <p>使用 <strong>optimizeLegibility</strong> 确保品牌文本的最高质量呈现，体现专业形象。</p>
+          </div>
+
+          <div class="use-case">
+            <h3>SVG图形</h3>
+            <p>使用 <strong>geometricPrecision</strong> 确保SVG中的文本在缩放时保持清晰和精确。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>CSS text-rendering 属性详解 &copy; 2023 | 注意：这是一个非标准属性，建议在生产环境中谨慎使用</p>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const textInput = document.getElementById("text-input");
+        const fontSelect = document.getElementById("font-select");
+        const fontSizeSelect = document.getElementById("font-size");
+        const radioButtons = document.querySelectorAll('input[name="rendering-type"]');
+        const radioOptions = document.querySelectorAll(".radio-option");
+        const resultElement = document.getElementById("result");
+
+        // FPS模拟（仅用于演示）
+        let fps = 60;
+        const fpsMeter = document.getElementById("fpsMeter");
+
+        function simulatePerformance(renderingType) {
+          // 模拟不同渲染模式下的性能影响
+          switch (renderingType) {
+            case "optimizeSpeed":
+              fps = 60;
+              break;
+            case "auto":
+              fps = 58;
+              break;
+            case "optimizeLegibility":
+              fps = 55;
+              break;
+            case "geometricPrecision":
+              fps = 52;
+              break;
+          }
+          fpsMeter.textContent = `FPS: ${fps}`;
+        }
+
+        function updateResult() {
+          const selectedValue = document.querySelector('input[name="rendering-type"]:checked').value;
+          const inputText = textInput.value;
+          const selectedFont = fontSelect.value;
+          const selectedFontSize = fontSizeSelect.value;
+
+          resultElement.textContent = inputText;
+          resultElement.style.textRendering = selectedValue;
+          resultElement.style.fontFamily = selectedFont;
+          resultElement.style.fontSize = selectedFontSize;
+          resultElement.classList.add("active");
+
+          // 更新选中状态样式
+          radioOptions.forEach(option => {
+            option.classList.remove("selected");
+          });
+          document.getElementById(`option-${selectedValue.replace("optimize", "").toLowerCase()}`).classList.add("selected");
+
+          // 模拟性能影响
+          simulatePerformance(selectedValue);
+        }
+
+        textInput.addEventListener("input", updateResult);
+        fontSelect.addEventListener("change", updateResult);
+        fontSizeSelect.addEventListener("change", updateResult);
+
+        radioButtons.forEach(radio => {
+          radio.addEventListener("change", updateResult);
+        });
+
+        // 为选项添加点击事件
+        radioOptions.forEach(option => {
+          option.addEventListener("click", function () {
+            const radioInput = this.querySelector("input");
+            radioInput.checked = true;
+            updateResult();
+          });
+        });
+
+        // 初始化
+        updateResult();
+
+        // 简单的FPS动画（仅用于演示）
+        let lastTime = 0;
+        function animate(time) {
+          if (!lastTime) lastTime = time;
+          const delta = time - lastTime;
+
+          // 每100ms更新一次FPS显示
+          if (delta > 100) {
+            fpsMeter.textContent = `FPS: ${fps}`;
+            lastTime = time;
+          }
+
+          requestAnimationFrame(animate);
+        }
+        requestAnimationFrame(animate);
+      });
+    </script>
+  </body>
+</html>
