@@ -195,9 +195,20 @@
         color: #ff9900;
         font-weight: bold;
       }
+      .highlight {
+        background: #f1c40f;
+        padding: 2px 5px;
+        border-radius: 3px;
+        color: #2c3e50;
+      }
     </style>
   </head>
   <body>
+    <script src="/run.js"></script>
+    <div>
+      <button onclick="window.MyUtils.onBackToParent()">返回上一级</button>
+    </div>
+
     <div class="container">
       <header>
         <h1>迭代器协议与next()方法详解</h1>
@@ -236,19 +247,9 @@
 
         <div class="card">
           <h2>迭代器协议的应用</h2>
-          <p>实现了迭代器协议的对象可以在许多JavaScript结构中使用：</p>
+          <p>实现了迭代器协议的对象的<span class="highlight">主要用途是 手动控制迭代过程</span>；但不能 <span class="highlight">使对象可以在 for...of 等结构中使用</span></p>
 
-          <ul style="padding-left: 20px; margin: 15px 0">
-            <li><code>for...of</code>循环</li>
-            <li>扩展运算符<code>...</code></li>
-            <li><code>Array.from()</code>方法</li>
-            <li>解构赋值</li>
-            <li><code>yield*</code>表达式</li>
-          </ul>
-
-          <div class="code">
-            // 自定义迭代器与for...of使用 <br/>const myIterable = { <br/>&emsp;[Symbol.iterator]() { <br/>&emsp;&emsp;let step = 0; <br/>&emsp;&emsp;return { <br/>&emsp;&emsp;&emsp;next() { <br/>&emsp;&emsp;&emsp;&emsp;step++; <br/>&emsp;&emsp;&emsp;&emsp;if (step <= 3) { <br/>&emsp;&emsp;&emsp;&emsp;&emsp;return { value: `步骤${step}`, done: false }; <br/>&emsp;&emsp;&emsp;&emsp;} <br/>&emsp;&emsp;&emsp;&emsp;return { value: undefined, done: true }; <br/>&emsp;&emsp;&emsp;} <br/>&emsp;&emsp;}; <br/>&emsp;} <br/>}; <br/>for (const step of myIterable) { <br/>&emsp;console.log(step); <br/>&emsp;// 输出: 步骤1, 步骤2, 步骤3 <br/>}
-          </div>
+          
         </div>
       </div>
 
@@ -270,6 +271,7 @@
 function createRangeIterator(start, end, step = 1) {
   let current = start;
   return {
+    // 1. 迭代器协议的核心方法
     next() {
       if (current <= end) {
         const value = current;
@@ -278,10 +280,14 @@ function createRangeIterator(start, end, step = 1) {
       }
       return { value: undefined, done: true };
     },
+
+    // 2. 可选的迭代器方法（提前终止）
     return(value) {
       console.log('迭代提前终止');
       return { value, done: true };
     },
+
+    // 3. 可迭代协议的核心方法
     [Symbol.iterator]() {
       return this;
     }
@@ -289,6 +295,7 @@ function createRangeIterator(start, end, step = 1) {
 }
 
 const range = createRangeIterator(1, 5);
+
 for (const num of range) {
   if (num > 3) break; // 会触发return方法
   console.log(num); // 输出: 1, 2, 3

@@ -216,9 +216,20 @@
         font-size: 1.2rem;
         font-weight: bold;
       }
+      .highlight {
+        background: #f1c40f;
+        padding: 2px 5px;
+        border-radius: 3px;
+        color: #2c3e50;
+      }
     </style>
   </head>
   <body>
+    <script src="/run.js"></script>
+    <div>
+      <button onclick="window.MyUtils.onBackToParent()">返回上一级</button>
+    </div>
+
     <div class="container">
       <header>
         <h1>迭代器协议详解：对象与next()方法</h1>

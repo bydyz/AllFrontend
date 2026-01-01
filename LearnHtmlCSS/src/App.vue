@@ -9,98 +9,98 @@ import SpecificSymbol from "./components/SpecificSymbol.vue";
 import LearnOl from "./components/LearnOl.vue";
 import LearnUl from "./components/LearnUl.vue";
 import CustomList from "./components/CustomList.vue";
-import LearnTagA from "./components/LearnTagA/index.vue"
-import LearnTable from "./components/LearnTable/index.vue"
-import LearnTagForm from "./components/LearnTagForm/index.vue"
-import LearnFont from "./components/LearnFont/index.vue"
-import LearnDisplay from "./components/LearnDisplay/index.vue"
-import LearnScrollbar from "./components/LearnScrollbar/index.vue"
-import LearnSelector from "./components/LearnSelector/index.vue"
-import LearnEIFPicture from "./components/LearnEIFPicture/index.vue"
-import LearnSpacing from "./components/LearnSpacing/index.vue"
+import LearnTagA from "./components/LearnTagA/index.vue";
+import LearnTable from "./components/LearnTable/index.vue";
+import LearnTagForm from "./components/LearnTagForm/index.vue";
+import LearnFont from "./components/LearnFont/index.vue";
+import LearnDisplay from "./components/LearnDisplay/index.vue";
+import LearnScrollbar from "./components/LearnScrollbar/index.vue";
+import LearnSelector from "./components/LearnSelector/index.vue";
+import LearnEIFPicture from "./components/LearnEIFPicture/index.vue";
+import LearnSpacing from "./components/LearnSpacing/index.vue";
 
 import { ref, shallowRef, markRaw } from "vue";
 
 let componentsArray = ref([
   {
-    name: '简便写法',
-    component: markRaw(ASimpleWrite)
+    name: "简便写法",
+    component: markRaw(ASimpleWrite),
   },
   {
-    name: 'center',
-    component: markRaw(LearnCenter)
+    name: "center",
+    component: markRaw(LearnCenter),
   },
   {
-    name: 'img',
-    component: markRaw(LearnTagImg)
+    name: "img",
+    component: markRaw(LearnTagImg),
   },
   {
-    name: '常见标签',
-    component: markRaw(CommonTags)
+    name: "常见标签",
+    component: markRaw(CommonTags),
   },
   {
-    name: 'LearnHr',
-    component: markRaw(LearnHr)
+    name: "LearnHr",
+    component: markRaw(LearnHr),
   },
   {
-    name: '特殊符号',
-    component: markRaw(SpecificSymbol)
+    name: "特殊符号",
+    component: markRaw(SpecificSymbol),
   },
   {
-    name: '有序列表',
-    component: markRaw(LearnOl)
+    name: "有序列表",
+    component: markRaw(LearnOl),
   },
   {
-    name: '无序列表',
-    component: markRaw(LearnUl)
+    name: "无序列表",
+    component: markRaw(LearnUl),
   },
   {
-    name: '自定义列表',
-    component: markRaw(CustomList)
+    name: "自定义列表",
+    component: markRaw(CustomList),
   },
   {
-    name: 'a标签',
-    component: markRaw(LearnTagA)
+    name: "a标签",
+    component: markRaw(LearnTagA),
   },
   {
-    name: '原生Table',
-    component: markRaw(LearnTable)
+    name: "原生Table",
+    component: markRaw(LearnTable),
   },
   {
-    name: 'form标签',
-    component: markRaw(LearnTagForm)
+    name: "form标签",
+    component: markRaw(LearnTagForm),
   },
   {
-    name: '字体样式',
-    component: markRaw(LearnFont)
+    name: "字体样式",
+    component: markRaw(LearnFont),
   },
   {
-    name: 'display',
-    component: markRaw(LearnDisplay)
+    name: "display",
+    component: markRaw(LearnDisplay),
   },
   {
-    name: '滚动条样式',
-    component: markRaw(LearnScrollbar)
+    name: "滚动条样式",
+    component: markRaw(LearnScrollbar),
   },
   {
-    name: 'CSS选择器',
-    component: markRaw(LearnSelector)
+    name: "CSS选择器",
+    component: markRaw(LearnSelector),
   },
   {
-    name: '精灵图',
-    component: markRaw(LearnEIFPicture)
+    name: "精灵图",
+    component: markRaw(LearnEIFPicture),
   },
   {
-    name: '间距',
-    component: markRaw(LearnSpacing)
+    name: "间距",
+    component: markRaw(LearnSpacing),
   },
-])
-let componentId = shallowRef(LearnSpacing);
+]);
+let componentId = shallowRef(LearnSelector);
 </script>
 
 <template>
   <div>
-    <div style="display: flex; flex-wrap: wrap;">
+    <div style="display: flex; flex-wrap: wrap">
       <div id="myDivButton" class="cursor-pointer" :class="componentId === item.component ? 'bg-[pink]' : ''" v-for="(item, index) in componentsArray" :key="index" @click="componentId = item.component">{{ item.name }}</div>
     </div>
 

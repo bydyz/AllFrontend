@@ -1,5 +1,5 @@
 // 在定义一个TypeScript中的函数时, 都要明确的指定参数的类型
-//! 未设置返回值类型，相当于其为any   此处是由类型推导决定
+//! 未设置返回值类型，相当于其为any   此处的 返回值类型 是由类型推导决定
 function sum(num1: number, num2: number) {
   return num1 + num2
 }

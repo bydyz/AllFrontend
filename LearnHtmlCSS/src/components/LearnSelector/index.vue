@@ -7,43 +7,48 @@ import GroupSonSelector from "./GroupSonSelector.vue";
 import PseudoSelector from "./PseudoSelector/index.vue";
 import SelectorWeight from "./SelectorWeight/index.vue";
 import ChildCombinator from "./ChildCombinator.vue";
+import NestSelector from "./NestSelector/index.vue";
 import { ref, shallowRef, markRaw } from "vue";
 
 let componentsArray = ref([
   {
-    name: '通配选择器',
-    component: markRaw(UniversalSelector)
+    name: "通配选择器",
+    component: markRaw(UniversalSelector),
   },
   {
-    name: '标签选择器',
-    component: markRaw(TagSelector)
+    name: "标签选择器",
+    component: markRaw(TagSelector),
   },
   {
-    name: '类选择器',
-    component: markRaw(ClassSelector)
+    name: "类选择器",
+    component: markRaw(ClassSelector),
   },
   {
-    name: 'id选择器',
-    component: markRaw(IdSelector)
+    name: "id选择器",
+    component: markRaw(IdSelector),
   },
   {
-    name: '群组后代选择器',
-    component: markRaw(GroupSonSelector)
+    name: "群组后代选择器",
+    component: markRaw(GroupSonSelector),
   },
   {
-    name: '伪类选择器',
-    component: markRaw(PseudoSelector)
+    name: "伪类选择器",
+    component: markRaw(PseudoSelector),
   },
   {
-    name: '选择器权重',
-    component: markRaw(SelectorWeight)
+    name: "选择器权重",
+    component: markRaw(SelectorWeight),
   },
   {
-    name: '子元素选择器 >',
-    component: markRaw(ChildCombinator)
+    name: "子元素选择器 >",
+    component: markRaw(ChildCombinator),
   },
-])
-let componentId = shallowRef(UniversalSelector);
+  {
+    name: "嵌套选择器 &",
+    component: markRaw(NestSelector),
+  },
+]);
+let componentId = shallowRef(NestSelector);
 </script>
 
 <template>

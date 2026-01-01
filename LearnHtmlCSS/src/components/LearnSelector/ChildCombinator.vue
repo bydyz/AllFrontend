@@ -9,16 +9,14 @@
   </div>
 </template>
 
-
-<script setup>
-</script>
+<script setup></script>
 
 <style scoped lang="stylus">
 // > 符号在 CSS 中表示选择直接子元素，它只匹配作为某个元素直接后代的元素，不会匹配更深层嵌套的元素。
 
 // 任意一个  div  的直接子元素p
-div > p {
-  color: red;
+.container > p {
+  color: pink;
 }
 .container > p {
   font-size: 30px
