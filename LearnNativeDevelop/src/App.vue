@@ -1,30 +1,24 @@
 <script setup>
-import BasicFunction from "./a_basicFunction/index.vue";
-import RadioSelect from "./e_radioSelect/index.vue";
-import ScrollAbout from "./zzz_scroll/index.vue";
-
-import { ref, shallowRef, markRaw } from "vue";
+import JustCSSAndJs from "./1拖曳修改div尺寸/index.vue";
+import RealizeScroll from "./2滚动实现/index.vue";
+import { ref } from "vue";
 
 let componentsArray = ref([
   {
-    name: '基础功能',
-    component: markRaw(BasicFunction)
-  },
-  {
-    name: '单选框',
-    component: markRaw(RadioSelect)
+    name: '拖曳',
+    component: JustCSSAndJs
   },
   {
     name: '滚动',
-    component: markRaw(ScrollAbout)
+    component: RealizeScroll
   },
 ])
-let componentId = shallowRef(ScrollAbout);
+let componentId = ref(RealizeScroll);
 </script>
 
 <template>
   <div>
-    <div style="display: flex; flex-wrap: wrap;">
+    <div style="display: flex; flex-wrap: wrap">
       <div id="myDivButton" class="cursor-pointer" :class="componentId === item.component ? 'bg-[pink]' : ''" v-for="(item, index) in componentsArray" :key="index" @click="componentId = item.component">{{ item.name }}</div>
     </div>
 

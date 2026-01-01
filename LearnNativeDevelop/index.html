@@ -4,16 +4,27 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + Vue</title>
+    <title>原生开发</title>
     <style>
       * {
         margin: 0;
         padding: 0;
       }
+      /* scroll-behavior 应该设置在「可滚动的容器元素」上 */
+      html {
+        scroll-behavior: smooth; /* 平滑滚动 */
+      }
       body {
         padding: 16px;
       }
       #myDivButton {
+        padding: 0 12px;
+        margin: 0 8px 8px 0;
+
+        border: 1px solid #999;
+        border-radius: 4px;
+      }
+      #innerPageButton {
         padding: 0 12px;
         margin: 0 8px 8px 0;
 

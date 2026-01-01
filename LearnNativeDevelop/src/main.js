@@ -1,6 +1,7 @@
 import { createApp } from "vue";
 
-import App from "./1拖曳修改div尺寸/App.vue";
+import App from "./App.vue";
+import './main.css'
 
 const app = createApp(App);
 
