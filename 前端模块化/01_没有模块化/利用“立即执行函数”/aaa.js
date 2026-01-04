@@ -1,4 +1,5 @@
 const moduleA = (function() {
+  // name、age、height 是 私有变量 - 外部无法直接访问
   let name = "why"
   let age = 18
   let height = 1.88

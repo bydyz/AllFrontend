@@ -8,8 +8,32 @@
 </head>
 <body>
   <!-- 用let，会报错重名；用var则不会 -->
+   <!-- Uncaught SyntaxError: Identifier 'name' has already been declared (at bbb.js:1:1) -->
   <script src="./aaa.js"></script>
   <script src="./bbb.js"></script>
 
+  <!-- 
+
+  报上述错误的原因：
+
+  根本原因：let 的“块级作用域” + “禁止重复声明”
+
+  1. <script> 标签在浏览器中不是模块（除非加 type="module"）
+    默认情况下，所有 <script> 脚本都在同一个全局作用域中执行。
+    所以 aaa.js 和 bbb.js 中的代码相当于写在一起：
+
+  2. let 不允许在同一作用域内重复声明
+
+  3. let 是“块级作用域”，但全局也是“一个块”
+    虽然 let 是块级作用域，但每个 <script> 并不会创建新的块级作用域。
+    它们都在全局作用域这个“大块”里，所以 name 被声明了两次 → 冲突！
+
+
+
+  如果用 var 就不会报错
+
+  原因：var 允许重复声明（实际上是变量提升后赋值覆盖）  即 后命名的会覆盖先命名的
+  
+  -->
 </body>
 </html>
