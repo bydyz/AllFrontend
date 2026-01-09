@@ -16,7 +16,7 @@
 
 <script setup></script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 .custom-scrollbar {
   resize: both
 }

@@ -23,4 +23,4 @@
 
 <script setup></script>
 
-<style lang="stylus" scope></style>
+<style lang="scss" scope></style>

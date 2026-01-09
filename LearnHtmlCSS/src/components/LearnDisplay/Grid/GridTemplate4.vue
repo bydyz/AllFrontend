@@ -11,7 +11,7 @@
 
 <script setup></script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 .dashboard {
   display: grid;
   grid-template-columns: repeat(12, 1fr); /* 12列网格系统 */
@@ -25,7 +25,7 @@
   background: white;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .stats {
@@ -66,7 +66,7 @@
 .activity {
   grid-column: 5 / span 8;
   grid-row: 3;
-  background: #e74c3c;
+  background: #999;
   color: white;
 }
 
@@ -77,11 +77,29 @@
     grid-template-rows: repeat(4, auto);
   }
 
-  .stats { grid-column: 1 / span 6; grid-row: 1; }
-  .chart { grid-column: 1 / span 6; grid-row: 2; }
-  .tasks { grid-column: 1 / span 3; grid-row: 3; }
-  .calendar { grid-column: 4 / span 3; grid-row: 3; }
-  .notifications { grid-column: 1 / span 3; grid-row: 4; }
-  .activity { grid-column: 4 / span 3; grid-row: 4; }
+  .stats {
+    grid-column: 1 / span 6;
+    grid-row: 1;
+  }
+  .chart {
+    grid-column: 1 / span 6;
+    grid-row: 2;
+  }
+  .tasks {
+    grid-column: 1 / span 3;
+    grid-row: 3;
+  }
+  .calendar {
+    grid-column: 4 / span 3;
+    grid-row: 3;
+  }
+  .notifications {
+    grid-column: 1 / span 3;
+    grid-row: 4;
+  }
+  .activity {
+    grid-column: 4 / span 3;
+    grid-row: 4;
+  }
 }
 </style>

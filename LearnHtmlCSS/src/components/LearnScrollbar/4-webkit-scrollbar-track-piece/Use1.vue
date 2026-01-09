@@ -30,7 +30,7 @@
 
 <script setup></script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 /* 滚动条整体  样式设置 */
 .custom-scrollbar::-webkit-scrollbar {
   width: 16px;              /* 垂直滚动条宽度 */

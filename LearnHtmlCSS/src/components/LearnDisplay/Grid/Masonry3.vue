@@ -22,7 +22,7 @@
 
 <script setup></script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 .masonry-blog {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

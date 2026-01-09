@@ -13,7 +13,7 @@
 
 <script setup></script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 .photo-gallery {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -35,16 +35,28 @@
 }
 
 .large {
-  grid-row: span 2;       /* 占两行 */
-  grid-column: span 2;    /* 占两列 */
-  background: #e74c3c;
+  grid-row: span 2; /* 占两行 */
+  grid-column: span 2; /* 占两列 */
+  background: #999;
 }
 
 /* 不同尺寸的图片 */
-.photo:nth-child(2) { height: 120px; }
-.photo:nth-child(3) { height: 180px; }
-.photo:nth-child(4) { height: 150px; }
-.photo:nth-child(6) { height: 200px; }
-.photo:nth-child(7) { height: 130px; }
-.photo:nth-child(8) { height: 170px; }
+.photo:nth-child(2) {
+  height: 120px;
+}
+.photo:nth-child(3) {
+  height: 180px;
+}
+.photo:nth-child(4) {
+  height: 150px;
+}
+.photo:nth-child(6) {
+  height: 200px;
+}
+.photo:nth-child(7) {
+  height: 130px;
+}
+.photo:nth-child(8) {
+  height: 170px;
+}
 </style>

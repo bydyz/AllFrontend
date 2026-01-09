@@ -6,7 +6,7 @@
     <div>
       <form>
         <div class="flex py-[4px]">
-          <span class="mr-[8px]">flex-direction:</span>
+          <span class="mr-[8px] text-[#f6899c]">flex-direction:</span>
           <div class="mr-[12px]">
             <input type="radio" value="row" name="flex-direction" id="a" checked />
             <label for="a">row</label>
@@ -27,7 +27,7 @@
 
         <!-- 主轴方向上的排列方式 -->
         <div class="flex py-[4px]">
-          <span class="mr-[8px]">justify-content:</span>
+          <span class="mr-[8px] text-[#f6899c]">justify-content:</span>
           <div class="mr-[12px]">
             <input type="radio" value="flex-start" name="justify-content" id="a1" />
             <label for="a1">flex-start</label>
@@ -52,7 +52,7 @@
 
         <!-- 侧轴方向上的排列方式  适用于有多个侧轴 -->
         <div class="flex py-[4px]">
-          <span class="mr-[8px]">align-content:</span>
+          <span class="mr-[8px] text-[#f6899c]">align-content:</span>
           <div class="mr-[12px]">
             <input type="radio" value="flex-start" name="align-content" id="a5" />
             <label for="a5">flex-start</label>
@@ -89,7 +89,7 @@
 
         <!-- 侧轴方向上的排列方式  适用于有一个侧轴 -->
         <div class="flex py-[4px]">
-          <span class="mr-[8px]">align-items:</span>
+          <span class="mr-[8px] text-[#f6899c]">align-items:</span>
           <div class="mr-[12px]">
             <input type="radio" value="flex-start" name="align-items" id="a6" />
             <label for="a6">flex-start</label>
@@ -135,7 +135,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted } from "vue";
 const startFun = () => {
   // 下方的div盒子
   const container = document.getElementById("divContainer");
@@ -175,8 +175,7 @@ const startFun = () => {
 
 onMounted(() => {
   startFun();
-})
-
+});
 </script>
 
 <style scoped>

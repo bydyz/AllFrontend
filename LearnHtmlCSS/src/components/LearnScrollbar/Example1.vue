@@ -8,7 +8,7 @@
 <script setup>
 </script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 /* 基础滚动条样式 - Webkit 浏览器（Chrome, Safari, Edge） */
 .custom-scrollbar {
   width: 300px;

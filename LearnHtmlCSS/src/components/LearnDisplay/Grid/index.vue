@@ -9,86 +9,91 @@ import GridTemplate7 from "./GridTemplate7.vue";
 import Masonry1 from "./Masonry1.vue";
 import Masonry2 from "./Masonry2.vue";
 import Masonry3 from "./Masonry3.vue";
-import MasonryOther1 from "./MasonryOther1.vue";
+import ColumnCount from "./ColumnCount.vue";
 import MasonryOther2 from "./MasonryOther2.vue";
 import GridTemplateAreas1 from "./GridTemplateAreas1.vue";
 import GridTemplateAreas2 from "./GridTemplateAreas2.vue";
 import GridTemplateAreas3 from "./GridTemplateAreas3.vue";
+import AutoFillAutoFit from "./AutoFillAutoFit.vue";
 import GridAutoFlow1 from "./GridAutoFlow1.vue";
 import { ref, shallowRef, markRaw } from "vue";
 
 let componentsArray = ref([
   {
-    name: 'GridTemplate1',
-    component: markRaw(GridTemplate1)
+    name: "GridTemplate1",
+    component: markRaw(GridTemplate1),
   },
   {
-    name: 'GridTemplate2',
-    component: markRaw(GridTemplate2)
+    name: "GridTemplate2",
+    component: markRaw(GridTemplate2),
   },
   {
-    name: 'GridTemplate3',
-    component: markRaw(GridTemplate3)
+    name: "GridTemplate3",
+    component: markRaw(GridTemplate3),
   },
   {
-    name: 'GridTemplate4',
-    component: markRaw(GridTemplate4)
+    name: "GridTemplate4",
+    component: markRaw(GridTemplate4),
   },
   {
-    name: 'GridTemplate5',
-    component: markRaw(GridTemplate5)
+    name: "GridTemplate5",
+    component: markRaw(GridTemplate5),
   },
   {
-    name: 'GridTemplate6',
-    component: markRaw(GridTemplate6)
+    name: "GridTemplate6",
+    component: markRaw(GridTemplate6),
   },
   {
-    name: 'GridTemplate7',
-    component: markRaw(GridTemplate7)
+    name: "GridTemplate7",
+    component: markRaw(GridTemplate7),
   },
   {
-    name: 'masonry1',
-    component: markRaw(Masonry1)
+    name: "masonry1",
+    component: markRaw(Masonry1),
   },
   {
-    name: 'masonry2',
-    component: markRaw(Masonry2)
+    name: "masonry2",
+    component: markRaw(Masonry2),
   },
   {
-    name: 'masonry3',
-    component: markRaw(Masonry3)
+    name: "masonry3",
+    component: markRaw(Masonry3),
   },
   {
-    name: 'MasonryOther1',
-    component: markRaw(MasonryOther1)
+    name: "ColumnCount",
+    component: markRaw(ColumnCount),
   },
   {
-    name: 'MasonryOther2',
-    component: markRaw(MasonryOther2)
+    name: "MasonryOther2",
+    component: markRaw(MasonryOther2),
   },
   {
-    name: 'GridTemplateAreas1',
-    component: markRaw(GridTemplateAreas1)
+    name: "GridTemplateAreas1",
+    component: markRaw(GridTemplateAreas1),
   },
   {
-    name: 'GridTemplateAreas2',
-    component: markRaw(GridTemplateAreas2)
+    name: "GridTemplateAreas2",
+    component: markRaw(GridTemplateAreas2),
   },
   {
-    name: 'GridTemplateAreas3',
-    component: markRaw(GridTemplateAreas3)
+    name: "GridTemplateAreas3",
+    component: markRaw(GridTemplateAreas3),
   },
   {
-    name: 'GridAutoFlow1',
-    component: markRaw(GridAutoFlow1)
+    name: "AutoFillAutoFit",
+    component: markRaw(AutoFillAutoFit),
   },
-])
+  {
+    name: "GridAutoFlow1",
+    component: markRaw(GridAutoFlow1),
+  },
+]);
 let componentId = shallowRef(GridTemplate1);
 </script>
 
 <template>
   <div class="ml-[50px] mt-[20px]">
-    <div style="display: flex; flex-wrap: wrap;">
+    <div style="display: flex; flex-wrap: wrap">
       <div id="myDivButton" class="cursor-pointer" :class="componentId === item.component ? 'bg-[pink]' : ''" v-for="(item, index) in componentsArray" :key="index" @click="componentId = item.component">{{ item.name }}</div>
     </div>
 

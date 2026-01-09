@@ -37,7 +37,7 @@
 
 <script setup></script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 /* 常规块盒子，只能实现 水平居中 */
 .textarea {
   margin: 0 8px 8px 0;
@@ -77,7 +77,7 @@
   display: flex;
 
   div {
-    margin auto
+    margin: auto;
   }
 }
 
@@ -86,7 +86,7 @@
   display: flex;
 
   .leftArea {
-    margin-right: auto
+    margin-right: auto;
   }
 }
 
@@ -94,8 +94,10 @@
   width: 1000px;
   display: flex;
 
-  .leftArea, .centerArea, .rightArea {
-    margin-right: auto
+  .leftArea,
+  .centerArea,
+  .rightArea {
+    margin-right: auto;
   }
 }
 
@@ -104,17 +106,17 @@
   display: flex;
 
   .leftArea {
-    margin-top: auto
-    margin-bottom: auto
-    margin-left: auto
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto;
   }
   .centerArea {
-    margin: auto
+    margin: auto;
   }
   .rightArea {
-    margin-top: auto
-    margin-bottom: auto
-    margin-right: auto
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-right: auto;
   }
 }
 </style>

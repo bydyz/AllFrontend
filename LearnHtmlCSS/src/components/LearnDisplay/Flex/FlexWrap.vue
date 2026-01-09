@@ -43,7 +43,7 @@ const getSelectedValue = () => {
 };
 </script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 .selectArea {
   margin: 16px 0;
   div {

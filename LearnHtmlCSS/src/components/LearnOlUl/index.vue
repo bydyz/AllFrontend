@@ -1,19 +1,19 @@
 <script setup>
-import Flex from "./Flex/index.vue";
-import Grid from "./Grid/index.vue";
+import LearnOl from "./LearnOl.vue";
+import LearnUl from "./LearnUl.vue";
 import { ref, shallowRef, markRaw } from "vue";
 
 let componentsArray = ref([
   {
-    name: "Flex",
-    component: markRaw(Flex),
+    name: '有序列表',
+    component: markRaw(LearnOl)
   },
   {
-    name: "Grid",
-    component: markRaw(Grid),
+    name: '无序列表',
+    component: markRaw(LearnUl)
   },
-]);
-let componentId = shallowRef(Grid);
+])
+let componentId = shallowRef(LearnUl);
 </script>
 
 <template>

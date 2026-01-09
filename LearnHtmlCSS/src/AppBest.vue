@@ -37,10 +37,11 @@ const componentsConfig = [
   { name: "精灵图", value: "LearnEIFPicture", loader: () => import("./components/LearnEIFPicture/index.vue") },
   { name: "间距", value: "LearnSpacing", loader: () => import("./components/LearnSpacing/index.vue") },
 ]
+
 const componentsArray = ref(componentsConfig)
 
 // 当前选中的标识（字符串）
-const componentValue = ref("LearnDisplay")
+const componentValue = ref("LearnOlUl")
 
 // ✅ 计算属性：返回对应的异步组件（不是字符串！）
 const currentComponent = computed(() => {

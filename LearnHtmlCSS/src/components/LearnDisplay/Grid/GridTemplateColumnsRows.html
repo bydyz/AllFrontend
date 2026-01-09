@@ -48,7 +48,7 @@
         display: grid;
         /* 定义列：从[start]开始，一列自动宽度，一列1fr比例，到[end]结束 */
         grid-template-columns: [start] auto [main] 1fr [end];
-        /* 定义行：header行80px，content行自动高度，footer行60px */
+        /* 定义行：从[header]开始，第一行80px，然后是[content]，第二行自动高度，然后是[footer]，第三行60px */
         grid-template-rows: [header] 80px [content] auto [footer] 60px;
         gap: 10px;
         background-color: #34495e;
@@ -71,7 +71,8 @@
 
       .header {
         grid-column: start / end;
-        grid-row: header;
+        /* 默认只 占 一行 / 一列 */
+        grid-row: header; /* 等同于 1/2 */
         background-color: #e74c3c;
       }
 
@@ -218,15 +219,15 @@
           <li>第一行高度为<strong>80px</strong></li>
           <li>第二行高度为<strong>auto</strong>（根据内容自动调整）</li>
           <li>第三行高度为<strong>60px</strong></li>
-          <li>定义了四条水平网格线：<strong>header</strong>, <strong>content</strong> 和 <strong>footer</strong></li>
+          <li>定义了四条水平网格线：给前面3条命名，<strong>header</strong>, <strong>content</strong> 和 <strong>footer</strong></li>
         </ul>
 
         <p>通过使用这些命名的网格线，我们可以轻松地将网格项目放置到网格中的特定区域，例如：</p>
         <ul>
-          <li><strong>Header</strong>: 从start到end（跨越所有列），位于header行</li>
-          <li><strong>Sidebar</strong>: 从start到main（第一列），位于content行</li>
-          <li><strong>Main Content</strong>: 从main到end（第二列），位于content行</li>
-          <li><strong>Footer</strong>: 从start到end（跨越所有列），位于footer行</li>
+          <li><strong>Header</strong>: 从start到end（跨越所有列）；从header到sidebar占据1行</li>
+          <li><strong>Sidebar</strong>: 从start到main（第一列），从sidebar到content占据1行</li>
+          <li><strong>Main Content</strong>: 从main到end（第二列），从content到footer占据1行</li>
+          <li><strong>Footer</strong>: 从start到end（跨越所有列），从footer到 -1 占据1行</li>
         </ul>
       </div>
     </div>

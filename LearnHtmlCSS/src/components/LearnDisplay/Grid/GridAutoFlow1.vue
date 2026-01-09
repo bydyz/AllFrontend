@@ -14,7 +14,7 @@
 
 <script setup></script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 .box{
     width: 600px;
     height: 600px;

@@ -15,7 +15,7 @@
 
 <script setup></script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 .masonry-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr); /* 4列 */

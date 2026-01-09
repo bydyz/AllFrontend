@@ -28,6 +28,7 @@
     <button type="button" @click="getSelectedValue()">获取选择</button>
   </div>
 
+  <h3 class="mb-[4px]">控制主轴上，项目的排列</h3>
   <div class="textarea">
     <div>1 placeholder resize vertical</div>
     <div>2 horizontal both none</div>
@@ -56,7 +57,7 @@ const getSelectedValue = () => {
 };
 </script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 .selectArea {
   margin: 16px 0;
   div {
@@ -114,7 +115,6 @@ const getSelectedValue = () => {
           
           */
   /* 主轴是水平或者竖直都可以 */
-
 
   /* 先主轴，主轴满了，沿着侧轴都下一行，然后在沿着主轴排列！！！！！！！ */
 }

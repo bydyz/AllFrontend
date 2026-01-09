@@ -43,11 +43,11 @@ let pageInfo = {
 };
 </script>
 
-<style lang="stylus" scope>
-.tableArea
-  margin 0 auto
-  width 1200px
-  table
+<style lang="scss" scope>
+.tableArea {
+  margin: 0 auto;
+  width: 1200px;
+  table {
     /*
     border-collapse CSS 属性是用来决定表格的边框是分开的还是合并的。在分隔模式下，相邻的单元格都拥有独立的边框。在合并模式下，相邻单元格共享边框
 
@@ -60,19 +60,28 @@ let pageInfo = {
       这个属性定义了水平和垂直方向上两个单元格之间空间的大小，使用百分比或像素，包括了表格的顶部与第一行的单元格、表的左边与第一列单元格、表的右边与最后一列的单元格、表的底部与最后一行单元格之间的空间。
 
       为了实现相似的效果，可以在 <table> 元素上使用 CSS 属性 border-spacing。border-spacing 在 border-collapse 设置为 collapse 时将无效。 */
-    border-spacing 0
-    width 100%
-    thead
-      tr
-        height 72px
-        background: #F8F9FB
-        th
-          border: 1px solid #F0F0F0
-    tbody
-      tr
-        height 50px
-        td
-          line-height 50px
-          text-align: center
-          border: 1px solid #F0F0F0
+    border-spacing: 0;
+    width: 100%;
+    thead {
+      tr {
+        height: 72px;
+        background: #f8f9fb;
+        th {
+          border: 1px solid #f0f0f0;
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        height: 50px;
+        td {
+          line-height: 50px;
+          text-align: center;
+          border: 1px solid #f0f0f0;
+        }
+      }
+    }
+  }
+}
 </style>

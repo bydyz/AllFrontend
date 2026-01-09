@@ -27,7 +27,7 @@
 
 <script setup></script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 /* 选择作为父元素第一个子元素的 li */
 ul li:first-child {
   background-color: #ff6b6b;

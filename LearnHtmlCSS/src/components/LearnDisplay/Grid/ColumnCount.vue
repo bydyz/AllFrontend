@@ -9,7 +9,7 @@
 
 <script setup></script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 .columns-fallback {
   column-count: 4; /* 4列 */
   column-gap: 16px;
@@ -27,14 +27,20 @@
 
 /* 响应式 */
 @media (max-width: 1024px) {
-  .columns-fallback { column-count: 3; }
+  .columns-fallback {
+    column-count: 3;
+  }
 }
 
 @media (max-width: 768px) {
-  .columns-fallback { column-count: 2; }
+  .columns-fallback {
+    column-count: 2;
+  }
 }
 
 @media (max-width: 480px) {
-  .columns-fallback { column-count: 1; }
+  .columns-fallback {
+    column-count: 1;
+  }
 }
 </style>

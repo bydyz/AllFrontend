@@ -32,6 +32,7 @@
     <button type="button" @click="getSelectedValue()">获取选择</button>
   </div>
 
+  <h3 class="mb-[4px]">控制主轴在侧轴上的排列</h3>
   <div class="textarea">
     <div>1 placeholder resize vertical</div>
     <div>2 horizontal both none</div>
@@ -59,7 +60,7 @@ const getSelectedValue = () => {
 };
 </script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 .selectArea {
   margin: 16px 0;
   div {

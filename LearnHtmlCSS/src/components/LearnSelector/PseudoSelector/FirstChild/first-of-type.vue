@@ -21,7 +21,7 @@
 
 <script setup></script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 /* 选择每个父元素中第一个 p 类型的元素 */
 .container p:first-of-type {
   background-color: #667eea;

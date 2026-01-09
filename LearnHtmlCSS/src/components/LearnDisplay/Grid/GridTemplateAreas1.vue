@@ -18,7 +18,7 @@
 
 <script setup></script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 .box {
   width: 900px;
   height: 900px;
@@ -28,13 +28,14 @@
   grid-template-columns: 200px 200px 200px;
   grid-template-rows: 200px 200px 200px;
 
-  grid-template-areas: 'a e e'
-                       'd e e'
-                       'g h i'
+  grid-template-areas:
+    "a e e"
+    "d e e"
+    "g h i";
 
   div {
     border-radius: 8px;
-    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    background: linear-gradient(135deg, #999999, #999998);
   }
 }
 /* .box div:nth-child(1){
@@ -45,7 +46,7 @@
   grid-area:e;
 } */
 
-.box div:nth-child(1){
+.box div:nth-child(1) {
   grid-area: e;
 }
 </style>

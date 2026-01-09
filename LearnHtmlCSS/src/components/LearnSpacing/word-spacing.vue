@@ -15,7 +15,7 @@
 <script setup>
 </script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 /* 正常单词间距 */
 .normal-words {
   word-spacing: normal;

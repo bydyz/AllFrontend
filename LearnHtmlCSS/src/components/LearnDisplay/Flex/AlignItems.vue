@@ -24,6 +24,7 @@
     <button type="button" @click="getSelectedValue()">获取选择</button>
   </div>
 
+  <h3 class="mb-[4px]">控制 所有项目 相对于 自己所处框框 而言的，侧轴上的排列</h3>
   <div class="textarea">
     <div>1 placeholder</div>
     <div>2 horizontal both none</div>
@@ -51,7 +52,7 @@ const getSelectedValue = () => {
 };
 </script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 .selectArea {
   margin: 16px 0;
   div {
@@ -84,15 +85,33 @@ const getSelectedValue = () => {
       baseline            项目按它们的基线对齐
    */
 
-  div:nth-child(1) { min-height: 60px; }
-  div:nth-child(2) { min-height: 70px; }
-  div:nth-child(3) { min-height: 80px; }
-  div:nth-child(4) { min-height: 90px; }
-  div:nth-child(5) { min-height: 100px; }
-  div:nth-child(6) { min-height: 110px; }
-  div:nth-child(7) { min-height: 120px; }
-  div:nth-child(8) { min-height: 130px; }
-  div:nth-child(9) { min-height: 140px; }
+  div:nth-child(1) {
+    min-height: 60px;
+  }
+  div:nth-child(2) {
+    min-height: 70px;
+  }
+  div:nth-child(3) {
+    min-height: 80px;
+  }
+  div:nth-child(4) {
+    min-height: 90px;
+  }
+  div:nth-child(5) {
+    min-height: 100px;
+  }
+  div:nth-child(6) {
+    min-height: 110px;
+  }
+  div:nth-child(7) {
+    min-height: 120px;
+  }
+  div:nth-child(8) {
+    min-height: 130px;
+  }
+  div:nth-child(9) {
+    min-height: 140px;
+  }
 }
 
 .textarea div {

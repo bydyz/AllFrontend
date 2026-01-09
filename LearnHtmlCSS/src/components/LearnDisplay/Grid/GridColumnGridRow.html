@@ -190,8 +190,26 @@
         padding-bottom: 10px;
       }
 
-      .explanation p {
-        margin-bottom: 15px;
+      /* .explanation {
+        h3:nth-child(n + 3) {
+          margin-top: 18px;
+        }
+      } */
+      /* .explanation {
+        h3:not(:first-of-type) {
+          margin-top: 1.5rem; // 或你需要的值
+        }
+      } */
+      .explanation {
+        h3 ~ h3 {
+          margin-top: 1.5rem;
+        }
+      }
+      /* 会给第一个h3之后的所有h3加margin
+      不管中间是否有其他元素 */
+
+      .explanation ul {
+        margin-left: 35px;
       }
 
       .highlight {

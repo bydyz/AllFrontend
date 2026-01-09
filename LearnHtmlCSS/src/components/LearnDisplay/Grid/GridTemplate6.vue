@@ -20,8 +20,8 @@
 
 <script setup></script>
 
-<style scoped lang="stylus">
-div.box{
+<style scoped lang="scss">
+div.box {
   width: 800px;
   height: 800px;
   display: grid;
@@ -36,7 +36,7 @@ div.box{
 
   div {
     border-radius: 8px;
-    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    background: linear-gradient(135deg, #999999, #999998);
   }
 }
 </style>

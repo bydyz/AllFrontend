@@ -13,13 +13,15 @@
   </table>
 </template>
 
-<style scope lang="stylus">
-table
-  border-spacing 0
-td
-  width 50px
-  height 50px
-  line-height 50px
-  text-align: center
-  border: 1px solid #999
+<style scope lang="scss">
+table {
+  border-spacing: 0;
+}
+td {
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  border: 1px solid #999;
+}
 </style>

@@ -14,13 +14,13 @@
 
 <script setup></script>
 
-<style scoped lang="stylus">
-div.box{
+<style scoped lang="scss">
+div.box {
   width: 600px;
   height: 600px;
   overflow: auto;
   display: grid;
-  gap: 10px 15px
+  gap: 10px 15px;
 
   /* 1 固定值 */
   grid-template-rows: 200px 300px 200px;
@@ -30,7 +30,7 @@ div.box{
 
   div {
     border-radius: 8px;
-    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    background: linear-gradient(135deg, #999999, #999998);
   }
 }
 </style>

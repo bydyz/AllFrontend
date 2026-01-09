@@ -1,5 +1,6 @@
 <template>
   <div class="selectRowsArea flex flex-wrap">
+    <span class="mr-[8px] text-[#f6899c]">grid-template-rows:</span>
     <div>
       <input type="radio" name="111" value="200px 200px 200px" id="1a" checked />
       <label for="1a">200px 200px 200px</label>
@@ -46,6 +47,7 @@
     </div>
   </div>
   <div class="selectColumnsArea flex flex-wrap">
+    <span class="mr-[8px] text-[#f6899c]">grid-template-columns:</span>
     <div>
       <input type="radio" name="222" value="200px 200px 200px" id="2a" checked />
       <label for="2a">200px 200px 200px</label>
@@ -125,7 +127,8 @@ const getSelectedValue = () => {
 </script>
 
 <style scoped>
-.selectRowsArea, .selectColumnsArea {
+.selectRowsArea,
+.selectColumnsArea {
   margin: 16px 0;
   div {
     margin-right: 16px;
@@ -140,7 +143,7 @@ div.box {
   width: 900px;
   height: 900px;
   display: grid;
-  gap:20px 20px;
+  gap: 20px 20px;
 
   /* 1 固定值 */
   grid-template-rows: 200px 200px 200px;

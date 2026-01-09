@@ -16,7 +16,7 @@
 
 <script setup></script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 /* 滚动条整体  样式设置 */
 // 若这设置这个，则不会 有滑块、两端按钮
 .custom-scrollbar::-webkit-scrollbar {

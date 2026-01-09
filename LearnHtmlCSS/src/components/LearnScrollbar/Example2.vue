@@ -4,11 +4,9 @@
   </div>
 </template>
 
+<script setup></script>
 
-<script setup>
-</script>
-
-<style scoped lang="stylus">
+<style scoped lang="scss">
 /* 基础滚动条样式 - Webkit 浏览器（Chrome, Safari, Edge） */
 .custom-scrollbar {
   width: 300px;
@@ -30,7 +28,7 @@
 
 ::-webkit-scrollbar-thumb {
   background: #c1c1ee;
-  border-radius: 6px;s
+  border-radius: 6px;
   border: 2px solid #f1f1f1;
 }
 </style>

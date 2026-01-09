@@ -13,51 +13,53 @@ import { ref, shallowRef, markRaw } from "vue";
 
 let componentsArray = ref([
   {
-    name: 'AllInExample',
-    component: markRaw(AllInExample)
+    name: "AllInExample",
+    component: markRaw(AllInExample),
   },
   {
-    name: 'MarginAuto',
-    component: markRaw(MarginAuto)
+    name: "MarginAuto",
+    component: markRaw(MarginAuto),
   },
   {
-    name: 'flex-direction',
-    component: markRaw(FlexDirection)
+    name: "flex-direction",
+    component: markRaw(FlexDirection),
   },
   {
-    name: 'justify-content',
-    component: markRaw(JustifyContent)
+    name: "justify-content",
+    component: markRaw(JustifyContent),
   },
   {
-    name: 'align-content',
-    component: markRaw(AlignContent)
+    name: "align-content",
+    component: markRaw(AlignContent),
   },
   {
-    name: 'align-items',
-    component: markRaw(AlignItems)
+    name: "align-items",
+    component: markRaw(AlignItems),
   },
   {
-    name: 'flex-wrap',
-    component: markRaw(FlexWrap)
+    name: "align-self",
+    component: markRaw(AlignSelf),
   },
   {
-    name: 'align-self',
-    component: markRaw(AlignSelf)
+    name: "flex-wrap",
+    component: markRaw(FlexWrap),
   },
   {
-    name: 'order',
-    component: markRaw(Order)
+    name: "order",
+    component: markRaw(Order),
   },
   {
-    name: 'flex',
-    component: markRaw(FlexNum)
+    name: "flex",
+    component: markRaw(FlexNum),
   },
-])
+]);
 let componentId = shallowRef(AllInExample);
 </script>
 
 <template>
   <div class="ml-[50px] mt-[20px]">
+    <h3 class="mb-[8px]">justify-items 、 justify-self 不能用于 flex</h3>
+
     <div style="display: flex">
       <div id="myDivButton" class="cursor-pointer" :class="componentId === item.component ? 'bg-[pink]' : ''" v-for="(item, index) in componentsArray" :key="index" @click="componentId = item.component">{{ item.name }}</div>
     </div>

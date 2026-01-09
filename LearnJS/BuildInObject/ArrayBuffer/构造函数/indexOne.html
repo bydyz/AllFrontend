@@ -41,7 +41,7 @@
       }
       .card-container {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-columns: 1fr 1fr;
         gap: 20px;
         margin-bottom: 40px;
       }
@@ -155,6 +155,11 @@
     </style>
   </head>
   <body>
+    <script src="/run.js"></script>
+    <div>
+      <button onclick="window.MyUtils.onBackToParent()">返回上一级</button>
+    </div>
+
     <div class="container">
       <header>
         <h1>ArrayBuffer(length, options) 参数详解</h1>
