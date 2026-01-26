@@ -2,7 +2,6 @@
 // slice(start)
 // slice(start, end)
 
-
 // 参数
 //   start 可选
 //     要开始提取的位置索引（从 0 开始），将被转换为整数。
@@ -19,17 +18,15 @@
 //       如果 end >= buffer.length 或省略了 end，则会使用 buffer.length，则会导致直到末尾的所有元素都被提取。
 //       如果标准化后的 end 位置在 start 位置之前，则不会提取任何内容。
 
-
 // 返回值
 //   一个新的 ArrayBuffer 对象。
 
-
-// 描述  
-//   ArrayBuffer 实例的 slice() 方法返回一个新的 ArrayBuffer 实例，其包含原 ArrayBuffer 
+// 描述
+//   ArrayBuffer 实例的 slice() 方法返回一个新的 ArrayBuffer 实例，其包含原 ArrayBuffer
 //     实例中从 begin 开始（包含）到 end 结束（不含）的所有字节的副本。
-
 
 const buf1 = new ArrayBuffer(8);
 const buf2 = buf1.slice(1);
 
-console.log(buf1.byteLength, buf2.byteLength)
+console.log(buf1.byteLength, buf2.byteLength);
+console.log("");

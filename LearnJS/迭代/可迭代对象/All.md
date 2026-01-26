@@ -8,6 +8,11 @@
 
 只能迭代一次的可迭代对象（例如生成器）通常从它们的 [Symbol.iterator]() 方法中返回 this，而那些可以多次迭代的方法必须在每次调用 [Symbol.iterator]() 时返回一个新的迭代器。
 
+**虽然任何对象都可以实现next()方法，但只有具有[Symbol.iterator]方法的对象才是可迭代对象** 。
+
+* 迭代器: 任何实现了next()方法的对象
+* 可迭代对象: 具有[Symbol.iterator]方法的对象，该方法返回一个迭代器
+
 
 ```javascript
 function* makeIterator() {
@@ -81,7 +86,7 @@ String、Array、TypedArray、Map 和 Set 都是内置可迭代对象，因为�
 
 # 用于可迭代对象的语法
 
-一些语句和表达式专用于可迭代对象，例如 for...of 循环、展开语法、yield* 和解构语法。
+一些语句和表达式专用于可迭代对象，例如 for...of 循环、展开语法、yield*、解构语法、可以用于 Array.from()、可以用于 Map、Set 等构造函数。
 
 ```javascript
 for (let value of ["a", "b", "c"]) {

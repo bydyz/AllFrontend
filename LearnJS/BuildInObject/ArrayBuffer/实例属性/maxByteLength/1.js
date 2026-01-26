@@ -1,18 +1,17 @@
-const buffer = new ArrayBuffer(8, { maxByteLength: 16 });
+const bufferA = new ArrayBuffer(8, { maxByteLength: 16 });
 
-console.log(buffer.byteLength);
+console.log(bufferA.byteLength);
 // Expected output: 8
 
-console.log(buffer.maxByteLength);
+console.log(bufferA.maxByteLength);
 // Expected output: 16
 
+const bufferB = new ArrayBuffer(8);
 
-
-
-const buffer1 = new ArrayBuffer(8);
-
-console.log(buffer1.byteLength);
+console.log(bufferB.byteLength);
 // Expected output: 8
 
-console.log(buffer1.maxByteLength);
+console.log(bufferB.maxByteLength);
 // Expected output: 8
+
+console.log("");

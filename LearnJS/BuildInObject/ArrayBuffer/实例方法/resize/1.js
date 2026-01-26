@@ -19,15 +19,13 @@
 
 //   请注意，你可以使用 resize() 来缩小和增大 ArrayBuffer——即使 newLength 小于 ArrayBuffer 的当前 byteLength。
 
+const bufferResize = new ArrayBuffer(8, { maxByteLength: 16 });
 
-
-
-const buffer = new ArrayBuffer(8, { maxByteLength: 16 });
-
-console.log(buffer.byteLength);
+console.log(bufferResize.byteLength);
 // Expected output: 8
 
-buffer.resize(12);
+console.log("resize的返回值：", bufferResize.resize(12));
 
-console.log(buffer.byteLength);
+console.log(bufferResize.byteLength);
 // Expected output: 12
+console.log("");

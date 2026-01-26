@@ -31,5 +31,5 @@
 const adder = new Function("a", "b", "return a + b");
 
 // 调用函数
-adder(2, 6);
+console.log(adder(2, 6));
 // 8
