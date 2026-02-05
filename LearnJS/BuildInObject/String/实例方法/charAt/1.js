@@ -6,7 +6,8 @@
 //   默认   0
 //   范围   0 – str.length - 1    否则 为 空字符
 
-
+// 作用：获取对应索引号位置的字符
+// 返回值：对应索引号位置的字符
 
 const sentence = "The quick brown fox jumps over the lazy dog.";
 

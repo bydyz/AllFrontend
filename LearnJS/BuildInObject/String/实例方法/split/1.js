@@ -5,6 +5,8 @@
 
 // 通过 分隔符 separator，对字符串进行分割，形成数组，limit表示最多形成 limit 个元素
 
+// 返回值：切割后的数组
+
 const str = "The quick brown fox jumps over the lazy dog.";
 
 const words = str.split(" ");

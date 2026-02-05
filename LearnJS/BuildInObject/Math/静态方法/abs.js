@@ -1,4 +1,7 @@
-// Math.abs(x) 函数返回一个数字的绝对值。
+// Math.abs(x)
+
+// 作用：对数字进行绝对值运算
+// 返回值：绝对值运算后的结果
 
 
 Math.abs(-Infinity); // Infinity

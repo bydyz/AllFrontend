@@ -1,4 +1,8 @@
+// 这个不影响原本的数组！！！
+
 // 不加 /g  替换第一个      加了 /g  替换全部
+
+// 返回值：替换好的字符串
 
 const paragraph = "I think Ruth's dog is cuter than your dog!";
 

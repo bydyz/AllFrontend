@@ -1,4 +1,9 @@
-// Math.max() 函数返回作为输入参数的最大数字，如果没有参数，则返回 -Infinity。
+// Math.max(value1, value2 ... )
+
+// 作用：取 value1, value2 ... 的最大值
+// 返回值：选取出来的最大值
+
+// 如果没有参数，则返回 -Infinity。
 
 
 
