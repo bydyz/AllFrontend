@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app"></div>
+  
+  <br>
+  <br>
+
+  <div id="myElement">Hello, <span style="visibility: hidden;">Hidden</span> World!</div>
+  
+  <br>
+  <br>
+
+  <div id="myElement2">Hello, <span style="display: none;">Hidden</span> World!</div>
+
+
+
+  <script>
+    const container = document.getElementById( 'app' )
+
+    const el = document.createElement('div');
+    el.innerText = "哈哈哈"
+    el.textContent = "呵呵呵"
+
+    el.addEventListener("click", function divClick () {
+      alert('div clicked!');
+    })
+
+    function divHover() {
+      alert('div hovered!');
+    }
+    el.addEventListener("mouseover", divHover )
+    
+
+    el.setAttribute('style', 'color: red; font-size: 18px; text-align: center; cursor: pointer')
+
+    container.appendChild(el);
+
+
+    const fruits = ['apple', 'banana', 'orange', 'apple'];
+    const uniqueFruitsSet = new Set(fruits);
+    console.log(uniqueFruitsSet);
+
+
+
+    console.log('')
+    console.log('-------------------------------------------------------')
+    console.log('')
+
+
+
+    const myElement = document.getElementById('myElement');
+
+    console.log('innerText:', myElement.innerText);
+    // 输出: innerText: Hello,  World!   (中间多一个空格)
+
+    console.log('textContent:', myElement.textContent);
+    // 输出: textContent: Hello, Hidden World!
+
+
+
+    console.log('')
+    console.log('-------------------------------------------------------')
+    console.log('')
+
+
+ 
+    const myElement2 = document.getElementById('myElement');
+
+    console.log('innerText:', myElement2.innerText);
+    // 输出: innerText: Hello, World!   (中间没有多余空格)
+
+    console.log('textContent:', myElement2.textContent);
+    // 输出: textContent: Hello, Hidden World!
+  </script>
+</body>
+</html>

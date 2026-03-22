@@ -166,7 +166,7 @@ div.box {
   /* 第二个关键字处可去固定值，也可以取百分比 */
 
   /* 5. fr 片段 */
-  /* grid-template-rows: 1fr 2fr  1fr;
+  /* grid-template-rows: 1fr 2fr 1fr;
             grid-template-columns: 1fr 50%  1fr; */
   /* 关键字可取fr，也可取固定的px，也可取百分比，fr部分是按照fr的数值比例进行划分的 */
 
@@ -176,8 +176,8 @@ div.box {
             grid-template-columns: 200px  200px 200px; */
 
   /* 7 auto   自动填满剩余空间 */
-  /* grid-template-rows: 100px  200px auto;
-            grid-template-columns: 100px  200px auto; */
+  /* grid-template-rows: 100px 200px auto;
+            grid-template-columns: 100px 200px auto; */
 
   div {
     background-color: #bdbaba;

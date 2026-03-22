@@ -29,4 +29,4 @@ const buf1 = new ArrayBuffer(8);
 const buf2 = buf1.slice(1);
 
 console.log(buf1.byteLength, buf2.byteLength);
-console.log("");
+// 8 7

@@ -21,6 +21,17 @@ function makeRangeIterator(start = 0, end = Infinity, step = 1) {
         done: true 
       };
     },
+    return() {
+      console.log('迭代器提前终止，清理资源...');
+      // 执行清理，比如关闭文件句柄
+      current = 0; // 重置状态
+      return { done: true };
+    },
+    throw(error) {
+      console.log('接收到异常:', error);
+      // 可以选择处理异常，然后继续迭代或终止
+      return { done: true }; // 终止迭代
+    }
   };
 
   return rangeIterator;

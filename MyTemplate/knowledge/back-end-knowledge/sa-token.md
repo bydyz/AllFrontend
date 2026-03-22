@@ -1,0 +1,76 @@
+### sa-token配置文件
+
+sa-token: 
+  - token 名称（同时也是 cookie 名称）
+    - token-name: Authorization
+  - token 有效期（单位：秒） 默认30天，-1 代表永久有效
+    - timeout: 2592000
+  - token 最低活跃频率（单位：秒），如果 token 超过此时间没有访问系统就会被冻结，默认-1 代表不限- 制，永不冻结
+    - active-timeout: -1
+  - 是否允许同一账号多地同时登录 （为 true 时允许一起登录, 为 false 时新登录挤掉旧登录）
+    - is-concurrent: true
+  - 在多人登录同一账号时，是否共用一个 token （为 true 时所有登录共用一个 token, 为 false 时每次登- 录新建一个 token）
+    - is-share: false
+  - token 风格（默认可取值：uuid、simple-uuid、random-32、random-64、random-128、tik）
+    - token-style: simple-uuid
+  - 是否输出操作日志 
+    - is-log: true
+  - 允许动态设置 token 有效期
+    - dynamic-active-timeout: true
+  - 允许从 请求参数 读取 token
+    - is-read-body: true
+  - 允许从 header 读取 token
+    - is-read-header: true
+  - 关闭 cookie 鉴权 从根源杜绝 csrf 漏洞风险
+    - is-read-cookie: false
+  - token前缀
+    - token-prefix: "Bearer"   
+  - 内部调用验证 
+    - checkSameToken: false
+    - jwt-secret-key: sStwv7GrgngFnS/LNa+UeBxd5Yx3ceUL7pqMAEBm7/Y=
+
+
+以上配置文件展示了如何为 Sa-Token 框架进行详细的配置，以满足特定的安全性和功能性需求。这些配置项涵盖了从 Token 的生成、有效期管理到读取位置等多个方面。
+
+- token-name: Authorization
+  - 含义：指定 Token 的名称，同时也是 HTTP 请求头或 Cookie 中使用的名称。
+  - 作用：默认情况下，Sa-Token 使用 satoken 作为 Token 名称。通过设置此选项，你可以将其更改为 Authorization，这在 RESTful API 中是一个常见的做法，符合 OAuth 2.0 标准。
+- timeout: 2592000
+  - 含义：定义 Token 的有效期（单位：秒）。这里设置为 2,592,000 秒，即 30 天。
+  - 作用：确保 Token 在一定时间内有效，超过该时间后 Token 将失效，用户需要重新登录。设置为 -1 表示永久有效，但不推荐用于生产环境，因为这样会增加安全风险。
+- active-timeout: -1
+  - 含义：设置 Token 最低活跃频率（单位：秒），即如果 Token 超过此时间没有访问系统就会被冻结。
+  - 作用：用于实现“自动登出”功能。设置为 -1 表示不限制，Token 不会被冻结。对于长期在线的应用，可以适当调整此值来提高安全性。
+- is-concurrent: true
+  - 含义：控制是否允许同一账号多地同时登录。
+  - 作用：当设置为 true 时，允许多个设备同时登录同一个账号；设置为 false 时，新的登录会挤掉旧的登录。根据应用的需求选择合适的设置，以平衡用户体验和安全性。
+- is-share: false
+  - 含义：决定在同一账号多设备登录时是否共用一个 Token。
+  - 作用：当设置为 true 时，所有登录共用一个 Token；设置为 false 时，每次登录都会生成新的 Token。通常建议设置为 false，以增强安全性并便于跟踪不同的登录会话。
+- token-style: simple-uuid
+  - 含义：指定生成 Token 的风格。
+  - 作用：提供了多种 Token 生成方式供选择，如 uuid、simple-uuid、random-32 等。simple-uuid 是一种简洁且随机性较高的生成方式，适用于大多数场景。
+- is-log: true
+  - 含义：是否输出操作日志。
+  - 作用：启用此选项可以记录用户的登录和其他重要操作，有助于审计和故障排查。确保日志数据得到妥善保护，避免泄露敏感信息。
+- dynamic-active-timeout: true
+  - 含义：是否允许动态设置 Token 有效期。
+  - 作用：当设置为 true 时，可以在运行时调整 Token 的有效期，灵活性更高。这对于某些特殊应用场景非常有用，例如临时延长用户的登录状态。
+- is-read-body: true
+  - 含义：是否允许从请求体中读取 Token。
+  - 作用：启用此选项可以让应用程序从请求体中获取 Token，适合 POST 请求等场景。注意，这种方式不如使用 Header 安全，应谨慎使用。
+- is-read-header: true
+  - 含义：是否允许从 HTTP 请求头中读取 Token。
+  - 作用：这是最常用的方式之一，特别是与 Authorization 头配合使用时。它提供了更高的安全性和灵活性，是推荐的做法。
+- is-read-cookie: false
+  - 含义：是否允许从 Cookie 中读取 Token。
+  - 作用：关闭此选项可以防止 CSRF 攻击，因为 Token 不再依赖于浏览器自动发送的 Cookie。这对于纯 API 应用非常重要，但如果你的应用依赖于 Web 页面，则需要权衡利弊。
+- token-prefix: "Bearer"
+  - 含义：设置 Token 前缀，默认为 Bearer。
+  - 作用：遵循 OAuth 2.0 标准，确保 Token 在传输时带有正确的前缀。这对于兼容其他基于 OAuth 的系统非常重要。
+- checkSameToken: false
+  - 含义：是否在内部调用时验证 Token 是否相同。
+  - 作用：当设置为 false 时，内部服务之间的调用不会严格检查 Token 的一致性，提高了灵活性。对于微服务架构尤其有用。
+- jwt-secret-key: sStwv7GrgngFnS/LNa+UeBxd5Yx3ceUL7pqMAEBm7/Y=
+  - 含义：JWT 加密密钥，用于签名和验证 JWT Token。
+  - 作用：确保 JWT Token 的完整性和真实性。务必保管好这个密钥，不要泄露给未经授权的人员。考虑定期更换密钥，并采用安全的方式存储和分发密钥。

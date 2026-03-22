@@ -1,0 +1,24 @@
+# http://editorconfig.org
+
+
+# EditorConfig for VS Code  会读取  .editorconfig文件中的配置，潜移默化的进行样式修改
+# 如：indent_style = tab  设置缩进为tab     indent_size = 8 # 缩进大小   这样，一个tab便会变为8，backpace一次删除也会以八个空格为单位，若前面有 1-8 个空格，一个backpace便会没有，倘若有9个，则第一个backpace只会少1个，第二个backpace会少8个
+
+# 又如 trim_trailing_whitespace = true # 去除行尾的任意空白字符  则在最后加空白字符，也会被删除
+
+# 又如 insert_final_newline = true # 始终在文件末尾插入一个新行  则在总会在最后加个新行，即使你删掉也会再次出现
+
+
+root = true
+
+[*] # 表示所有文件适用
+charset = utf-8 # 设置文件字符集为 utf-8
+indent_style = space # 缩进风格（tab | space）
+indent_size = 2 # 缩进大小
+end_of_line = crlf # 控制换行类型(lf | cr | crlf)
+trim_trailing_whitespace = true # 去除行尾的任意空白字符
+insert_final_newline = true # 始终在文件末尾插入一个新行
+
+[*.md] # 表示仅 md 文件适用以下规则
+max_line_length = off
+trim_trailing_whitespace = false
