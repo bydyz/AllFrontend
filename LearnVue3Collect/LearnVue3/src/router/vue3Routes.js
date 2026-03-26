@@ -141,4 +141,17 @@ export default [
       },
     ]
   },
+  {
+    path: '/specialUse',
+    component: () => import('@/views/Vue3API/SpecialUse'),
+    redirect: '/specialUse/propsAllEmitsAll',
+    name: 'SpecialUse',
+    children: [
+      {
+        path: '/specialUse/propsAllEmitsAll',
+        component: () => import('@/views/Vue3API/SpecialUse/PropsAllEmitsAll'),
+        name: 'PropsAllEmitsAll'
+      },
+    ]
+  },
 ]

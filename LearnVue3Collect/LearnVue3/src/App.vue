@@ -10,7 +10,7 @@ let apiType = ref('Vue')
 let pathList = ref([])
 
 const allPathList = ref({
-  'Vue': ['/data', '/provideInject', '/computed', '/lifeCircle', '/watch', '/props', '/emits', '/pinia', '/useSlot'],
+  'Vue': ['/data', '/provideInject', '/computed', '/lifeCircle', '/watch', '/props', '/emits', '/pinia', '/useSlot', '/specialUse'],
   'JS': ['/bom'],
   'Example': ['/example/1', '/example/2'],
 })
