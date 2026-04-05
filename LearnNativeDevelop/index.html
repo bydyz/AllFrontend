@@ -12,11 +12,12 @@
         box-sizing: border-box;
       }
       /* scroll-behavior 应该设置在「可滚动的容器元素」上 */
-      html {
-        scroll-behavior: smooth; /* 平滑滚动 */
-      }
-      body {
-        padding: 16px;
+      /* html {
+        scroll-behavior: smooth;  平滑滚动
+      } */
+      html, body, #app {
+        height: 100%;
+        overflow: hidden;
       }
       #myDivButton {
         padding: 0 12px;

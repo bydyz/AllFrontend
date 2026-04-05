@@ -26,7 +26,7 @@ const componentsConfig = [
 const componentsArray = ref(componentsConfig);
 
 // 当前选中的标识（字符串）
-const componentValue = ref("InputGather");
+const componentValue = ref("CustomCalender");
 
 // ✅ 计算属性：返回对应的异步组件（不是字符串！）
 const currentComponent = computed(() => {
@@ -38,8 +38,8 @@ const currentComponent = computed(() => {
 </script>
 
 <template>
-  <div>
-    <div style="display: flex; flex-wrap: wrap">
+  <div class="app-container">
+    <div class="nav-bar">
       <div id="myDivButton" class="cursor-pointer" :class="componentValue === item.value ? 'bg-[pink]' : ''" v-for="(item, index) in componentsArray" :key="index" @click="componentValue = item.value">{{ item.name }}</div>
     </div>
 
@@ -48,4 +48,20 @@ const currentComponent = computed(() => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.app-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.nav-bar {
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 10px;
+  gap: 10px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+</style>
