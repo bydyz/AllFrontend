@@ -18,8 +18,8 @@ function lazyLoad(loader) {
 
 // 🚀 组件配置：只存加载函数，不实际加载
 const componentsConfig = [
-  { name: "拖曳", value: "JustCSSAndJs", loader: () => import("./1拖曳修改div尺寸/index.vue") },
-  { name: "滚动", value: "RealizeScroll", loader: () => import("./2滚动实现/index.vue") },
+  { name: "拖曳", value: "JustCSSAndJs", loader: () => import("./1DropChangeDivSize/index.vue") },
+  { name: "滚动", value: "RealizeScroll", loader: () => import("./2ScrollRealize/index.vue") },
   { name: "input集合", value: "InputGather", loader: () => import("./3InputGather/index.vue") },
   { name: "自定义日历", value: "CustomCalender", loader: () => import("./ACustomCalendar/index.vue") },
 ];

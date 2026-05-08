@@ -11,6 +11,8 @@ import { ref } from 'vue'
   </nav>
   <p>通常情况下：父组件模板中的表达式只能访问父组件的作用域；子组件模板中的表达式只能访问子组件的作用域。</p>
 
+  <hr>
+
   <RouterView />
 </template>
 

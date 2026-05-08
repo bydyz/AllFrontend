@@ -233,11 +233,11 @@ const nextMonth = () => {
   }
   
   &.completed-false {
-    background: #fff1f0;
+    background: #ffd8d4;
   }
   
   &.completed-true {
-    background: #f6ffed;
+    background: #e0f9c6;
   }
 }
 
@@ -293,9 +293,11 @@ const nextMonth = () => {
 
 .task-text {
   flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;        /* 限制显示的行数 */
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  text-overflow: ellipsis;      /* 可选，但通常配合使用 */
 }
 
 .task-status {

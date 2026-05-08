@@ -53,7 +53,7 @@
       "weekday": "Saturday",
       "disabled": true,
       "tasks": [],
-      "completed": true
+      "completed": null
     },
     {
       "year": 2026,
@@ -62,27 +62,14 @@
       "weekday": "Sunday",
       "disabled": true,
       "tasks": [],
-      "completed": false
+      "completed": null
     },
     {
       "year": 2026,
       "month": 4,
       "day": 6,
       "weekday": "Monday",
-      "tasks": [
-        {
-          "text": "学习 React 222",
-          "status": 2
-        },
-        {
-          "text": "学习 React 111",
-          "status": 1
-        },
-        {
-          "text": "学习 React 000",
-          "status": 0
-        }
-      ],
+      "tasks": [],
       "completed": null
     },
     {
@@ -138,15 +125,25 @@
       "month": 4,
       "day": 13,
       "weekday": "Monday",
-      "tasks": [],
-      "completed": null
+      "tasks": [
+        {
+          "text": "弄清 Function Calling、MCP、Agent、Skill、SubAgent、Command、Ex",
+          "status": 0
+        }
+      ],
+      "completed": false
     },
     {
       "year": 2026,
       "month": 4,
       "day": 14,
       "weekday": "Tuesday",
-      "tasks": [],
+      "tasks": [
+        {
+          "text": "弄清 Function Calling、MCP、Agent、Skill、SubAgent、Command、Ex",
+          "status": 0
+        }
+      ],
       "completed": null
     },
     {

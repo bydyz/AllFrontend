@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { watchEffect, watch, ref } from "vue";
+import { watchEffect, watch, ref, reactive } from "vue";
 
 let counter = ref(0);
 let name = ref("why");
