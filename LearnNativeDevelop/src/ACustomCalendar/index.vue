@@ -133,7 +133,7 @@ const nextMonth = () => {
 
 <style scoped lang="scss">
 .calendar-container {
-  flex: 1;
+  height: calc(100vh - 74px);
   display: flex;
   justify-content: center;
   align-items: flex-start;

@@ -21,12 +21,13 @@ const componentsConfig = [
   { name: "拖曳", value: "JustCSSAndJs", loader: () => import("./1DropChangeDivSize/index.vue") },
   { name: "滚动", value: "RealizeScroll", loader: () => import("./2ScrollRealize/index.vue") },
   { name: "input集合", value: "InputGather", loader: () => import("./3InputGather/index.vue") },
+  { name: "自定义虚拟滚动", value: "CustomizedVirtualScrolling", loader: () => import("./4CustomizedVirtualScrolling/index.vue") },
   { name: "自定义日历", value: "CustomCalender", loader: () => import("./ACustomCalendar/index.vue") },
 ];
 const componentsArray = ref(componentsConfig);
 
 // 当前选中的标识（字符串）
-const componentValue = ref("CustomCalender");
+const componentValue = ref("CustomizedVirtualScrolling");
 
 // ✅ 计算属性：返回对应的异步组件（不是字符串！）
 const currentComponent = computed(() => {
@@ -44,7 +45,10 @@ const currentComponent = computed(() => {
     </div>
 
     <!-- 渲染动态异步组件 -->
-    <component :is="currentComponent" />
+     <div class="component-container">
+      <component :is="currentComponent" />
+     </div>
+    
   </div>
 </template>
 
@@ -53,7 +57,7 @@ const currentComponent = computed(() => {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: auto;
 }
 .nav-bar {
   flex-shrink: 0;
@@ -63,5 +67,9 @@ const currentComponent = computed(() => {
   gap: 10px;
   background: #fff;
   border-bottom: 1px solid #eee;
+}
+.component-container {
+  margin-top: 20px;
+  background-color: #f7e4e7;
 }
 </style>
