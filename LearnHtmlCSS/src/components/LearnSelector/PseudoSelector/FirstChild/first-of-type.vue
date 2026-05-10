@@ -22,14 +22,14 @@
 <script setup></script>
 
 <style scoped lang="scss">
-/* 选择每个父元素中第一个 p 类型的元素 */
+/* 选择每个父元素中第一个 p 类型的元素    没必要必须是其第一个子元素 */
 .container p:first-of-type {
   background-color: #667eea;
   color: white;
   padding: 10px;
 }
 
-/* 选择每个父元素中第一个 span 类型的元素 */
+/* 选择每个父元素中第一个 span 类型的元素    没必要必须是其第一个子元素 */
 .container span:first-of-type {
   background-color: #ffa726;
   color: white;

@@ -28,14 +28,14 @@
 <script setup></script>
 
 <style scoped lang="scss">
-/* 选择作为父元素第一个子元素的 li */
+/* 选择作为父元素  第一个子元素 且为 li  才设定样式 */
 ul li:first-child {
   background-color: #ff6b6b;
   color: white;
   font-weight: bold;
 }
 
-/* 选择作为父元素第一个子元素的 p */
+/* 选择作为父元素  第一个子元素的 且为 p  才设定样式 */
 .container p:first-child {
   border-left: 4px solid #4ecdc4;
   padding-left: 10px;

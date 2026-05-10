@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>方案7：localStorage持久化 + Class</title>
+  <style>
+    /* ============================================
+       CSS 变量 - 亮色主题
+       ============================================ */
+    :root {
+      --bg: #ffffff;
+      --text: #333333;
+      --card-bg: #f5f5f5;
+    }
+
+    /* ============================================
+       CSS 变量 - 暗色主题
+       ============================================ */
+    :root.dark {
+      --bg: #1a1a1a;
+      --text: #e0e0e0;
+      --card-bg: #2d2d2d;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: system-ui, sans-serif;
+      transition: all 0.3s;
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      transition: all 0.3s;
+    }
+
+    h1 { border-bottom: 2px solid var(--text); padding-bottom: 10px; }
+
+    button {
+      background: var(--card-bg);
+      color: var(--text);
+      border: 1px solid var(--text);
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      transition: all 0.3s;
+    }
+
+    button:hover { opacity: 0.8; }
+    /* 按钮激活状态样式 */
+    button.active {
+      background: var(--text);
+      color: var(--bg);
+    }
+
+    code {
+      background: var(--card-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    pre {
+      background: var(--card-bg);
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .storage-display {
+      font-family: monospace;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>方案7：localStorage持久化 + Class</h1>
+
+  <div class="card">
+    <p><strong>当前 localStorage 值：</strong></p>
+    <!-- 显示当前存储的主题偏好 -->
+    <div class="storage-display" id="storageDisplay"></div>
+  </div>
+
+  <!-- 三个主题选项按钮 -->
+  <button onclick="setTheme('light')" id="btn-light">☀️ 亮色</button>
+  <button onclick="setTheme('dark')" id="btn-dark">🌙 暗色</button>
+  <button onclick="setTheme('system')" id="btn-system">💻 跟随系统</button>
+
+  <div class="card">
+    <p><strong>原理：</strong></p>
+    <p>将用户的主题偏好存储在 <code>localStorage</code>，页面加载时读取并应用，支持三种模式。</p>
+  </div>
+
+  <div class="card">
+    <p><strong>核心代码：</strong></p>
+    <pre><code>// 保存偏好到 localStorage
+localStorage.setItem('theme', 'dark');
+
+// 页面加载时读取并应用
+const saved = localStorage.getItem('theme');
+if (saved === 'dark') {
+  document.documentElement.classList.add('dark');
+}
+
+// 监听系统主题变化（当选择"跟随系统"时）
+const mq = window.matchMedia('(prefers-color-scheme: dark)');
+mq.addEventListener('change', handleSystemChange);</code></pre>
+  </div>
+
+  <div class="card">
+    <p><strong>特点：</strong></p>
+    <ul>
+      <li>用户选择持久化保存</li>
+      <li>刷新页面保持主题不变</li>
+      <li>支持三种模式：亮色、暗色、跟随系统</li>
+      <li>组合多种方案的最佳实践</li>
+      <li>主流网站普遍采用此方案</li>
+    </ul>
+  </div>
+
+  <script>
+    /* ============================================
+       localStorage 持久化主题方案
+
+       核心逻辑：
+       1. 保存：用户选择 → localStorage
+       2. 读取：页面加载 → 读取存储 → 应用主题
+       3. 监听：系统变化 → 更新主题（仅当选择"跟随系统"时）
+       ============================================ */
+
+    // localStorage 的 key 名称
+    const STORAGE_KEY = 'preferred-theme';
+
+    /* ============================================
+       设置主题并保存
+       ============================================ */
+    function setTheme(theme) {
+      // 保存到 localStorage
+      localStorage.setItem(STORAGE_KEY, theme);
+      // 应用主题到页面
+      applyTheme();
+      // 更新按钮高亮状态
+      updateButtons();
+    }
+
+    /* ============================================
+       应用主题核心函数
+       根据保存的偏好决定是否使用暗色模式
+       ============================================ */
+    function applyTheme() {
+      // 从 localStorage 读取，默认为 'system'
+      const saved = localStorage.getItem(STORAGE_KEY) || 'system';
+
+      // 判断是否需要暗色模式
+      const isDark = saved === 'dark' ||
+        // 如果选择"跟随系统"，则检测系统偏好
+        (saved === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+      // 切换根元素的 dark 类
+      document.documentElement.classList.toggle('dark', isDark);
+    }
+
+    /* ============================================
+       更新按钮高亮状态
+       ============================================ */
+    function updateButtons() {
+      const saved = localStorage.getItem(STORAGE_KEY) || 'system';
+      // 遍历三个按钮，根据当前选择添加 active 类
+      ['light', 'dark', 'system'].forEach(t => {
+        document.getElementById(`btn-${t}`).classList.toggle('active', saved === t);
+      });
+    }
+
+    /* ============================================
+       显示当前存储的值
+       ============================================ */
+    function updateDisplay() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      document.getElementById('storageDisplay').textContent =
+        `theme = "${saved || 'system'}"`;
+    }
+
+    /* ============================================
+       监听系统主题变化
+       当用户选择"跟随系统"时，系统主题变化会自动应用
+       ============================================ */
+    window.matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', applyTheme);
+
+    // 页面加载时初始化
+    applyTheme();
+    updateButtons();
+    updateDisplay();
+  </script>
+</body>
+</html>

@@ -27,6 +27,8 @@ let componentId = shallowRef(NewWrite3);
 </script>
 
 <template>
+  <h2 style="margin-bottom: 12px;">NestSelector 文件夹  &emsp;&emsp;  似乎其作用就是将后面的提到父元素的后面，直接相连</h2>
+
   <div class="ml-[50px] mt-[20px]">
     <div style="display: flex">
       <div id="myDivButton" class="cursor-pointer" :class="componentId === item.component ? 'bg-[pink]' : ''" v-for="(item, index) in componentsArray" :key="index" @click="componentId = item.component">{{ item.name }}</div>

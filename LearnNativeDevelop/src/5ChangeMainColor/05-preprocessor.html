@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>方案5：CSS预处理器变量</title>
+  <style>
+    /* ============================================
+       CSS 变量 - 亮色主题
+       这些变量可以通过 SCSS/Less 编译时注入
+       ============================================ */
+    :root {
+      --bg: #ffffff;
+      --text: #333333;
+      --card-bg: #f5f5f5;
+      --accent: #007bff;    /* 强调色 */
+      --border: #e0e0e0;    /* 边框色 */
+    }
+
+    /* ============================================
+       CSS 变量 - 暗色主题
+       ============================================ */
+    .dark {
+      --bg: #1a1a1a;
+      --text: #e0e0e0;
+      --card-bg: #2d2d2d;
+      --accent: #6eb3ff;
+      --border: #444444;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: system-ui, sans-serif;
+      transition: all 0.3s;
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+      transition: all 0.3s;
+    }
+
+    h1 { border-bottom: 2px solid var(--border); padding-bottom: 10px; }
+
+    button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-bottom: 20px;
+      transition: all 0.3s;
+    }
+
+    pre {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    code {
+      background: var(--card-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .file-label {
+      color: var(--accent);
+      font-weight: bold;
+      font-size: 12px;
+      display: block;
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>方案5：CSS预处理器变量 + 构建工具</h1>
+  <!-- 点击切换暗色模式 -->
+  <button onclick="toggleDark()">🌙 切换暗色 / 亮色</button>
+
+  <div class="card">
+    <span class="file-label">SCSS / Sass</span>
+    <pre><code>// _variables.scss
+// 预处理器变量 - 定义主题颜色
+$bg-light: #ffffff;
+$bg-dark: #1a1a1a;
+
+// Mixin - 可复用的主题样式块
+@mixin theme($is-dark: false) {
+  @if $is-dark {
+    --bg: $bg-dark;
+    --text: #e0e0e0;
+  } @else {
+    --bg: $bg-light;
+    --text: #333333;
+  }
+}
+
+// 使用时通过构建工具注入变量值
+:root { @include theme(false); }
+.dark { @include theme(true); }</code></pre>
+  </div>
+
+  <div class="card">
+    <span class="file-label">Less</span>
+    <pre><code>// variables.less
+// Less 变量
+@bg-light: #ffffff;
+@bg-dark: #1a1a1a;
+
+// Less 混合（Mixin）带有守卫条件
+.theme(@is-dark) when (@is-dark = true) {
+  --bg: @bg-dark;
+  --text: #e0e0e0;
+}
+.theme(@is-dark) when (@is-dark = false) {
+  --bg: @bg-light;
+  --text: #333333;
+}</code></pre>
+  </div>
+
+  <div class="card">
+    <span class="file-label">构建时动态切换示例 (PostCSS)</span>
+    <pre><code>// postcss.config.js
+module.exports = {
+  plugins: {
+    // postcss-darkmode 插件
+    // 可以在构建时生成暗色主题变体
+    'postcss-darkmode': {
+      darkSelector: '.dark',
+      darkValue: 'dark'
+    }
+  }
+};</code></pre>
+  </div>
+
+  <div class="card">
+    <p><strong>特点：</strong></p>
+    <ul>
+      <li>构建时生成不同主题的 CSS 文件</li>
+      <li>运行时切换需要加载不同文件或覆盖变量</li>
+      <li>适合多主题打包场景</li>
+      <li>配合 PostCSS 插件可实现运行时切换</li>
+    </ul>
+  </div>
+
+  <script>
+    function toggleDark() {
+      document.documentElement.classList.toggle('dark')
+    }
+  </script>
+</body>
+</html>

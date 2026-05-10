@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>方案3：Tailwind CSS 暗色模式</title>
+  <!-- 引入 Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    /* ============================================
+       Tailwind 配置 - 启用 class 模式的暗色模式
+       可选值：
+       - 'class': 通过添加 .dark 类来切换
+       - 'media': 通过媒体查询自动检测系统偏好
+       ============================================ */
+    tailwind.config = {
+      darkMode: 'class'
+    }
+  </script>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+    }
+  </style>
+</head>
+<!-- ============================================
+     Tailwind 暗色模式用法：
+     在需要暗色版本的类前添加 'dark:' 前缀
+     例如：bg-white dark:bg-gray-800
+     ============================================ -->
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300 p-6">
+  <h1 class="text-2xl font-bold mb-4 border-b border-gray-300 dark:border-gray-700 pb-2">
+    方案3：Tailwind CSS 暗色模式
+  </h1>
+
+  <!-- 切换按钮：浅色时显示灰色，深色时显示深灰色 -->
+  <button onclick="toggleDark()"
+    class="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 rounded-lg mb-6 transition-colors">
+    🌙 切换暗色 / 亮色
+  </button>
+
+  <!-- 卡片：浅色白色，深色深灰色 -->
+  <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg mb-4 transition-colors">
+    <h2 class="text-xl font-semibold mb-2">卡片组件</h2>
+    <p class="text-gray-600 dark:text-gray-300">
+      Tailwind 使用 <code class="bg-gray-100 dark:bg-gray-700 px-1 rounded">dark:</code> 前缀来应用暗色样式。
+    </p>
+  </div>
+
+  <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl mb-4 transition-colors">
+    <h3 class="font-semibold mb-2">特点</h3>
+    <ul class="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
+      <li>原子化 CSS，快速开发</li>
+      <li>支持 <code>class</code> 或 <code>media</code> 模式</li>
+      <li>响应式暗色模式更容易实现</li>
+      <li>配置灵活，可自定义主题</li>
+    </ul>
+  </div>
+
+  <!-- 信息框：浅色浅蓝，深色深蓝 -->
+  <div class="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg text-blue-800 dark:text-blue-200 transition-colors">
+    <strong>核心用法：</strong><br>
+    <code class="bg-blue-100 dark:bg-blue-800 px-1 rounded">bg-white dark:bg-gray-800</code>
+  </div>
+
+  <script>
+    /* ============================================
+       切换暗色模式
+       通过在根元素上添加/移除 .dark 类来触发
+       ============================================ */
+    function toggleDark() {
+      document.documentElement.classList.toggle('dark')
+    }
+  </script>
+</body>
+</html>

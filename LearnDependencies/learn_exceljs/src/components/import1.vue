@@ -76,8 +76,8 @@ export default {
   methods: {
     // 处理文件上传
     async handleFileUpload(event) {
-      console.log('00000000000000000000000000000000000000000000000000000000', )
       const file = event.target.files[0];
+      console.log('00000000000000000000000000000000000000000000000000000000', file)
       if (!file) return;
 
       this.loading = true;

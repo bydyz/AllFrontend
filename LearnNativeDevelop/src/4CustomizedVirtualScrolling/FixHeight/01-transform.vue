@@ -18,7 +18,8 @@
          scrollTop = 实际滚动距离（如 1000px）
          list 通过 translateY(-1000px) 将第 17 行（1000/60）精确对齐到容器顶部
          offsetTop = startIndex * ITEM_HEIGHT，仅用于计算 slice 范围，不参与 transform -->
-    <div class="list" :style="{ transform: `translateY(${scrollTop}px)` }">
+    <!-- absolute的定位 是相对于 父元素的内容 而言的  因此需要 transform 回来-->
+    <div class="list" :style="{ transform: `translateY(${scrollTop}px)` }">    
       <div
         v-for="item in visibleItems"
         :key="item.id"

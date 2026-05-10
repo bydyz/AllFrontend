@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>圆圈扩散主题切换</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ============================================
+       CSS 变量 — 亮色主题（默认）
+       所有样式引用这些变量，切换主题时只需
+       在 html.dark 中覆盖同名变量即可
+       ============================================ */
+    :root {
+      --bg: #ffffff;           /* 页面背景 */
+      --text: #303133;         /* 主要文字 */
+      --text-secondary: #909399; /* 次要文字 */
+      --card-bg: #f2f3f5;      /* 卡片背景 */
+      --border: #dcdfe6;       /* 边框颜色 */
+      --accent: #409eff;       /* 主题强调色 */
+    }
+
+    /* ============================================
+       CSS 变量 — 暗色主题
+       通过给 html 标签添加 dark class 激活
+       ============================================ */
+    html.dark {
+      --bg: #141724;
+      --text: #fcfcfc;
+      --text-secondary: #c0c4cc;
+      --card-bg: #1d1e1f;
+      --border: #363738;
+      --accent: #409eff;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+      /* body 背景直接使用 CSS 变量，主题切换时自动响应 */
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      /* 背景色过渡效果，让切换更平滑（非动画期间） */
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* ============================================
+       圆圈遮罩层
+       固定覆盖整个视口 z-index 最高，pointer-events 禁用
+       使用 clip-path: circle() 控制圆圈大小
+       背景色由 JS 动态设为目标主题色
+       ============================================ */
+    .circle-mask {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      /* 默认背景色：暗色主题色。因为浅→深时遮罩就是暗色的 */
+      background-color: #141724;
+      /* 圆心初始为 0，配合 clip-path 实现从无到有的效果 */
+      clip-path: circle(0% at 0px 0px);
+      /* 扩散动画：0.8秒，贝塞尔曲线让它先快后慢 */
+      transition: clip-path 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* 深色→浅色时，遮罩背景变为浅色 */
+    .circle-mask.light-target {
+      background-color: #ffffff;
+    }
+
+    /* 动画结束时添加 snap，立即归零无过渡，避免最后一帧闪动 */
+    .circle-mask.snap {
+      transition: none;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 60px;
+      color: var(--text);
+    }
+
+    .btn-theme {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 auto 40px;
+      padding: 12px 24px;
+      font-size: 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--card-bg);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-theme:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-theme .icon {
+      font-size: 20px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    .card h2 {
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+    .card p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    .note {
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <!-- 圆圈遮罩层，初始状态 clip-path: circle(0%) 完全不可见 -->
+  <div class="circle-mask" id="mask"></div>
+
+  <div class="container">
+    <h1>圆圈扩散主题切换</h1>
+
+    <!-- 点击按钮触发主题切换 -->
+    <button class="btn-theme" id="toggleBtn">
+      <span class="icon" id="themeIcon">🌙</span>
+      <span id="themeText">切换深色模式</span>
+    </button>
+
+    <div class="card">
+      <h2>效果说明</h2>
+      <p>浅色→深色：左下角最先变成深色，圆圈向按钮点(100,100)扩散覆盖整个页面</p>
+      <p>深色→浅色：按钮点(100,100)最先变成浅色，圆圈向左下角扩散覆盖整个页面</p>
+    </div>
+
+    <div class="card">
+      <h2>实现原理</h2>
+      <p>遮罩层背景色始终是目标主题色。切换时遮罩圆心固定在某处（浅→深在左下角，深→浅在点击点），圆圈半径从0扩散到覆盖全屏，动画结束后 class 切换 + 遮罩瞬间消失（无过渡）。</p>
+    </div>
+
+    <p class="note">点击按钮查看效果</p>
+  </div>
+
+  <script>
+    // ============================================
+    // DOM 元素引用
+    // ============================================
+    const mask = document.getElementById('mask');       // 遮罩层
+    const btn = document.getElementById('toggleBtn');   // 切换按钮
+    const themeIcon = document.getElementById('themeIcon');
+    const themeText = document.getElementById('themeText');
+
+    // 按钮在页面上的固定坐标（第7行代码约定）
+    const CLICK_X = 100;
+    const CLICK_Y = 100;
+
+    // 动画进行中标志，防止重复点击
+    let animating = false;
+
+    // ============================================
+    // 计算最大半径
+    // 给定圆心坐标，计算到页面四个角落的最大距离
+    // 用于确保圆圈能完全覆盖整个页面
+    // ============================================
+    function calcMaxRadius(x, y) {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      return Math.max(
+        Math.hypot(x, y),           // 左上角
+        Math.hypot(w - x, y),       // 右上角
+        Math.hypot(x, h - y),       // 左下角
+        Math.hypot(w - x, h - y)    // 右下角
+      );
+    }
+
+    // ============================================
+    // 主题切换核心函数
+    // 流程：
+    // 1. 先切换 html 的 dark class（DOM 立即变为新主题）
+    // 2. 播放遮罩动画（用目标色覆盖页面）
+    // 3. 动画结束后遮罩瞬间消失
+    // ============================================
+    function toggleTheme() {
+      if (animating) return;
+      animating = true;
+
+      // 判断当前是否为暗色模式
+      const isDark = document.documentElement.classList.contains('dark');
+
+      // 计算最大半径并加 5% 安全边距
+      const maxR = Math.ceil(calcMaxRadius(CLICK_X, CLICK_Y) * 1.05) + 'px';
+
+      // ===== 步骤1：先切换主题 class =====
+      // 关键：class 在动画开始前就切换了，遮罩只是视觉覆盖效果
+      document.documentElement.classList.toggle('dark');
+
+      // ===== 步骤2：配置并播放遮罩动画 =====
+
+      if (isDark) {
+        // ---- 深色→浅色 ----
+        // 圆心固定在按钮点击点(100, 100)
+        // 遮罩背景设为浅色（目标色）
+        // 圆圈从0扩散到最大，完全覆盖后露出下方的浅色主题
+        mask.classList.add('light-target');                                          // 遮罩背景=浅色
+        mask.style.clipPath = 'circle(0% at ' + CLICK_X + 'px ' + CLICK_Y + 'px)';  // 初始圆圈半径=0
+        void mask.offsetWidth;                                                        // 强制浏览器应用初始状态
+        mask.style.clipPath = 'circle(' + maxR + ' at ' + CLICK_X + 'px ' + CLICK_Y + 'px)'; // 动画到最大半径
+      } else {
+        // ---- 浅色→深色 ----
+        // 圆心固定在左下角(0, 窗口高度)
+        // 遮罩背景设为深色（目标色）
+        // 圆圈从0扩散到最大，完全覆盖后露出下方的深色主题
+        mask.classList.remove('light-target');                                       // 遮罩背景=深色
+        mask.style.clipPath = 'circle(0% at 0px ' + window.innerHeight + 'px)';     // 初始圆圈半径=0
+        void mask.offsetWidth;                                                       // 强制浏览器应用初始状态
+        mask.style.clipPath = 'circle(' + maxR + ' at 0px ' + window.innerHeight + 'px)'; // 动画到最大半径
+      }
+
+      // ===== 步骤3：动画结束后清理遮罩 =====
+
+      setTimeout(() => {
+        // 添加 snap class 禁用过渡 transition
+        // 这样 clip-path 归零是瞬间完成，不会有最后一帧的过渡闪烁
+        mask.classList.add('snap');
+        mask.style.clipPath = 'circle(0% at 0px 0px)';
+
+        // 更新按钮文字
+        updateBtn(isDark);
+
+        // 下一帧移除 snap class，恢复动画能力
+        // 用 requestAnimationFrame 确保浏览器先绘制当前帧
+        requestAnimationFrame(() => {
+          mask.classList.remove('snap', 'light-target');
+          animating = false;
+        });
+      }, 800); // 等待 0.8 秒动画完成
+    }
+
+    // ============================================
+    // 更新按钮图标和文字
+    // wasDark = 切换前的状态
+    // ============================================
+    function updateBtn(wasDark) {
+      if (wasDark) {
+        // 刚从暗色切过来，现在显示"切换深色模式"
+        themeIcon.textContent = '🌙';
+        themeText.textContent = '切换深色模式';
+      } else {
+        // 刚从浅色切过来，现在显示"切换浅色模式"
+        themeIcon.textContent = '☀️';
+        themeText.textContent = '切换浅色模式';
+      }
+    }
+
+    // ============================================
+    // 初始化
+    // ============================================
+    btn.addEventListener('click', toggleTheme);
+
+    // 如果页面初始就是暗色模式，更新按钮文字
+    if (document.documentElement.classList.contains('dark')) {
+      updateBtn(true);
+    }
+  </script>
+</body>
+</html>

@@ -1,4 +1,6 @@
 <template>
+  <h2 style="margin-bottom: 12px;">GroupSonSelector.vue  &emsp;&emsp;  用空格表示后代</h2>
+
   <div>
     <div class="sonSelector">
       <p>后代选择器</p>

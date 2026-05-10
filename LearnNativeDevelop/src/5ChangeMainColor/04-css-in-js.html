@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>方案4：CSS-in-JS（如 styled-components）</title>
+  <!-- 引入 React 库 -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <!-- 引入 Babel 用于在浏览器中转换 JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: system-ui, sans-serif;
+      /* 使用 CSS 变量实现主题切换 */
+      background-color: var(--bg);
+      color: var(--text);
+      transition: all 0.3s;
+    }
+
+    /* ============================================
+       CSS 变量 - 亮色主题
+       ============================================ */
+    :root {
+      --bg: #ffffff;
+      --text: #333333;
+      --card-bg: #f0f0f0;
+    }
+
+    /* ============================================
+       CSS 变量 - 暗色主题
+       ============================================ */
+    .dark {
+      --bg: #1a1a1a;
+      --text: #e0e0e0;
+      --card-bg: #2d2d2d;
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      transition: background-color 0.3s;
+    }
+
+    button {
+      background: var(--card-bg);
+      color: var(--text);
+      border: 1px solid var(--text);
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-bottom: 20px;
+      transition: all 0.3s;
+    }
+
+    code {
+      background: var(--card-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    pre {
+      background: var(--card-bg);
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      transition: background-color 0.3s;
+    }
+
+    h1 { border-bottom: 2px solid var(--text); padding-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    /* ============================================
+       React 实现 CSS-in-JS 主题方案
+
+       核心概念：
+       1. 使用 Context 在组件树中传递主题信息
+       2. 主题切换时更新 Context 值，触发重渲染
+       3. 组件根据主题值动态计算样式
+
+       类似库：styled-components, emotion
+       ============================================ */
+
+    // 解构 React API
+    const { useState, createContext, useContext } = React;
+
+    /* ============================================
+       创建主题 Context
+       提供默认值，包含 dark 状态和 toggle 函数
+       ============================================ */
+    const ThemeContext = createContext({
+      dark: false,
+      toggle: () => {}
+    });
+
+    /* ============================================
+       App 组件 - 主题提供者
+       ============================================ */
+    function App() {
+      // useState 管理暗色模式状态
+      const [dark, setDark] = useState(false);
+
+      // 切换函数
+      const toggle = () => setDark(!dark);
+
+      return (
+        // 提供主题 context 给子组件
+        <ThemeContext.Provider value={{ dark, toggle }}>
+          <div style={{
+            /* 使用内联样式设置 CSS 变量 */
+            '--bg': dark ? '#1a1a1a' : '#ffffff',
+            '--text': dark ? '#e0e0e0' : '#333333',
+            '--card-bg': dark ? '#2d2d2d' : '#f0f0f0'
+          }}>
+            <h1 style={{ borderBottom: `2px solid var(--text)` }}>方案4：CSS-in-JS 主题方案</h1>
+            <button onClick={toggle}>🌙 切换暗色 / 亮色</button>
+            <Card title="原理">
+              通过 <code>Context</code> 注入主题对象，组件根据主题切换样式值。类似 React 的 ThemeProvider 模式。
+            </Card>
+            <Card title="特点">
+              <ul>
+                <li>运行时动态切换主题</li>
+                <li>组件级别的样式封装</li>
+                <li>支持多主题切换</li>
+                <li>典型库：styled-components、emotion</li>
+              </ul>
+            </Card>
+            <Card title="核心代码">
+              <pre>{`<ThemeContext.Provider value={{ dark, toggle }}>
+  {children}
+</ThemeContext.Provider>`}</pre>
+            </Card>
+          </div>
+        </ThemeContext.Provider>
+      );
+    }
+
+    /* ============================================
+       Card 组件 - 消费主题 Context
+       ============================================ */
+    function Card({ title, children }) {
+      // 使用 useContext 获取主题值
+      const { dark } = useContext(ThemeContext);
+      return (
+        <div className="card" style={{
+          background: dark ? '#2d2d2d' : '#f0f0f0',
+          color: dark ? '#e0e0e0' : '#333333'
+        }}>
+          <h2>{title}</h2>
+          <div style={{ color: dark ? '#e0e0e0' : '#333333' }}>{children}</div>
+        </div>
+      );
+    }
+
+    // 渲染应用
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

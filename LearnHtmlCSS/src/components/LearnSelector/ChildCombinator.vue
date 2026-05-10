@@ -1,4 +1,6 @@
 <template>
+  <h2 style="margin-bottom: 12px;">ChildCombinator.vue  &emsp;&emsp;  > 符号在 CSS 中表示选择直接子元素，它只匹配作为某个元素直接后代的元素，不会匹配更深层嵌套的元素。</h2>
+
   <div class="container">
     <div>
       <p>div中的内容1</p>

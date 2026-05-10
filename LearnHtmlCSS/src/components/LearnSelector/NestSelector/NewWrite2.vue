@@ -1,4 +1,6 @@
 <template>
+  <h2 style="margin-bottom: 12px;">需要设定 lang="scss" 才生效，less和sass不可</h2>
+
   <div class="containerNew">
     <div class="containerNew-first-div">
       <p class="first-p">div 1 中的内容1</p>
@@ -9,7 +11,7 @@
 
 <script setup></script>
 
-<style scoped>
+<style scoped lang="scss">
 .containerNew {
   color: pink;
 

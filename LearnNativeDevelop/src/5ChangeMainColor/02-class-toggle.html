@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>方案2：CSS变量 + Class切换</title>
+  <style>
+    /* ============================================
+       CSS 变量定义 - 默认亮色主题
+       ============================================ */
+    :root {
+      --bg: #ffffff;
+      --text: #333333;
+      --card-bg: #f5f5f5;
+    }
+
+    /* ============================================
+       暗色主题 - 通过添加 .dark 类激活
+       注意：使用 :root.dark 而不是 .dark
+       这样可以更精确地控制选择器优先级
+       ============================================ */
+    :root.dark {
+      --bg: #1a1a1a;
+      --text: #e0e0e0;
+      --card-bg: #2d2d2d;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: system-ui, sans-serif;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      transition: background-color 0.3s;
+    }
+
+    h1 { border-bottom: 2px solid var(--text); padding-bottom: 10px; }
+
+    .toggle-btn {
+      background: var(--card-bg);
+      color: var(--text);
+      border: 1px solid var(--text);
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-bottom: 20px;
+      transition: all 0.3s;
+    }
+
+    .toggle-btn:hover {
+      opacity: 0.8;
+    }
+
+    code {
+      background: var(--card-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>方案2：CSS变量 + Class切换</h1>
+  <!-- 点击按钮切换主题类 -->
+  <button class="toggle-btn" onclick="toggleDark()">🌙 切换暗色 / 亮色</button>
+  <div class="card">
+    <p><strong>原理：</strong>通过 JS 切换根元素的类（如 <code>.dark</code>），不同类下 CSS 变量呈现不同值。</p>
+  </div>
+  <div class="card">
+    <p><strong>特点：</strong></p>
+    <ul>
+      <li>用户可手动切换</li>
+      <li>灵活可控</li>
+      <li>需要配合 localStorage 持久化</li>
+      <li>最主流的方案之一</li>
+    </ul>
+  </div>
+  <div class="card">
+    <p><strong>核心代码：</strong></p>
+    <pre><code>document.documentElement.classList.toggle('dark')</code></pre>
+  </div>
+
+  <script>
+    /* ============================================
+       切换主题的核心函数
+       通过 toggle 方法添加/移除 .dark 类
+       ============================================ */
+    function toggleDark() {
+      document.documentElement.classList.toggle('dark')
+    }
+  </script>
+</body>
+</html>
