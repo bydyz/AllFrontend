@@ -27,7 +27,7 @@ type GenuiChatExposed = ComponentPublicInstance & {
 
 const chatRef = ref<GenuiChatExposed | null>(null)
 const theme = ref<'dark' | 'lite' | 'light'>('light')
-const model = ref(import.meta.env.VITE_GENUI_MODEL || 'deepseek-v3.2')
+const model = ref(import.meta.env.VITE_GENUI_MODEL || 'MiniMax-M2.5')
 const temperature = ref(0)
 
 const chatConfig = {
