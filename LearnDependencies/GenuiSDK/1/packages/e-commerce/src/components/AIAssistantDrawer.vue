@@ -52,6 +52,7 @@ function startNewConversation() {
 }
 
 function onAddProduct(product: Product) {
+  console.log('11111111111111111111111111111111111111111111111111111111', )
   addToCart(product, 1)
   showCartNotice(product.title)
 }

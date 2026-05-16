@@ -4,13 +4,20 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "server": "genui-sdk-server",
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.19.1",
+    "@opentiny/genui-sdk-vue": "1.1.2",
+    "@opentiny/genui-sdk-server": "1.1.2",
     "element-plus": "^2.14.0",
-    "vue": "^3.5.13"
+    "openai": "5.10.0",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.3",

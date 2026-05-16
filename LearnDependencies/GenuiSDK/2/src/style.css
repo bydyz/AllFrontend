@@ -57,6 +57,10 @@ button:focus-visible {
   height: 100%;
 }
 
+.el-drawer__header {
+  margin-bottom: 0 !important;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
