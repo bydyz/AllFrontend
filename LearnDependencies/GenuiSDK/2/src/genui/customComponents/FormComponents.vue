@@ -26,6 +26,8 @@ const submit = async () => {
 
   localStorage.setItem("person-data", JSON.stringify(tableData));
 
+  // 此处发射的是 xxxxxx 事件，则定义该自定义渲染组件时，事件的 property 为 onXxxxxx
+  // 例如 E:\Project\AAA_All_MINE\all-frontend\LearnDependencies\GenuiSDK\2\src\genui\chat\custom-components.ts 中的 onOnCloseDrawerChangePage
   emit('closeDrawerChangePage')
 };
 </script>

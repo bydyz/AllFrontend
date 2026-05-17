@@ -2,14 +2,14 @@ import type { ICustomActionItem } from '@opentiny/genui-sdk-vue'
 import type { Person } from "../../types";
 
 type CreateActionOptions = {
-  closeDrawerChangePage: () => void;
-  addPerson?: (person: Person) => void
+  closeDrawerChangePage222: () => void;
+  addPerson222?: (person: Person) => void
 }
 
 export function createCustomActions(options: CreateActionOptions) {
   return [
     {
-      name: 'addPerson',
+      name: 'addPerson111',
       description: '新增人员',
       parameters: {
         type: 'object',
@@ -30,18 +30,18 @@ export function createCustomActions(options: CreateActionOptions) {
       } as const,
       /** 执行函数：当 AI 调用此操作时执行 */
       execute: (params: unknown) => {
-        options?.addPerson?.(params as Person)
+        options?.addPerson222?.(params as Person)
       },
     },
     {
-      name: 'closeDrawerChangePage',
+      name: 'closeDrawerChangePage111',
       description: '关闭智能助手滑窗并切换到表格页',
       parameters: {
         type: 'object',
         properties: {},
       } as const,
       execute: () => {
-        options.closeDrawerChangePage()
+        options.closeDrawerChangePage222()
       },
     },
   ] as ICustomActionItem[]

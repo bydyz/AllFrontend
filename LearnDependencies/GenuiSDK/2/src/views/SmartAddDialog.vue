@@ -68,12 +68,16 @@ const customFetch: CustomFetch = async (url, options) => {
 
   options.body = JSON.stringify(body)
 
-  return await fetch(url, options)
+  let response = await fetch(url, options)
+
+  console.log('responseresponseresponseresponse', response)
+
+  return response
 };
 
 const customActions = computed(() =>
     createCustomActions({
-      closeDrawerChangePage: () => {
+      closeDrawerChangePage222: () => {
         console.log('onCloseAndChangePage');
         visible.value = false;
         router.push({ path: "/table" });
