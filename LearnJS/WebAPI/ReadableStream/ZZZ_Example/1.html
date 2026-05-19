@@ -1,0 +1,172 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple random stream</title>
+    <style>
+      .input {
+        float: left;
+        width: 50%;
+      }
+
+      .output {
+        float: right;
+        width: 50%;
+      }
+
+      hr {
+        clear: both;
+      }
+
+      button {
+        display: block;
+      }
+    </style>
+</head>
+<body>
+<h1>Simple random stream</h1>
+
+<button>Stop string generation</button>
+
+<div class="input">
+  <h2>Custom stream input</h2>
+  <ul>
+
+  </ul>
+</div>
+
+<div class="output">
+  <h2>Reading custom stream</h2>
+  <ul>
+
+  </ul>
+</div>
+
+<hr>
+
+<h2>Final result</h2>
+
+<p></p>
+
+<script>
+  // 获取页面元素的引用
+  const list1 = document.querySelector('.input ul'); // 左侧列表，用于显示生成的字符串
+  const list2 = document.querySelector('.output ul'); // 右侧列表，用于显示读取的字符串
+  const para = document.querySelector('p'); // 最终结果显示的段落
+  const button = document.querySelector('button'); // 停止按钮
+
+  // 用于存储最终拼接的完整结果
+  let result = "";
+
+  /**
+   * 生成随机字符组成的字符串
+   * 从给定的字符集中随机选择8个字符
+   * @returns {string} 生成的随机字符串
+   */
+  function randomChars() {
+    let string = "";
+    // 字符集：包含大小写字母、数字和特殊符号
+    let choices = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+
+    // 循环8次，每次随机选择一个字符
+    for (let i = 0; i < 8; i++) {
+      string += choices.charAt(Math.floor(Math.random() * choices.length));
+    }
+    return string;
+  }
+
+  // 创建自定义的 ReadableStream
+  const stream = new ReadableStream({
+    /**
+     * start 回调：在流创建时立即调用，用于初始化流
+     * @param {ReadableStreamDefaultController} controller - 流控制器，用于控制数据的推送
+     */
+    start(controller) {
+      // 每隔1000毫秒（1秒）生成一个随机字符串并推入流中
+      interval = setInterval(() => {
+        // 生成随机字符串
+        let string = randomChars();
+
+        // 将生成的字符串推入流中，供消费者读取
+        controller.enqueue(string);
+
+        // 在页面的左侧列表中显示生成的字符串
+        let listItem = document.createElement('li');
+        listItem.textContent = string;
+        list1.appendChild(listItem);
+      }, 1000);
+
+      // 为停止按钮添加点击事件监听器
+      button.addEventListener('click', function() {
+        // 停止生成新的字符串
+        clearInterval(interval);
+        // 开始读取流中的数据
+        readStream();
+        // 关闭流，表示不再有新的数据
+        controller.close();
+      })
+    },
+
+    /**
+     * pull 回调：当流的内部缓冲区为空时调用，请求更多数据
+     * 在本示例中不需要实现，因为数据由 setInterval 自动推送
+     * @param {ReadableStreamDefaultController} controller - 流控制器
+     */
+    pull(controller) {
+      // 此示例中不需要 pull 回调，数据由 start 中的 setInterval 推送
+    },
+
+    /**
+     * cancel 回调：当消费者取消读取流时调用
+     * 在本示例中用于停止生成新的字符串
+     */
+    cancel() {
+      // 当流被取消时，停止生成字符串
+      clearInterval(interval);
+    }
+  });
+
+  /**
+   * 读取流中的数据并进行处理
+   * 使用流的 getReader() 方法获取读取器，然后循环读取数据
+   */
+  function readStream() {
+    // 获取流的读取器
+    const reader = stream.getReader();
+    // 记录已接收的字符总数
+    let charsReceived = 0;
+
+    // reader.read() 返回一个 Promise，当有数据可用时 resolve
+    reader.read().then(function processText({ done, value }) {
+      // read() 返回的结果对象包含两个属性：
+      // - done: 布尔值，true 表示流已关闭，不再有更多数据
+      // - value: 数据块，当 done 为 true 时始终为 undefined
+
+      // 检查流是否已结束
+      if (done) {
+        console.log("流读取完成");
+        // 在页面底部显示最终拼接的完整结果
+        para.textContent = result;
+        return;
+      }
+
+      // 计算已接收的字符数量
+      charsReceived += value.length;
+      const chunk = value;
+
+      // 在右侧列表中显示当前读取的进度和内容
+      let listItem = document.createElement('li');
+      listItem.textContent = '已读取 ' + charsReceived + ' 个字符。当前数据块 = ' + chunk;
+      list2.appendChild(listItem);
+
+      // 将读取到的数据块拼接到结果字符串中
+      result += chunk;
+
+      // 继续读取下一块数据，递归调用 processText 处理
+      return reader.read().then(processText);
+    });
+  }
+</script>
+</body>
+</html>

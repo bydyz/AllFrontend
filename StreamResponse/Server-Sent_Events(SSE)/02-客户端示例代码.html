@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SSE 客户端示例</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+    .log { background: #f5f5f5; padding: 10px; border-radius: 4px; max-height: 400px; overflow-y: auto; }
+    .log div { padding: 5px 0; border-bottom: 1px solid #eee; }
+    .log .event-type { color: #2196F3; font-weight: bold; }
+    .log .data { color: #4CAF50; }
+    .log .id { color: #FF9800; }
+    button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+    pre { background: #263238; color: #fff; padding: 10px; border-radius: 4px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <h1>Server-Sent Events 示例</h1>
+
+  <button onclick="connectSSE()">连接 SSE</button>
+  <button onclick="closeSSE()">断开连接</button>
+  <button onclick="clearLog()">清空日志</button>
+
+  <h3>接收到的消息：</h3>
+  <div class="log" id="log"></div>
+
+  <h3>服务端示例代码 (Node.js)：</h3>
+  <pre>
+const http = require('http');
+
+http.createServer((req, res) => {
+  if (req.url === '/sse') {
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive'
+    });
+
+    // 发送消息 1
+    res.write('id: 1\n');
+    res.write('event: message\n');
+    res.write('data: {"text": "Hello SSE"}\n\n');
+
+    // 发送消息 2 (3秒后)
+    setTimeout(() => {
+      res.write('id: 2\n');
+      res.write('data: {"text": "Welcome"}\n\n');
+    }, 3000);
+
+    // 保持连接，每5秒发送心跳
+    const interval = setInterval(() => {
+      res.write(': heartbeat\n\n');
+    }, 5000);
+
+    req.on('close', () => clearInterval(interval));
+  } else {
+    res.writeHead(404);
+    res.end();
+  }
+}).listen(3000);
+  </pre>
+
+  <script>
+    let eventSource = null;
+
+    function connectSSE() {
+      // 注意：需要服务端配合运行才能测试
+      eventSource = new EventSource('/sse');
+
+      // 监听默认消息
+      eventSource.onmessage = (event) => {
+        addLog('默认消息', event.data, event.lastEventId);
+      };
+
+      // 监听自定义事件
+      eventSource.addEventListener('message', (event) => {
+        addLog('message 事件', event.data, event.lastEventId);
+      });
+
+      eventSource.addEventListener('update', (event) => {
+        addLog('update 事件', event.data, event.lastEventId);
+      });
+
+      eventSource.onerror = (error) => {
+        addLog('错误', '连接断开', '');
+      };
+    }
+
+    function closeSSE() {
+      if (eventSource) {
+        eventSource.close();
+        eventSource = null;
+      }
+    }
+
+    function clearLog() {
+      document.getElementById('log').innerHTML = '';
+    }
+
+    function addLog(type, data, id) {
+      const log = document.getElementById('log');
+      const item = document.createElement('div');
+      item.innerHTML = `
+        <span class="event-type">[${type}]</span>
+        <span class="id">ID: ${id || '无'}</span>
+        <span class="data">Data: ${data}</span>
+      `;
+      log.appendChild(item);
+    }
+  </script>
+</body>
+</html>

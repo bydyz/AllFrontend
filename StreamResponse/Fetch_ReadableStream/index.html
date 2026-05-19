@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fetch + ReadableStream 示例</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+    .box { background: #f5f5f5; padding: 15px; margin: 10px 0; border-radius: 5px; }
+    .highlight { background: #e3f2fd; }
+    pre { background: #263238; color: #aed581; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+    #output { white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>Fetch + ReadableStream 数据格式分析</h1>
+
+  <button onclick="demoBasicFormat()">1. 基本格式分析</button>
+  <button onclick="demoStreamRead()">2. 流式读取示例</button>
+  <button onclick="demoChunkAnalysis()">3. 分块数据分析</button>
+
+  <div id="output" class="box"></div>
+
+  <script>
+    const output = document.getElementById('output');
+
+    function log(msg, isHighlight = false) {
+      output.innerHTML += `<div class="${isHighlight ? 'highlight' : ''}">${msg}</div>`;
+    }
+
+    function clearOutput() {
+      output.innerHTML = '';
+    }
+
+    async function demoBasicFormat() {
+      clearOutput();
+      log('<strong>=== Fetch + ReadableStream 基本数据格式 ===</strong>', true);
+      log('');
+
+      log('<strong>1. Response 对象结构：</strong>');
+      log(`fetch() 返回的 response 是 Response 对象，不是 ReadableStream`);
+      log(`  Response 对象包含: ok, status, statusText, headers, url, body`);
+      log('');
+
+      log('<strong>2. response.body 是 ReadableStream 实例：</strong>');
+      log(`  - response.body 返回 ReadableStream 对象`);
+      log(`  - 通过 .getReader() 获取 reader 来读取数据`);
+      log('');
+
+      log('<strong>3. reader.read() 返回的数据格式：</strong>');
+      log(`  { done: boolean, value: Uint8Array | undefined }`);
+      log('');
+
+      log('<strong>4. 数据流转过程：</strong>');
+      log(`  fetch(url) → Response 对象 → response.body (ReadableStream)`);
+      log(`  → getReader() → ReadableStreamDefaultReader`);
+      log(`  → reader.read() → { done, value } → TextDecoder 解码 → 字符串`);
+    }
+
+    async function demoStreamRead() {
+      clearOutput();
+      log('<strong>=== 完整流式读取示例 ===</strong>', true);
+      log('');
+
+      const mockData = '这是模拟的流式响应数据，模拟大文本内容的分块传输。';
+      let index = 0;
+      const chunkSize = 10;
+
+      const stream = new ReadableStream({
+        start(controller) {
+          log('<strong>模拟服务器端流式发送：</strong>');
+          while (index < mockData.length) {
+            const chunk = mockData.slice(index, index + chunkSize);
+            controller.enqueue(new TextEncoder().encode(chunk));
+            index += chunkSize;
+          }
+          controller.close();
+        }
+      });
+
+      log(`<strong>创建 ReadableStream，模拟 fetch 响应体</strong>`);
+      log(`流类型: ${stream.constructor.name}`);
+      log(`是否可锁定: ${stream.locked}`);
+      log('');
+
+      const reader = stream.getReader();
+      log(`<strong>获取 reader: stream.getReader()</strong>`);
+      log(`reader 类型: ${reader.constructor.name}`);
+      log('');
+
+      const decoder = new TextDecoder();
+      let chunkCount = 0;
+
+      log('<strong>循环读取流数据：</strong>');
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+          log(`<strong>读取完成 done=${done}</strong>`);
+          break;
+        }
+        chunkCount++;
+        const decoded = decoder.decode(value, { stream: true });
+        log(`第 ${chunkCount} 块: value=${JSON.stringify(Array.from(value))} (Uint8Array)`);
+        log(`        解码: "${decoded}"`);
+      }
+
+      log('');
+      log(`<strong>读取完成，共 ${chunkCount} 个数据块</strong>`);
+    }
+
+    async function demoChunkAnalysis() {
+      clearOutput();
+      log('<strong>=== 分块数据详细分析 ===</strong>', true);
+      log('');
+
+      log('<strong>重要概念：</strong>');
+      log('1. value 是 Uint8Array（TypedArray），不是字符串');
+      log('2. 需要用 TextDecoder 将二进制转为字符串');
+      log('3. 对于大文本，使用 { stream: true } 保持解码状态');
+      log('');
+
+      log('<strong>数据格式示例：</strong>');
+      const text = 'Hello 世界';
+      const encoder = new TextEncoder();
+      const encoded = encoder.encode(text);
+
+      log(`原始字符串: "${text}"`);
+      log(`编码后 Uint8Array: [${encoded.join(', ')}]`);
+      log(`字节长度: ${encoded.length}`);
+      log('');
+
+      const decoder = new TextDecoder();
+      const decoded = decoder.decode(encoded);
+      log(`解码回字符串: "${decoded}"`);
+      log('');
+
+      log('<strong>实际 fetch 场景的数据流：</strong>');
+      log(`1. const response = await fetch('/api/data')`);
+      log(`2. const reader = response.body.getReader()`);
+      log(`3. const { done, value } = await reader.read()`);
+      log(`   - value: Uint8Array(8) [72, 101, 108, 108, 111, ...]`);
+      log(`   - done: false（继续读取）/ true（已结束）`);
+      log(`4. const text = new TextDecoder().decode(value)`);
+    }
+  </script>
+</body>
+</html>

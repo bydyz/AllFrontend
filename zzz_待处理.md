@@ -2,3 +2,6 @@ D:\allProject\Mine\why-vue3\LearnVue3Collect\vue-next-mini\A_Explain\ChapterTwo\
 
 
 D:\allProject\Mine\why-vue3\LearnVue3Collect\vue-next-mini\A_Explain\Chapter3\  暂未细看
+
+
+E:\Project\AAA_All_MINE\all-frontend\StreamResponse

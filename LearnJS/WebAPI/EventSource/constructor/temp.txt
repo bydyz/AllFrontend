@@ -1,0 +1,106 @@
+BEGIN
+/**
+ * EventSource 构造函数详解
+ * 
+ * EventSource 是 Web API 中用于实现 Server-Sent Events (SSE) 的接口。
+ * SSE 允许服务器通过 HTTP 连接向客户端推送实时更新。
+ * 
+ * @module EventSource
+ * @description 详细说明 EventSource 构造函数的参数、返回值和使用场景
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/EventSource/EventSource
+ */
+
+/**
+ * =============================
+ * 一、构造器语法 (Constructor Syntax)
+ * =============================
+ * 
+ * new EventSource(url)
+ * new EventSource(url, options)
+ * 
+ * 说明: EventSource() 构造函数创建一个新的 EventSource 对象，用于接收服务器发送的事件。
+ *       该功能在 Web Workers 中也可用。
+ * =============================
+ */
+
+/**
+ * =============================
+ * 二、构造器参数 (Parameters)
+ * =============================
+ * 
+ * 参数1: url (必需)
+ * - 类型: string (USVString)
+ * - 说明: 远程资源的 URL，即 Server-Sent Events 端点的地址
+ * - 示例: https://example.com/sse-endpoint 或 sse.php
+ * 
+ * 参数2: options (可选)
+ * - 类型: EventSourceInit 对象
+ * - 说明: 用于配置新连接的选项
+ * 
+ *   options.withCredentials (可选)
+ *   - 类型: boolean
+ *   - 默认值: false
+ *   - 说明: 指示是否携带 CORS 凭证 (credentials)
+ *   - 当设置为 true 时，CORS 请求将包含 cookie、HTTP 认证和 TLS 客户端证书
+ *   - 这允许跨域请求携带认证信息
+ * =============================
+ */
+
+/**
+ * =============================
+ * 三、返回值 (Return Value)
+ * =============================
+ * 
+ * 返回值: EventSource 对象
+ * 
+ * EventSource 实例具有以下属性和方法:
+ * 
+ * 属性:
+ * - url (只读): 返回连接的 URL
+ * - withCredentials (只读): 返回是否携带凭证
+ * - readyState (只读): 返回连接状态
+ *   * CONNECTING (0): 连接尚未建立，或已关闭并正在重连
+ *   * OPEN (1): 连接已打开，正在接收事件
+ *   * CLOSED (2): 连接未打开，且不在重连
+ * 
+ * 事件处理属性:
+ * - onopen: 连接打开时触发
+ * - onmessage: 收到消息时触发
+ * - onerror: 发生错误时触发
+ * 
+ * 方法:
+ * - close(): 关闭连接
+ * =============================
+ */
+
+/**
+ * =============================
+ * 四、使用场景 (Use Cases)
+ * =============================
+ * 
+ * 1. 实时数据推送
+ *    - 股票价格实时更新
+ *    - 货币汇率实时更新
+ *    - 天气预报实时推送
+ * 
+ * 2. 消息通知系统
+ *    - 聊天消息推送
+ *    - 系统通知推送
+ *    - 邮件提醒
+ * 
+ * 3. 实时监控
+ *    - 服务器状态监控
+ *    - 日志实时推送
+ *    - 任务进度更新
+ * 
+ * 4. 社交媒体更新
+ *    - 动态消息流
+ *    - 点赞/评论通知
+ *    - 关注者动态
+ * 
+ * 5. 浏览器与服务器双向通信的简化场景
+ *    - 仅需要服务器向客户端推送数据
+ *    - 不需要客户端向服务器发送复杂请求
+ * =============================
+ */
+END

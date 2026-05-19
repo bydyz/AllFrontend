@@ -1,0 +1,89 @@
+/**
+ * EventSource Constructor Detailed Guide
+ * Based on MDN Web Docs
+ * https://developer.mozilla.org/en-US/docs/Web/API/EventSource/EventSource
+ */
+
+/**
+ * Constructor Parameters:
+ * - url (required): Server-Sent Events endpoint URL
+ * - options (optional): { withCredentials: boolean }
+ *   - withCredentials: default false, set to true for CORS credentials
+ *
+ * Return Value: EventSource instance
+ * - Properties: url, withCredentials, readyState
+ * - Constants: CONNECTING(0), OPEN(1), CLOSED(2)
+ * - Methods: close()
+ * - Events: onopen, onmessage, onerror
+ */
+
+/**
+ * Use Cases:
+ * 1. Real-time data (stock, weather)
+ * 2. Notifications (chat, email)
+ * 3. Monitoring (server status, logs)
+ * 4. Social media updates
+ */
+
+/**
+ * Server Response Format:
+ * data: message content
+ * id: message id (optional)
+ * event: event type (optional)
+ * Content-Type must be: text/event-stream
+ */
+
+/**
+ * Browser Compatibility:
+ * Chrome 6+, Firefox 6+, Safari 5+, Edge 79+ (IE not supported)
+ */
+
+/**
+ * Notes:
+ * - SSE is one-way communication (server to client)
+ * - Auto-reconnect is enabled by default
+ * - Max 6 connections per domain
+ */
+
+
+
+/**
+ * EventSource Constructor Demo
+ * Based on MDN Web Docs
+ */
+
+function basic() {
+  var es = new EventSource('http://example.com/sse');
+  es.onmessage = function(e) { console.log(e.data); };
+}
+
+function withCred() {
+  var es = new EventSource('url', {withCredentials: true});
+  console.log(es.url, es.withCredentials);
+}
+
+function customEvt() {
+  var es = new EventSource('url');
+  es.addEventListener('update', function(e) { console.log(e.data); });
+}
+
+function checkState() {
+  var es = new EventSource('url');
+  console.log(EventSource.CONNECTING, EventSource.OPEN, EventSource.CLOSED);
+}
+
+function closeConn() {
+  var es = new EventSource('url');
+  es.onmessage = function(e) { if(e.data === 'CLOSE') es.close(); };
+}
+
+function full() {
+  var es = new EventSource('url');
+  es.onopen = function() { console.log('connected'); };
+  es.onmessage = function(e) { console.log(e.data); };
+  es.onerror = function(e) { console.log('error'); };
+}
+
+if(typeof module !== 'undefined') {
+  module.exports = { basic, withCred, customEvt, checkState, closeConn, full };
+}
