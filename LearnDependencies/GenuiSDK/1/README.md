@@ -1,6 +1,6 @@
 # genui-sdk-demos
 
-GenUI SDK 示例项目仓库，当前包含一个基于 Vue 3 + Vite 的电商示例应用。
+GenUI SDK 示例项目仓库，当前包含一个基于 Vue 3 + Vite 的电商示例应用。**官方提供的 dom**
 
 ## 环境要求
 
