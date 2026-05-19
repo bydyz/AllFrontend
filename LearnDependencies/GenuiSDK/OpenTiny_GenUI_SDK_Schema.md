@@ -15,7 +15,7 @@ Schema 是"模式/结构"的统称，不同领域有各自的 Schema 规范：
 
 ### 2.1 概述
 
-Schema 协议是一个基于 JSON 的**声明式 UI 描述协议**，用于定义和渲染用户界面。
+**GenUI-SDK Schema 协议**是 OpenTiny 厂商特定的**自定义 UI 描述协议**，用于定义和渲染用户界面。
 
 - **设计原则**：
   - 声明式：使用声明式结构描述 UI
@@ -145,3 +145,23 @@ GenuiRenderer (底层渲染器)
 - [Schema 协议规范](https://docs.opentiny.design/genui-sdk/schema/protocol.html)
 - [GitHub](https://github.com/opentiny/genui-sdk)
 - [Playground](https://playground.opentiny.design/genui-sdk)
+
+## 八、GenUI-SDK Schema 与标准 Schema 的区别
+
+根据《标准Schema规范说明.md》中的定义，标准 Schema 规范主要包括：
+
+| 规范 | 用途 |
+|------|------|
+| **JSON Schema** | 验证 JSON 数据结构，国际标准 |
+| **Schema.org (JSON-LD)** | SEO 结构化数据标记 |
+| **XML Schema (XSD)** | XML 数据的模式定义 |
+| **GraphQL Schema** | GraphQL API 的类型系统 |
+| **Protocol Buffers (.proto)** | Google 的序列化协议 |
+
+**GenUI-SDK Schema 协议**是 OpenTiny 厂商特定的**自定义 UI 描述协议**，不属于上述任何一种国际或行业标准。它是用于声明式描述 UI 界面的专有格式，专注于：
+- UI 组件结构描述
+- 状态与方法绑定
+- 条件/循环渲染
+- 样式定义
+
+因此，它与标准的 JSON Schema（用于数据验证）是完全不同的概念，应用领域也不同。

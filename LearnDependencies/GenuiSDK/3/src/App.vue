@@ -1,70 +1,68 @@
 <template>
-  <div class="demo-container">
-    <div class="input-group">
-      <input v-model="inputText" placeholder="请输入问题..." @keyup.enter="handleSend" />
-      <button @click="handleSend">发送</button>
-    </div>
-    <GenuiRenderer :content="schema" :key="rendererKey" />
+  <div class="app-container">
+    <nav class="nav-bar">
+      <router-link
+        v-for="(btn, index) in navButtons"
+        :key="index"
+        :to="btn.path"
+        class="nav-btn"
+        :class="{ active: $route.path === btn.path }"
+      >
+        {{ btn.label }}
+      </router-link>
+    </nav>
+    <router-view />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { GenuiRenderer } from '@opentiny/genui-sdk-vue';
-import { fetchSchemaStream } from './fetch-schema-stream.ts';
+import { useRoute } from 'vue-router';
+const $route = useRoute();
 
-const inputText = ref('');
-const schema = ref<any>({ componentName: 'Page', children: [] });
-const rendererKey = ref(0);
-const generating = ref(false);
-
-const handleSend = async () => {
-  if (!inputText.value.trim() || generating.value) return;
-
-  generating.value = true;
-  schema.value = '';
-  rendererKey.value++;
-  const userInput = inputText.value;
-  inputText.value = '';
-
-  try {
-    await fetchSchemaStream('https://api.minimaxi.com/v1/chat/completions', userInput, (schemaChunk) => {
-      schema.value += schemaChunk;
-      console.log('11111111111111111111111111111111111111111111111111111111', schema.value)
-    });
-  } catch (error) {
-    console.error('请求失败:', error);
-  } finally {
-    generating.value = false;
-  }
-};
+const navButtons = [
+  { label: '静态Schema演示1', path: '/staticGenuiRenderer1' },
+  { label: '静态Schema演示2', path: '/staticGenuiRenderer2' },
+  { label: '流式Schema演示', path: '/genui2' }
+];
 </script>
 
-<style scoped>
-.demo-container {
-  padding: 16px;
+<style>
+* {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
-.input-group {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
+.app-container {
+  min-height: 100vh;
 }
 
-input {
-  flex: 1;
-  padding: 8px 12px;
+.nav-bar {
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.nav-btn {
+  padding: 8px 16px;
+  background: #fff;
   border: 1px solid #ddd;
   border-radius: 4px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.2s;
 }
 
-button {
-  padding: 8px 16px;
+.nav-btn:hover {
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+.nav-btn.active {
   background: #1890ff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+  border-color: #1890ff;
+  color: #fff;
 }
 </style>
