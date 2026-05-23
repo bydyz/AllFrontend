@@ -1,0 +1,15 @@
+{
+  "eval_id": 0,
+  "eval_name": "md-parser-industry-analysis",
+  "prompt": "分析业内方案：解析md文档格式并进行展示。选择：原生+Vue",
+  "assertions": [
+    "在桌面创建了 md-parser-demo 目录",
+    "在桌面创建了 vue-md-parser-demo 目录",
+    "md-parser-demo 包含 index.html、package.json、vite.config.js",
+    "md-parser-demo 的 src/pages/ 下至少有 3 个页面文件",
+    "vue-md-parser-demo 包含 src/App.vue 和 package.json",
+    "vue-md-parser-demo 的 src/components/ 下至少有 3 个组件文件",
+    "两个项目均能成功安装依赖",
+    "README.md 包含方案对比和选型建议"
+  ]
+}

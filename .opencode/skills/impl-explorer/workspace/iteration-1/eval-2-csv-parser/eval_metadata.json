@@ -1,0 +1,11 @@
+{
+  "eval_id": 2,
+  "eval_name": "csv-parser-industry-analysis",
+  "prompt": "分析 CSV 文件解析的业界实现方式。选择：原生",
+  "assertions": [
+    "在桌面创建了 csv-parser-demo 目录",
+    "没有创建 vue-csv-parser-demo 或 react-csv-parser-demo",
+    "调研了至少 3 种 CSV 解析库/方式",
+    "README.md 包含各方案的对比分析"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "eval_id": 1,
+  "eval_name": "lazy-load-industry-analysis",
+  "prompt": "分析前端实现图片懒加载的业内方案。选择：原生+React",
+  "assertions": [
+    "在桌面创建了 lazy-load-demo 目录",
+    "在桌面创建了 react-lazy-load-demo 目录",
+    "lazy-load-demo 是 Vite + 原生 JS 项目",
+    "react-lazy-load-demo 是 Vite + React 项目",
+    "包含 IntersectionObserver 方案的演示",
+    "包含 loading=lazy 属性方案的演示",
+    "react-lazy-load-demo 包含对应的 React 组件实现"
+  ]
+}

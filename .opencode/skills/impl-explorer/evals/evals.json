@@ -1,0 +1,46 @@
+{
+  "skill_name": "impl-explorer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "分析业内方案：解析md文档格式并进行展示。选择：原生 + Vue",
+      "expected_output": "在桌面生成 md-parser-demo 和 vue-md-parser-demo 两个完整的 Vite 项目，每个项目包含 3-6 种 Markdown 解析方案的演示",
+      "expectations": [
+        "在桌面创建了 md-parser-demo 目录",
+        "在桌面创建了 vue-md-parser-demo 目录",
+        "md-parser-demo 包含 index.html、package.json、vite.config.js、.gitignore",
+        "md-parser-demo 的 src/pages/ 下至少有 3 个页面文件",
+        "vue-md-parser-demo 包含 src/App.vue 和 package.json",
+        "vue-md-parser-demo 的 src/components/ 下至少有 3 个组件文件",
+        "两个项目均能成功安装依赖（npm install 无报错）",
+        "两个项目的 README.md 都包含方案对比和选型建议"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "分析前端实现图片懒加载的业内方案。选择：原生 + React",
+      "expected_output": "在桌面生成 lazy-load-demo 和 react-lazy-load-demo 两个完整的 Vite 项目",
+      "expectations": [
+        "在桌面创建了 lazy-load-demo 目录",
+        "在桌面创建了 react-lazy-load-demo 目录",
+        "lazy-load-demo 是 Vite + 原生 JS 项目",
+        "react-lazy-load-demo 是 Vite + React 项目",
+        "包含 IntersectionObserver 方案的演示",
+        "包含 loading=lazy 属性方案的演示",
+        "包含基于滚动事件监听方案的演示",
+        "react-lazy-load-demo 包含对应的 React 组件实现"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "分析 CSV 文件解析的业界实现方式。选择：原生",
+      "expected_output": "在桌面生成 csv-parser-demo 一个项目",
+      "expectations": [
+        "在桌面创建了 csv-parser-demo 目录",
+        "没有创建 vue-csv-parser-demo 或 react-csv-parser-demo",
+        "调研了至少 3 种 CSV 解析库/方式",
+        "README.md 包含各方案的对比分析"
+      ]
+    }
+  ]
+}
