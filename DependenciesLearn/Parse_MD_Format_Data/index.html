@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<!-- ↑ 文档类型声明：告诉浏览器使用 HTML5 标准模式渲染，避免 quirks 模式 -->
+<html lang="zh-CN">
+<!-- ↑ html 根元素，lang="zh-CN" 声明页面语言为简体中文，有利于屏幕阅读器和搜索引擎 -->
+<head>
+  <!-- 字符编码：使用 UTF-8 编码，支持中文等所有 Unicode 字符 -->
+  <meta charset="UTF-8" />
+  <!-- 视口设置：针对移动端优化，宽度跟随设备宽度，初始缩放比例为 1 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- 页面标题：显示在浏览器标签页上 -->
+  <title>Markdown 解析工具演示</title>
+</head>
+<body>
+  <!-- #app 容器：整个应用挂载点，由 src/main.js 中的路由控制动态渲染内容 -->
+  <div id="app">
+    <!-- 顶部导航栏：使用 sticky 定位固定在页面顶部 -->
+    <nav class="nav-bar">
+      <!--
+        导航链接使用 hash 路由（#/path）方式：
+        点击后改变 URL 中的 hash 部分，触发 window.hashchange 事件，
+        main.js 中的 router() 函数据此加载对应的解析页面。
+      -->
+      <!-- 首页：展示工具概述和原始 MD 内容 -->
+      <a href="#/" class="nav-link">首页</a>
+      <!-- remark —— unified 生态核心，解析 MD 为 mdast AST，可遍历/查询/修改 -->
+      <a href="#/remark" class="nav-link">remark</a>
+      <!-- gray-matter —— 专门提取 YAML/TOML/JSON frontmatter -->
+      <a href="#/gray-matter" class="nav-link">gray-matter</a>
+      <!-- mdast-util-from-markdown —— 底层解析，直接输出 mdast，无需 unified 管道 -->
+      <a href="#/mdast-util" class="nav-link">mdast-util</a>
+      <!-- marked —— 老牌解析器，输出 tokens 或 HTML -->
+      <a href="#/marked" class="nav-link">marked</a>
+      <!-- markdown-it —— 插件化解析器，输出 token 流 -->
+      <a href="#/markdown-it" class="nav-link">markdown-it</a>
+      <!-- micromark —— 底层流式解析器，最快的 MD 解析核心 -->
+      <a href="#/micromark" class="nav-link">micromark</a>
+    </nav>
+    <!-- #content 内容区：路由渲染的目标容器，由 router() 函数填充页面 HTML -->
+    <main id="content"></main>
+  </div>
+  <!--
+    type="module" 表示使用 ES Module 方式加载 JavaScript，
+    浏览器内置支持 import / export 语法，无需打包器也可运行。
+    Vite 开发环境下此文件由 Vite 编译后提供，生产构建后路径会由 Vite 自动处理。
+  -->
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
