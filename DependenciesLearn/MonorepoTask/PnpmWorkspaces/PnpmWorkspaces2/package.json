@@ -1,0 +1,9 @@
+{
+  "name": "pnpm-workspaces-demo-2",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm -r run dev",
+    "build": "pnpm -r run build"
+  }
+}
