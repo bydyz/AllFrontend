@@ -1,0 +1,8 @@
+{
+  "name": "vite-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter vue-app dev"
+  }
+}
