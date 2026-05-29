@@ -1,0 +1,9 @@
+{
+  "name": "@demo/utils",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "echo utils dev",
+    "build": "echo utils build"
+  }
+}

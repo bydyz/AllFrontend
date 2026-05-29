@@ -1,0 +1,12 @@
+{
+  "name": "@demo/ui",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "echo ui dev",
+    "build": "echo ui build"
+  },
+  "dependencies": {
+    "@demo/utils": "workspace:*"
+  }
+}
