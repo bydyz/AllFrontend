@@ -3,8 +3,8 @@ import http from 'http';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { ModuleResolver } from './moduleResolver.js';
-import { Transformer } from './transform.js';
+import { ModuleResolver } from './moduleResolver.ts';
+import { Transformer } from './transform.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '../../vue-app');

@@ -1,5 +1,5 @@
 import path from 'path';
-import { ModuleResolver } from './moduleResolver.js';
+import { ModuleResolver } from './moduleResolver.ts';
 
 const IMPORT_RE = /import\s+(?:[\w{}\s,*]+\s+from\s+)?['"]([^'"]+)['"]/g;
 const DYNAMIC_IMPORT_RE = /import\s*\(['"]([^'"]+)['"]\)/g;

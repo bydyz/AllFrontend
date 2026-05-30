@@ -1,12 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vue App</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vite 基础示例</title>
+  <link rel="stylesheet" href="/src/style.css">
 </head>
 <body>
-  <div id="app"></div>
-  <script type="module" src="./src/main.ts"></script>
+  <div id="app">
+    <nav class="nav-bar">
+      <a href="#/" class="nav-link">首页</a>
+      <a href="#/hello" class="nav-link">Hello</a>
+      <a href="#/counter" class="nav-link">计数器</a>
+    </nav>
+    <main id="content"></main>
+  </div>
+  <script type="module" src="/src/main.js"></script>
 </body>
 </html>
