@@ -14,6 +14,7 @@ GSD 是一个 AI 辅助开发工作流系统，帮助个人开发者和小团队
 
 核心特点：
 - **六命令循环**：初始化 → 讨论 → 计划 → 执行 → 验证 → 发布
+- 上面对应的也就是：**1) 初始化 -> 2) 讨论 -> 3) 规划 -> 4) 执行 -> 5) 验证 -> 6) 交付** 这六个主要阶段，也就是一个循环，即 `一个phase`
 - **多Agent编排**：研究者、规划者、执行者各自在全新上下文中工作
 - **结构化 artifacts**：跨会话持久化的 PROJECT.md、REQUIREMENTS.md、ROADMAP.md、STATE.md 等
 - **跨运行时兼容**：支持 Claude Code、OpenCode、Gemini CLI、Kilo、Codex、Copilot、Cursor、Windsurf
@@ -65,6 +66,13 @@ npx @opengsd/get-shit-done-redux@latest -- --dangerously-skip-permissions
 | `/gsd-progress --next` | 自动检测并运行下一步 |
 | `/gsd-complete-milestone` | 归档里程碑并打标签 |
 | `:gsd:surface` | 运行时启用/禁用技能集群 |
+| `/gsd-pause-work` | 保存当前进度 |
+| `/gsd-resume-work` | 恢复当前进度 |
+| `/gsd-add-phase` | 在当前路线的最后添加一个新阶段 |
+| `/gsd-insert-phase` | 在中间插入一个Phase，命令执行后，GSD会询问你想插入的具体位置 |
+| `/gsd-remove-phase` | 移除一个Phase，命令执行后，GSD会询问你想移除的Phase编号 |
+| `/gsd-quick` | 用于快速处理一个临时任务，跳过完整的阶段流程 |
+| `/gsd-new-milestone` | 开启一个新里程碑 |
 
 ## 工作流程
 
