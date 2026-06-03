@@ -1,3 +1,7 @@
+# Maven 安装
+
+解压完 maven的压缩包 后即可使用
+
 # Maven `settings.xml` 配置详解
 
 > `settings.xml` 是 Maven 的核心配置文件，用于定义**全局**或**用户级**的 Maven 行为。

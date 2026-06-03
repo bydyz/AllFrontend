@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>client / offset / scroll 属性演示</title>
+  <style>
+    body {
+      margin: 0;
+    }
+    #box {
+      height: 3000px;
+      width: 6000px;
+      background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+      color: #333;
+      font-family: "Consolas", "Monaco", monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      padding: 20px;
+      box-sizing: border-box;
+      white-space: pre;
+      overflow: auto;
+    }
+  </style>
+</head>
+<body>
+  <div id="box"></div>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const box = document.getElementById('box');
+
+      const props = [
+        ['clientLeft',   box.clientLeft],
+        ['clientTop',    box.clientTop],
+        ['clientWidth',  box.clientWidth],
+        ['clientHeight', box.clientHeight],
+        ['offsetLeft',   box.offsetLeft],
+        ['offsetTop',    box.offsetTop],
+        ['offsetWidth',  box.offsetWidth],
+        ['offsetHeight', box.offsetHeight],
+        ['offsetParent', box.offsetParent],
+        ['scrollLeft',   box.scrollLeft],
+        ['scrollTop',    box.scrollTop],
+        ['scrollWidth',  box.scrollWidth],
+        ['scrollHeight', box.scrollHeight],
+      ];
+
+      const lines = props.map(([k, v]) => `${k.padEnd(15, ' ')} = ${v}`);
+      box.textContent = lines.join('\n');
+    });
+  </script>
+</body>
+</html>

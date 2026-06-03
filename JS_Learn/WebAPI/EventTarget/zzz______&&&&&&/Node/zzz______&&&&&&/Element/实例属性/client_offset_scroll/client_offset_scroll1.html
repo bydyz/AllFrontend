@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<title>client / offset / scroll 演示</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    font-family: "Microsoft YaHei", sans-serif;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 上方区域 */
+  .top {
+    flex: 0 0 auto;
+    padding: 12px 16px;
+    border-bottom: 1px solid #ccc;
+    background: #f5f5f5;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+  }
+  .ctrl {
+    display: flex;
+    flex-direction: column;
+    font-size: 13px;
+  }
+  .ctrl label {
+    margin-bottom: 4px;
+    color: #333;
+  }
+  .ctrl input[type="range"] {
+    width: 160px;
+  }
+  .ctrl .val {
+    font-size: 12px;
+    color: #666;
+  }
+  .btn {
+    padding: 8px 18px;
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    align-self: flex-end;
+  }
+  .btn:hover { background: #1565c0; }
+
+  /* 下方区域 */
+  .bottom {
+    flex: 1 1 auto;
+    display: flex;
+    min-height: 0;
+  }
+
+  /* 下左 */
+  .bottom-left {
+    flex: 1 1 50%;
+    padding: 16px;
+    border-right: 1px solid #ccc;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .outer {
+    flex: 1 1 auto;
+    overflow: auto;          /* 上下左右滚动 */
+    background: #fafafa;
+    border: 1px dashed #aaa;
+    min-height: 0;
+  }
+  .inner {
+    /* 初始宽高超过外层 */
+    width: 600px;
+    height: 600px;
+    background: linear-gradient(135deg, #ffe082, #f06292);
+    color: #fff;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    word-break: break-word;
+    text-align: center;
+  }
+
+  /* 下右 */
+  .bottom-right {
+    flex: 1 1 50%;
+    padding: 16px;
+    overflow: auto;
+    background: #fff;
+  }
+  .bottom-right h3 {
+    margin: 0 0 8px;
+    color: #1976d2;
+  }
+  .bottom-right h4 {
+    margin: 12px 0 6px;
+    color: #444;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 2px;
+  }
+  .bottom-right table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .bottom-right td {
+    border: 1px solid #eee;
+    padding: 4px 8px;
+  }
+  .bottom-right td:first-child {
+    width: 45%;
+    color: #555;
+  }
+  .bottom-right td:last-child {
+    color: #d81b60;
+    font-family: Consolas, monospace;
+  }
+</style>
+</head>
+<body>
+
+  <!-- 上方：4 个滑块 + 确定按钮 -->
+  <div class="top">
+    <div class="controls">
+      <div class="ctrl">
+        <label>margin (px)</label>
+        <input type="range" id="marginSlider" min="0" max="100" value="10" />
+        <div class="val"><span id="marginVal">10</span> px</div>
+      </div>
+      <div class="ctrl">
+        <label>border (px)</label>
+        <input type="range" id="borderSlider" min="0" max="50" value="5" />
+        <div class="val"><span id="borderVal">5</span> px</div>
+      </div>
+      <div class="ctrl">
+        <label>padding (px)</label>
+        <input type="range" id="paddingSlider" min="0" max="100" value="20" />
+        <div class="val"><span id="paddingVal">20</span> px</div>
+      </div>
+      <div class="ctrl">
+        <label>宽高 (px)</label>
+        <input type="range" id="sizeSlider" min="50" max="1000" value="600" />
+        <div class="val"><span id="sizeVal">600</span> px</div>
+      </div>
+      <button class="btn" id="applyBtn">确定</button>
+    </div>
+  </div>
+
+  <!-- 下方 -->
+  <div class="bottom">
+    <!-- 下左 -->
+    <div class="bottom-left">
+      <div class="outer" id="outer">
+        <div class="inner" id="inner">
+          内容区域
+        </div>
+      </div>
+    </div>
+
+    <!-- 下右：展示信息 -->
+    <div class="bottom-right" id="info">
+      <h3>点击「确定」后展示 inner 元素的几何信息</h3>
+    </div>
+  </div>
+
+<script>
+  const marginSlider  = document.getElementById('marginSlider');
+  const borderSlider  = document.getElementById('borderSlider');
+  const paddingSlider = document.getElementById('paddingSlider');
+  const sizeSlider    = document.getElementById('sizeSlider');
+
+  const marginVal  = document.getElementById('marginVal');
+  const borderVal  = document.getElementById('borderVal');
+  const paddingVal = document.getElementById('paddingVal');
+  const sizeVal    = document.getElementById('sizeVal');
+
+  // 实时更新滑块右侧数值显示
+  function bindVal(slider, label) {
+    slider.addEventListener('input', () => label.textContent = slider.value);
+  }
+  bindVal(marginSlider,  marginVal);
+  bindVal(borderSlider,  borderVal);
+  bindVal(paddingSlider, paddingVal);
+  bindVal(sizeSlider,    sizeVal);
+
+  const inner = document.getElementById('inner');
+  const info  = document.getElementById('info');
+
+  document.getElementById('applyBtn').addEventListener('click', () => {
+    const m = marginSlider.value;
+    const b = borderSlider.value;
+    const p = paddingSlider.value;
+    const s = sizeSlider.value;
+
+    // 更新 inner 样式
+    inner.style.margin = m + 'px';
+    inner.style.border = b + 'px solid #333';
+    inner.style.padding = p + 'px';
+    inner.style.width = s + 'px';
+    inner.style.height = s + 'px';
+
+    // 等待浏览器重新计算样式后再读取
+    requestAnimationFrame(() => {
+      showInfo(inner);
+    });
+  });
+
+  function showInfo(el) {
+    const cs = getComputedStyle(el);
+
+    const rows = (title, obj) => {
+      let html = `<h4>${title}</h4><table>`;
+      for (const k in obj) {
+        html += `<tr><td>${k}</td><td>${obj[k]}</td></tr>`;
+      }
+      html += '</table>';
+      return html;
+    };
+
+    const client = {
+      clientWidth:        el.clientWidth,
+      clientHeight:       el.clientHeight,
+      clientTop:          el.clientTop,
+      clientLeft:         el.clientLeft,
+    };
+
+    const offset = {
+      offsetWidth:        el.offsetWidth,
+      offsetHeight:       el.offsetHeight,
+      offsetTop:          el.offsetTop,
+      offsetLeft:         el.offsetLeft,
+      offsetParent:       el.offsetParent ? el.offsetParent.tagName + '#' + el.offsetParent.id : 'null',
+    };
+
+    const scroll = {
+      scrollWidth:        el.scrollWidth,
+      scrollHeight:       el.scrollHeight,
+      scrollTop:          el.scrollTop,
+      scrollLeft:         el.scrollLeft,
+    };
+
+    const style = {
+      width:              cs.width,
+      height:             cs.height,
+      margin:             cs.margin,
+      border:             cs.border,
+      padding:            cs.padding,
+      boxSizing:          cs.boxSizing,
+      innerText长度:      (el.innerText || '').length,
+    };
+
+    info.innerHTML =
+      '<h3>inner 元素几何信息</h3>' +
+      rows('clientXXX', client) +
+      rows('offsetXXX', offset) +
+      rows('scrollXXX', scroll) +
+      rows('computed style', style);
+  }
+</script>
+</body>
+</html>
