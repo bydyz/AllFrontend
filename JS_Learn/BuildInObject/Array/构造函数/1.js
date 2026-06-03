@@ -22,4 +22,4 @@ console.log(fruits[0]); // "Apple"
 
 
 // RangeError
-// 若用 arrayLength 创建array, 且其值不在 0 到 232 - 1（包括）之间，则会触发异常。
+// 若用 arrayLength 创建array, 且 arrayLength 的值不在 0 到 2的32次方 - 1（包括）之间，则会触发异常。

@@ -29,14 +29,14 @@ console.log(Array.from("foo"));
 
 
 const set = new Set(["foo", "bar", "baz", "foo"]);
-console.log(set)
+console.log(set)  // Set(3) { 'foo', 'bar', 'baz' }
 console.log(Array.from(set));
 // [ "foo", "bar", "baz" ]
 
 
 
 function f() {
-  console.log(arguments)
+  console.log(arguments)  // [Arguments] { '0': 1, '1': 2, '2': 3 }
   return Array.from(arguments);
 }
 console.log(f(1, 2, 3));

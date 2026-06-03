@@ -11,11 +11,11 @@ const mapper = new Map([
   ["1", "a"],
   ["2", "b"],
 ]);
-console.log(mapper.values())
+console.log(mapper.values())  // [Map Iterator] { 'a', 'b' }
 console.log(Array.from(mapper.values()));
 // ['a', 'b'];
 
 
-console.log(mapper.keys())
+console.log(mapper.keys())  // [Map Iterator] { '1', '2' }
 Array.from(mapper.keys());
 // ['1', '2'];

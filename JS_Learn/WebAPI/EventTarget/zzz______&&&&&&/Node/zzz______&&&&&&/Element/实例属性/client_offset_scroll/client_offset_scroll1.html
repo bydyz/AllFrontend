@@ -153,7 +153,8 @@
         <input type="range" id="sizeSlider" min="50" max="1000" value="600" />
         <div class="val"><span id="sizeVal">600</span> px</div>
       </div>
-      <button class="btn" id="applyBtn">确定</button>
+      <button class="btn" id="updateDomBtn">更新dom</button>
+      <button class="btn" id="applyBtn">生成元素的几何信息</button>
     </div>
   </div>
 
@@ -170,7 +171,7 @@
 
     <!-- 下右：展示信息 -->
     <div class="bottom-right" id="info">
-      <h3>点击「确定」后展示 inner 元素的几何信息</h3>
+      <h3>点击「更新dom」调整 inner 样式，点击「生成元素的几何信息」查看结果</h3>
     </div>
   </div>
 
@@ -194,29 +195,35 @@
   bindVal(paddingSlider, paddingVal);
   bindVal(sizeSlider,    sizeVal);
 
+  const outer = document.getElementById('outer');
   const inner = document.getElementById('inner');
   const info  = document.getElementById('info');
 
-  document.getElementById('applyBtn').addEventListener('click', () => {
+  // 更新 inner 样式（将滑块的尺寸作用于 inner）
+  function updateInnerStyle() {
     const m = marginSlider.value;
     const b = borderSlider.value;
     const p = paddingSlider.value;
     const s = sizeSlider.value;
-
-    // 更新 inner 样式
-    inner.style.margin = m + 'px';
-    inner.style.border = b + 'px solid #333';
+    inner.style.margin  = m + 'px';
+    inner.style.border  = b + 'px solid #333';
     inner.style.padding = p + 'px';
-    inner.style.width = s + 'px';
-    inner.style.height = s + 'px';
+    inner.style.width   = s + 'px';
+    inner.style.height  = s + 'px';
+  }
 
+  document.getElementById('updateDomBtn').addEventListener('click', updateInnerStyle);
+
+  document.getElementById('applyBtn').addEventListener('click', () => {
     // 等待浏览器重新计算样式后再读取
     requestAnimationFrame(() => {
-      showInfo(inner);
+      info.innerHTML = '';
+      info.insertAdjacentHTML('beforeend', showInfo(outer, 'outer'));
+      info.insertAdjacentHTML('beforeend', showInfo(inner, 'inner'));
     });
   });
 
-  function showInfo(el) {
+  function showInfo(el, name) {
     const cs = getComputedStyle(el);
 
     const rows = (title, obj) => {
@@ -260,12 +267,13 @@
       innerText长度:      (el.innerText || '').length,
     };
 
-    info.innerHTML =
-      '<h3>inner 元素几何信息</h3>' +
+    return (
+      `<h3>${name} 元素几何信息</h3>` +
       rows('clientXXX', client) +
       rows('offsetXXX', offset) +
       rows('scrollXXX', scroll) +
-      rows('computed style', style);
+      rows('computed style', style)
+    );
   }
 </script>
 </body>
