@@ -71,7 +71,7 @@
 
   function tabItemClick(index) {
     console.log("app:", index)
-    this.currentIndex = index
+    currentIndex.value = index
   }
 </script>
 

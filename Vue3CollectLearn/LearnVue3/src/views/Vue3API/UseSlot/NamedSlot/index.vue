@@ -37,6 +37,7 @@
 
   <hr>
 
+  <!-- 条件插槽 -->
   <IfSlot>
     <template v-slot:left>
       <a href="#">注册</a>

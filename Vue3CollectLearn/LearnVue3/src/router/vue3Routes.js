@@ -139,6 +139,16 @@ export default [
         component: () => import('@/views/Vue3API/UseSlot/ScopeSlot'),
         name: 'ScopeSlot'
       },
+      {
+        path: '/useSlot/use$slots',
+        component: () => import('@/views/Vue3API/UseSlot/Use$slots'),
+        name: 'Use$slots'
+      },
+      {
+        path: '/useSlot/jsSlotComponent',
+        component: () => import('@/views/Vue3API/UseSlot/JSSlotVersion'),
+        name: 'JSSlotComponent'
+      },
     ]
   },
   {
@@ -153,5 +163,11 @@ export default [
         name: 'PropsAllEmitsAll'
       },
     ]
+  },
+  {
+    // 组件命名最佳实践
+    path: '/myComponentNaming',
+    component: () => import('@/views/Vue3API/MyComponentNaming/index.vue'),
+    name: 'MyComponentNaming'
   },
 ]

@@ -8,6 +8,8 @@ import { ref } from 'vue'
     <RouterLink to="/useSlot/defaultSlot">DefaultSlot</RouterLink>
     <RouterLink to="/useSlot/namedSlot">NamedSlot</RouterLink>
     <RouterLink to="/useSlot/scopeSlot">ScopeSlot</RouterLink>
+    <RouterLink to="/useSlot/use$slots">Use$slots</RouterLink>
+    <RouterLink to="/useSlot/jsSlotComponent">JSSlotComponent</RouterLink>
   </nav>
   <p>通常情况下：父组件模板中的表达式只能访问父组件的作用域；子组件模板中的表达式只能访问子组件的作用域。</p>
 

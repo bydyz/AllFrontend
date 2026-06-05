@@ -13,6 +13,8 @@
 
   <div class="other">
     <slot name="default"></slot>
+    <br>
+    <slot></slot>
   </div>
 </template>
 
