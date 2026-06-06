@@ -1,3 +1,5 @@
+# 本文件夹下是 **类数组** 相关内容
+
 # 总述
 
 一些 JavaScript 对象，如 document.getElementsByTagName() 返回的 NodeList 或 arguments 等 JavaScript 对象，

@@ -49,6 +49,11 @@ Markdown All in One使用
 <br/>
 <br/>
 
+# 缩进
+
+  * &emsp;&emsp;  首行缩进两个汉字的段落。
+  * 用 HTML/CSS 方式 进行包裹
+
 # 特殊符号
 
 换行符 <br/>

@@ -1,3 +1,6 @@
+// for...of 语句执行一个循环，该循环处理来自可迭代对象的值序列。可迭代对象包括内置对象的实例，例如 Array、String、TypedArray、Map、Set、NodeList（以及其他 DOM 集合），还包括 arguments 对象、由生成器函数生成的生成器，以及用户定义的可迭代对象。
+
+
 const array = [1, 2, 3];
 for (const item of array) {
   console.log(item); // 1, 2, 3

@@ -33,6 +33,7 @@
 | `npm update <package>` | 更新单个包 |
 | `npm root -g` | 查看 npm 全局安装的位置 |
 | `npm config get prefix` | 配置确定位 |
+| `npm ls <包名>` | 查看所有层级有无安装依赖；添加 --depth=0 仅查看直接依赖 |
 
 ## 运行脚本
 
@@ -97,6 +98,7 @@
 | `pnpm update` | 更新依赖 |
 | `pnpm list` | 列出依赖 |
 | `pnpm run` | 运行脚本 |
+| `pnpm why <包名>` | 列出依赖关系树中该包的所有出现位置 |
 
 ## yarn 命令（类似npm）
 
@@ -110,3 +112,4 @@
 | `yarn list` | 列出依赖 |
 | `yarn run` | 运行脚本 |
 | `yarn create <package>` | 使用模板创建项目 |
+| `yarn why <包名>` | 列出依赖关系树中该包的所有出现位置 |
