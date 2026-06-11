@@ -44,8 +44,10 @@ import dateData from './dates.json'
 
 const weekDays = ['日', '一', '二', '三', '四', '五', '六']
 
-const currentYear = ref(dateData.startDate.year)
-const currentMonth = ref(dateData.startDate.month)
+const originCurrentYear = new Date().getFullYear()
+const originCurrentMonth = new Date().getMonth() + 1
+const currentYear = ref(originCurrentYear)
+const currentMonth = ref(originCurrentMonth)
 
 const getMonthDays = (year, month) => {
   const result = dateData.dates.filter(d => d.year === year && d.month === month)
@@ -107,7 +109,7 @@ const calendarDays = computed(() => {
 })
 
 const prevMonth = () => {
-  if (currentMonth.value === dateData.startDate.month && currentYear.value === dateData.startDate.year) {
+  if (currentMonth.value === originCurrentMonth && currentYear.value === originCurrentYear) {
     return
   }
   if (currentMonth.value === 1) {
