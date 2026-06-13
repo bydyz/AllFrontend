@@ -3,17 +3,32 @@
 1. `npm create vue@latest`
 2. `npm create vite`
 
+
+---
+
+
 # windows中 cmd命令
 
 1. `cls`
 2. `where node`     查看 node 和 npm 的安装位置
 3. `where npm`      查看 node 和 npm 的安装位置
 4. `echo xxx yyy`   控制台 显示 xxx yyy
+5. `d:`             切换盘符
+
+
+# windows中 Win + R 后使用
+
+1. 
+
 
 # windows中 Win + R 后使用  在cmd中也可
 
 1. `rundll32 sysdm.cpl,EditEnvironmentVariables`  直接打开 环境变量 窗口
 2. `sysdm.cpl`  打开 系统属性
+
+
+---
+
 
 # npm命令
 

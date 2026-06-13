@@ -309,14 +309,37 @@
         </profile>
 
         <!-- 针对 JDK 17 的特殊配置 -->
+        <!-- 此配置的核心目的是：当 Maven 构建运行在 JDK 17 环境下（或希望显式兼容 JDK 17）时，强制将项目的源代码级别和目标字节码级别都锁定为 17。 -->
+        <!-- 如果当前 JDK 为 17，并且没有其他 profile 强制抢占激活，则此 profile 自动生效。 -->
+        <!-- 指定该 profile 的唯一标识符为 jdk17，方便手动激活（如 mvn clean install -P jdk17）或在配置中引用。 -->
+        <!-- 
+        典型使用场景： 
+            1. 你的项目必须运行在 JDK 17 或更高版本，但你希望生成的字节码严格兼容 JDK 17，避免意外使用更高版本的 API 或语言特性。
+            2. 团队多人使用不同 JDK（如 17、21、11），通过 profile 自动适配编译参数，保证输出产物的一致性。
+            3. 在 CI/CD 中，构建环境是 JDK 17，但 Maven 项目默认的 maven.compiler 属性可能被父 POM 覆盖，通过 profile 强制纠正。
+
+        潜在问题：
+            1.如果运行 Maven 的 JDK 版本低于 17（如 JDK 11），该 profile 不会激活，因为 <jdk>17</jdk> 条件不满足。此时若未定义其他 profile 或全局编译属性，可能回退到默认的较老版本（如 1.5），导致编译失败。建议同时为低版本 JDK 定义对应的 profile。
+            2.由于 activeByDefault 与 <jdk> 同时存在，会导致“仅在 JDK 17 下才默认激活”的行为，不符合直觉。更常见的写法是只保留 <jdk>17</jdk>，去掉 activeByDefault，让 profile 完全由 JDK 版本驱动。
+        -->
         <profile>
             <id>jdk17</id>
             <activation>
-                <jdk>17</jdk>
+              <!-- 表示如果没有其他任何 profile 被显式激活，则此 profile 会作为默认配置生效。 -->
+              <!-- 注意：activeByDefault 的优先级很低——当存在其他通过 -P、<activeProfiles> 或系统属性激活的 profile 时，默认激活不会生效。 -->
+              <activeByDefault>true</activeByDefault>
+              <jdk>17</jdk>
             </activation>
+
+            <!-- 这些属性仅在 maven-compiler-plugin 未显式配置 source、target、compilerVersion 时才会生效。如果插件中已经硬编码了值，profile 里的属性会被忽略。 -->
+            <!-- 设置这些属性后，Maven 会确保使用 JDK 17 的编译器语义，但不会自动切换 JAVA_HOME——如果运行 Maven 的 JDK 本身就是 17，则自然一致；如果运行的是 JDK 21 但设定 source=17，则 Maven 会调用当前 JDK 21 的 javac 并以 -source 17 -target 17 模式编译，生成兼容 17 的字节码。 -->
             <properties>
+                <!-- 设置源代码使用的 Java 语言版本，此处即 不允许使用高于 17 的语法特性 -->
                 <maven.compiler.source>17</maven.compiler.source>
+                <!-- 设置生成的字节码版本，使其能被指定版本的 JVM 运行。 -->
                 <maven.compiler.target>17</maven.compiler.target>
+                <!-- 指定 javac 编译器的版本（如 17）。通常与 source/target 保持一致，尤其在需要显式控制编译器实现时有用（例如使用不同 JDK 的编译器）。 -->
+                <maven.compiler.compilerVersion>17</maven.compiler.compilerVersion>
             </properties>
         </profile>
 
