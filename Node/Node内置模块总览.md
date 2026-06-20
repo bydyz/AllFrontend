@@ -162,7 +162,25 @@ if (cluster.isPrimary) {
 
 ---
 
-## 七、模块系统
+## 七、压缩与解压
+
+### 50. `zlib`
+压缩与解压缩模块，支持 gzip、deflate、deflate-raw、brotli 等算法。
+```javascript
+const zlib = require('zlib');
+const gzip = zlib.createGzip();
+const input = fs.createReadStream('input.txt');
+const output = fs.createWriteStream('input.txt.gz');
+input.pipe(gzip).pipe(output);
+
+// 同步压缩
+const compressed = zlib.gzipSync('hello world');
+const decompressed = zlib.gunzipSync(compressed);
+```
+
+---
+
+## 八、模块系统
 
 ### 23. `module`
 模块加载系统（`require`、`exports`、缓存机制）。
@@ -178,7 +196,27 @@ vm.runInNewContext('x + 1', { x: 2 });  // 3
 
 ---
 
-## 八、工具与算法
+## 九、错误处理
+
+### 37. `error`（内置 `Error`、`TypeError`、`RangeError` 等）
+错误对象体系。Node 额外扩展了 `SystemError`、`AssertionError`、`NodeError`。
+
+### 51. `domain`（已弃用，但仍可用）
+错误处理域，将多个 I/O 操作组合成一个组，统一处理错误。
+```javascript
+const domain = require('domain');
+const d = domain.create();
+d.on('error', (err) => {
+  console.error('Domain caught:', err);
+});
+d.run(() => {
+  // 在这个域中运行的所有代码的错误都会被捕获
+});
+```
+
+---
+
+## 十、工具与算法
 
 ### 26. `util`
 工具函数集合。
@@ -304,6 +342,64 @@ test('add', t => {
 ### 49. `sqlite`（Node ≥ 22 内置）
 内置 SQLite 数据库（实验性稳定中）。
 
+### 54. `webcrypto`（Node ≥ 15）
+Web Crypto API 实现，提供与浏览器一致的加密接口。
+```javascript
+const { subtle } = require('crypto').webcrypto;
+const key = await subtle.generateKey(
+  { name: 'AES-GCM', length: 256 },
+  true,
+  ['encrypt', 'decrypt']
+);
+```
+
+### 55. `webstreams`（Node ≥ 16）
+Web Streams API 实现，提供标准的流接口。
+```javascript
+const { ReadableStream, WritableStream, TransformStream } = require('stream/web');
+const readable = new ReadableStream({
+  start(controller) {
+    controller.enqueue('hello');
+    controller.close();
+  }
+});
+```
+
+### 56. `permissions`（Node ≥ 20）
+权限管理模块，用于控制对敏感 API 的访问。
+```javascript
+const { permissions } = require('node:permissions');
+// 检查权限
+if (permissions.has('fs.read')) {
+  // 允许读取文件
+}
+```
+
+### 57. `sea`（Node ≥ 20）
+单可执行应用程序（Single Executable Applications），将 Node.js 应用打包成单个可执行文件。
+```javascript
+// 通过 node --experimental-sea-config 配置
+// 生成独立的 .exe 或二进制文件
+```
+
+### 58. `ffi`（Node ≥ 22，实验性）
+外部函数接口，用于调用 C/C++ 库函数。
+```javascript
+const ffi = require('node:ffi');
+// 直接调用系统库函数
+```
+
+### 59. `async_context`
+异步上下文追踪，用于在异步操作中保持上下文信息。
+```javascript
+const { AsyncLocalStorage } = require('async_context');
+const asyncLocalStorage = new AsyncLocalStorage();
+asyncLocalStorage.run({ userId: 123 }, () => {
+  // 在这个异步上下文中，可以随时获取 userId
+  const store = asyncLocalStorage.getStore();
+});
+```
+
 ---
 
 ## 十五、其他
@@ -324,16 +420,18 @@ test('add', t => {
 | **文件系统** | `fs`, `fs/promises`, `path`, `os`, `url` |
 | **网络** | `http`, `https`, `http2`, `net`, `dgram`, `dns`, `tls` |
 | **二进制** | `buffer`, `string_decoder` |
-| **事件异步** | `events`, `async_hooks` |
-| **流** | `stream` |
+| **事件异步** | `events`, `async_hooks`, `async_context` |
+| **流** | `stream`, `webstreams` |
 | **进程** | `process`, `child_process`, `cluster`, `worker_threads` |
 | **模块系统** | `module`, `vm` |
-| **工具** | `util`, `crypto`, `querystring`, `assert`, `timers` |
+| **压缩** | `zlib` |
+| **工具** | `util`, `crypto`, `webcrypto`, `querystring`, `assert`, `timers` |
 | **调试** | `console`, `perf_hooks`, `v8`, `report`, `diagnostics_channel`, `trace_events` |
+| **错误处理** | `error`, `domain` |
 | **OS API** | `readline`, `repl`, `tty` |
 | **国际化** | `Intl`, `TextEncoder`, `TextDecoder` |
 | **测试** | `node:test` |
-| **新特性** | `fetch`, `undici`, `sqlite` |
+| **新特性** | `fetch`, `undici`, `sqlite`, `permissions`, `sea`, `ffi` |
 
 ---
 

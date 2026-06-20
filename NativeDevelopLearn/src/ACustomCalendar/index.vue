@@ -12,6 +12,7 @@
       </div>
       
       <div class="days-grid">
+        <!-- completed 为 true，表示 当天顺利完成；否则，当天的任务未完成。 -->
         <div
           v-for="(day, index) in calendarDays"
           :key="index"
@@ -42,7 +43,7 @@
 import { ref, computed } from 'vue'
 import dateData from './dates.json'
 
-const weekDays = ['日', '一', '二', '三', '四', '五', '六']
+const weekDays = ['一', '二', '三', '四', '五', '六', '日']
 
 const originCurrentYear = new Date().getFullYear()
 const originCurrentMonth = new Date().getMonth() + 1

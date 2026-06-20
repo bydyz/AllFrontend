@@ -69,14 +69,17 @@ sequenceDiagram
                         Resolve->>Resolve: 查询 moduleGraph
                         
                         alt 内置模块 (vue, react)
-                            Resolve-->>Transform: 内置模块标记
+                            Transform->>Plugin: resolveId 钩子
+                            Plugin-->>Transform: 返回虚拟路径 (/@vite/...)
                         else node_modules
-                            Resolve-->>Transform: 绝对路径
+                            Transform->>Plugin: resolveId 钩子
+                            Plugin-->>Transform: 返回绝对路径
                         else 本地模块
-                            Resolve-->>Transform: 解析后的相对路径
+                            Transform->>Plugin: resolveId 钩子
+                            Plugin-->>Transform: 返回解析后的路径
                         end
                         
-                        Transform->>Plugin: 调用 transform 钩子
+                        Transform->>Plugin: transform 钩子
                         Plugin-->>Transform: 返回转换后的代码
                         
                         Transform->>Transform: 生成 sourcemap
@@ -89,37 +92,37 @@ sequenceDiagram
             end
         end
         
-        rect rgb(250, 250, 250)
-            Note over User,Browser: === 阶段七：依赖预构建 (首次 Import) ===
-            Browser->>Server: GET /node_modules/vue/dist/vue.esm.js
-            Server->>Server: checkImports()
+    rect rgb(250, 250, 250)
+        Note over User,Browser: === 阶段七：依赖预构建 (首次 Import) ===
+        Browser->>Server: GET /node_modules/vue/dist/vue.esm.js
+        Server->>Server: checkImports()
+        
+        alt 第三方模块首次导入
+            Server->>DepOptimizer: scanDeps(mainEntry)
             
-            alt 第三方模块首次导入
-                Server->>Resolve: scanImports(deps)
-                
-                loop 遍历依赖
-                    Resolve->>Resolve: 递归分析 import 语句
-                end
-                
-                Resolve->>Server: 返回预构建清单
-                
-                Server->>Transform: preBundleDeps()
-                
-                loop 处理每个依赖
-                    Transform->>Transform: esbuild 打包
-                    Transform->>Transform: 输出到 node_modules/.vite
-                end
-                
-                Server-->>Browser: 返回预构建后的代码
-            else 已预构建
-                Server-->>Server: 读取 .vite 缓存
-                Server-->>Browser: 返回缓存内容
+            loop 递归扫描依赖
+                DepOptimizer->>DepOptimizer: 解析 import 语句
+                DepOptimizer->>DepOptimizer: 识别第三方模块
             end
+            
+            DepOptimizer->>DepOptimizer: prebundleDeps(esbuild)
+            
+            loop 每个依赖
+                DepOptimizer->>DepOptimizer: esbuild 打包
+                DepOptimizer->>DepOptimizer: 输出到 node_modules/.vite
+            end
+            
+            DepOptimizer->>Server: 更新预构建状态
+            
+            Server-->>Browser: 返回预构建后的代码
+        else 已预构建
+            Server-->>Server: 读取 .vite 缓存
+            Server-->>Browser: 返回缓存内容
         end
+    end
         
         rect rgb(250, 250, 250)
             Note over User,Browser: === 阶段八：HMR 热更新 (文件变更时) ===
-            activate Server
             Server->>Server: watcher.on("change", file)
             
             Server->>Server: analyzeChain
@@ -147,44 +150,49 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    participant Graph as ModuleGraph
-    participant Resolve as Resolver
     participant Transform as Transform
+    participant PluginContainer as PluginContainer
+    participant Graph as ModuleGraph
     participant Cache as 缓存
     
     rect rgb(250, 250, 250)
-        Note over Graph,Cache: 模块关系追踪
+        Note over Transform,Graph: 模块关系追踪
     end
     
-    Resolve->>Graph: resolveId('/src/app.js')
+    Transform->>PluginContainer: resolveId('/src/app.js')
     
-    alt 已有节点
-        Graph-->>Resolve: 返回现有模块节点
-    else 新模块
+    PluginContainer->>PluginContainer: 调用插件 resolveId 钩子
+    
+    alt 返回结果
+        PluginContainer-->>Transform: 返回解析后的 ID
+        Transform->>Graph: resolve(id)
         
-        Graph->>Graph: createModule('')
-        
-        Graph->>Resolve: url + pos
-        
-        Resolve-->>Graph: 绝对路径 + 真实路径
-        
-        Graph->>Graph: 设置 meta 信息
+        alt 已有节点
+            Graph-->>Transform: 返回现有模块节点
+        else 新模块
+            
+            Graph->>Graph: createModule(id)
+            
+            Graph-->>Transform: 创建的模块节点
+        end
     end
     
-    note right of Graph: 保存 importer→imported 关系
-    
-    ---
-    
-    Transform->>Graph: getModule('/src/app.js')
-    
+    rect rgb(255, 255, 200)
+        Note over Graph: 保存 importer→imported 关系
+    end
+
+    Transform->>Graph: getModule(id)
+
     alt 获取转换后的模块
         Transform->>Transform: 解析 import 语句
         Transform->>Graph: updateModule(graphNode, deps)
-        
+
         Graph->>Graph: 添加边关系
     end
     
-    note right of Graph: DAG（有向无环图）
+    rect rgb(200, 255, 200)
+        Note over Graph: DAG（有向无环图）
+    end
 ```
 
 **数据结构：**
@@ -208,49 +216,39 @@ sequenceDiagram
     
     CLI->>Plugin: config('', {})
     Plugin->>Plugin: config()
-    
-    ---
-    
-    rect rgb(250, 250, 250)
+
+    rect rgb(200, 255, 200)
         Note over Plugin,Hooks: configureServer 阶段
     end
-    
+
     Server->>Plugin: configureServer(server)
     Plugin->>Plugin: 注册中间件
-    
-    ---
-    
-    rect rgb(250, 250, 250)
+
+    rect rgb(200, 255, 200)
         Note over Plugin,Hooks: resolveId 阶段（每个模块）
     end
-    
+
     Transform->>Plugin: resolveId(source, importer)
     Plugin->>Plugin: 返回resolved
-    
-    ---
-    
-    rect rgb(250, 250, 250)
+
+    rect rgb(200, 255, 200)
         Note over Plugin,Hooks: transform 阶段（代码转换）
     end
-    
+
     Transform->>Plugin: transform(code, id)
     Plugin->>Plugin: 返回转换结果
-    
-    ---
-    
-    rect rgb(250, 250, 250)
+
+    rect rgb(200, 255, 200)
         Note over Plugin,Hooks: load 阶段（虚拟模块）
     end
-    
+
     Transform->>Plugin: load(id)
     Plugin->>Plugin: 返回虚拟模块内容
-    
-    ---
-    
-    rect rgb(250, 250, 250)
+
+    rect rgb(200, 255, 200)
         Note over Plugin,Hooks: handleHotUpdate 阶段
     end
-    
+
     Watcher->>Plugin: handleHotUpdate({modules})
     Plugin->>Plugin: 自定义 HMR 处理
 ```
@@ -281,21 +279,19 @@ sequenceDiagram
     rect rgb(250, 250, 250)
         Note over Server,Protocol: 连接建立
     end
-    
+
     Server->>Protocol: createWebSocketServer()
     Protocol->>Protocol: 使用 ws 库
-    
+
     Client->>Protocol: new WebSocket('ws://localhost:5173')
     Protocol->>Protocol: 握手 + 心跳
-    
+
     Server->>Client: 'connected'
-    
-    ---
-    
-    rect rgb(250, 250, 250)
+
+    rect rgb(200, 255, 200)
         Note over Server,Protocol: 消息类型
     end
-    
+
     Server->>Protocol: 构建消息 payload
     
     alt 错误消息
@@ -348,22 +344,21 @@ sequenceDiagram
     rect rgb(250, 250, 250)
         CLI->>CLI: parseArgs(process.argv)
         CLI->>ConfigLoader: loadConfig(root, overrides)
-        
+
         ConfigLoader->>ConfigLoader: 查找 vite.config.{js,ts,mjs,mts}
         ConfigLoader->>ConfigLoader: 执行配置文件 (IIFE)
         ConfigLoader->>ConfigLoader: 合并默认配置
-        
+
         ConfigLoader-->>CLI: resolvedConfig
-        
+
         CLI->>PluginRunner: resolvePlugins(plugins)
-        
+
         loop 依次激活插件
             PluginRunner->>PluginRunner: plugin.build.start()
         end
-        
+
         PluginRunner-->>CLI: resolvedPlugins
     end
-    
 ```
 
 **关键点：**
@@ -382,7 +377,7 @@ sequenceDiagram
     participant WS as WebSocket Server
     participant Watcher as 文件监视器
     
-    Server->>Middleware: 创建 composeMiddewares()
+     Server->>Middleware: 创建 composeMiddlewares()
     
     Note right of Middleware: 中间件执行顺序
     
@@ -418,45 +413,44 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
+    participant Browser as 浏览器
     participant Transform as TransformPlugin
     participant Parser as AST 解析器
     participant Resolver as 路径解析器
     participant Esbuild as esbuild
     participant Cache as 内存缓存
-    
+
     Browser->>Transform: GET /src/App.vue
-    
+
     Transform->>Parser: parse(ast)
-    Parser->>Parser: 分析 &lt;script&gt; 部分
-    
+    Parser->>Parser: 分析 <script> 部分
+
     alt Vue 单文件组件
         Parser->>Parser: @vue/compiler-sfc
         Parser-->>Transform: 分离 script/style/template
         Transform->>Transform: 分别处理各块
     end
-    
+
     Transform->>Transform: 检查缓存
-    
+
     alt 有缓存且未过期
         Transform-->>Browser: 304 Not Modified
     else 无缓存
-    
-        Transform->>Resolver: resolveId(importPath)
-        
-        alt 内置模块
-            Resolver-->>Transform: /@vite嵌入模块
-        else node_modules
-            Resolver->>Resolver: 查找 node_modules/
-            Resolver-->>Transform: 绝对路径
-        else 相对路径
-            Resolver->>Resolver: 拼接 baseUrl
-            Resolver-->>Transform: 绝对路径
+
+        Transform->>PluginContainer: resolveId(importPath)
+
+        PluginContainer->>PluginContainer: 调用插件 resolveId 钩子
+
+        alt 返回虚拟路径
+            PluginContainer-->>Transform: /@vite嵌入模块
+        else 返回绝对路径
+            PluginContainer-->>Transform: 绝对路径
         end
-        
+
         Transform->>Esbuild: esbuild.transform(code)
-        
+
         Esbuild-->>Transform: 转换后的 JS
-        
+
         Transform->>Cache: 存入结果
         Transform-->>Browser: 200 OK + 转换后代码
     end
@@ -468,41 +462,39 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
+    participant Browser as 浏览器
+    participant Server as ViteDevServer
+    participant DepOptimizer as DepOptimizer
     participant Scanner as DepScanner
-    participant Crawler as AST 爬虫
-    participant Bundler as esbuild 打包器
+    participant Esbuild as esbuild
     participant CacheDir as node_modules/.vite
-    
-    Browser->>Scanner: import 'vue'
-    
-    Scanner->>Scanner: isOptimizedDeps()
-    
+
+    Browser->>Server: GET /node_modules/vue/dist/vue.esm.js
+
+    Server->>DepOptimizer: isOptimizedDeps()
+
     alt 已在缓存中
-        Scanner-->>Browser: 返回缓存路径
+        DepOptimizer-->>Server: 返回缓存信息
+        Server-->>Browser: 返回缓存文件
     else 首次导入
-        
-        Scanner->>Crawler: crawlImport(mainJs)
-        
-        loop 递归扫描所有 import
-            Crawler->>Crawler: parseImports(ast)
-            Crawler->>Scanner: 发现 dep: ['vue', 'vue-router']
+
+        Server->>DepOptimizer: scanDeps(mainEntry)
+
+        loop 递归扫描依赖
+            DepOptimizer->>Scanner: 扫描文件
+            Scanner->>Scanner: 解析 import 语句
+            Scanner->>DepOptimizer: 收集第三方模块
         end
-        
-        Scanner->>Bundler: bundleDeps(deps)
-        
+
+        DepOptimizer->>Esbuild: prebundleDeps()
+
         loop 每个依赖
-            Bundler->>Bundler: esbuild.build({
-                entry: pkg.module,
-                bundle: true,
-                format: 'esm',
-                external: ['vue']
-            })
-            
-            Bundler->>CacheDir: 输出 xxx.js + xxx.js.map
+            Esbuild->>Esbuild: 打包优化
+            Esbuild->>CacheDir: 输出到 deps 目录
         end
-        
-        CacheDir-->>Scanner: 预构建完成
-        Scanner-->>Browser: 分包优化后的代码
+
+        DepOptimizer-->>Server: 预构建完成
+        Server-->>Browser: 返回预构建后的代码
     end
 ```
 
@@ -516,35 +508,32 @@ sequenceDiagram
     participant HMR as HMRPlugin
     participant Client as HMR Client
     participant App as Vue/React App
-    
+
     Watcher->>HMR: file change event
-    
+
     HMR->>HMR: getAffectedModules(file)
-    
+
     HMR->>HMR: propagateUpdate()
-    
+
     rect rgb(250, 250, 250)
         Note right of HMR: 计算受影响模块链
     end
-    
+
     alt 需要重载
-        HMR->>Client: {'type': 'full-reload'}
+        HMR->>Client: {"type": "full-reload"}
         Client->>App: location.reload()
     else 局部更新
-        HMR->>Client: {
-            'type': 'update',
-            'updates': [{模块, hotmap}]
-        }
-        
+        HMR->>Client: {"type": "update", "updates": [{"模块", "hotMap"}]}
+
         Client->>App: 替换新模块代码
-        
-        rect rgb(250, 250, 250)
+
+        rect rgb(200, 255, 200)
             Note right of App: 执行 dispose/create/accept 生命周期
         end
     end
-    
+
     alt CSS 更新
-        HMR->>Client: {style tag update}
+        HMR->>Client: style tag update
         Client->>App: style tag innerHTML = newCSS
     end
 ```
@@ -656,9 +645,11 @@ sequenceDiagram
     else 不存在
         Middle->>Middle: next()
     end
-    
-    ---
-    
+
+    rect rgb(200, 255, 200)
+        Note over Browser,Proxy: API 代理处理
+    end
+
     Browser->>Middle: GET /api/users
     
     alt 配置了 proxy
@@ -685,57 +676,57 @@ sequenceDiagram
 ### 阶段八：各类资源请求处理
 
 ```mermaid
- sequenceDiagram
+sequenceDiagram
     participant Browser as 浏览器
     participant Handler as 资源处理器
-    
+
     rect rgb(250, 250, 250)
         Note over Browser,Handler: Vue 单文件组件
     end
-    
-    Browser->>Handler: GET /src/App.vue?v=xxx
-    
-    Handler->>Handler: @vue/compiler-sfc
-    
-    Handler-->>Browser: JS (setup) + CSS + template HMR
-    
 
-    rect rgb(250, 250, 250)
+    Browser->>Handler: GET /src/App.vue?v=xxx
+
+    Handler->>Handler: @vue/compiler-sfc
+
+    Handler-->>Browser: JS (setup) + CSS + template HMR
+
+
+    rect rgb(200, 255, 200)
         Note over Browser,Handler: CSS 导入
     end
-    
+
     Browser->>Handler: import './style.css'
-    
+
     Handler->>Handler: css 转换
     Handler-->>Browser: JS (注入 style tag)
-    
 
-    rect rgb(250, 250, 250)
+
+    rect rgb(200, 255, 200)
         Note over Browser,Handler: JSON 导入
     end
-    
+
     Browser->>Handler: import data from './data.json'
-    
+
     Handler->>Handler: JSON -> JS object
     Handler-->>Browser: export default data
-    
 
-    rect rgb(250, 250, 250)
+
+    rect rgb(200, 255, 200)
         Note over Browser,Handler: Raw 资源
     end
-    
+
     Browser->>Handler: import raw from './text.txt?raw'
-    
+
     Handler->>Handler: fs.readFile
     Handler-->>Browser: export default "file content"
-    
 
-    rect rgb(250, 250, 250)
+
+    rect rgb(200, 255, 200)
         Note over Browser,Handler: URL 资源
     end
-    
+
     Browser->>Handler: import icon from './img.png?url'
-    
+
     Handler->>Handler: 生成 hash 文件名
     Handler->>Handler: 复制到 _vite/assets
     Handler-->>Browser: /_vite/assets/xxx.png
@@ -756,31 +747,26 @@ sequenceDiagram
     participant Config as 环境配置
     participant Handler as EnvHandler
     participant Browser as 浏览器
-    
+
     Config->>Handler: 定义 .env 文件
-    
+
     rect rgb(250, 250, 250)
         Note over Config,Browser: 环境变量注入
     end
-    
-    Handler->>Handler: 加载 .env, .env.production, .env.development
-    
+
+    Handler->>Handler: 加载 .env .env.production .env.development
+
     alt NODE_ENV === 'production'
         Handler->>Handler: 使用 .env.production
     else
         Handler->>Handler: 使用 .env.development
     end
-    
+
     Handler->>Handler: 生成 import.meta.env 对象
-    
+
     Handler->>Handler: 注入 __ENV__ 占位符
-    
-    Handler-->>Browser: {
-        BASE_URL: '/',
-        MODE: 'development',
-        DEV: true,
-        PROD: false
-    }
+
+    Handler-->>Browser: import_meta_env对象
 ```
 
 ---

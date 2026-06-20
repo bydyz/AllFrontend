@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date 对象学习 - 动态加载</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            font-size: 20px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        button:active {
+            background-color: #1a5276;
+        }
+        
+        .output {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            min-height: 200px;
+        }
+        
+        iframe {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ddd;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Date 对象学习 - 动态加载演示</h1>
+    
+    <div class="container" id="container">
+        <!-- 按钮组将通过 JavaScript 动态生成 -->
+    </div>
+    
+    <div class="output">
+        <h3>输出区域：</h3>
+        <div id="output-content">
+            <p>请点击上方按钮加载对应的内容</p>
+        </div>
+    </div>
+
+    <script>
+        const dateSections = {
+            constructor: {
+                name: 'Constructor (构造函数)',
+                files: ['1.js', 'indexOne.html']
+            },
+            Example: {
+                name: 'Example (示例)',
+                files: ['1.js', '2.js']
+            },
+            instanceAttributes: {
+                name: 'Instance Attributes (实例属性)',
+                files: ['Symbol.js']
+            },
+            instanceMethods: {
+                name: 'Instance Methods (实例方法)',
+                files: ['[Symbol.toPrimitive].js', 'valueOf.js']
+            },
+            staticMethods: {
+                name: 'Static Methods (静态方法)',
+                files: ['now', 'parse', 'UTC']
+            }
+        };
+
+        const container = document.getElementById('container');
+        const outputContent = document.getElementById('output-content');
+
+        // 遍历所有章节
+        for (const [folderName, section] of Object.entries(dateSections)) {
+            // 创建章节容器
+            const sectionDiv = document.createElement('div');
+            sectionDiv.className = 'section';
+            
+            // 创建章节标题
+            const title = document.createElement('h2');
+            title.className = 'section-title';
+            title.textContent = section.name;
+            sectionDiv.appendChild(title);
+            
+            // 创建按钮组
+            const buttonGroup = document.createElement('div');
+            buttonGroup.className = 'button-group';
+            
+            // 为每个文件创建按钮
+            for (const fileName of section.files) {
+                const button = document.createElement('button');
+                button.textContent = fileName;
+                button.onclick = () => loadFile(folderName, fileName);
+                buttonGroup.appendChild(button);
+            }
+            
+            sectionDiv.appendChild(buttonGroup);
+            container.appendChild(sectionDiv);
+        }
+
+        // 加载文件函数
+        function loadFile(folder, fileName) {
+            outputContent.innerHTML = '';
+            
+            const filePath = `${folder}/${fileName}`;
+            
+            if (fileName.endsWith('.html')) {
+                // 加载 HTML 文件
+                const iframe = document.createElement('iframe');
+                iframe.src = filePath;
+                outputContent.appendChild(iframe);
+            } else if (fileName.endsWith('.js')) {
+                // 加载 JS 文件
+                const script = document.createElement('script');
+                script.src = filePath;
+                outputContent.appendChild(script);
+                
+                // 等待脚本加载完成后显示提示
+                script.onload = () => {
+                    const message = document.createElement('p');
+                    message.textContent = `已加载文件：${folder}/${fileName}`;
+                    message.style.color = '#27ae60';
+                    message.style.marginTop = '10px';
+                    outputContent.appendChild(message);
+                };
+                
+                script.onerror = () => {
+                    const message = document.createElement('p');
+                    message.textContent = `加载失败：${folder}/${fileName}`;
+                    message.style.color = '#c0392b';
+                    outputContent.appendChild(message);
+                };
+            }
+        }
+    </script>
+</body>
+</html>
