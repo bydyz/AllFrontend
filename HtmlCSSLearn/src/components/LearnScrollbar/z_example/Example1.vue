@@ -21,6 +21,7 @@
 .custom-scrollbar::-webkit-scrollbar {
   width: 12px; /* 垂直滚动条宽度 */
   height: 12px; /* 水平滚动条高度 */
+  // background: #bdc3c7;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {

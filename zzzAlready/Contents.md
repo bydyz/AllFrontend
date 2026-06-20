@@ -59,6 +59,19 @@
 
 ## flex grid
 
+* `justify-content`   主轴上项目的对齐方式
+* `justify-items`   flex无用
+* `justify-self`   flex无用
+
+
+* `align-content`   主轴在侧轴方向上的排列
+* `align-items`    控制  所有项目  相对于  自己所处框框  而言的，侧轴方向上的排列
+* `align-self`    控制  单个项目  相对于  自己所处框框  而言的，侧轴方向上的排列
+
+### flex
+  `justify-items` 、 `justify-self`  在 flex 中无用
+
+
 ### grid
   `grid-template-rows`, `grid-template-columns`  
     // 固定值  
@@ -91,7 +104,6 @@
     "d e e"  
     "g h i";  
   `grid-area`: e;
-### flex
 
 
 

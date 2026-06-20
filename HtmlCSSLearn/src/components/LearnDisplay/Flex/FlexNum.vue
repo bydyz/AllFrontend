@@ -16,6 +16,12 @@
     <button type="button" @click="getSelectedValue()">获取选择</button>
   </div>
 
+  <div>
+    <span>1 placeholder   设置的 flex 为 1</span>
+    <span>2 horizontal both none   设置的 flex 初始值为 1，后面由上动态设置</span>
+    <span>3 select size multiple   设置的 固定宽度 160px</span>
+  </div>
+
   <div class="textarea">
     <div>1 placeholder</div>
     <div>2 horizontal both none</div>

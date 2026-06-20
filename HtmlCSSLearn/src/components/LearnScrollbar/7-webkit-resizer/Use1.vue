@@ -1,5 +1,19 @@
 <template>
-  <div class="w-[300px] h-[200px] overflow-auto custom-scrollbar">
+  <div class="w-[300px] h-[200px] m-[20px] overflow-auto custom-scrollbar">
+    <div class="w-[600px] h-[400px] flex flex-col justify-between items-start">
+      <div class="w-full h-4 flex justify-between bg-[#f5c1c1]">
+        <span>start</span>
+        <span>end</span>
+      </div>
+
+      <div class="w-full h-4 flex justify-between bg-[#c0c0f1]">
+        <span>start</span>
+        <span>end</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="w-[300px] h-[200px] m-[20px] overflow-auto mt-[20px] custom-scrollbar custom-scrollbar-with-resizer">
     <div class="w-[600px] h-[400px] flex flex-col justify-between items-start">
       <div class="w-full h-4 flex justify-between bg-[#f5c1c1]">
         <span>start</span>
@@ -18,7 +32,9 @@
 
 <style scoped lang="scss">
 .custom-scrollbar {
-  resize: both
+  resize: both;   // horizontal   vertical
+  padding: 20px;
+  border: 2px solid #3498db;
 }
 /* 滚动条整体  样式设置 */
 .custom-scrollbar::-webkit-scrollbar {
@@ -65,11 +81,11 @@
 
 .custom-scrollbar::-webkit-scrollbar-corner {
   background: red;
-  border-radius: 0 0 8px 0;
+  border-radius: 0 0 8px 0; // 设置此 会导致 右下角的尺寸调整图标消失
 }
 
 /* 调整大小句柄样式 */
-.custom-scrollbar::-webkit-resizer {
+.custom-scrollbar-with-resizer::-webkit-resizer {
   background: linear-gradient(135deg, #ff6b6b, #ee5a52);
   border: 2px solid #f8f9fa;
   border-radius: 4px;

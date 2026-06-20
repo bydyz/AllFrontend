@@ -9,6 +9,7 @@ import FlexWrap from "./FlexWrap.vue";
 import AlignSelf from "./AlignSelf.vue";
 import Order from "./Order.vue";
 import FlexNum from "./FlexNum.vue";
+import FlexCollect from "./FlexCollect.vue";
 import { ref, shallowRef, markRaw } from "vue";
 
 let componentsArray = ref([
@@ -52,8 +53,12 @@ let componentsArray = ref([
     name: "flex",
     component: markRaw(FlexNum),
   },
+  {
+    name: "flex-collect",
+    component: markRaw(FlexCollect),
+  },
 ]);
-let componentId = shallowRef(AllInExample);
+let componentId = shallowRef(FlexCollect);
 </script>
 
 <template>

@@ -25,7 +25,7 @@
   height: 16px;             /* 水平滚动条高度 */
   background-color: #8989ec; /* 滚动条背景色 */
   border-radius: 8px;       /* 圆角 */
-  border: 1px solid #ddd;   /* 边框 */
+  border: 4px solid #ba1212;   /* 边框 */
 }
 
 // 若不设置上面的，下面的这些设置都无用

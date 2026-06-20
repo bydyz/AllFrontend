@@ -14,9 +14,10 @@ import Use51 from "./5-webkit-scrollbar-thumb/Use1.vue";
 import Use61 from "./6-webkit-scrollbar-corner/Use1.vue";
 
 import Use71 from "./7-webkit-resizer/Use1.vue";
+import Use72 from "./7-webkit-resizer/Use2.vue";
 
-import Example1 from "./Example1.vue";
-import Example2 from "./Example2.vue";
+import Example1 from "./z_example/Example1.vue";
+import Example2 from "./z_example/Example2.vue";
 
 import { ref, shallowRef, markRaw } from "vue";
 
@@ -56,6 +57,10 @@ let componentsArray = ref([
   {
     name: '::-webkit-resizer 1',
     component: markRaw(Use71)
+  },
+  {
+    name: '::-webkit-resizer 2',
+    component: markRaw(Use72)
   },
   {
     name: '示例一',
