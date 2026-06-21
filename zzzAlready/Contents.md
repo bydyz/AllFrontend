@@ -173,6 +173,15 @@
 
 
 
+## box-sizing
+  设置 width为200px  height为100px
+    * box-sizing 为 border-box 时，既是 设置了 content = 200px - 2个padding - 2个border
+    * box-sizing 为 content-box（ 默认值 ） 时，既是 设置了 content = 200px
+
+`E:\Project\AAA_All_MINE\all-frontend\HtmlCSSLearn\src\components\LearnBoxSizing\README.MD`
+
+
+
 ## 虚拟滚动
   LearnNativeDevelop\src\4CustomizedVirtualScrolling\DynamicHeight\01-transform.vue  02
   LearnNativeDevelop\src\4CustomizedVirtualScrolling\FixHeight\01-transform.vue  02
@@ -218,6 +227,42 @@
 
 
 
+## HtmlCSSLearn
+
+### CSSCollect 文件 放置以下内容的展示
+
+1. 文本阴影     `text-shadow: 8px 22px 1px red, 5px 5px 10px yellow, 35px 35px 10px blue, XXX;`
+
+    第一个参数，可正可负可0  x轴
+    第二个参数，可正可负可0  y轴
+    第三个参数，可正可0  模糊度，0则完全不发散，数值越大越模糊
+    第四个参数  阴影颜色
+
+    ```css
+    text-shadow: inherit;
+    text-shadow: initial;
+    text-shadow: unset;
+    ```
+
+
+2. 盒子阴影     `box-shadow: 8px 22px 1px 10px red, 5px 5px 10px 10px yellow, 35px 35px 10px 10px blue, XXX;`
+
+    第一个参数，可正可负可0  x轴
+    第二个参数，可正可负可0  y轴
+    第三个参数，可正可0  阴影模糊半径，0则完全不发散，数值越大越模糊
+    第四个参数，可正可负可0  阴影扩散半径；正值 视觉效果则是往外围扩大；负值  视觉效果则是缩小
+    第五个参数，阴影颜色
+
+    ```css
+    text-shadow: inherit;
+    text-shadow: initial;
+    text-shadow: unset;
+    ```
+
+
+3. 
+
+
 ## JS_Learn
 
 ### 语句和声明
@@ -227,3 +272,23 @@
   * for...of
   * throw
   * try...catch...finally
+
+### WebAPI
+
+#### clientXXX、 offsetXXX、 scrollXXX
+
+##### 一般情况
+clientWidth、clientHeight           内容 + padding - 滚动条
+clientTop                           border-top
+clientLeft                          border-left
+
+
+scrollWidth、scrollHeight           无滚动条时     等同于  clientXXX；有滚动条时     所有内容的宽度，高度，包含margin  border 等
+scrollTop、scrollLeft               内容滚动的距离
+
+
+offsetWidth、offsetHeight           内容 + padding + 滚动条 + border
+offsetLeft、offsetTop               左边界到左边界，上边界到上边界
+offsetParent                        client_offset_scroll\谁会成为 offsetParent.md
+
+##### 特殊情况，暂不考虑

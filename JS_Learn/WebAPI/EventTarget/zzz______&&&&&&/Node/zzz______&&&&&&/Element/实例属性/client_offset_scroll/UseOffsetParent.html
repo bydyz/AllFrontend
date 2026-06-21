@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>offsetParent 链遍历示例</title>
+    <style>
+      /* 简单重置 */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        padding: 30px;
+        font-family: system-ui, sans-serif;
+        background: #f5f7fa;
+      }
+      .outer {
+        position: relative; /* ① 成为子元素的 offsetParent */
+        width: 400px;
+        height: 300px;
+        margin: 50px auto;
+        background: #e0e7ff;
+        border: 4px solid #4f6af5;
+        padding: 20px;
+      }
+      .middle {
+        position: absolute; /* ② 也成为子元素的 offsetParent */
+        top: 40px;
+        left: 30px;
+        width: 300px;
+        height: 200px;
+        background: #fde68a;
+        border: 3px solid #f59e0b;
+        padding: 15px;
+      }
+      .target {
+        width: 150px;
+        height: 100px;
+        background: #a7f3d0;
+        border: 2px solid #10b981;
+        /* 自身没有任何定位，其 offsetParent 会是最近的定位祖先（.middle） */
+      }
+      .info {
+        max-width: 500px;
+        margin: 20px auto;
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+      .info p {
+        margin: 8px 0;
+        font-size: 15px;
+      }
+      .info .highlight {
+        color: #1e40af;
+        font-weight: 600;
+      }
+      button {
+        display: block;
+        margin: 16px auto 0;
+        padding: 8px 24px;
+        font-size: 16px;
+        background: #4f6af5;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #3b55d9;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="outer">
+      <div class="middle">
+        <div class="target" id="targetEl">🎯 目标元素</div>
+      </div>
+    </div>
+
+    <div class="info" id="result">
+      <p><strong>📐 遍历 offsetParent 链累加结果：</strong></p>
+      <p>top: <span class="highlight" id="calcTop">-</span> px</p>
+      <p>left: <span class="highlight" id="calcLeft">-</span> px</p>
+      <div style="margin-top: 20px">
+        历史意义：在 IE 6/7 和早期浏览器时代，getBoundingClientRect() 这个 API 不仅性能差，而且在某些浏览器中精度有问题（会忽略边框）。那时候，想要获取一个元素在页面中的绝对坐标，唯一的兼容办法就是写一个 while 循环，不断往上累加 offsetTop/Left。这是那个年代的“标准 polyfill”。
+      </div>
+      <div style="margin-top: 20px">
+        <div>现代意义：</div>
+        <div>1.有更简单的替代品：element.getBoundingClientRect() 加上滚动偏移，一行代码就能拿到精确坐标，而且性能极佳。</div>
+        <div>2.容易被 CSS 属性“坑”：只要父级加了 transform、filter 或 will-change，offsetParent 链就会被打断（甚至变成 null），导致累加出来的数字完全错误。现在项目中动画和 3D 变换太常见了，这个方法极不可靠。</div>
+      </div>
+      <div style="margin-top: 20px">现代还能用上的场景，那就是在滚动容器内计算相对偏移。</div>
+      <hr style="margin: 12px 0" />
+      <p><strong>🖥️ getBoundingClientRect() 参考值（相对视口）：</strong></p>
+      <p>top: <span class="highlight" id="rectTop">-</span> px</p>
+      <p>left: <span class="highlight" id="rectLeft">-</span> px</p>
+      <button id="calcBtn">重新计算</button>
+    </div>
+
+    <script>
+      function getOffsetSum(element) {
+        console.log("11111111111111111111111111111111111111111111111111111111", [element]);
+        let top = 0,
+          left = 0;
+        while (element) {
+          top += element.offsetTop || 0;
+          left += element.offsetLeft || 0;
+          // 打印调试信息，展示每一步的 offsetParent 和累加值
+          console.log(`当前元素：${element.tagName}，offsetParent：${element.offsetParent?.tagName || "null"}，offsetTop：${element.offsetTop}，累加 top：${top}`);
+          element = element.offsetParent;
+        }
+        return { top, left };
+      }
+
+      function updateInfo() {
+        const target = document.getElementById("targetEl");
+        // 1. 遍历 offsetParent 链累加
+        const { top, left } = getOffsetSum(target);
+        document.getElementById("calcTop").textContent = top;
+        document.getElementById("calcLeft").textContent = left;
+
+        // 2. 使用 getBoundingClientRect() 获取视口坐标（包含滚动偏移）
+        const rect = target.getBoundingClientRect();
+        // 为了对比，我们加上当前滚动偏移，得到相对于文档根（html）的坐标
+        const scrollX = window.scrollX || window.pageXOffset || 0;
+        const scrollY = window.scrollY || window.pageYOffset || 0;
+        document.getElementById("rectTop").textContent = Math.round(rect.top + scrollY);
+        document.getElementById("rectLeft").textContent = Math.round(rect.left + scrollX);
+      }
+
+      // 初始计算
+      updateInfo();
+
+      // 按钮重新计算（可以手动滚动页面后点击验证）
+      document.getElementById("calcBtn").addEventListener("click", updateInfo);
+    </script>
+  </body>
+</html>
