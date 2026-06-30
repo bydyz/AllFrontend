@@ -60,8 +60,8 @@
 ## flex grid
 
 * `justify-content`   主轴上项目的对齐方式
-* `justify-items`   flex无用
-* `justify-self`   flex无用
+* `justify-items`   控制  所有项目  相对于  自己所处框框  而言的，主轴方向上的排列；**flex无用**
+* `justify-self`   控制  单个项目  相对于  自己所处框框  而言的，主轴方向上的排列；**flex无用**
 
 
 * `align-content`   主轴在侧轴方向上的排列
@@ -174,16 +174,16 @@
 
 
 ## box-sizing
-  设置 width为200px  height为100px
-    * box-sizing 为 border-box 时，既是 设置了 content = 200px - 2个padding - 2个border
-    * box-sizing 为 content-box（ 默认值 ） 时，既是 设置了 content = 200px
+  设置 width为200px  height为100px 
+  * box-sizing 为 border-box 时，既是 设置了 content = 200px - 2个padding - 2个border
+  * box-sizing 为 content-box（ 默认值 ） 时，既是 设置了 content = 200px
 
 `E:\Project\AAA_All_MINE\all-frontend\HtmlCSSLearn\src\components\LearnBoxSizing\README.MD`
 
 
 
 ## 虚拟滚动
-  LearnNativeDevelop\src\4CustomizedVirtualScrolling\DynamicHeight\01-transform.vue  02
+  LearnNativeDevelop\src\4CustomizedVirtualScrolling\DynamicHeight\01-transform.vue  02 
   LearnNativeDevelop\src\4CustomizedVirtualScrolling\FixHeight\01-transform.vue  02
 
 
@@ -260,7 +260,7 @@
     ```
 
 
-3. 
+3. box-sizing.md
 
 
 ## JS_Learn
