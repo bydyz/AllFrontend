@@ -1,0 +1,1 @@
+import{m as a,q as n,s as c}from"./vue-router-5zoigG8c.js";const i=a("entry-b",()=>{const o=n(["学习 Vue3","学习 Pinia","学习 MPA"]),t=n(""),s=c(()=>o.value.length);function u(){const e=t.value.trim();e&&(o.value.push(e),t.value="")}function r(e){o.value.splice(e,1)}return{todos:o,newTodo:t,todoCount:s,addTodo:u,removeTodo:r}});export{i as u};

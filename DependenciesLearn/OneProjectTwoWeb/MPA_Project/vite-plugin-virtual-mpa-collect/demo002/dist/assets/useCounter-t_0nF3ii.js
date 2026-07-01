@@ -1,0 +1,1 @@
+import{q as r}from"./vue-router-5zoigG8c.js";function f(n=0){const e=r(n);function t(){e.value++}function u(){e.value--}function o(){e.value=n}return{count:e,increment:t,decrement:u,reset:o}}export{f as u};
