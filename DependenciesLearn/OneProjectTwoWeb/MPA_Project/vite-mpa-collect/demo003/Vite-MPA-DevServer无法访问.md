@@ -2,7 +2,9 @@
 
 ## 问题描述
 
-运行 `npm run dev` 后，访问 `http://localhost:5173/page-a.html` 提示"找不到 localhost 的网页"（404）。
+虽然打包后在 dist文件夹 中，直接生成了 `page-a.html` 和 `page-b.html`，但运行 `npm run dev` 后，访问 `http://localhost:5173/page-a.html` 提示"找不到 localhost 的网页"（404）。
+（若不在 项目的根目录下 创建 `page-a.html` 和 `page-b.html`）
+（似乎 `vite dev` 会将这个项目文件夹 弄到了服务器里，因此访问 `http://localhost:5173/src/page-a/main.ts` 可看到内容）
 
 ## 环境
 
