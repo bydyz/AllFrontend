@@ -15,5 +15,8 @@ export default defineConfig({
     
     // 由此不需要后缀
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json', '.vue'],
+  },
+  server: {
+    host: '0.0.0.0'
   }
 })

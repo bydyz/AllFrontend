@@ -38,11 +38,12 @@ const componentsConfig = [
   { name: "间距", value: "LearnSpacing", loader: () => import("./components/LearnSpacing/index.vue") },
   { name: "background", value: "LearnBackground", loader: () => import("./components/LearnBackground/index.vue") },
   { name: "CSSCollect", value: "CSSCollect", loader: () => import("./components/CSSCollect/index.vue") },
+  { name: "CSS中的函数", value: "CSSFunction", loader: () => import("./components/CSSFunction/index.vue") },
 ]
 const componentsArray = ref(componentsConfig)
 
 // 当前选中的标识（字符串）
-const componentValue = ref("CSSCollect")
+const componentValue = ref("CSSFunction")
 
 // ✅ 计算属性：返回对应的异步组件（不是字符串！）
 const currentComponent = computed(() => {

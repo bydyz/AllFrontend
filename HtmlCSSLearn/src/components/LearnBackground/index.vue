@@ -5,6 +5,7 @@ import BackgroundSize from "./BackgroundSize.vue";
 import BackgroundAttachment1 from "./BackgroundAttachment1.vue";
 import BackgroundAttachment2 from "./BackgroundAttachment2.vue";
 import Background from "./Background.vue";
+import BackgroundImage from "./BackgroundImage.vue";
 import { ref, shallowRef, markRaw } from "vue";
 
 let componentsArray = ref([
@@ -31,6 +32,10 @@ let componentsArray = ref([
   {
     name: "Background",
     component: markRaw(Background),
+  },
+  {
+    name: "BackgroundImage",
+    component: markRaw(BackgroundImage),
   },
 ]);
 let componentId = shallowRef(BackgroundSize);

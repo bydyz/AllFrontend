@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // 获取设备像素比，它直接反映了屏幕的密度
+      const dpr = window.devicePixelRatio || 1;
+      console.log(`当前设备的像素比，即window.devicePixelRatio 是: ${dpr}`);
+      // 在标准的 96 DPI 屏幕上，dpr 通常为 1
+      // 在 Retina 屏幕上，dpr 通常为 2 或更高
+    </script>
+  </body>
+</html>

@@ -1,29 +1,14 @@
 <script setup>
-import WaysOfImg from "./WaysOfImg.vue";
-import ObjectFit from "./ObjectFit.vue";
-import PicturePath from "./PicturePath.vue";
-import ImgParam from "./ImgParam.vue";
+import clampFunc from "./clampFunc.vue";
 import { ref, shallowRef, markRaw } from "vue";
 
 let componentsArray = ref([
   {
-    name: 'img 渲染图片方式合集',
-    component: markRaw(WaysOfImg)
+    name: "clamp()函数",
+    component: markRaw(clampFunc),
   },
-  {
-    name: '图片object-fit',
-    component: markRaw(ObjectFit)
-  },
-  {
-    name: '图片路径问题',
-    component: markRaw(PicturePath)
-  },
-  {
-    name: 'img属性',
-    component: markRaw(ImgParam)
-  },
-])
-let componentId = shallowRef(ObjectFit);
+]);
+let componentId = shallowRef(clampFunc);
 </script>
 
 <template>
