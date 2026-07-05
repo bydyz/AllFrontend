@@ -49,26 +49,79 @@
 
 ### 右侧 主要内容区的方案
 
-* 右侧利用 Flexbox 或 Grid 自动填满剩余空间。
-* 右侧内容区域设定最大宽度（max-width），然后多余空间留白，但要 引入 “超大屏优化断点”
+* 主容器：永远使用 `max-width: min(理想宽, 百分百)` 加一个“硬天花板”。
+* 文字区域：必须单独限制宽度（`max-width: 70ch 或 800px`），这是超大屏适配的第一铁律。
+* 布局增强：利用 `grid-template-columns: repeat(auto-fill, minmax(280px, 1fr))` 配合 `minmax`，可以不用写死列数，让卡片自动换行填充，比硬编码 `repeat(4, 1fr)` 更鲁棒。
     ```css
+    /* ========== 1. 基础范围（< 2560px，适配 720p ~ 2K 显示器） ========== */
     .main-content {
-        /* 默认做法：限制宽度 */
-        max-width: 1440px;
+        max-width: min(1440px, 90%);
         margin: 0 auto;
-        padding: 0 24px;
+        padding: 0 clamp(1rem, 3vw, 3rem);
     }
 
-    /* 专门针对 4K 超大屏的优化（逻辑宽度超过 1920px） */
-    @media screen and (min-width: 1921px) {
+    /* 基础文本块：此时依靠父容器限宽，无需额外限制，但显式写出以防万一 */
+    .text-block,
+    .article-content p,
+    .description {
+        max-width: 100%; /* 默认跟随父容器 */
+    }
+
+    /* 基础卡片网格：默认 3 列（适合 1080p 和 2K 下 1440px 容器） */
+    .card-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: clamp(1rem, 2vw, 2rem);
+    }
+
+    /* ========== 2. 宽屏增强（>= 2560px，对应 1440p/2K 显示器逻辑宽度） ========== */
+    @media screen and (min-width: 2560px) {
         .main-content {
-            max-width: none; /* 解除宽度封印 */
-            padding: 0 10%;  /* 用百分比留白，左右各留 10%，让内容随屏幕优雅变宽 */
+            max-width: min(1600px, 85%);
+            padding: 0 7.5%;
         }
-        
-        /* 内容区的卡片/表格可以增加列数 */
+
+        /* 关键：容器放宽后，强制限制文本宽度，保证 70~80 字符舒适阅读 */
+        .text-block,
+        .article-content p,
+        .description {
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* 卡片网格扩充至 4 列，利用更多横向空间展示内容 */
         .card-grid {
-            grid-template-columns: repeat(4, 1fr); /* 从3列变成4列 */
+            grid-template-columns: repeat(4, 1fr);
+            gap: clamp(1.5rem, 2vw, 2.5rem);
+        }
+    }
+
+    /* ========== 3. 超大屏巨幕（>= 3840px，对应 4K / 8K 显示器） ========== */
+    @media screen and (min-width: 3840px) {
+        .main-content {
+            max-width: min(1800px, 80%); /* 哪怕 8K 也不超过 1800px 物理上限 */
+            padding: 0 10%;
+        }
+
+        /* 超大屏下，文本宽度可略微放宽至 900px，配合更大的字号 */
+        .text-block,
+        .article-content p,
+        .description {
+            max-width: 900px; /* 比 2560 断点略宽，配合大屏视野 */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* 网格进一步扩充至 6 列（适合展示大量数据卡片或缩略图） */
+        .card-grid {
+            grid-template-columns: repeat(6, 1fr);
+            gap: clamp(2rem, 2.5vw, 3.5rem);
+        }
+
+        /* 超大屏下整体字号和间距可等比微调，避免内容显得“渺小” */
+        body {
+            font-size: clamp(18px, 1.2vw, 24px);
         }
     }
     ```
