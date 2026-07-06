@@ -1,5 +1,3 @@
-# Should Remember
-
 ## 编码、解码
   `encodeURI`  `encodeURIComponent`  `decodeURI`  `decodeURIComponent`
 
