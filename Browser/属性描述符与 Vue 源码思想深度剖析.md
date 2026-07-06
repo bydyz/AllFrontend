@@ -92,10 +92,66 @@ Object.defineProperty(obj, 'choose', {
 ```
 
 ## 3. Vue响应式原理：从属性描述符到数据驱动
+
 ### 3.1 响应式的核心思想
+数据（data）与视图（模板）分离，数据变化自动更新视图（数据响应式）。
+
 ### 3.2 Vue 2的实现：Object.defineProperty
+Vue 2使用 `Object.defineProperty` 来劫持数据的读取和修改：
+
+```javascript
+// Vue 2 响应式核心思想
+function defineReactive(obj, key, val) {
+  const dep = []; // 依赖收集器
+  
+  Object.defineProperty(obj, key, {
+    get() {
+      // 收集依赖
+      if (window.__currentFn) {
+        dep.push(window.__currentFn);
+      }
+      return val;
+    },
+    set(newVal) {
+      val = newVal;
+      // 派发更新
+      dep.forEach(fn => fn());
+    }
+  });
+}
+```
+
 ### 3.3 Vue 3的改进：Proxy
+Vue 3使用 `Proxy` 替代 `Object.defineProperty`：
+
+```javascript
+// Vue 3 响应式核心思想
+function reactive(target) {
+  return new Proxy(target, {
+    get(obj, key, receiver) {
+      const result = Reflect.get(obj, key, receiver);
+      // 收集依赖
+      track(obj, key);
+      return result;
+    },
+    set(obj, key, value, receiver) {
+      const result = Reflect.set(obj, key, value, receiver);
+      // 派发更新
+      trigger(obj, key);
+      return result;
+    }
+  });
+}
+```
+
 ### 3.4 两种实现的对比分析
+| 特性 | Vue 2 (Object.defineProperty) | Vue 3 (Proxy) |
+|------|-------------------------------|---------------|
+| 劫持方式 | 逐个属性劫持 | 整个对象劫持 |
+| 数组支持 | 需要重写数组方法 | 原生支持 |
+| 性能 | 初始化递归消耗大 | 惰性代理，性能更好 |
+| 新增属性 | 需要 `Vue.set` | 自动检测 |
+| 兼容性 | IE9+ | 不支持IE |
 
 ## 4. 源码解析：Vue响应式的实现细节
 ### 4.1 依赖收集机制
