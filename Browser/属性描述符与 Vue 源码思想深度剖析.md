@@ -154,11 +154,188 @@ function reactive(target) {
 | 兼容性 | IE9+ | 不支持IE |
 
 ## 4. 源码解析：Vue响应式的实现细节
+
 ### 4.1 依赖收集机制
+Vue 2的依赖收集基于 `Dep` 和 `Watcher` 两个核心类：
+
+```javascript
+// 简化的 Dep 类
+class Dep {
+  constructor() {
+    this.subs = [];
+  }
+  
+  addSub(watcher) {
+    this.subs.push(watcher);
+  }
+  
+  notify() {
+    this.subs.forEach(watcher => watcher.update());
+  }
+}
+
+// 简化的 Watcher 类
+class Watcher {
+  constructor(vm, expOrFn, cb) {
+    this.vm = vm;
+    this.cb = cb;
+    this.depIds = new Set();
+    this.getter = parsePath(expOrFn);
+    this.value = this.get();
+  }
+  
+  get() {
+    Dep.target = this;
+    const value = this.getter.call(this.vm, this.vm);
+    Dep.target = null;
+    return value;
+  }
+  
+  update() {
+    const oldValue = this.value;
+    this.value = this.get();
+    this.cb.call(this.vm, this.value, oldValue);
+  }
+}
+```
+
 ### 4.2 派发更新机制
+当数据变化时，setter 会通知所有依赖的 Watcher：
+
+```javascript
+// Vue 2 setter 中的派发更新
+set(newVal) {
+  if (newVal === val) return;
+  val = newVal;
+  // 通知所有订阅者
+  dep.notify();
+}
+```
+
 ### 4.3 数组变异处理
+Vue 2 重写了数组的7个方法来实现响应式：
+
+```javascript
+// Vue 2 数组变异方法重写
+const arrayProto = Array.prototype;
+const arrayMethods = Object.create(arrayProto);
+
+const methodsToPatch = [
+  'push', 'pop', 'shift', 'unshift', 
+  'splice', 'sort', 'reverse'
+];
+
+methodsToPatch.forEach(method => {
+  const original = arrayProto[method];
+  def(arrayMethods, method, function mutator(...args) {
+    const result = original.apply(this, args);
+    const ob = this.__ob__;
+    let inserted;
+    
+    switch (method) {
+      case 'push':
+      case 'unshift':
+        inserted = args;
+        break;
+      case 'splice':
+        inserted = args.slice(2);
+        break;
+    }
+    
+    if (inserted) ob.observeArray(inserted);
+    ob.dep.notify();
+    return result;
+  });
+});
+```
+
 ### 4.4 嵌套对象处理
+Vue 2 递归 observe 对象的所有属性：
+
+```javascript
+// 递归 observe 实现
+function observe(value) {
+  if (typeof value !== 'object' || value === null) {
+    return;
+  }
+  
+  let ob;
+  if (value.__ob__ && value.__ob__ instanceof Observer) {
+    ob = value.__ob__;
+  } else {
+    ob = new Observer(value);
+  }
+  
+  return ob;
+}
+
+class Observer {
+  constructor(value) {
+    this.value = value;
+    this.dep = new Dep();
+    
+    def(value, '__ob__', this);
+    
+    if (Array.isArray(value)) {
+      this.observeArray(value);
+    } else {
+      this.walk(value);
+    }
+  }
+  
+  walk(obj) {
+    const keys = Object.keys(obj);
+    for (let i = 0; i < keys.length; i++) {
+      defineReactive(obj, keys[i]);
+    }
+  }
+  
+  observeArray(items) {
+    for (let i = 0, l = items.length; i < l; i++) {
+      observe(items[i]);
+    }
+  }
+}
+```
+
 ### 4.5 Vue 3的改进
+Vue 3 使用 Proxy 实现响应式，解决了 Vue 2 的诸多限制：
+
+```javascript
+// Vue 3 响应式实现核心
+function reactive(target) {
+  return new Proxy(target, {
+    get(obj, key, receiver) {
+      const result = Reflect.get(obj, key, receiver);
+      track(obj, key);
+      
+      // 懒递归：只有访问时才递归代理嵌套对象
+      if (typeof result === 'object' && result !== null) {
+        return reactive(result);
+      }
+      
+      return result;
+    },
+    set(obj, key, value, receiver) {
+      const oldValue = obj[key];
+      const result = Reflect.set(obj, key, value, receiver);
+      
+      if (oldValue !== value && (oldValue === oldValue || value === value)) {
+        trigger(obj, key);
+      }
+      
+      return result;
+    },
+    deleteProperty(obj, key) {
+      const result = Reflect.deleteProperty(obj, key);
+      if (result) {
+        trigger(obj, key);
+      }
+      return result;
+    }
+  });
+}
+```
 
 ## 5. 实际应用：响应式在项目中的使用
 ### 5.1 Vue组件中的响应式数据
