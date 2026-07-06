@@ -1,0 +1,10 @@
+/* Tailwind CSS v3 指令 */
+/* @tailwind 指令用于注入 Tailwind 的基础、组件和工具类样式 */
+@tailwind base;      /* 基础样式：重置浏览器默认样式 */
+@tailwind components; /* 组件样式：预定义的组件类 */
+@tailwind utilities;  /* 工具类：各种实用的原子类 */
+
+/* 自定义全局样式 */
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+}
