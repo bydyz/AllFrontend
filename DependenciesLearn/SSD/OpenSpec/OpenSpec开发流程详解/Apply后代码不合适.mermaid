@@ -1,0 +1,25 @@
+flowchart TD
+    A["/opsx-apply 完成<br>代码已实现"] --> B{评估问题严重程度<br>首先检查 md 文档}
+    B -->|小问题| C["方案 A：仅修改代码"]
+    B -->|中等问题| D["方案 B：回退 + 修正"]
+    B -->|大问题| E["方案 C：完全重来"]
+
+    C --> C1[直接修改代码]
+    C1 --> C2[测试验证]
+    C2 --> F[归档]
+
+    D --> D1[git revert HEAD<br>代码全回退]
+    D1 --> D2[修改有问题的 md<br>（design.md / tasks.md）]
+    D2 --> D3[重新执行 /opsx-apply]
+    D3 --> D4[测试验证]
+    D4 --> F
+
+    E --> E1[git revert HEAD<br>代码全回退]
+    E1 --> E2[删除整个变更目录]
+    E2 --> E3[重新 /opsx-explore]
+    E3 --> E4[重新 /opsx-propose]
+    E4 --> E5[重新 /opsx-apply]
+    E5 --> E6[测试验证]
+    E6 --> F
+
+    F["/opsx-archive 归档完成"]

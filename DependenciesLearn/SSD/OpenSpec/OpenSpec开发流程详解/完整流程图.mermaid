@@ -1,0 +1,43 @@
+flowchart LR
+    subgraph Main[主流程]
+        direction LR
+        Start([需求出现]) --> Explore["/opsx-explore<br>探索 · 思考分析 · 不产代码"]
+        Explore --> Propose["/opsx-propose<br>提案 · 生成 3 个文档文件"]
+        Propose --> Apply["/opsx-apply<br>实施 · 编码实现 · 完成任务"]
+        Apply --> Archive["/opsx-archive<br>归档 · 清理目录 · 保留历史"]
+        Archive --> End([完成])
+    end
+
+    subgraph ProposeBranch[提案后异常处理 · 循环]
+        direction TB
+        Propose --> ReviewDocs{文档是否合适？}
+        ReviewDocs -->|合适| ContinueApply[继续 Apply]
+        ReviewDocs -->|不合适| HandleDocs[选择处理方式]
+        HandleDocs --> EditDoc[直接编辑文档]
+        HandleDocs --> DeleteDoc[删除重来]
+        HandleDocs --> BackExplore[回到探索]
+        EditDoc --> ReviewDocs
+        DeleteDoc --> Propose
+        BackExplore --> Explore
+    end
+
+    subgraph ApplyBranch[实施后异常处理 · 三种方案]
+        direction TB
+        Apply --> CheckQuality{评估问题严重程度<br>先检查 md 文档}
+        CheckQuality -->|小问题<br>md 没问题| PlanA[方案 A：仅修改代码]
+        CheckQuality -->|中等问题<br>md 部分有误| PlanB[方案 B：回退+修正]
+        CheckQuality -->|大问题<br>md 从根有误| PlanC[方案 C：完全重来]
+        PlanA --> Archive
+        PlanB --> Apply
+        PlanC --> Explore
+    end
+
+    style Explore fill:#e1f5fe,stroke:#01579b
+    style Propose fill:#fff3e0,stroke:#e65100
+    style Apply fill:#e8f5e9,stroke:#1b5e20
+    style Archive fill:#f3e5f5,stroke:#4a148c
+    style ReviewDocs fill:#fff9c4,stroke:#f57f17
+    style CheckQuality fill:#fff9c4,stroke:#f57f17
+    style PlanA fill:#c8e6c9,stroke:#2e7d32
+    style PlanB fill:#ffe0b2,stroke:#bf360c
+    style PlanC fill:#ffcdd2,stroke:#b71c1c

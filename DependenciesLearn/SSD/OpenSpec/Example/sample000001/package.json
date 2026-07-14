@@ -1,0 +1,19 @@
+{
+  "name": "sample000001",
+  "version": "1.0.0",
+  "description": "OpenSpec 示例项目 - 计算器功能",
+  "main": "src/calculator.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "openspec",
+    "calculator",
+    "example"
+  ],
+  "author": "OpenSpec Demo",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

@@ -1,0 +1,12 @@
+flowchart TD
+    A["/opsx-propose<br>生成文档"] --> B{文档审视<br>是否合适？}
+    B -->|合适| C["继续 apply"]
+    B -->|不合适| D{选择处理方式}
+    D --> E["直接编辑文档<br>（小改动）"]
+    D --> F["删除重来<br>（重新提案）"]
+    D --> G["回到探索<br>（重新思考）"]
+    E --> B
+    F --> A
+    G --> H["/opsx-explore"]
+    H --> A
+    C --> I["/opsx-apply"]

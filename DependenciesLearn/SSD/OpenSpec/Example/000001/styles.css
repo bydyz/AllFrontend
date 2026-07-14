@@ -1,0 +1,275 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark-mode {
+    background-color: #1a1a1a;
+    color: #fff;
+}
+
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .container {
+    background: #2d2d2d;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #eee;
+}
+
+body.dark-mode header {
+    border-bottom-color: #444;
+}
+
+h1 {
+    color: #2c3e50;
+    font-size: 2em;
+}
+
+body.dark-mode h1 {
+    color: #ecf0f1;
+}
+
+.theme-btn {
+    background: none;
+    border: 2px solid #ddd;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.theme-btn:hover {
+    background: #f0f0f0;
+}
+
+body.dark-mode .theme-btn {
+    border-color: #555;
+}
+
+body.dark-mode .theme-btn:hover {
+    background: #444;
+}
+
+.input-section {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#todo-input {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.priority-select {
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    background: white;
+}
+
+body.dark-mode .priority-select {
+    background: #3d3d3d;
+    border-color: #555;
+    color: #fff;
+}
+
+body.dark-mode #todo-input {
+    background: #3d3d3d;
+    border-color: #555;
+    color: #fff;
+}
+
+#add-btn {
+    padding: 12px 24px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+}
+
+#add-btn:hover {
+    background: #2980b9;
+}
+
+.filter-section {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filter-btn {
+    flex: 1;
+    padding: 8px;
+    border: 2px solid #ddd;
+    background: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.filter-btn.active {
+    background: #3498db;
+    color: white;
+    border-color: #3498db;
+}
+
+body.dark-mode .filter-btn {
+    background: #3d3d3d;
+    border-color: #555;
+    color: #fff;
+}
+
+body.dark-mode .filter-btn.active {
+    background: #3498db;
+    border-color: #3498db;
+}
+
+.priority-filter {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.priority-btn {
+    flex: 1;
+    padding: 6px 12px;
+    border: 2px solid #ddd;
+    background: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.3s;
+}
+
+.priority-btn.active {
+    background: #3498db;
+    color: white;
+    border-color: #3498db;
+}
+
+body.dark-mode .priority-btn {
+    background: #3d3d3d;
+    border-color: #555;
+    color: #fff;
+}
+
+body.dark-mode .priority-btn.active {
+    background: #3498db;
+    border-color: #3498db;
+}
+
+.todo-list {
+    list-style: none;
+    margin-bottom: 20px;
+}
+
+.todo-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background: #f9f9f9;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    transition: all 0.3s;
+}
+
+body.dark-mode .todo-item {
+    background: #3d3d3d;
+}
+
+.todo-item.completed {
+    opacity: 0.6;
+    text-decoration: line-through;
+}
+
+.todo-item input[type="checkbox"] {
+    margin-right: 15px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.priority-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 10px;
+    display: inline-block;
+}
+
+.priority-high .priority-dot {
+    background-color: #e74c3c;
+}
+
+.priority-medium .priority-dot {
+    background-color: #f39c12;
+}
+
+.priority-low .priority-dot {
+    background-color: #27ae60;
+}
+
+.todo-item span {
+    flex: 1;
+    font-size: 16px;
+}
+
+.delete-btn {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+.delete-btn:hover {
+    background: #c0392b;
+}
+
+.stats {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+}
+
+body.dark-mode .stats {
+    color: #bbb;
+}

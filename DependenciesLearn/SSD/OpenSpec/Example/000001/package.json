@@ -1,0 +1,13 @@
+{
+  "name": "000001",
+  "version": "1.0.0",
+  "description": "待办事项应用示例 - OpenSpec 开发流程演示",
+  "main": "index.html",
+  "scripts": {
+    "start": "open index.html",
+    "dev": "live-server ."
+  },
+  "keywords": ["todo", "openspec", "example"],
+  "author": "OpenSpec Demo",
+  "license": "MIT"
+}
