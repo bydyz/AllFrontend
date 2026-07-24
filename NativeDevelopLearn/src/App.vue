@@ -23,6 +23,7 @@ const componentsConfig = [
   { name: "input集合", value: "InputGather", loader: () => import("./3InputGather/index.vue") },
   { name: "自定义虚拟滚动", value: "CustomizedVirtualScrolling", loader: () => import("./4CustomizedVirtualScrolling/index.vue") },
   { name: "自定义日历", value: "CustomCalender", loader: () => import("./ACustomCalendar/index.vue") },
+  { name: "双色球摇号机", value: "DoubleColorBall", loader: () => import("./6DoubleColorBall/index.vue") },
 ];
 const componentsArray = ref(componentsConfig);
 
