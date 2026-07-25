@@ -14,11 +14,10 @@
 3. `where npm`      查看 node 和 npm 的安装位置
 4. `echo xxx yyy`   控制台 显示 xxx yyy
 5. `d:`             切换盘符
+6. `dir`             显示当前目录下的所有文件和文件夹列表（含创建时间、大小等）
 
 
-# windows中 Win + R 后使用
-
-1. 
+---
 
 
 # windows中 Win + R 后使用  在cmd中也可

@@ -1,0 +1,36 @@
+# 源代码
+src/
+
+# 测试
+tests/
+vitest.config.ts
+
+# 示例项目
+examples/
+
+# 配置文件
+tsconfig.json
+tsup.config.ts
+.gitignore
+.eslintrc*
+
+# 文档
+*.md
+!README.md
+
+# 开发依赖相关
+node_modules/
+npm-debug.log*
+
+# 构建临时文件
+*.tsbuildinfo
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+
+# 编辑器配置
+.vscode/
+.idea/
+*.swp
+*.swo
