@@ -1,0 +1,24 @@
+{
+  "name": "mini-vite-core",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "bin": {
+    "mini-vite": "./bin/vite.js"
+  },
+  "scripts": {
+    "dev": "tsx src/cli.ts"
+  },
+  "dependencies": {
+    "vite": "^6.3.5",
+    "mri": "^1.2.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
+  }
+}

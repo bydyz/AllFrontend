@@ -1,0 +1,8 @@
+{
+  "name": "learn-vite",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter mini-vite-core dev",
+    "app": "pnpm --filter mini-vite-app start"
+  }
+}
