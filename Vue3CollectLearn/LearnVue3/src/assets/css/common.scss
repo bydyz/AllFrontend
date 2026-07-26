@@ -1,0 +1,32 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  padding: 12px;
+}
+
+#app {
+  height: calc(100vh - 24px);
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+}
+
+
+// 以下是共用逻辑
+#app hr {
+  margin: 12px 0 !important;
+}
+button {
+  padding: 0 8px;
+  margin-right: 8px;
+
+  &:last-child {
+    margin-right: 0;
+  }
+}
