@@ -1,11 +1,8 @@
-/**
- * 本函数是一行行一列列的进行比对，符合一个加一个，显然有重复，应该某行通过，则跳一行，某列通过跳一列，具体见b.js
- * @param {number[][]} grid
- * @return {number}
- */
+// 统计可以相互通信的服务器数量（暴力解法，有重复计算）
 var countServers = function(grid) {
   var rowNum = grid && grid.length
   var columnNum = (grid[0] || []).length
+  // 将列数据转置为行数据，便于按列统计
   var columnArray = []
   for(var i = 0; i < columnNum; i++) {
     let columnArrayItem = []
@@ -14,13 +11,12 @@ var countServers = function(grid) {
     })
     columnArray.push(columnArrayItem)
   }
-  console.log(rowNum, columnNum, columnArray)
   
   var total = 0
   for(var row = 0; row < rowNum; row++  ) {
     for(var column = 0; column < columnNum; column++ ) {
+      // 如果当前位置有服务器，且同行或同列有其他服务器，则可以通信
       if(grid[row][column] === 1 && (grid[row].filter(item => item === 1).length >= 2 || columnArray[column].filter(item => item === 1).length >= 2)){
-        console.log('可以通信的行列数', row, column)
         total++
       }
     }
@@ -28,5 +24,8 @@ var countServers = function(grid) {
   return total
 };
 
-console.log(countServers([[1,1,0,0],[0,0,1,0],[0,0,1,0],[0,0,0,1]]))
-console.log(countServers([[1,0,1,1,0]]))
+/*
+复杂度分析：
+时间复杂度：O(m * n * (m + n))，其中m是行数，n是列数。
+空间复杂度：O(m * n)，用于存储转置后的列数据。
+*/

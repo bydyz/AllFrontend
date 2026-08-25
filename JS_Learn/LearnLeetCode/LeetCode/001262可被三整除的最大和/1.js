@@ -112,30 +112,36 @@
 
 
 
+// 动态规划思想：按余数分组，寻找最优组合
 var maxSumDivThree = function(nums) {
+  // 按余数分为三组：余0、余1、余2
   const v = [[], [], []];
   for (const num of nums) {
       v[num % 3].push(num);
   }
+  // 余1和余2的组按降序排列，便于取前k个最大值
   v[1].sort((a, b) => b - a);
   v[2].sort((a, b) => b - a);
 
   let ans = 0;
   const lb = v[1].length;
   const lc = v[2].length;
+  // 尝试从余1组取cntb个，从余2组取cntc个，使得(cntb + cntc*2) % 3 === 0
   for (let cntb = lb - 2; cntb <= lb; ++cntb) {
       if (cntb >= 0) {
           for (let cntc = lc - 2; cntc <= lc; ++cntc) {
-            // 关于 (cntb - cntc) % 3 === 0 的分析，两个取值要么相等，要么其中一个大，因为余数为1 2，故大1，大2均不可，而是需要大3的倍数，这样和才为3的倍数   -3 % 3 === -0 === 0
+              // (cntb - cntc) % 3 === 0 等价于 (cntb + cntc*2) % 3 === 0
               if (cntc >= 0 && (cntb - cntc) % 3 === 0) {
                   ans = Math.max(ans, getSum(v[1], 0, cntb) + getSum(v[2], 0, cntc));
               }
           }
       }
   }
+  // 加上所有余数为0的数（它们一定可以被3整除）
   return ans + getSum(v[0], 0, v[0].length);
 }
 
+// 计算数组从start到end的和
 const getSum = (list, start, end) => {
   let sum = 0;
   for (let i = start; i < end; ++i) {
@@ -144,5 +150,9 @@ const getSum = (list, start, end) => {
   return sum;
 };
 
-console.log(maxSumDivThree([3,6,5,1,8,5,9,1]))
+/*
+复杂度分析：
+时间复杂度：O(n log n)，主要消耗在排序上。
+空间复杂度：O(n)，用于存储分组数组。
+*/
 
