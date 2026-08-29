@@ -42,7 +42,7 @@ describe('useTodoList 组合式函数', () => {
 
     it('应该返回新创建的待办事项', () => {
       const todo = todoList.addTodo('测试任务')
-      expect(todoList.todos.value).toContain(todo)
+      expect(todoList.todos.value).toContainEqual(todo)
     })
 
     it('应该正确更新统计数据', () => {
@@ -124,7 +124,7 @@ describe('useTodoList 组合式函数', () => {
     it('应该根据ID返回正确的待办事项', () => {
       const todo = todoList.addTodo('查找我')
       const found = todoList.getTodoById(todo.id)
-      expect(found).toBe(todo)
+      expect(found).toStrictEqual(todo)
     })
 
     it('当ID不存在时应该返回null', () => {

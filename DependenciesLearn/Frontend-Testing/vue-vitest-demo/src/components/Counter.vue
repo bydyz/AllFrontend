@@ -34,7 +34,7 @@ const props = defineProps({
 const emit = defineEmits(['update'])
 
 // 使用计数器组合式函数
-const { count, isEven, isPositive, increment, decrement, reset } = useCounter(
+const { count, isEven, isPositive, increment: rawIncrement, decrement: rawDecrement, reset: rawReset } = useCounter(
   props.initialValue,
   props.step
 )
@@ -45,23 +45,20 @@ const emitUpdate = () => {
 }
 
 // 包装原始方法以触发emit
-const wrappedIncrement = () => {
-  increment()
+const increment = () => {
+  rawIncrement()
   emitUpdate()
 }
 
-const wrappedDecrement = () => {
-  decrement()
+const decrement = () => {
+  rawDecrement()
   emitUpdate()
 }
 
-const wrappedReset = () => {
-  reset()
+const reset = () => {
+  rawReset()
   emitUpdate()
 }
-
-// 替换方法引用
-Object.assign({ increment: wrappedIncrement, decrement: wrappedDecrement, reset: wrappedReset })
 </script>
 
 <style scoped>

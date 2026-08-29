@@ -134,8 +134,8 @@ describe('异步操作测试', () => {
     })
 
     it('应该正确mock模块', async () => {
-      // 动态导入模块
-      const { default: mathModule } = await import('../utils/math.js')
+      // 动态导入模块（使用命名导出）
+      const mathModule = await import('../utils/math.js')
       
       // Mock模块中的函数
       vi.spyOn(mathModule, 'add').mockReturnValue(100)
