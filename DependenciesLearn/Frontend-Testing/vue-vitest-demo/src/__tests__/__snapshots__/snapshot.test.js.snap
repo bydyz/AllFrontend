@@ -1,0 +1,67 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`快照测试 > 数据结构快照 > 应该匹配用户数据结构 1`] = `
+{
+  "email": "zhangsan@example.com",
+  "id": 1,
+  "name": "张三",
+  "roles": [
+    "admin",
+    "user",
+  ],
+  "settings": {
+    "language": "zh-CN",
+    "theme": "dark",
+  },
+}
+`;
+
+exports[`快照测试 > 数据结构快照 > 应该匹配配置对象 1`] = `
+{
+  "api": {
+    "baseUrl": "https://api.example.com",
+    "retries": 3,
+    "timeout": 5000,
+  },
+  "features": {
+    "darkMode": true,
+    "notifications": false,
+  },
+}
+`;
+
+exports[`快照测试 > 组件快照 > Counter 组件应该匹配快照 1`] = `
+"<div data-v-9bd91872="" class="counter">
+  <h2 data-v-9bd91872="">计数器组件</h2>
+  <p data-v-9bd91872="" class="count">当前计数: 5</p>
+  <p data-v-9bd91872="" class="status">状态: 奇数 | 正数</p>
+  <div data-v-9bd91872="" class="buttons"><button data-v-9bd91872="" class="btn decrement">-</button><button data-v-9bd91872="" class="btn reset">重置</button><button data-v-9bd91872="" class="btn increment">+</button></div>
+</div>"
+`;
+
+exports[`快照测试 > 组件快照 > TodoList 组件应该匹配快照 1`] = `
+"<div data-v-4afa86a5="" class="todo-list">
+  <h2 data-v-4afa86a5="">待办事项</h2><!-- 输入框 -->
+  <div data-v-4afa86a5="" class="input-group"><input data-v-4afa86a5="" placeholder="输入新的待办事项..." class="todo-input"><button data-v-4afa86a5="" class="add-btn" disabled=""> 添加 </button></div><!-- 统计信息 -->
+  <div data-v-4afa86a5="" class="stats"><span data-v-4afa86a5="">总计: 0</span><span data-v-4afa86a5="">待完成: 0</span><span data-v-4afa86a5="">已完成: 0</span><span data-v-4afa86a5="">完成率: 0.0%</span></div><!-- 清除已完成按钮 -->
+  <!--v-if-->
+  <!-- 待办事项列表 -->
+  <ul data-v-4afa86a5="" class="todo-items"></ul><!-- 空状态 -->
+  <p data-v-4afa86a5="" class="empty-message"> 暂无待办事项 </p>
+</div>"
+`;
+
+exports[`快照测试 > 组件快照 > 带有待办事项的 TodoList 应该匹配快照 1`] = `
+"<div data-v-4afa86a5="" class="todo-list">
+  <h2 data-v-4afa86a5="">待办事项</h2><!-- 输入框 -->
+  <div data-v-4afa86a5="" class="input-group"><input data-v-4afa86a5="" placeholder="输入新的待办事项..." class="todo-input"><button data-v-4afa86a5="" class="add-btn" disabled=""> 添加 </button></div><!-- 统计信息 -->
+  <div data-v-4afa86a5="" class="stats"><span data-v-4afa86a5="">总计: 2</span><span data-v-4afa86a5="">待完成: 2</span><span data-v-4afa86a5="">已完成: 0</span><span data-v-4afa86a5="">完成率: 0.0%</span></div><!-- 清除已完成按钮 -->
+  <!--v-if-->
+  <!-- 待办事项列表 -->
+  <ul data-v-4afa86a5="" class="todo-items">
+    <li data-v-4afa86a5="" class="todo-item"><input data-v-4afa86a5="" type="checkbox" class="checkbox"><span data-v-4afa86a5="" class="title">任务1</span><button data-v-4afa86a5="" class="delete-btn"> 删除 </button></li>
+    <li data-v-4afa86a5="" class="todo-item"><input data-v-4afa86a5="" type="checkbox" class="checkbox"><span data-v-4afa86a5="" class="title">任务2</span><button data-v-4afa86a5="" class="delete-btn"> 删除 </button></li>
+  </ul><!-- 空状态 -->
+  <!--v-if-->
+</div>"
+`;
